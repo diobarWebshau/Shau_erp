@@ -1,0 +1,28 @@
+### GET ALL
+GET http://localhost:3003/input-type HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/input-type/id/2 HTTP/1.1
+
+### GET BY NAME
+GET http://localhost:3003/input-type/name/RHH HTTP/1.1
+
+### CREATE
+POST http://localhost:3003/input-type HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Rercursos Humanos"
+}
+
+
+### UPDATE
+PATCH http://localhost:3003/input-type/5 HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Recursos Humanos"
+}
+
+### DELETE
+DELETE http://localhost:3003/input-type/4 HTTP/1.1

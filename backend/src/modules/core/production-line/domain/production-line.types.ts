@@ -1,0 +1,91 @@
+/**
+ * Domain Types
+ * ------------------------------------------------------------------
+ * Definen las estructuras de datos puras que representan conceptos
+ * del negocio dentro de la capa de dominio. Estos tipos no dependen
+ * de frameworks, ORM ni librerías de validación; son contratos
+ * internos que los casos de uso consumen y manipulan.
+ *
+ * Función técnica:
+ * - Modelar atributos y propiedades relevantes de un concepto del negocio.
+ * - Proveer estructuras tipadas para operaciones de creación, actualización
+ *   y manipulación de entidades.
+ * - Servir como base para DTOs y schemas, garantizando consistencia en
+ *   la comunicación entre capas.
+ * - Mantener independencia de infraestructura, asegurando que el dominio
+ *   sea portable y libre de dependencias externas.
+ *
+ * Qué hacen:
+ * - Representan datos completos del dominio (Props).
+ * - Definen subconjuntos de atributos para creación (CreateProps).
+ * - Definen subconjuntos de atributos para actualización (UpdateProps).
+ * - Actúan como contratos internos que los casos de uso utilizan para
+ *   ejecutar operaciones sobre entidades.
+ *
+ * Qué no hacen:
+ * - No contienen lógica de negocio ni validaciones.
+ * - No representan entidades con identidad propia (eso corresponde a las Entity).
+ * - No gestionan persistencia ni infraestructura.
+ * - No sustituyen a los schemas de validación, sino que los complementan
+ *   como tipos puros del dominio.
+ *
+ * Convención de nombres:
+ * - `Props`: atributos completos de la entidad en el dominio.
+ * - `CreateProps`: atributos permitidos al crear un registro (sin id ni timestamps).
+ * - `UpdateProps`: atributos permitidos al actualizar un registro (parcial).
+ * Esta convención deja claro el propósito de cada tipo y su relación con
+ * el ciclo de vida de los datos.
+ *
+ * Ubicación en la arquitectura Clean + Core + Features + Orchestrators:
+ * - Core: los types viven aquí, representando contratos puros del dominio.
+ * - Entities: utilizan estos types para encapsular atributos y comportamientos.
+ * - UseCases: consumen estos types para definir entradas y salidas de operaciones.
+ * - Features: implementaciones de infraestructura transforman datos externos
+ *   hacia/desde estos types.
+ * - Orchestrators: exponen endpoints que terminan trabajando con DTOs y schemas
+ *   derivados de estos tipos.
+ */
+
+/**
+ * ProductionLineProps
+ * ------------------------------------------------------------------
+ * Representa los atributos completos del dominio.
+ * Estos valores ya son "puros", no pertenecen al ORM ni a Zod.
+ *
+ * Se corresponden con los datos que los casos de uso manejan.
+ */
+
+interface ProductionLineProps {
+    id: number,
+    name: string,
+    custom_id: string,
+    is_active: boolean,
+    created_at: Date,
+    updated_at: Date,
+};
+
+
+/**
+ * ProductionLineCreateProps
+ * ------------------------------------------------------------------
+ * Representa los campos permitidos durante la creación.
+ * No incluye id, timestamps, etc.
+ */
+
+
+type ProductionLineCreateProps = Partial<Omit<ProductionLineProps, "id" | "created_at" | "updated_at">>;
+
+/**
+ * ProductionLineUpdateProps
+ * ------------------------------------------------------------------
+ * Representa los campos que pueden ser actualizados.
+ * Es equivalente a un DTO parcial de update.
+ */
+
+type ProductionLineUpdateProps = Partial<ProductionLineCreateProps>;
+
+export {
+    ProductionLineProps,
+    ProductionLineCreateProps,
+    ProductionLineUpdateProps
+};

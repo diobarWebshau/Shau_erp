@@ -1,0 +1,35 @@
+### GET ALL
+GET http://localhost:3003/process HTTP/1.1
+### GET ALL WITH EXCLUDE IDS
+GET http://localhost:3003/process?exclude_ids=1&exclude_ids=3 HTTP/1.1
+### GET ALL WITH EXCLUDE ATTRIBUTE VALUE
+GET http://localhost:3003/process?name=Proceso A HTTP/1.1
+### GET ALL WITH EXCLUDE IDS AND ATTRIBUTE VALUES
+GET http://localhost:3003/process?exclude_ids=2&name=Proceso A HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/process/id/2 HTTP/1.1
+
+### GET BY NAME
+GET http://localhost:3003/process/name/Line B HTTP/1.1
+
+### CREATE
+POST http://localhost:3003/process HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Secado",
+  "description": "sdaskda"
+}
+
+
+### UPDATE
+PATCH http://localhost:3003/process/4 HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Proceso Z"
+}
+
+### DELETE
+DELETE http://localhost:3003/process/4 HTTP/1.1

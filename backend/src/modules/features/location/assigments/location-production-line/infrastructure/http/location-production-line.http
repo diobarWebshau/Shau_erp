@@ -1,0 +1,27 @@
+### GET ALL
+GET http://localhost:3003/location-production-line HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/location-production-line/id/2 HTTP/1.1
+
+### CREATE
+POST http://localhost:3003/location-production-line HTTP/1.1
+Content-Type: application/json
+
+{
+  "location_id": 25,
+  "production_line_id": 26
+}
+
+
+### UPDATE
+PATCH http://localhost:3003/location-production-line/18 HTTP/1.1
+Content-Type: application/json
+
+{
+  "location_id": 1,
+  "production_line": 35
+}
+
+### DELETE
+DELETE http://localhost:3003/location-production-line/17 HTTP/1.1

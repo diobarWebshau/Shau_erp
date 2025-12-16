@@ -1,0 +1,48 @@
+### GET ALL
+GET http://localhost:3003/client HTTP/1.1
+### GET ALL WITH EXCLUDE IDS
+GET http://localhost:3003/client?exclude_ids=31&exclude_ids=30&is_active=1 HTTP/1.1
+### GET ALL WITH EXCLUDE ATTRIBUTE VALUE
+GET http://localhost:3003/client?country=Mexico HTTP/1.1
+### GET ALL WITH EXCLUDE IDS AND ATTRIBUTE VALUES
+GET http://localhost:3003/client?exclude_ids=31&exclude_ids=30&is_active=1&country=Mexico HTTP/1.1
+### GET BY ID
+GET http://localhost:3003/client/id/2 HTTP/1.1
+
+### GET BY NAME
+GET http://localhost:3003/client/company_name/Innova Corp. HTTP/1.1
+
+### CREATE
+POST http://localhost:3003/client HTTP/1.1
+Content-Type: application/json
+
+{
+  "cfdi": "G01 - Asdadquisición sdasde mercancías",
+  "city": "Monterrey",
+  "company_name": "Innsfsdfsdfddoasdvaasds Corp.",
+  "country": "México",
+  "credit_limit": 100000.0000,
+  "email": "ventas@innovacorp.com",
+  "is_active": 1,
+  "neighborhood": "Parque Industrial",
+  "payment_method": "PPD",
+  "payment_terms": "Net 60",
+  "phone": "+52 987 654 3210",
+  "state": "Nuevo León",
+  "street": "Calle Innovación",
+  "street_number": 456,
+  "tax_id": "DEF7sdfsd8asdsad9101",
+  "tax_regimen": "Régimen Simplificado de Confianza",
+  "zip_code": 64000
+}
+
+### UPDATE
+PATCH http://localhost:3003/client/30 HTTP/1.1
+Content-Type: application/json
+
+{
+  "is_active": 1
+}
+
+### DELETE
+DELETE http://localhost:3003/client/29 HTTP/1.1

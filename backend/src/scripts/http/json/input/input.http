@@ -1,0 +1,49 @@
+
+### GET ALL
+GET http://localhost:3003/input HTTP/1.1
+### GET ALL WITH EXCLUDE IDS
+GET http://localhost:3003/input?exclude_ids=1&exclude_ids=3&status=1 HTTP/1.1
+### GET ALL WITH EXCLUDE ATTRIBUTE VALUE
+GET http://localhost:3003/input?is_draft=0 HTTP/1.1
+### GET ALL WITH EXCLUDE IDS AND ATTRIBUTE VALUES
+GET http://localhost:3003/input?exclude_ids=31&exclude_ids=30&status=1&is_draft=0 HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/input/id/5 HTTP/1.1
+
+### GET BY NAME
+GET http://localhost:3003/input/name/Insumo X HTTP/1.1
+
+### GET BY CUSTOMID
+GET http://localhost:3003/input/custom_id/InsX HTTP/1.1
+
+### GET BY SKU
+GET http://localhost:3003/input/sku/A12345 HTTP/1.1
+
+### GET BY BARCODE
+GET http://localhost:3003/input/barcode/987654321 HTTP/1.1
+
+### CREATE
+POST http://localhost:3003/input HTTP/1.1   
+Content-Type: application/json
+
+{
+  "name": "Prosasdasdsaductsdso Y",
+  "type": "Electrónico",
+  "description": "Descripción del inputo A",
+  "sku": "SKUasdsaassdasd1sda2sds345",
+  "status": 1,
+  "unit_price": 25.16,
+  "is_draft": 0
+}
+
+### UPDATE
+PATCH http://localhost:3003/input/63 HTTP/1.1
+Content-Type: application/json
+
+{
+  "status": 0
+}
+
+### DELETE
+DELETE http://localhost:3003/input/4 HTTP/1.1

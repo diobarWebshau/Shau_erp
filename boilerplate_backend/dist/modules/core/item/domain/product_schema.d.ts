@@ -1,0 +1,35 @@
+import { z } from "zod";
+declare const CreateProductSchema: z.ZodObject<{
+    name: z.ZodString;
+    description: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    type: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    production_cost: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    sale_price: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    active: z.ZodOptional<z.ZodBoolean>;
+    photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    is_draft: z.ZodOptional<z.ZodBoolean>;
+}, z.core.$strip>;
+declare const UpdateProductSchema: z.ZodObject<{
+    name: z.ZodString;
+    description: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    type: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    production_cost: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    sale_price: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    active: z.ZodOptional<z.ZodBoolean>;
+    photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    is_draft: z.ZodOptional<z.ZodBoolean>;
+    id: z.ZodNumber;
+}, z.core.$strip>;
+export type { UpdateProductSchema, CreateProductSchema };

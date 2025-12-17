@@ -1,6 +1,6 @@
 import type { LocationLocationTypeCreateProps, LocationLocationTypeProps, LocationLocationTypeUpdateProps } from "../../domain/location-location-type.types";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
-import { LocationLocationTypeModel } from "../orm/location-location-type.model";
+import { LocationLocationTypeModel } from "../orm/location-location-type.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";

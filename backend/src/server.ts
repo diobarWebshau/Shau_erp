@@ -3,8 +3,8 @@ import { Express } from "express";
 import { Server } from "http";
 import { AddressInfo } from "net";
 
-const createServer = (): Server => {
-    const app: Express = createApp();
+const createServer = async (): Promise<Server> => {
+    const app: Express = await createApp();
     const port: string = (process.env.SERVER_PORT) ?? ""
     const server: Server = app.listen(port, () => {
         const address: string | AddressInfo | null = server.address();

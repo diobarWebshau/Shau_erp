@@ -1,6 +1,6 @@
 import type { ProductionLineCreateProps, ProductionLineProps, ProductionLineUpdateProps } from "../../domain/production-line.types";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
-import { ProductionLineModel } from "../orm/production-lines.model";
+import { ProductionLineModel } from "../orm/production-lines.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";

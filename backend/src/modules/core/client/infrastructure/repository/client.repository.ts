@@ -1,7 +1,7 @@
 import type { ClientCreateProps, ClientProps, ClientUpdateProps, ClientSearchCriteria } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
-import { ClientModel } from "../orm/clients.model";
+import { ClientModel } from "../orm/clients.orm";
 import { sequelize } from "@config/mysql/sequelize";
 import { Op, Transaction, WhereOptions } from "sequelize";
 

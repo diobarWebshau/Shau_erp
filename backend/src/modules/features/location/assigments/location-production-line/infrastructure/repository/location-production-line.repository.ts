@@ -1,6 +1,6 @@
 import type { LocationProductionLineCreateProps, LocationProductionLineProps, LocationProductionLineUpdateProps } from "../../domain/location-production-line.types";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
-import { LocationProductionLineModel } from "../orm/location-production-line.model";
+import { LocationProductionLineModel } from "../orm/location-production-line.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";

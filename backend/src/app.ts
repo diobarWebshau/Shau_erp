@@ -19,7 +19,9 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import path from "node:path";
 
-const createApp = (): Express => {
+import { initializeDatabase } from "@shared/database/index";
+
+const createApp = async (): Promise<Express> => {
 
     const app: Express = express();
 
@@ -28,6 +30,8 @@ const createApp = (): Express => {
     app.use(express.urlencoded({ extended: true, limit: "10mb" }));
     app.use("/uploads", express.static(path.resolve(__dirname, process.env.FILES_PATH)));
     app.use(compression({ threshold: 1024 }));
+    
+    await initializeDatabase();
 
     // ******* CORE ******* 
     app.use("/production-line", productionLineRouter());

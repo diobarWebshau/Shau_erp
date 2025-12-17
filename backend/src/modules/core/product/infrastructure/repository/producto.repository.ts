@@ -2,7 +2,7 @@ import type { ProductCreateProps, ProductProps, ProductUpdateProps, ProductSearc
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
-import { ProductModel } from "../orm/product.model";
+import { ProductModel } from "../orm/product.orm";
 import { sequelize } from "@config/mysql/sequelize";
 import ImageHandler from "@helpers/imageHandlerClass";
 

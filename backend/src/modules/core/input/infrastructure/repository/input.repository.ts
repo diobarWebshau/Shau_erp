@@ -2,7 +2,7 @@ import type { InputCreateProps, InputProps, InputUpdateProps, InputSearchCriteri
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
-import { InputModel } from "../orm/input.model";
+import { InputModel } from "../orm/input.orm";
 import { sequelize } from "@config/mysql/sequelize";
 import ImageHandler from "@helpers/imageHandlerClass";
 

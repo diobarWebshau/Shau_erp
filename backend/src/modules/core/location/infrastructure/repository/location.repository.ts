@@ -1,7 +1,7 @@
 import type { LocationCreateProps, LocationProps, LocationUpdateProps } from "../../domain/location.types";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
-import { LocationModel } from "../orm/location.model";
+import { LocationModel } from "../orm/location.orm";
 import { sequelize } from "@config/mysql/sequelize";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import { ClientSearchCriteria } from "@src/modules/core/client/domain/client.types";

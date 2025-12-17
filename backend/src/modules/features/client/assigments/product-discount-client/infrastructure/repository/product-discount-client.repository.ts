@@ -1,6 +1,6 @@
 import type { ProductDiscountClientCreateProps, ProductDiscountClientProps, ProductDiscountClientUpdateProps } from "../../domain/product-discount-client.types";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
-import { ProductDiscountClientModel } from "../orm/product-discount-client.model";
+import { ProductDiscountClientModel } from "../orm/product-discount-client.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";

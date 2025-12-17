@@ -1,7 +1,7 @@
 import type { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateProps } from "../../domain/client-address.types";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
-import { ClientAddressModel } from "../orm/client-address.model";
+import { ClientAddressModel } from "../orm/client-address.orm";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 

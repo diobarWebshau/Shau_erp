@@ -1,3 +1,4 @@
+import { checkRangeConflicts, type RangeConflict } from "@helpers/check-range-conflicts";
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
 import type { ProductDiscountRangeProps, ProductDiscountRangeCreateProps } from "../../domain/product-discount-range.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -46,6 +47,24 @@ import HttpError from "@shared/errors/http/http-error";
 export class CreateProductDiscountRangeUseCase {
     constructor(private readonly repo: IProductDiscountRangeRepository) { }
     async execute(data: ProductDiscountRangeCreateProps): Promise<ProductDiscountRangeProps> {
+        const getAll: ProductDiscountRangeProps[] = await this.repo.findByProductId(data.product_id);
+        const getAllWithNew: Pick<ProductDiscountRangeCreateProps, "min_qty" | "max_qty">[] = [...getAll, ...[data]];
+        const conflictRanges: RangeConflict = checkRangeConflicts(getAllWithNew, "min_qty", "max_qty");
+        if (conflictRanges === "invalid_range") {
+            throw new HttpError(400,
+                "El rango del descueto es invalído."
+            );
+        }
+        if (conflictRanges === "duplicate") {
+            throw new HttpError(400,
+                "El rango del descuento ya esta aplicado por otro descuento del producto."
+            );
+        }
+        if (conflictRanges === "overlap") {
+            throw new HttpError(400,
+                "El rango del descueto se traslapa con otro descuento ya existente para el producto."
+            );
+        }
         const created: ProductDiscountRangeProps = await this.repo.create(data);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del descueto por rango al producto."

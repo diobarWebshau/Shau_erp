@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateClientUseCase = void 0;
 const validation_diff_engine_backend_1 = require("../../../../../helpers/validation-diff-engine-backend");
 const pickEditableFields_1 = require("../../../../../helpers/pickEditableFields");
+const decimal_normalization_and_cleaning_utils_1 = require("../../../../../helpers/decimal-normalization-and-cleaning.utils");
 const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
 /**
  * UseCase
@@ -66,7 +67,9 @@ class UpdateClientUseCase {
         ];
         const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
         const merged = { ...existing, ...filteredBody };
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(existing, merged);
+        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["credit_limit"]);
+        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["credit_limit"]);
+        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length)
             return existing;
         if (updateValues?.company_name) {

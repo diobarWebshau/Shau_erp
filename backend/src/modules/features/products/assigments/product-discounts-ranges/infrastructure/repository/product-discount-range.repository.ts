@@ -60,7 +60,7 @@ const mapModelToDomain = (model: ProductDiscountRangeModel): ProductDiscountRang
         unit_price: json.unit_price,
         product_id: json.product_id,
         max_qty: json.max_qty,
-        min_qty: json.max_qty,
+        min_qty: json.min_qty,
         created_at: json.created_at,
         updated_at: json.created_at
     };
@@ -77,12 +77,22 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
         const rowsMap: ProductDiscountRangeProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: string): Promise<ProductDiscountRangeProps | null> => {
+    findById = async (id: number): Promise<ProductDiscountRangeProps | null> => {
         const row: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id, {
             attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
+    
+    findByProductId = async (product_id: number): Promise<ProductDiscountRangeProps[]> => {
+        const rows: ProductDiscountRangeModel[] = await ProductDiscountRangeModel.findAll({
+            where: { product_id: product_id },
+            attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[])
+        });
+        const rowsMap: ProductDiscountRangeProps[] = rows.map((r) => mapModelToDomain(r));
+        return rowsMap;
+    }
+
     // ================================================================
     // CREATE
     // ================================================================
@@ -103,7 +113,7 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: ProductDiscountRangeUpdateProps): Promise<ProductDiscountRangeProps> => {
+    update = async (id: number, data: ProductDiscountRangeUpdateProps): Promise<ProductDiscountRangeProps> => {
         const transaction: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         });
@@ -136,7 +146,7 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
+    delete = async (id: number): Promise<void> => {
         const transaction: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         });

@@ -8,6 +8,7 @@ const validation_diff_engine_backend_1 = require("../../../../../helpers/validat
 const pickEditableFields_1 = require("../../../../../helpers/pickEditableFields");
 const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
 const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
+const decimal_normalization_and_cleaning_utils_1 = require("../../../../../helpers/decimal-normalization-and-cleaning.utils");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -68,66 +69,48 @@ class UpdateProductUseCase {
         // Esto evita actualizaciones accidentales o maliciosas de
         // propiedades no editables del dominio.
         const editableFields = [
-            "name",
-            "storage_conditions",
-            "description",
-            "unit_of_measure",
-            "presentation",
-            "production_cost",
-            "barcode",
-            "type",
-            "sku",
-            "sale_price",
-            "active",
-            "photo",
-            "is_draft",
-            "custom_id",
+            "name", "storage_conditions", "description", "unit_of_measure",
+            "presentation", "production_cost", "barcode", "type", "sku",
+            "sale_price", "active", "photo", "is_draft", "custom_id",
         ];
         const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        // ------------------------------------------------------------------
-        // 🔀 MERGE DE ESTADO ACTUAL + CAMBIOS PROPUESTOS
-        // ------------------------------------------------------------------
-        // Se construye un estado "virtual" del producto combinando
-        // el estado persistido con los cambios entrantes.
-        const merged = {
-            ...existing,
-            ...filteredBody,
-        };
+        const merged = { ...existing, ...filteredBody };
+        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["sale_price", "production_cost", "barcode"]);
+        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["sale_price", "production_cost", "barcode"]);
         // ------------------------------------------------------------------
         // 🧮 DETECCIÓN DE CAMBIOS EFECTIVOS
         // ------------------------------------------------------------------
         // Se calcula la diferencia real entre el estado actual y el
         // estado resultante. Esto evita writes innecesarios en BD.
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(existing, merged);
-        if (!Object.keys(updateValues).length) {
+        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
+        if (!Object.keys(updateValues).length)
             return existing;
-        }
         // ------------------------------------------------------------------
         // 🔐 VALIDACIONES DE UNICIDAD
         // ------------------------------------------------------------------
         // Las validaciones de unicidad se basan en la intención del usuario
         // (data), no en los cambios efectivos (updateValues), para evitar
         // inconsistencias y falsos negativos.
-        if (data.name) {
-            const existsByName = await this.repo.findByName(data.name);
+        if (updateValues.name) {
+            const existsByName = await this.repo.findByName(updateValues.name);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new http_error_1.default(409, "El nombre ingresado para el producte ya está en uso.");
             }
         }
-        if (data.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku);
+        if (updateValues.sku) {
+            const existsBySku = await this.repo.findBySku(updateValues.sku);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new http_error_1.default(409, "El sku ingresado para el producte ya está en uso.");
             }
         }
-        if (data.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+        if (updateValues.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(updateValues.custom_id);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new http_error_1.default(409, "El id único ingresado para el producte ya está en uso.");
             }
         }
-        if (data.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString());
+        if (updateValues.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(updateValues.barcode.toString());
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new http_error_1.default(409, "El código de barras ingresado para el producte ya está en uso.");
             }

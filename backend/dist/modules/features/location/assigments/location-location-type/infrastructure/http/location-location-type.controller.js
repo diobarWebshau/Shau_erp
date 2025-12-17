@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LocationProductionLineController = void 0;
+exports.LocationLocationTypeController = void 0;
 const get_location_location_type_by_id_usecase_1 = require("../../application/use-cases/get-location-location-type-by-id.usecase");
 const create_location_location_type_usecase_1 = require("../../application/use-cases/create-location-location-type.usecase");
 const update_location_location_type_usecase_1 = require("../../application/use-cases/update-location-location-type.usecase");
@@ -56,7 +56,7 @@ const location_location_type_repository_1 = require("../repository/location-loca
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
-class LocationProductionLineController {
+class LocationLocationTypeController {
     repo;
     getAllUseCase;
     getByIdUseCase;
@@ -115,5 +115,5 @@ class LocationProductionLineController {
         return res.status(201).send(null);
     };
 }
-exports.LocationProductionLineController = LocationProductionLineController;
-exports.default = LocationProductionLineController;
+exports.LocationLocationTypeController = LocationLocationTypeController;
+exports.default = LocationLocationTypeController;

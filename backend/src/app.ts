@@ -1,5 +1,7 @@
 import { locationProductionLineRouter } from "@modules/features/location/assigments/location-production-line/infrastructure/http/location-production-line.router";
 import { locationLocationTypeRouter } from "@modules/features/location/assigments/location-location-type/infrastructure/http/location-location-type.router";
+import { ProductDiscountRangeRouter } from "@modules/features/products/assigments/product-discounts-ranges/infrastructure/http/product-discount-range.router";
+import { ProductDiscountClientRouter } from "@modules/features/client/assigments/product-discount-client/infrastructure/http/product-discount-client.router";
 import { ProductProcessRouter } from "@modules/features/products/assigments/product-process/infrastructure/http/product-process.router";
 import { ProductInputRouter } from "@modules/features/products/assigments/product-input/infrastructure/http/product-input.router";
 import { ClientAddressRouter } from "@modules/features/client/assigments/client-addresses/infrastructure/http/client.router";
@@ -37,6 +39,7 @@ const createApp = (): Express => {
     app.use("/input", InputRouter());
 
     // ******* CLIENTS ******* 
+    app.use("/product-discount-client", ProductDiscountClientRouter());
 
     // ******* LOCATION ******* 
     app.use("/location", locationRouter());
@@ -47,7 +50,7 @@ const createApp = (): Express => {
     app.use("/product", ProductRouter());
     app.use("/product-process", ProductProcessRouter());
     app.use("/product-input", ProductInputRouter());
-    // app.use("/product-discount-range", ProductInputRouter());
+    app.use("/product-discount-range", ProductDiscountRangeRouter());
 
     // ******* ERROR ******* 
     app.use(errorMiddleware);

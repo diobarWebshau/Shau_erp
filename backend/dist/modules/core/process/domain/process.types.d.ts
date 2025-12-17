@@ -54,4 +54,10 @@ interface ProcessProps {
 }
 type ProcessCreateProps = Partial<Omit<ProcessProps, "created_at" | "updated_at" | "id">>;
 type ProcessUpdateProps = Partial<ProcessCreateProps>;
-export type { ProcessProps, ProcessCreateProps, ProcessUpdateProps };
+interface ProcessSearchCriteria {
+    filter?: string;
+    exclude_ids?: number[];
+    name?: string | string[];
+    description?: string | string[];
+}
+export type { ProcessProps, ProcessCreateProps, ProcessUpdateProps, ProcessSearchCriteria };

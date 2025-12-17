@@ -39,6 +39,17 @@ const getByIdProductDiscountRangeSchema = z.object({
 });
 
 /**
+ * Schema: GET /location-location-type/product/:product_id
+ * ------------------------------------------------------------------
+ */
+const getByProductIdProductDiscountRangeSchema = z.object({
+    params: z.object({ product_id: z.string() }),
+    query: z.object({}).strict(),
+    body: z.object({}).strict(),
+    response: z.array(ProductDiscountRangeReponseSchema),
+});
+
+/**
  * Schema: POST /location-location-type
  * ------------------------------------------------------------------
  */
@@ -119,6 +130,13 @@ type GetByIdProductDiscountRangeSchema = EndpointSchema<
     z.infer<typeof getByIdProductDiscountRangeSchema>["response"]
 >;
 
+type GetByProductIdProductDiscountRangeSchema = EndpointSchema<
+    z.infer<typeof getByProductIdProductDiscountRangeSchema>["params"],
+    z.infer<typeof getByProductIdProductDiscountRangeSchema>["body"],
+    z.infer<typeof getByProductIdProductDiscountRangeSchema>["query"],
+    z.infer<typeof getByProductIdProductDiscountRangeSchema>["response"]
+>;
+
 type CreateProductDiscountRangeSchema = EndpointSchema<
     z.infer<typeof createProductDiscountRangeSchema>["params"],
     z.infer<typeof createProductDiscountRangeSchema>["body"],
@@ -144,6 +162,7 @@ export {
     deleteProductDiscountRangeSchema,
     createProductDiscountRangeSchema,
     getAllProductDiscountRangeSchema,
+    getByProductIdProductDiscountRangeSchema,
     updateProductDiscountRangeSchema,
     getByIdProductDiscountRangeSchema
 };
@@ -153,5 +172,6 @@ export type {
     GetAllProductDiscountRangesSchema,
     GetByIdProductDiscountRangeSchema,
     UpdateProductDiscountRangeSchema,
-    DeleteProductDiscountRangeSchema
+    DeleteProductDiscountRangeSchema,
+    GetByProductIdProductDiscountRangeSchema
 };

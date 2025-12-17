@@ -1,0 +1,31 @@
+### GET ALL
+GET http://localhost:3003/product-discount-range HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/product-discount-range/id/4 HTTP/1.1
+
+
+### GET DISCOUNT OF THE PRODUCT
+GET http://localhost:3003/product-discount-range/product/1 HTTP/1.1
+
+### CREATE
+POST http://localhost:3003/product-discount-range HTTP/1.1
+Content-Type: application/json
+
+{
+    "product_id": 1,
+    "max_qty": 3000,
+    "min_qty": 2001,
+    "unit_price": 200.50
+}
+
+### UPDATE
+PATCH http://localhost:3003/product-discount-range/4 HTTP/1.1
+Content-Type: application/json
+
+{
+  "equivalence": 5
+}
+
+### DELETE
+DELETE http://localhost:3003/product-discount-range/13 HTTP/1.1

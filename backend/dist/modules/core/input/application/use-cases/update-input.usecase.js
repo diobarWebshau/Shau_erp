@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateInputUseCase = void 0;
+const decimal_normalization_and_cleaning_utils_1 = require("../../../../../helpers/decimal-normalization-and-cleaning.utils");
 const validation_diff_engine_backend_1 = require("../../../../../helpers/validation-diff-engine-backend");
 const pickEditableFields_1 = require("../../../../../helpers/pickEditableFields");
 const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
@@ -79,16 +80,15 @@ class UpdateInputUseCase {
         // ------------------------------------------------------------------
         // Se construye un estado "virtual" del Inputo combinando
         // el estado persistido con los cambios entrantes.
-        const merged = {
-            ...existing,
-            ...filteredBody,
-        };
+        const merged = { ...existing, ...filteredBody, };
+        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["unit_cost", "barcode"]);
+        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["unit_cost", "barcode"]);
         // ------------------------------------------------------------------
         // 🧮 DETECCIÓN DE CAMBIOS EFECTIVOS
         // ------------------------------------------------------------------
         // Se calcula la diferencia real entre el estado actual y el
         // estado resultante. Esto evita writes innecesarios en BD.
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(existing, merged);
+        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) {
             return existing;
         }

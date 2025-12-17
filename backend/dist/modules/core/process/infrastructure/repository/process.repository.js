@@ -69,8 +69,31 @@ class ProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    async findAll() {
+    async findAll(query) {
+        const { filter, exclude_ids, ...rest } = query;
+        const where = {
+            ...(exclude_ids?.length
+                ? { id: { [sequelize_2.Op.notIn]: exclude_ids } }
+                : {}),
+            ...Object.fromEntries(Object.entries(rest)
+                .filter(([, v]) => v !== undefined)
+                .map(([k, v]) => [
+                k,
+                Array.isArray(v) ? { [sequelize_2.Op.notIn]: v } : v,
+            ])),
+            ...(filter
+                ? {
+                    [sequelize_2.Op.or]: [
+                        { company_name: { [sequelize_2.Op.like]: `%${filter}%` } },
+                        { email: { [sequelize_2.Op.like]: `%${filter}%` } },
+                        { tax_id: { [sequelize_2.Op.like]: `%${filter}%` } },
+                        { cfdi: { [sequelize_2.Op.like]: `%${filter}%` } },
+                    ],
+                }
+                : {}),
+        };
         const rows = await process_orm_1.ProcessModel.findAll({
+            where,
             attributes: process_orm_1.ProcessModel.getAllFields()
         });
         return rows.map(mapModelToDomain);

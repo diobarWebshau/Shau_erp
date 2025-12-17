@@ -49,7 +49,7 @@ import { CreateLocationLocationTypeSchema, DeleteLocationLocationTypeSchema, Get
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
-export declare class LocationProductionLineController {
+export declare class LocationLocationTypeController {
     private readonly repo;
     private readonly getAllUseCase;
     private readonly getByIdUseCase;
@@ -63,4 +63,4 @@ export declare class LocationProductionLineController {
     update: (req: ApiRequest<UpdateLocationLocationTypeSchema>, res: ApiResponse<UpdateLocationLocationTypeSchema>) => Promise<ApiResponse<UpdateLocationLocationTypeSchema>>;
     delete: (req: ApiRequest<DeleteLocationLocationTypeSchema>, res: ApiResponse<DeleteLocationLocationTypeSchema>) => Promise<ApiResponse<DeleteLocationLocationTypeSchema>>;
 }
-export default LocationProductionLineController;
+export default LocationLocationTypeController;

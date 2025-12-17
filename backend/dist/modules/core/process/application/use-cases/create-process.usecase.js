@@ -55,7 +55,7 @@ class CreateProcessUseCase {
         if (data.name) {
             const existsByName = await this.repo.findByName(data.name);
             if (existsByName)
-                throw new http_error_1.default(409, "El nombre ingresado para el nuevo tipo de proceso, ya esta utilizado por otro tipo de proceso.");
+                throw new http_error_1.default(409, "El nombre ingresado para el nuevo proceso, ya esta utilizado por otro proceso.");
         }
         /**
          * ⭐ CREACIÓN DEL TIPO DE proceso

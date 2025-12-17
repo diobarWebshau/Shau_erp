@@ -68,6 +68,25 @@ declare const processResponseSchema: z.ZodObject<{
     updated_at: z.ZodString;
 }, z.core.$strip>;
 /**
+ * QuerySchema
+ * ------------------------------------------------------------------
+ * Define los parámetros de consulta aceptados por endpoints GET.
+ *
+ * Comentario complementario:
+ * - Este schema modela exclusivamente datos provenientes del query string.
+ * - En HTTP todos los valores llegan como string o string[].
+ * - El uso de `z.union([string, string[]])` refleja el comportamiento real
+ *   de Express cuando un parámetro se repite en la URL.
+ * - La conversión de tipos (string → number/boolean) se realiza posteriormente
+ *   en el controller o en una capa de normalización.
+ */
+declare const processQuerySchema: z.ZodObject<{
+    filter: z.ZodOptional<z.ZodString>;
+    exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    description: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+}, z.core.$strict>;
+/**
  * Data Transfer Objects (DTO)
  * ------------------------------------------------------------------
  * Representan tipos derivados directamente de los esquemas de validación.
@@ -110,5 +129,6 @@ declare const processResponseSchema: z.ZodObject<{
 type ProcessCreateDto = z.infer<typeof processCreateSchema>;
 type ProcessUpdateDto = z.infer<typeof processUpdateSchema>;
 type ProcessResponseDto = z.infer<typeof processResponseSchema>;
-export { processCreateSchema, processResponseSchema, processUpdateSchema };
-export type { ProcessCreateDto, ProcessResponseDto, ProcessUpdateDto };
+type ProcessQueryDto = z.infer<typeof processQuerySchema>;
+export { processCreateSchema, processResponseSchema, processUpdateSchema, processQuerySchema };
+export type { ProcessCreateDto, ProcessResponseDto, ProcessUpdateDto, ProcessQueryDto };

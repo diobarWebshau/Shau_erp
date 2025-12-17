@@ -1,5 +1,5 @@
 import type { IProcessRepository } from "../../domain/process.repository";
-import type { ProcessProps } from "../../domain/process.types";
+import type { ProcessProps, ProcessSearchCriteria } from "../../domain/process.types";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -43,5 +43,5 @@ import type { ProcessProps } from "../../domain/process.types";
 export declare class GetAllProcessesUseCase {
     private readonly repo;
     constructor(repo: IProcessRepository);
-    execute(): Promise<ProcessProps[]>;
+    execute(query: ProcessSearchCriteria): Promise<ProcessProps[]>;
 }

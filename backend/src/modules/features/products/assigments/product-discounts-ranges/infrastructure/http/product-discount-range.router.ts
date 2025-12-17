@@ -3,6 +3,7 @@ import { validateRequest } from "@middlewares/zod/zod.middleware";
 import {
     createProductDiscountRangeSchema, deleteProductDiscountRangeSchema,
     getAllProductDiscountRangeSchema, getByIdProductDiscountRangeSchema,
+    getByProductIdProductDiscountRangeSchema,
     updateProductDiscountRangeSchema
 } from "../../application/dto/product_discount-range.endpoint.schema";
 import { ProductDiscountRangeController } from "./product-discount-range.controller";
@@ -51,6 +52,7 @@ export const ProductDiscountRangeRouter = (): Router => {
     const controller: ProductDiscountRangeController = new ProductDiscountRangeController();
     router.get("/", validateRequest(getAllProductDiscountRangeSchema), controller.getAll);
     router.get("/id/:id", validateRequest(getByIdProductDiscountRangeSchema), controller.getById);
+    router.get("/product/:product_id", validateRequest(getByProductIdProductDiscountRangeSchema), controller.getByProductId);
     router.post("/", validateRequest(createProductDiscountRangeSchema), controller.create);
     router.patch("/:id", validateRequest(updateProductDiscountRangeSchema), controller.update);
     router.delete("/:id", validateRequest(deleteProductDiscountRangeSchema), controller.delete);

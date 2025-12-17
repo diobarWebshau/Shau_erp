@@ -1,4 +1,4 @@
-import type { ProcessCreateProps, ProcessUpdateProps, ProcessProps } from "./process.types";
+import type { ProcessCreateProps, ProcessUpdateProps, ProcessProps, ProcessSearchCriteria } from "./process.types";
 /**
  * IRepository
  * ------------------------------------------------------------------
@@ -41,7 +41,7 @@ import type { ProcessCreateProps, ProcessUpdateProps, ProcessProps } from "./pro
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 export interface IProcessRepository {
-    findAll(): Promise<ProcessProps[]>;
+    findAll(query: ProcessSearchCriteria): Promise<ProcessProps[]>;
     findById(id: string): Promise<ProcessProps | null>;
     findByName(name: string): Promise<ProcessProps | null>;
     create(data: ProcessCreateProps): Promise<ProcessProps>;

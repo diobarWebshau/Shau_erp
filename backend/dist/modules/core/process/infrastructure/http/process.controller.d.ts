@@ -58,9 +58,9 @@ export declare class ProcessController {
     private readonly updateUseCase;
     private readonly deleteUseCase;
     constructor();
-    /** Formatea un Location para convertir fechas a ISO */
+    /** Formatea un Process para convertir fechas a ISO */
     private formatResponse;
-    getAll: (_req: ApiRequest<GetAllProcessesSchema>, res: ApiResponse<GetAllProcessesSchema>) => Promise<ApiResponse<GetAllProcessesSchema>>;
+    getAll: (req: ApiRequest<GetAllProcessesSchema>, res: ApiResponse<GetAllProcessesSchema>) => Promise<ApiResponse<GetAllProcessesSchema>>;
     getById: (req: ApiRequest<GetByIdProcessSchema>, res: ApiResponse<GetByIdProcessSchema>) => Promise<ApiResponse<GetByIdProcessSchema>>;
     getByName: (req: ApiRequest<GetByNameProcessSchema>, res: ApiResponse<GetByNameProcessSchema>) => Promise<ApiResponse<GetByNameProcessSchema>>;
     create: (req: ApiRequest<CreateProcessSchema>, res: ApiResponse<CreateProcessSchema>) => Promise<ApiResponse<CreateProcessSchema>>;

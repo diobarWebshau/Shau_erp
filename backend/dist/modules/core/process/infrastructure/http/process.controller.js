@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessController = void 0;
-// src/modules/location/infrastructure/http/location.controller.ts
+// src/modules/Process/infrastructure/http/Process.controller.ts
 const get_process_by_name_usecase_1 = require("../../application/use-cases/get-process-by-name.usecase");
 const get_process_by_id_usecase_1 = require("../../application/use-cases/get-process-by-id.usecase");
 const get_all_processes_usecase_1 = require("../../application/use-cases/get-all-processes.usecase");
@@ -12,6 +12,7 @@ const create_process_usecase_1 = require("../../application/use-cases/create-pro
 const update_process_usecase_1 = require("../../application/use-cases/update-process.usecase");
 const delete_process_usecase_1 = require("../../application/use-cases/delete-process.usecase");
 const process_repository_1 = __importDefault(require("../repository/process.repository"));
+const process_query_mapper_1 = require("./process-query-mapper");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -81,19 +82,21 @@ class ProcessController {
     // ============================================================
     // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
     // ============================================================
-    /** Formatea un Location para convertir fechas a ISO */
-    formatResponse(location) {
+    /** Formatea un Process para convertir fechas a ISO */
+    formatResponse(Process) {
         return {
-            ...location,
-            created_at: location.created_at.toISOString(),
-            updated_at: location.updated_at.toISOString()
+            ...Process,
+            created_at: Process.created_at.toISOString(),
+            updated_at: Process.updated_at.toISOString()
         };
     }
     // ============================================================
     // GET ALL
     // ============================================================
-    getAll = async (_req, res) => {
-        const result = await this.getAllUseCase.execute();
+    getAll = async (req, res) => {
+        const queryRequest = req.query;
+        const query = (0, process_query_mapper_1.mapProcessQueryToCriteria)(queryRequest);
+        const result = await this.getAllUseCase.execute(query);
         const formatted = result.map(l => this.formatResponse(l));
         return res.status(200).send(formatted);
     };

@@ -1,13 +1,10 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.locationLocationTypeRouter = void 0;
 // src/modules/location/infrastructure/http/location.router.ts
 const zod_middleware_1 = require("../../../../../../../middlewares/zod/zod.middleware");
 const location_location_type_endpoint_schema_1 = require("../../application/dto/location-location-type.endpoint.schema");
-const location_location_type_controller_1 = __importDefault(require("./location-location-type.controller"));
+const location_location_type_controller_1 = require("./location-location-type.controller");
 const express_1 = require("express");
 /**
  * Router (Infrastructure / HTTP)
@@ -48,7 +45,7 @@ const express_1 = require("express");
  */
 const locationLocationTypeRouter = () => {
     const router = (0, express_1.Router)();
-    const controller = new location_location_type_controller_1.default();
+    const controller = new location_location_type_controller_1.LocationLocationTypeController();
     router.get("/", (0, zod_middleware_1.validateRequest)(location_location_type_endpoint_schema_1.getAllLocationLocationTypeSchema), controller.getAll);
     router.get("/id/:id", (0, zod_middleware_1.validateRequest)(location_location_type_endpoint_schema_1.getByIdLocationLocationTypeSchema), controller.getById);
     router.post("/", (0, zod_middleware_1.validateRequest)(location_location_type_endpoint_schema_1.createLocationLocationTypeSchema), controller.create);

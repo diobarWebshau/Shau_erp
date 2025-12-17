@@ -89,12 +89,12 @@ InputModel.init({
     created_at: {
         type: sequelize_2.DataTypes.DATE(),
         defaultValue: sequelize_2.DataTypes.NOW(),
-        allowNull: true,
+        allowNull: false,
     },
     updated_at: {
         type: sequelize_2.DataTypes.DATE(),
         defaultValue: sequelize_2.DataTypes.NOW(),
-        allowNull: true,
+        allowNull: false,
     }
 }, {
     sequelize: sequelize_1.sequelize,

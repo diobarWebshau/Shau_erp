@@ -22,7 +22,7 @@ const zod_1 = require("zod");
  */
 const getAllProcessesSchema = zod_1.z.object({
     params: zod_1.z.object({}).strict(),
-    query: zod_1.z.object({}).strict(),
+    query: process_model_schema_1.processQuerySchema,
     body: zod_1.z.object({}).strict(),
     response: zod_1.z.array(process_model_schema_1.processResponseSchema)
 });

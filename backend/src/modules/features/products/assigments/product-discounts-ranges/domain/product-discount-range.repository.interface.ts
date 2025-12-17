@@ -44,8 +44,9 @@ import type { ProductDiscountRangeProps, ProductDiscountRangeCreateProps, Produc
 
 export interface IProductDiscountRangeRepository {
     findAll(): Promise<ProductDiscountRangeProps[]>;
-    findById(id: string): Promise<ProductDiscountRangeProps | null>;
+    findById(id: number): Promise<ProductDiscountRangeProps | null>;
+    findByProductId(product_id: number): Promise<ProductDiscountRangeProps[]>;
     create(data: ProductDiscountRangeCreateProps): Promise<ProductDiscountRangeProps>;
-    update(id: string, data: ProductDiscountRangeUpdateProps): Promise<ProductDiscountRangeProps>;
-    delete(id: string): Promise<void>;
+    update(id: number, data: ProductDiscountRangeUpdateProps): Promise<ProductDiscountRangeProps>;
+    delete(id: number): Promise<void>;
 };

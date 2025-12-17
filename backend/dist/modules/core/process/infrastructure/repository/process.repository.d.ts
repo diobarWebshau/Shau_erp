@@ -1,7 +1,7 @@
-import type { ProcessProps, ProcessCreateProps, ProcessUpdateProps } from "../../domain/process.types";
+import type { ProcessProps, ProcessCreateProps, ProcessUpdateProps, ProcessSearchCriteria } from "../../domain/process.types";
 import type { IProcessRepository } from "../../domain/process.repository";
 export declare class ProcessRepository implements IProcessRepository {
-    findAll(): Promise<ProcessProps[]>;
+    findAll(query: ProcessSearchCriteria): Promise<ProcessProps[]>;
     findById(id: string): Promise<ProcessProps | null>;
     findByName(name: string): Promise<ProcessProps | null>;
     create(data: ProcessCreateProps): Promise<ProcessProps>;

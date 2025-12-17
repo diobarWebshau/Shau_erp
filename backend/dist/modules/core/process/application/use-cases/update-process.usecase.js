@@ -65,6 +65,11 @@ class UpdateProcessUseCase {
         // 🌐 SI NO HAY CAMBIOS → DEVUELVE EXISTING (igual que service)
         if (!Object.keys(updateValues).length)
             return existing;
+        if (updateValues.name) {
+            const existsByName = await this.repo.findByName(updateValues.name);
+            if (existsByName)
+                throw new http_error_1.default(409, "El nombre ingresado para el proceso, ya esta utilizado por otro proceso.");
+        }
         // 🌐 ACTUALIZACIÓN REAL (repositorio maneja la transacción)
         const updated = await this.repo.update(id, updateValues);
         if (!updated)

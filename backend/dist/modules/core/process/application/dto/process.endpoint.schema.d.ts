@@ -19,7 +19,12 @@ import { z } from "zod";
  */
 declare const getAllProcessesSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
-    query: z.ZodObject<{}, z.core.$strict>;
+    query: z.ZodObject<{
+        filter: z.ZodOptional<z.ZodString>;
+        exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+        name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+        description: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    }, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
         name: z.ZodString;

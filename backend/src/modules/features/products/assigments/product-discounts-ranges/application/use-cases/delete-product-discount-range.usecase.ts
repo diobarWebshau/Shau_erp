@@ -45,7 +45,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteProductDiscountRangeUseCase {
     constructor(private readonly repo: IProductDiscountRangeRepository) { }
-    async execute(id: string): Promise<void> {
+    async execute(id: number): Promise<void> {
         const exists: ProductDiscountRangeProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro la asignación del descuento por rango al producto que se pretende eliminar."

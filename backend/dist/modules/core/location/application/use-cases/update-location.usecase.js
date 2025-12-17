@@ -1,10 +1,10 @@
 "use strict";
-// src/modules/location/application/use-cases/update-location.usecase.ts
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateLocationUseCase = void 0;
+const decimal_normalization_and_cleaning_utils_1 = require("../../../../../helpers/decimal-normalization-and-cleaning.utils");
 const validation_diff_engine_backend_1 = require("../../../../../helpers/validation-diff-engine-backend");
 const pickEditableFields_1 = require("../../../../../helpers/pickEditableFields");
 const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
@@ -54,14 +54,9 @@ class UpdateLocationUseCase {
         this.repo = repo;
     }
     async execute(id, data) {
-        // 🌐 VALIDAR EXISTENCIA DEL REGISTRO (igual que service original)
         const existing = await this.repo.findById(id);
         if (!existing)
             throw new http_error_1.default(404, "La locación que se desea actualizar no fue posible encontrarla.");
-        // 🌐 CAMPOS EDITABLES (tomados de tu ORM original)
-        // Esta lista es normalmente elegida por el ORM, pero aquí
-        // la inyectaremos desde la infraestructura. Por ahora,
-        // asumimos que el repo provee getEditableFields() si es necesario.
         const editableFields = [
             "name", "description", "phone",
             "street", "street_number", "neighborhood",
@@ -70,25 +65,22 @@ class UpdateLocationUseCase {
             "is_active"
         ];
         const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        // 🌐 MERGE EXACTO AL ORIGINAL
         const merged = { ...existing, ...filteredBody };
-        // 🌐 DIFF EXACTO AL ORIGINAL (comportamiento idéntico)
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(existing, merged);
-        // 🌐 SI NO HAY CAMBIOS → DEVUELVE EXISTING (igual que service)
+        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["street_number", "zip_code"]);
+        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["street_number", "zip_code"]);
+        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length)
             return existing;
-        // 🌐 VALIDAR DUPLICADOS EXACTAMENTE COMO EN TU SERVICE
         if (updateValues.name) {
             const check = await this.repo.findByName(updateValues.name);
             if (check && String(check.id) !== String(id))
                 throw new http_error_1.default(409, "El nombre ingresado para la locación, ya esta utilizado por otra locación.");
         }
-        if (updateValues.custom_id) {
+        if (updateValues?.custom_id) {
             const check = await this.repo.findByCustomId(updateValues.custom_id);
             if (check && String(check.id) !== String(id))
                 throw new http_error_1.default(409, "El id unico ingresado para la locación, ya esta utilizado por otra locación.");
         }
-        // 🌐 ACTUALIZACIÓN REAL (repositorio maneja la transacción)
         const updated = await this.repo.update(id, updateValues);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la locación.");

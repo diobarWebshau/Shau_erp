@@ -44,5 +44,5 @@ import type { ProductDiscountRangeProps } from "../../domain/product-discount-ra
 
 export class GetProductDiscountRangeByIdUseCase {
     constructor(private readonly repo: IProductDiscountRangeRepository) { }
-    execute = async (id: string): Promise<ProductDiscountRangeProps | null> => this.repo.findById(id);
+    execute = async (id: number): Promise<ProductDiscountRangeProps | null> => this.repo.findById(id);
 };

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processUpdateSchema = exports.processResponseSchema = exports.processCreateSchema = void 0;
+exports.processQuerySchema = exports.processUpdateSchema = exports.processResponseSchema = exports.processCreateSchema = void 0;
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -68,3 +68,26 @@ const processResponseSchema = processCreateSchema.extend({
     updated_at: zod_1.z.string(),
 });
 exports.processResponseSchema = processResponseSchema;
+/**
+ * QuerySchema
+ * ------------------------------------------------------------------
+ * Define los parámetros de consulta aceptados por endpoints GET.
+ *
+ * Comentario complementario:
+ * - Este schema modela exclusivamente datos provenientes del query string.
+ * - En HTTP todos los valores llegan como string o string[].
+ * - El uso de `z.union([string, string[]])` refleja el comportamiento real
+ *   de Express cuando un parámetro se repite en la URL.
+ * - La conversión de tipos (string → number/boolean) se realiza posteriormente
+ *   en el controller o en una capa de normalización.
+ */
+const processQuerySchema = zod_1.z.object({
+    filter: zod_1.z.string().optional(),
+    exclude_ids: zod_1.z.union([
+        zod_1.z.string(),
+        zod_1.z.array(zod_1.z.string())
+    ]).optional(),
+    name: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
+    description: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
+}).strict();
+exports.processQuerySchema = processQuerySchema;

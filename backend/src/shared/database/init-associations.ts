@@ -21,9 +21,9 @@ import { ProductionLineModel } from "@modules/core/production-line/infrastructur
 import { InputTypeModel } from "@modules/core/input-type/infrastructure/orm/input-type.orm";
 import { InputModel } from "@modules/core/input/infrastructure/orm/input.orm";
 
-import { ProductDiscountRangeModel } from "@modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.model";
-import { ProductProcessModel } from "@modules/features/products/assigments/product-process/infrastructure/orm/product-process.model";
-import { ProductInputModel } from "@modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.model";
+import { ProductDiscountRangeModel } from "@src/modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
+import { ProductProcessModel } from "@src/modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
+import { ProductInputModel } from "@src/modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
 import { ProcessModel } from "@modules/core/process/infrastructure/orm/process.orm";
 import { ProductModel } from "@modules/core/product/infrastructure/orm/product.orm";
 

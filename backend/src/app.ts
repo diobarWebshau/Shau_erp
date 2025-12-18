@@ -20,6 +20,7 @@ import compression from "compression";
 import path from "node:path";
 
 import { initializeDatabase } from "@shared/database/index";
+import { ProductQuery } from "@modules/features/products/query/infrastructure/product-query.router";
 
 const createApp = async (): Promise<Express> => {
 
@@ -30,7 +31,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.urlencoded({ extended: true, limit: "10mb" }));
     app.use("/uploads", express.static(path.resolve(__dirname, process.env.FILES_PATH)));
     app.use(compression({ threshold: 1024 }));
-    
+
     await initializeDatabase();
 
     // ******* CORE ******* 
@@ -55,6 +56,7 @@ const createApp = async (): Promise<Express> => {
     app.use("/product-process", ProductProcessRouter());
     app.use("/product-input", ProductInputRouter());
     app.use("/product-discount-range", ProductDiscountRangeRouter());
+    app.use("/query", ProductQuery());
 
     // ******* ERROR ******* 
     app.use(errorMiddleware);

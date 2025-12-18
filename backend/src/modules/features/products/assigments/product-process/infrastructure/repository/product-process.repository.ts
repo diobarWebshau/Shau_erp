@@ -1,6 +1,6 @@
 import type { ProductProcessCreateProps, ProductProcessProps, ProductProcessUpdateProps } from "../../domain/product-process.types";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
-import { ProductProcessModel } from "../orm/product-process.model";
+import { ProductProcessModel } from "../orm/product-process.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";

@@ -73,6 +73,5 @@ export const ProductRouter = (): Router => {
         validateRequest(updateProductSchema),
         controller.update
     ); router.delete("/:id", validateRequest(deleteProductSchema), controller.delete);
-
     return router;
 }

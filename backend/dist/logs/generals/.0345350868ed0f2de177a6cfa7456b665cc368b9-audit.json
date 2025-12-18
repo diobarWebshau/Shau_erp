@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\DiobarBaez\\Desktop\\shau_erp\\backend\\dist\\logs\\generals\\.0345350868ed0f2de177a6cfa7456b665cc368b9-audit.json",
+    "files": [
+        {
+            "date": 1766015579622,
+            "name": "C:\\Users\\DiobarBaez\\Desktop\\shau_erp\\backend\\dist\\logs\\generals\\app-2025-12-17.log",
+            "hash": "dbf1057023a4aab3efe28fb919531eb6e53413f5b0f1821f2192c2be6d9ce4b9"
+        }
+    ],
+    "hashType": "sha256"
+}

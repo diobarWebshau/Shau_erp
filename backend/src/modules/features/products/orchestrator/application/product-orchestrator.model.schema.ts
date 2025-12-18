@@ -1,7 +1,7 @@
 import { ProductDiscountRangeCreateSchema, ProductDiscountRangeReponseSchema, ProductDiscountRangeUpdateSchema } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 import { ProductProcessCreateSchema, ProductProcessReponseSchema, ProductProcessUpdateSchema } from "../../assigments/product-process/application/dto/product-process.model.schema";
 import { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdateSchema } from "../../assigments/product-input/application/dto/product-input.model.schema";
-import { productCreateSchema, productResponseSchema, productUpdateSchema } from "@modules/core/product/application/dto/product.model.schema"
+import { productCreateSchema, productResponseSchema, productUpdateSchema, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema"
 import { processCreateSchema, processResponseSchema } from "@modules/core/process/application/dto/process.model.schema"
 import { inputResponseSchema } from "@modules/core/input/application/dto/input.model.schema"
 import { z } from "zod";
@@ -52,7 +52,7 @@ const productDiscountRangeOrchestratorCreateSchema = productDiscountRangeBaseCre
 // ROOT CREATE
 const productOrchestratorCreateSchema = z.object({
     product: productCreateSchema,
-    product_inputs: z.array(productInputOrchestratorCreateSchema),
+    products_inputs: z.array(productInputOrchestratorCreateSchema),
     product_processes: z.array(productProcessOrchestratorCreateSchema),
     product_discount_ranges: z.array(productDiscountRangeOrchestratorCreateSchema)
 });
@@ -93,7 +93,7 @@ const productDiscountRangeManagerSchema = z.object({
 // ROOT UPDATE CORREGIDO
 const productOrchestratorUpdateSchema = z.object({
     product: productUpdateSchema,
-    product_inputs_manager: productInputManagerSchema,
+    products_inputs_manager: productInputManagerSchema,
     product_processes_manager: productProcessManagerSchema,
     product_discount_ranges_manager: productDiscountRangeManagerSchema
 });
@@ -101,7 +101,7 @@ const productOrchestratorUpdateSchema = z.object({
 
 const productOrchestratorResponseSchema = z.object({
     product: productResponseSchema,
-    product_inputs: z.array(ProductInputReponseSchema),
+    products_inputs: z.array(ProductInputReponseSchema),
     product_processes: z.array(ProductProcessReponseSchema),
     product_discount_ranges: z.array(ProductDiscountRangeReponseSchema)
 });
@@ -111,4 +111,4 @@ type ProductOrchestratorCreateDTO = z.infer<typeof productOrchestratorCreateSche
 type ProductOrchestratorReponseDTO = z.infer<typeof productOrchestratorResponseSchema>;
 
 export type { ProductOrchestratorCreateDTO, ProductOrchestratorUpdateDTP, ProductOrchestratorReponseDTO };
-export { productOrchestratorCreateSchema, productOrchestratorUpdateSchema };
+export { productOrchestratorCreateSchema, productOrchestratorUpdateSchema, productOrchestratorResponseSchema, productQuerySchema };

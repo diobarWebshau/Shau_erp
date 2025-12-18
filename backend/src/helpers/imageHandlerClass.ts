@@ -163,7 +163,7 @@ class ImageHandler {
             const buffer = await fs.readFile(absPath);
             return buffer.toString("base64");
         } catch (err: unknown) {
-            console.error("Error converting image to Base64:", err);
+            // console.error("Error converting image to Base64:", err);
             return null;
         }
     }

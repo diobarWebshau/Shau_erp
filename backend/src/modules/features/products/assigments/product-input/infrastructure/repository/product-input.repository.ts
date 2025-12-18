@@ -1,6 +1,6 @@
 import type { ProductInputCreateProps, ProductInputProps, ProductInputUpdateProps } from "../../domain/product-input.types";
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
-import { ProductInputModel } from "../orm/product-inputs.model";
+import { ProductInputModel } from "../orm/product-inputs.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";

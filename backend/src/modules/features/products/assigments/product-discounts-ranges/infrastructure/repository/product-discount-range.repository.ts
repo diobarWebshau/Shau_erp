@@ -1,6 +1,6 @@
 import type { ProductDiscountRangeCreateProps, ProductDiscountRangeProps, ProductDiscountRangeUpdateProps } from "../../domain/product-discount-range.types";
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
-import { ProductDiscountRangeModel } from "../orm/product-discount-range.model";
+import { ProductDiscountRangeModel } from "../orm/product-discount-range.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";

@@ -2,8 +2,12 @@ import type { ProductDiscountRangeCreateProps, ProductDiscountRangeUpdateProps, 
 import type { ProductProcessCreateProps, ProductProcessUpdateProps, ProductProcessProps } from "../../assigments/product-process/domain/product-process.types";
 import type { ProductInputCreateProps, ProductInputUpdateProps, ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
 import type { ProductCreateProps, ProductUpdateProps, ProductProps } from "@modules/core/product/domain/product.types";
-import type { ProcessCreateProps, ProcessProps } from "@modules/core/process/domain/process.types";
+import type { ProcessCreateProps, ProcessProps, ProcessSearchCriteria } from "@modules/core/process/domain/process.types";
 import { InputProps } from "@modules/core/input/domain/input.types";
+import { ProductResponseDto } from "@src/modules/core/product/application/dto/product.model.schema";
+import { ProductInputResponseDto } from "../../assigments/product-input/application/dto/product-input.model.schema";
+import { ProductProcessResponseDto } from "../../assigments/product-process/application/dto/product-process.model.schema";
+import { ProductDiscountRangeResponseDto } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 
 // =========================
 // ORCHESTRATOR — CREATE
@@ -41,7 +45,7 @@ type ProductDiscountRangeOrchestratorCreate =
 // 🔵 ORCHESTRATOR ROOT CREATE
 interface ProductOrchestratorCreate {
     product: ProductCreateProps;
-    product_inputs: ProductInputOrchestratorCreate[];
+    products_inputs: ProductInputOrchestratorCreate[];
     product_processes: ProductProcessOrchestratorCreate[];
     product_discount_ranges: ProductDiscountRangeOrchestratorCreate[];
 }
@@ -91,32 +95,34 @@ interface ProductDiscountRangeManager {
     deleted: ProductDiscountRangeProps[];
 }
 
-
 // =========================
 // ORCHESTRATOR — UPDATE ROOT
 // =========================
 
 interface ProductOrchestratorUpdate {
     product: ProductUpdateProps;
-    product_inputs_manager: ProductInputManager;
+    products_inputs_manager: ProductInputManager;
     product_processes_manager: ProductProcessManager;
     product_discount_ranges_manager: ProductDiscountRangeManager;
 }
-
-
 
 // =========================
 // ORCHESTRATOR — RESPONSE
 // =========================
 
-interface ProductOrchestratorResponse {
+interface ProductOrchestrator {
     product: ProductProps;
-    product_inputs: ProductInputProps[];
+    products_inputs: ProductInputProps[];
     product_processes: ProductProcessProps[];
     product_discount_ranges: ProductDiscountRangeProps[];
 }
 
-
+interface ProductOrchestratorResponse {
+    product: ProductResponseDto;
+    products_inputs: ProductInputResponseDto[];
+    product_processes: ProductProcessResponseDto[];
+    product_discount_ranges: ProductDiscountRangeResponseDto[];
+}
 
 export type {
     // CREATE
@@ -134,6 +140,10 @@ export type {
     ProductDiscountRangeManager,
     ProductOrchestratorUpdate,
 
+    // SEARCH QUERY
+    ProcessSearchCriteria,
+    
     // RESPONSE
-    ProductOrchestratorResponse
+    ProductOrchestrator,
+    ProductOrchestratorResponse,
 };

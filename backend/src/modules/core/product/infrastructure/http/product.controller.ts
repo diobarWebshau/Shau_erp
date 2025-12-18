@@ -8,6 +8,7 @@ import { GetAllProductsUseCase } from "../../application/use-cases/get-all-produ
 import { CreateProductUseCase } from "../../application/use-cases/create-product.usecase";
 import { DeleteProductUseCase } from "../../application/use-cases/delete-product.usecase";
 import { UpdateProductUseCase } from "../../application/use-cases/update-product.usecase";
+import { LocalFileCleanupService } from "@shared/files/local-file-cleanup.service";
 import { ProductProps, ProductSearchCriteria } from "../../domain/product.types"
 import { ProductResponseDto } from "../../application/dto/product.model.schema";
 import { ProductRepository } from "../repository/producto.repository";
@@ -17,8 +18,7 @@ import {
     GetByNameProductSchema, GetBySkuProductSchema, UpdateProductSchema
 } from "../../application/dto/product.endpoint.schema";
 import { mapProductQueryToCriteria } from "./product-query-mapper";
-import ImageHandler from "@src/helpers/imageHandlerClass";
-import { LocalFileCleanupService } from "@src/shared/files/local-file-cleanup.service";
+import ImageHandler from "@helpers/imageHandlerClass";
 
 /**
  * Controller (Infrastructure / HTTP)

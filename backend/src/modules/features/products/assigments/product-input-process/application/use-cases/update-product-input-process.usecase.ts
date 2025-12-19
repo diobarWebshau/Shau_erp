@@ -1,10 +1,9 @@
-import type { ClientProps, ClientUpdateProps } from "../../domain/client.types";
-import type { IClientRepository } from "../../domain/client.repository.interface";
+import type { ProductInputUpdateProps, ProductInputProps } from "../../domain/product-input-process.types";
+import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
+import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
 import HttpError from "@shared/errors/http/http-error";
-import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -47,48 +46,25 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
-export class UpdateClientUseCase {
-    constructor(private readonly repo: IClientRepository) { }
-    async execute(id: string, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps> {
-        const existing: ClientProps | null = await this.repo.findById(id);
+export class UpdateProductInputUseCase {
+    constructor(private readonly repo: IProductInputRepository) { }
+    async execute(id: string, data: ProductInputUpdateProps): Promise<ProductInputProps> {
+        const existing: ProductInputProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
-            "El cliente que se desea actualizar no fue posible encontrarlo."
+            "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof ClientUpdateProps)[] = [
-            "cfdi", "city", "company_name", "country",
-            "credit_limit", "email", "email",
-            "is_active", "neighborhood", "payment_method",
-            "payment_terms", "phone", "state", "street",
-            "street_number", "tax_id", "tax_regimen",
-            "zip_code"
+        const editableFields: (keyof ProductInputUpdateProps)[] = [
+            "input_id", "product_id", "equivalence"
         ];
-        const filteredBody: ClientUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ClientProps = { ...existing, ...filteredBody };
-        const normalizedExisting: ClientUpdateProps = deepNormalizeDecimals<ClientUpdateProps>(existing, ["credit_limit"]);
-        const normalizedMerged: ClientUpdateProps = deepNormalizeDecimals<ClientUpdateProps>(merged, ["credit_limit"]);
-        const updateValues: ClientUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
+        const filteredBody: ProductInputUpdateProps = pickEditableFields(data, editableFields);
+        const merged: ProductInputProps = { ...existing, ...filteredBody };
+        const normalizedExisting: ProductInputUpdateProps = deepNormalizeDecimals<ProductInputUpdateProps>(existing, ["equivalence"]);
+        const normalizedMerged: ProductInputUpdateProps = deepNormalizeDecimals<ProductInputUpdateProps>(merged, ["equivalence"]);
+        const updateValues: ProductInputUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
-        if (updateValues?.company_name) {
-            const check: ClientProps | null = await this.repo.findByCompanyName(updateValues.company_name);
-            if (check && String(check.id) !== String(id)) throw new HttpError(409,
-                "El nombre ingresado para el cliente, ya esta utilizado por otro cliente."
-            );
-        }
-        if (updateValues?.cfdi) {
-            const existsByName: ClientProps | null = await this.repo.findByCfdi(updateValues.cfdi);
-            if (existsByName) throw new HttpError(409,
-                "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
-            );
-        }
-        if (updateValues?.tax_id) {
-            const existsByName: ClientProps | null = await this.repo.findByTaxId(updateValues.tax_id);
-            if (existsByName) throw new HttpError(409,
-                "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
-            );
-        }
-        const updated: ClientProps = await this.repo.update(id, updateValues, tx);
+        const updated: ProductInputProps = await this.repo.update(id, updateValues);
         if (!updated) throw new HttpError(500,
-            "No fue posible actualizar el cliente."
+            "No fue posible actualizar la asignacion del insumo al producto."
         );
         return updated;
     }

@@ -1,4 +1,5 @@
 import { ClientProps, ClientCreateProps, ClientUpdateProps, ClientSearchCriteria } from "./client.types";
+import { Transaction } from "sequelize";
 
 /**
  * IRepository
@@ -48,7 +49,7 @@ export interface IClientRepository {
     findByCfdi(cfdi: string): Promise<ClientProps | null>,
     findByTaxId(tax_id: string): Promise<ClientProps | null>,
     findByCompanyName(company_name: string): Promise<ClientProps | null>,
-    create(data: ClientCreateProps): Promise<ClientProps>,
-    update(id: string, data: ClientUpdateProps): Promise<ClientProps>,
-    delete(id: string): Promise<void>
+    create(data: ClientCreateProps, tx?: Transaction): Promise<ClientProps>,
+    update(id: string, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps>,
+    delete(id: string, tx?: Transaction): Promise<void>
 };

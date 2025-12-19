@@ -47,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateProductProcessUseCase {
     constructor(private readonly repo: IProductProcessRepository) { }
-    async execute(id: string, data: ProductProcessUpdateProps): Promise<ProductProcessProps> {
+    async execute(id: number, data: ProductProcessUpdateProps): Promise<ProductProcessProps> {
         const existing: ProductProcessProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."

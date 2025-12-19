@@ -1,4 +1,4 @@
-import type { ProductProcessProps, ProductProcessCreateProps, ProductProcessUpdateProps } from "./product-process.types";
+import type { ProductInputProps, ProductInputCreateProps, ProductInputUpdateProps } from "./product-input-process.types";
 
 /**
  * IRepository
@@ -42,10 +42,10 @@ import type { ProductProcessProps, ProductProcessCreateProps, ProductProcessUpda
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-export interface IProductProcessRepository {
-    findAll(): Promise<ProductProcessProps[]>;
-    findById(id: number): Promise<ProductProcessProps | null>;
-    create(data: ProductProcessCreateProps): Promise<ProductProcessProps>;
-    update(id: number, data: ProductProcessUpdateProps): Promise<ProductProcessProps>;
-    delete(id: number): Promise<void>;
+export interface IProductInputRepository {
+    findAll(): Promise<ProductInputProps[]>;
+    findById(id: string): Promise<ProductInputProps | null>;
+    create(data: ProductInputCreateProps): Promise<ProductInputProps>;
+    update(id: string, data: ProductInputUpdateProps): Promise<ProductInputProps>;
+    delete(id: string): Promise<void>;
 };

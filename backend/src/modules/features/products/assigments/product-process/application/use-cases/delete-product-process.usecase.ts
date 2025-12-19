@@ -45,7 +45,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteProductProcessUseCase {
     constructor(private readonly repo: IProductProcessRepository) { }
-    async execute(id: string): Promise<void> {
+    async execute(id: number): Promise<void> {
         const exists: ProductProcessProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro la asignación del proceso al producto que se pretende eliminar."

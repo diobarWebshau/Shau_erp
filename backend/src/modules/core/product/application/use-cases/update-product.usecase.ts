@@ -49,7 +49,7 @@ import { deepNormalizeDecimals } from "@src/helpers/decimal-normalization-and-cl
 export class UpdateProductUseCase {
     constructor(private readonly repo: IProductRepository) { }
 
-    async execute(id: string, data: ProductUpdateProps): Promise<ProductProps> {
+    async execute(id: number, data: ProductUpdateProps): Promise<ProductProps> {
 
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL

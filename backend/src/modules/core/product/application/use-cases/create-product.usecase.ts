@@ -45,9 +45,7 @@ import ImageHandler from "@helpers/imageHandlerClass";
  */
 
 export class CreateProductUseCase {
-    constructor(
-        private readonly repo: IProductRepository
-    ) {}
+    constructor(private readonly repo: IProductRepository) { }
 
     async execute(data: ProductCreateProps): Promise<ProductProps> {
 
@@ -116,7 +114,7 @@ export class CreateProductUseCase {
                     );
 
                 // Actualizar únicamente el campo photo
-                await this.repo.update(created.id.toString(), {
+                await this.repo.update(created.id, {
                     photo: newRelativePath,
                 });
 

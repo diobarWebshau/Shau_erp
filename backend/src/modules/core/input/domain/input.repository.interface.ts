@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import { InputCreateProps, InputProps, InputUpdateProps, InputSearchCriteria } from "./input.types";
 
 /**
@@ -44,12 +45,12 @@ import { InputCreateProps, InputProps, InputUpdateProps, InputSearchCriteria } f
 
 export interface IInputRepository {
     findAll(query: InputSearchCriteria): Promise<InputProps[]>,
-    findById(id: string): Promise<InputProps | null>,
+    findById(id: number): Promise<InputProps | null>,
     findByCustomId(custom_id: string): Promise<InputProps | null>,
     findBySku(sku: string): Promise<InputProps | null>,
     findByBarcode(barcode: string): Promise<InputProps | null>,
     findByName(name: string): Promise<InputProps | null>,
-    create(data: InputCreateProps): Promise<InputProps>,
-    update(id: string, data: InputUpdateProps): Promise<InputProps>,
-    delete(id: string): Promise<void>
+    create(data: InputCreateProps, tx?: Transaction): Promise<InputProps>,
+    update(id: number, data: InputUpdateProps, tx?: Transaction): Promise<InputProps>,
+    delete(id: number, tx?: Transaction): Promise<void>
 };

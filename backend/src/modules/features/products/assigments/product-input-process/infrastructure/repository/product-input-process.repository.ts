@@ -1,6 +1,6 @@
-import type { ProductProcessCreateProps, ProductProcessProps, ProductProcessUpdateProps } from "../../domain/product-process.types";
-import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
-import { ProductProcessModel } from "../orm/product-process.orm";
+import type { ProductInputCreateProps, ProductInputProps, ProductInputUpdateProps } from "../../domain/product-input-process.types";
+import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
+import { ProductInputModel } from "../orm/product-input-process.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
@@ -53,44 +53,43 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductProcessModel): ProductProcessProps => {
-    const json: ProductProcessProps = model.toJSON();
-    console.log(json);
+const mapModelToDomain = (model: ProductInputModel): ProductInputProps => {
+    const json: ProductInputProps = model.toJSON();
     return {
         id: json.id,
-        process_id: json.process_id,
+        input_id: json.input_id,
         product_id: json.product_id,
-        sort_order: json.sort_order
+        equivalence: json.equivalence
     };
 };
 
-export class ProductProcessRepository implements IProductProcessRepository {
+export class ProductInputRepository implements IProductInputRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductProcessProps[]> => {
-        const rows: ProductProcessModel[] = await ProductProcessModel.findAll({
-            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
+    findAll = async (): Promise<ProductInputProps[]> => {
+        const rows: ProductInputModel[] = await ProductInputModel.findAll({
+            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
-        const rowsMap: ProductProcessProps[] = rows.map((r) => mapModelToDomain(r));
+        const rowsMap: ProductInputProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ProductProcessProps | null> => {
-        const row: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
-            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
+    findById = async (id: string): Promise<ProductInputProps | null> => {
+        const row: ProductInputModel | null = await ProductInputModel.findByPk(id, {
+            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ProductProcessCreateProps): Promise<ProductProcessProps> => {
+    create = async (data: ProductInputCreateProps): Promise<ProductInputProps> => {
         const transaction: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         });
         try {
-            const created: ProductProcessModel = await ProductProcessModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la asignación del proceso al producto.");
+            const created: ProductInputModel = await ProductInputModel.create(data, { transaction });
+            if (!created) throw new HttpError(500, "No fue posible crear la asignación del insumo al producto.");
             await transaction.commit();
             return mapModelToDomain(created);
         } catch (err) {
@@ -101,30 +100,30 @@ export class ProductProcessRepository implements IProductProcessRepository {
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: number, data: ProductProcessUpdateProps): Promise<ProductProcessProps> => {
+    update = async (id: string, data: ProductInputUpdateProps): Promise<ProductInputProps> => {
         const transaction: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         });
         try {
             // 1. Verificar existencia
-            const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
+            const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
             if (!existing) throw new HttpError(404,
-                "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."
+                "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
             );
             // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ProductProcessModel.update(data, {
+            const [affectedCount]: [affectedCount: number] = await ProductInputModel.update(data, {
                 where: { id },
                 transaction,
             });
             if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
+                throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
             // 3. Obtener la producto actualizada
-            const updated: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
+            const updated: ProductInputModel | null = await ProductInputModel.findByPk(id, {
                 transaction,
-                attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[]),
+                attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[]),
             });
             await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
+            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
             return mapModelToDomain(updated);
         } catch (err) {
             await transaction.rollback();
@@ -134,20 +133,20 @@ export class ProductProcessRepository implements IProductProcessRepository {
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: number): Promise<void> => {
+    delete = async (id: string): Promise<void> => {
         const transaction: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         });
         try {
-            const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
+            const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
             if (!existing) throw new HttpError(404,
-                "No se encontro la asignación del proceso al producto que se pretende eliminar."
+                "No se encontro la asignación del insumo al producto que se pretende eliminar."
             );
-            const deleted: number = await ProductProcessModel.destroy({
+            const deleted: number = await ProductInputModel.destroy({
                 where: { id },
                 transaction,
             });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del proceso al producto.");
+            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del insumo al producto.");
             await transaction.commit();
             return;
         } catch (err) {

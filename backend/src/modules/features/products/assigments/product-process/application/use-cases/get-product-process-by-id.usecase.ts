@@ -44,5 +44,5 @@ import type { ProductProcessProps } from "../../domain/product-process.types";
 
 export class GetProductProcessByIdUseCase {
     constructor(private readonly repo: IProductProcessRepository) { }
-    execute = async (id: string): Promise<ProductProcessProps | null> => this.repo.findById(id);
+    execute = async (id: number): Promise<ProductProcessProps | null> => this.repo.findById(id);
 };

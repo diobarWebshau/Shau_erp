@@ -1,9 +1,8 @@
 import type { ClientCreateProps, ClientProps, ClientUpdateProps, ClientSearchCriteria } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
+import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
 import { ClientModel } from "../orm/clients.orm";
-import { sequelize } from "@config/mysql/sequelize";
-import { Op, Transaction, WhereOptions } from "sequelize";
 
 /**
  * Repository (Infrastructure)
@@ -77,7 +76,7 @@ const mapModelToDomain = (model: ClientModel): ClientProps => {
         updated_at: json.updated_at,
         zip_code: json.zip_code
     };
-}
+};
 
 export class ClientRepository implements IClientRepository {
     // ================================================================
@@ -145,79 +144,49 @@ export class ClientRepository implements IClientRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ClientCreateProps): Promise<ClientProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ClientModel = await ClientModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear el nuevo cliente.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            console.error("ERROR NAME:", (err as any).name);
-            console.error("ERROR ERRORS:", (err as any).errors);
-            console.error("SQL MESSAGE:", (err as any).parent?.sqlMessage);
-            throw err;
-        }
+    create = async (data: ClientCreateProps, tx: Transaction): Promise<ClientProps> => {
+        const created: ClientModel = await ClientModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear el nuevo cliente.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: ClientUpdateProps): Promise<ClientProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: string, data: ClientUpdateProps, tx: Transaction): Promise<ClientProps> => {
+        // 1. Verificar existencia
+        const existing: ClientModel | null = await ClientModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "El cliente que se desea actualizar no fue posible encontrarlo."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ClientModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ClientModel | null = await ClientModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "El cliente que se desea actualizar no fue posible encontrarlo."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ClientModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar el cliente.");
-            // 3. Obtener la locación actualizada
-            const updated: ClientModel | null = await ClientModel.findByPk(id, {
-                transaction,
-                attributes: ClientModel.getAllFields() as ((keyof ClientProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar el cliente.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar el cliente.");
+        // 3. Obtener la locación actualizada
+        const updated: ClientModel | null = await ClientModel.findByPk(id, {
+            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[]),
+            transaction: tx,
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar el cliente.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: string, tx?: Transaction): Promise<void> => {
+        const existing: ClientModel | null = await ClientModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la línea de producción que se pretende eliminar."
+        );
+        const deleted: number = await ClientModel.destroy({
+            where: { id },
+            transaction: tx
         });
-        try {
-            const existing: ClientModel | null = await ClientModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la línea de producción que se pretende eliminar."
-            );
-            const deleted: number = await ClientModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar el cliente.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar el cliente.");
+        return;
     }
 }
 

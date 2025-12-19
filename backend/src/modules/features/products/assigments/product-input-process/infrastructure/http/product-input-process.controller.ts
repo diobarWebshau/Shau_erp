@@ -1,16 +1,16 @@
-import type { ProductProcessCreateDto, ProductProcessResponseDto, ProductProcessUpdateDto } from "../../application/dto/product-process.model.schema";
-import { GetProductProcessByIdUseCase } from "../../application/use-cases/get-product-process-by-id.usecase";
-import { CreateProductProcessUseCase } from "../../application/use-cases/create-product-process.usecase";
-import { UpdateProductProcessUseCase } from "../../application/use-cases/update-product-process.usecase";
-import { GetAllProductProcessUseCase } from "../../application/use-cases/get-all-product-process.usecase";
-import { DeleteProductProcessUseCase } from "../../application/use-cases/delete-product-process.usecase";
+import type { ProductInputCreateDto, ProductInputResponseDto, ProductInputUpdateDto } from "../../application/dto/product-input-process.model.schema";
+import { GetProductInputByIdUseCase } from "../../application/use-cases/get-by-id-product-input-process.usecase";
+import { CreateProductInputUseCase } from "../../application/use-cases/create-product-input-process.usecase";
+import { UpdateProductInputUseCase } from "../../application/use-cases/update-product-input-process.usecase";
+import { GetAllProductInputUseCase } from "../../application/use-cases/get-all-product-input.usecase";
+import { DeleteProductInputUseCase } from "../../application/use-cases/delete-product-input-process.usecase";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
-import { ProductProcessRepository } from "../repository/product-process.repository";
+import { ProductInputRepository } from "../repository/product-input-process.repository";
 import {
-    CreateProductProcessSchema, DeleteProductProcessSchema,
-    GetAllProductProcesssSchema, GetByIdProductProcessSchema,
-    UpdateProductProcessSchema
-} from "../../application/dto/product-process.endpoint.schema"
+    CreateProductInputSchema, DeleteProductInputSchema,
+    GetAllProductInputsSchema, GetByIdProductInputSchema,
+    UpdateProductInputSchema
+} from "../../application/dto/product-input-process.endpoint.schema"
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -62,38 +62,38 @@ import {
  *   de forma coherente hacia clientes externos.
  */
 
-export class ProductProcessController {
+export class ProductInputController {
 
-    private readonly repo: ProductProcessRepository;
-    private readonly getAllUseCase: GetAllProductProcessUseCase;
-    private readonly getByIdUseCase: GetProductProcessByIdUseCase;
-    private readonly createUseCase: CreateProductProcessUseCase;
-    private readonly updateUseCase: UpdateProductProcessUseCase;
-    private readonly deleteUseCase: DeleteProductProcessUseCase;
+    private readonly repo: ProductInputRepository;
+    private readonly getAllUseCase: GetAllProductInputUseCase;
+    private readonly getByIdUseCase: GetProductInputByIdUseCase;
+    private readonly createUseCase: CreateProductInputUseCase;
+    private readonly updateUseCase: UpdateProductInputUseCase;
+    private readonly deleteUseCase: DeleteProductInputUseCase;
 
     constructor() {
-        this.repo = new ProductProcessRepository();
-        this.getAllUseCase = new GetAllProductProcessUseCase(this.repo);
-        this.getByIdUseCase = new GetProductProcessByIdUseCase(this.repo);
-        this.createUseCase = new CreateProductProcessUseCase(this.repo);
-        this.updateUseCase = new UpdateProductProcessUseCase(this.repo);
-        this.deleteUseCase = new DeleteProductProcessUseCase(this.repo);
+        this.repo = new ProductInputRepository();
+        this.getAllUseCase = new GetAllProductInputUseCase(this.repo);
+        this.getByIdUseCase = new GetProductInputByIdUseCase(this.repo);
+        this.createUseCase = new CreateProductInputUseCase(this.repo);
+        this.updateUseCase = new UpdateProductInputUseCase(this.repo);
+        this.deleteUseCase = new DeleteProductInputUseCase(this.repo);
     };
 
     // ============================================================
     // GET ALL
     // ============================================================
-    getAll = async (_req: ApiRequest<GetAllProductProcesssSchema>, res: ApiResponse<GetAllProductProcesssSchema>) => {
-        const result: ProductProcessResponseDto[] = await this.getAllUseCase.execute();
+    getAll = async (_req: ApiRequest<GetAllProductInputsSchema>, res: ApiResponse<GetAllProductInputsSchema>) => {
+        const result: ProductInputResponseDto[] = await this.getAllUseCase.execute();
         return res.status(200).send(result);
     };
 
     // ============================================================
     // GET BY ID
     // ============================================================
-    getById = async (req: ApiRequest<GetByIdProductProcessSchema>, res: ApiResponse<GetByIdProductProcessSchema>) => {
-        const { id }: GetByIdProductProcessSchema["params"] = req.params
-        const result: ProductProcessResponseDto | null = await this.getByIdUseCase.execute(Number(id));
+    getById = async (req: ApiRequest<GetByIdProductInputSchema>, res: ApiResponse<GetByIdProductInputSchema>) => {
+        const { id }: GetByIdProductInputSchema["params"] = req.params
+        const result: ProductInputResponseDto | null = await this.getByIdUseCase.execute(id);
         if (!result) return res.status(204).send(null);
         return res.status(200).send(result);
     };
@@ -101,31 +101,31 @@ export class ProductProcessController {
     // ============================================================
     // CREATE
     // ============================================================
-    create = async (req: ApiRequest<CreateProductProcessSchema>, res: ApiResponse<CreateProductProcessSchema>) => {
-        const body: ProductProcessCreateDto = req.body;
-        const created: ProductProcessResponseDto = await this.createUseCase.execute(body);
+    create = async (req: ApiRequest<CreateProductInputSchema>, res: ApiResponse<CreateProductInputSchema>) => {
+        const body: ProductInputCreateDto = req.body;
+        const created: ProductInputResponseDto = await this.createUseCase.execute(body);
         return res.status(201).send(created);
     };
 
     // ============================================================
     // UPDATE
     // ============================================================
-    update = async (req: ApiRequest<UpdateProductProcessSchema>, res: ApiResponse<UpdateProductProcessSchema>) => {
-        const { id }: UpdateProductProcessSchema["params"] = req.params;
-        const body: ProductProcessUpdateDto = req.body;
-        const updated: ProductProcessResponseDto = await this.updateUseCase.execute(Number(id), body);
+    update = async (req: ApiRequest<UpdateProductInputSchema>, res: ApiResponse<UpdateProductInputSchema>) => {
+        const { id }: UpdateProductInputSchema["params"] = req.params;
+        const body: ProductInputUpdateDto = req.body;
+        const updated: ProductInputResponseDto = await this.updateUseCase.execute(id, body);
         return res.status(200).send(updated);
     };
 
     // ============================================================
     // DELETE
     // ============================================================
-    delete = async (req: ApiRequest<DeleteProductProcessSchema>, res: ApiResponse<DeleteProductProcessSchema>) => {
-        const { id }: DeleteProductProcessSchema["params"] = req.params;
-        await this.deleteUseCase.execute(Number(id));
+    delete = async (req: ApiRequest<DeleteProductInputSchema>, res: ApiResponse<DeleteProductInputSchema>) => {
+        const { id }: DeleteProductInputSchema["params"] = req.params;
+        await this.deleteUseCase.execute(id);
         return res.status(201).send(null);
     };
 }
 
 
-export default ProductProcessController;
+export default ProductInputController;

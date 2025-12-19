@@ -134,7 +134,7 @@ export class InputController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdinputSchema>, res: ApiResponse<GetByIdinputSchema>) => {
         const { id }: GetByIdinputSchema["params"] = req.params
-        const result: InputProps | null = await this.getByIdUseCase.execute(id);
+        const result: InputProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: InputResponseDto = await this.formatResponse(result)
         return res.status(200).send(formatted);
@@ -191,24 +191,29 @@ export class InputController {
     // CREATE
     // ============================================================
     create = async (req: ApiRequest<CreateinputSchema>, res: ApiResponse<CreateinputSchema>) => {
-        const body: CreateinputSchema["body"] = req.body;
+        const body = req.body;
+
         try {
-            const created: InputProps = await this.createUseCase.execute(body);
-            const formatted: InputResponseDto = await this.formatResponse(created);
+            // 1️⃣ Ejecutar caso de uso
+            const created = await this.createUseCase.execute(body);
+
+            // 2️⃣ Formatear salida final
+            const formatted = await this.formatResponse(created);
+
             return res.status(201).send(formatted);
+
         } catch (error) {
-            // 🧹 LIMPIEZA DE IMAGEN TEMPORAL SI FALLA EL CREATE
-            // Esto cubre:
-            // - validaciones de negocio
-            // - errores de repositorio
-            // - errores antes de mover la imagen
+            // 🧹 Limpieza de imagen temporal si hubo error
             if (body?.photo) {
-                try { await ImageHandler.removeImageIfExists(body.photo); }
-                catch { /* silencio intencional (best-effort cleanup)*/ }
+                try {
+                    await ImageHandler.removeImageIfExists(body.photo);
+                } catch { /* silencio */ }
             }
-            throw error; // dejar que el middleware global maneje la respuesta
+            throw error;
         }
     };
+
+
     // ============================================================
     // UPDATE (BODY-DRIVEN IMAGE MOVE — FINAL DEFINITIVO)
     // ============================================================
@@ -226,7 +231,7 @@ export class InputController {
             // -----------------------------------------------------------
             // 1️⃣ OBTENER FOTO ACTUAL (ANTES DE MODIFICAR NADA)
             // -----------------------------------------------------------
-            const existing = await this.repo.findById(id);
+            const existing = await this.repo.findById(Number(id));
             if (!existing) {
                 throw new Error("Input not found"); // normalmente nunca pasa aquí
             }
@@ -245,7 +250,7 @@ export class InputController {
             // 3️⃣ UPDATE DE NEGOCIO (SIN IMAGEN)
             // -----------------------------------------------------------
             const updated: InputProps =
-                await this.updateUseCase.execute(id, body);
+                await this.updateUseCase.execute(Number(id), body);
 
             // -----------------------------------------------------------
             // 4️⃣ MOVER IMAGEN + UPDATE TÉCNICO DE PHOTO
@@ -258,7 +263,7 @@ export class InputController {
                         id
                     );
 
-                await this.repo.update(id, {
+                await this.repo.update(Number(id), {
                     photo: finalPhotoPath,
                 });
 
@@ -304,7 +309,7 @@ export class InputController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteinputSchema>, res: ApiResponse<DeleteinputSchema>) => {
         const { id }: DeleteinputSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 };

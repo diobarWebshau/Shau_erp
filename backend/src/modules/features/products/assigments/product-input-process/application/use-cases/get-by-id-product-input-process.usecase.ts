@@ -1,6 +1,5 @@
-import type { IProductRepository } from "../../domain/product.repository.interface";
-import HttpError from "@shared/errors/http/http-error";
-import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
+import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
+import type { ProductInputProps } from "../../domain/product-input-process.types";
 
 /**
  * UseCase
@@ -43,27 +42,7 @@ import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
  *   para responder a las solicitudes externas.
  */
 
-export class DeleteProductUseCase {
-
-    constructor(
-        private readonly repo: IProductRepository,
-        private readonly fileCleanup: IFileCleanupPort
-    ) { }
-
-    async execute(id: number): Promise<void> {
-        const exists = await this.repo.findById(id);
-
-        if (!exists) {
-            throw new HttpError(
-                404,
-                "No se encontró el producto que se pretende eliminar."
-            );
-        }
-
-        // 1️⃣ Eliminar en BD (operación crítica)
-        await this.repo.delete(id);
-
-        // 2️⃣ Programar limpieza de archivos (NO crítica)
-        this.fileCleanup.scheduleCleanup(`products/${id}`);
-    }
-}
+export class GetProductInputByIdUseCase {
+    constructor(private readonly repo: IProductInputRepository) { }
+    execute = async (id: string): Promise<ProductInputProps | null> => this.repo.findById(id);
+};

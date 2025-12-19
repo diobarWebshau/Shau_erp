@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import { ClientProps } from "../../domain/client.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,12 +46,12 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    async execute(id: string): Promise<void> {
+    async execute(id: string, tx?: Transaction): Promise<void> {
         const exists: ClientProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro el cliente que se pretende eliminar."
         );
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

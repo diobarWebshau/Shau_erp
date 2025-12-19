@@ -134,7 +134,7 @@ export class ProductController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdProductSchema>, res: ApiResponse<GetByIdProductSchema>) => {
         const { id }: GetByIdProductSchema["params"] = req.params;
-        const result: ProductProps | null = await this.getByIdUseCase.execute(id);
+        const result: ProductProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: ProductResponseDto = await this.formatResponse(result)
         return res.status(200).send(formatted);
@@ -229,7 +229,7 @@ export class ProductController {
             // -----------------------------------------------------------
             // 1️⃣ OBTENER FOTO ACTUAL (ANTES DE MODIFICAR NADA)
             // -----------------------------------------------------------
-            const existing = await this.repo.findById(id);
+            const existing = await this.repo.findById(Number(id));
             if (!existing) {
                 throw new Error("Product not found"); // normalmente nunca pasa aquí
             }
@@ -247,8 +247,7 @@ export class ProductController {
             // -----------------------------------------------------------
             // 3️⃣ UPDATE DE NEGOCIO (SIN IMAGEN)
             // -----------------------------------------------------------
-            const updated: ProductProps =
-                await this.updateUseCase.execute(id, body);
+            const updated: ProductProps = await this.updateUseCase.execute(Number(id), body);
 
             // -----------------------------------------------------------
             // 4️⃣ MOVER IMAGEN + UPDATE TÉCNICO DE PHOTO
@@ -258,10 +257,10 @@ export class ProductController {
                     await ImageHandler.moveImageToEntityDirectory(
                         tmpPhotoPath,
                         "products",
-                        id
+                        id.toString()
                     );
 
-                await this.repo.update(id, {
+                await this.repo.update(Number(id), {
                     photo: finalPhotoPath,
                 });
 
@@ -307,7 +306,7 @@ export class ProductController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteProductSchema>, res: ApiResponse<DeleteProductSchema>) => {
         const { id }: DeleteProductSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 };

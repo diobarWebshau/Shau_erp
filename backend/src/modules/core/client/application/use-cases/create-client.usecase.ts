@@ -1,6 +1,7 @@
 import type { ClientCreateProps, ClientProps } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -45,7 +46,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class CreateClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    async execute(data: ClientCreateProps): Promise<ClientProps> {
+    async execute(data: ClientCreateProps, tx?: Transaction): Promise<ClientProps> {
         if (data?.cfdi) {
             const existsByName: ClientProps | null = await this.repo.findByCfdi(data.cfdi);
             if (existsByName) throw new HttpError(409,
@@ -64,10 +65,10 @@ export class CreateClientUseCase {
                 "El nombre ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );
         }
-        const created: ClientProps = await this.repo.create(data);
+        const created: ClientProps = await this.repo.create(data, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la nueva locación."
         );
         return created;
     }
-}
+};

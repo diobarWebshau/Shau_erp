@@ -1,6 +1,7 @@
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -50,7 +51,7 @@ export class DeleteInputUseCase {
         private readonly fileCleanup: IFileCleanupPort
     ) { }
 
-    async execute(id: string): Promise<void> {
+    async execute(id: number, tx?: Transaction): Promise<void> {
         const exists = await this.repo.findById(id);
 
         if (!exists) {
@@ -61,9 +62,9 @@ export class DeleteInputUseCase {
         }
 
         // 1️⃣ Eliminar en BD (operación crítica)
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
 
         // 2️⃣ Programar limpieza de archivos (NO crítica)
-        this.fileCleanup.scheduleCleanup(`Inputs/${id}`);
+        this.fileCleanup.scheduleCleanup(`inputs/${id}`);
     }
 }

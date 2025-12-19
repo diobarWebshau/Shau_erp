@@ -31,7 +31,7 @@ class ImageHandler {
      *   - builds en Docker
      */
     static resolveImagePath(relativePath: string): string {
-        return path.join(process.cwd(), process.env.FILES_PATH!, relativePath);
+        return path.join(process.cwd(), process.env.FILES_PATH, relativePath);
     }
 
     /**

@@ -44,7 +44,7 @@ import type { ProductProps } from "../../domain/product.types";
 
 export class GetProductByIdUseCase {
     constructor(private readonly repo: IProductRepository) { }
-    execute = async (id: string): Promise<ProductProps | null> =>
+    execute = async (id: number): Promise<ProductProps | null> =>
         await this.repo.findById(id);
 };
 

@@ -113,7 +113,7 @@ export class ProductRepository implements IProductRepository {
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id: string): Promise<ProductProps | null> => {
+    findById = async (id: number): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findByPk(id, {
             attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
         });
@@ -168,7 +168,7 @@ export class ProductRepository implements IProductRepository {
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: ProductUpdateProps): Promise<ProductProps> => {
+    update = async (id: number, data: ProductUpdateProps): Promise<ProductProps> => {
         const transaction: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         });
@@ -202,7 +202,7 @@ export class ProductRepository implements IProductRepository {
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
+    delete = async (id: number): Promise<void> => {
         const transaction: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         });

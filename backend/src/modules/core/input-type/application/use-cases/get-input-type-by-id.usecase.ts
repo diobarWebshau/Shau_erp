@@ -44,7 +44,7 @@ import type { InputTypeProps } from "../../domain/input-type.types";
 
 export class GetInputTypeByIdUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
-    async execute(id: string): Promise<InputTypeProps | null> {
+    async execute(id: number): Promise<InputTypeProps | null> {
         return await this.repo.findById(id);
     }
 }

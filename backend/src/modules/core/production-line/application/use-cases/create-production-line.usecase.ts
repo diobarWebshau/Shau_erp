@@ -1,6 +1,7 @@
 import type { ProductionLineCreateProps, ProductionLineProps } from "../../domain/production-line.types";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -45,7 +46,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class CreateProductionLineUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
-    async execute(data: ProductionLineCreateProps): Promise<ProductionLineProps> {
+    async execute(data: ProductionLineCreateProps, tx?: Transaction): Promise<ProductionLineProps> {
         if (data?.name) {
             const existsByName: ProductionLineProps | null = await this.repo.findByName(data.name);
             if (existsByName) throw new HttpError(409,
@@ -58,7 +59,7 @@ export class CreateProductionLineUseCase {
                 "El id único ingresado para la línea de producción, ya esta utilizado por otra línea de producción."
             );
         }
-        const created: ProductionLineProps = await this.repo.create(data);
+        const created: ProductionLineProps = await this.repo.create(data, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la nueva locación."
         );

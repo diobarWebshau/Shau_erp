@@ -2,7 +2,6 @@ import type { ProductDiscountRangeCreateProps, ProductDiscountRangeProps, Produc
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
 import { ProductDiscountRangeModel } from "../orm/product-discount-range.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -83,7 +82,7 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
         });
         return row ? mapModelToDomain(row) : null;
     }
-    
+
     findByProductId = async (product_id: number): Promise<ProductDiscountRangeProps[]> => {
         const rows: ProductDiscountRangeModel[] = await ProductDiscountRangeModel.findAll({
             where: { product_id: product_id },
@@ -96,75 +95,47 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ProductDiscountRangeCreateProps): Promise<ProductDiscountRangeProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ProductDiscountRangeModel = await ProductDiscountRangeModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la asignación del descuento por rango al producto.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: ProductDiscountRangeCreateProps, tx?: Transaction): Promise<ProductDiscountRangeProps> => {
+        const created: ProductDiscountRangeModel = await ProductDiscountRangeModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear la asignación del descuento por rango al producto.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: number, data: ProductDiscountRangeUpdateProps): Promise<ProductDiscountRangeProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: ProductDiscountRangeUpdateProps, tx?: Transaction): Promise<ProductDiscountRangeProps> => {
+        // 1. Verificar existencia
+        const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ProductDiscountRangeModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ProductDiscountRangeModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
-            // 3. Obtener la producto actualizada
-            const updated: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id, {
-                transaction,
-                attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
+        // 3. Obtener la producto actualizada
+        const updated: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id, {
+            attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: number): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la asignación del descuento por rango al producto que se pretende eliminar."
+        );
+        const deleted: number = await ProductDiscountRangeModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la asignación del descuento por rango al producto que se pretende eliminar."
-            );
-            const deleted: number = await ProductDiscountRangeModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del descuento por rango al producto.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del descuento por rango al producto.");
+        return;
     }
 }

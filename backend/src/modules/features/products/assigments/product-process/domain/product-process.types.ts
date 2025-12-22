@@ -53,8 +53,8 @@ interface ProductProcessProps {
     sort_order: number
 };
 
-type ProductProcessCreateProps = Partial<Omit<ProductProcessProps, "id">>;
-type ProductProcessUpdateProps = ProductProcessCreateProps;
+type ProductProcessCreateProps = Omit<ProductProcessProps, "id">;
+type ProductProcessUpdateProps = Partial<ProductProcessCreateProps>;
 
 export type {
     ProductProcessProps,

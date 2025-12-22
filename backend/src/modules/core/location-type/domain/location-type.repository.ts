@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { LocationTypeCreateProps, LocationTypeUpdateProps, LocationTypeProps } from "./location-type.types";
 
 /**
@@ -44,9 +45,9 @@ import type { LocationTypeCreateProps, LocationTypeUpdateProps, LocationTypeProp
 
 export interface ILocationTypeRepository {
     findAll(): Promise<LocationTypeProps[]>,
-    findById(id: string): Promise<LocationTypeProps | null>,
+    findById(id: number): Promise<LocationTypeProps | null>,
     findByName(name: string): Promise<LocationTypeProps | null>,
-    create(data: LocationTypeCreateProps): Promise<LocationTypeProps>;
-    update(id: string, data: LocationTypeUpdateProps): Promise<LocationTypeProps>;
-    delete(id: string): Promise<void>;
+    create(data: LocationTypeCreateProps, tx?: Transaction): Promise<LocationTypeProps>;
+    update(id: number, data: LocationTypeUpdateProps, tx?: Transaction): Promise<LocationTypeProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 }

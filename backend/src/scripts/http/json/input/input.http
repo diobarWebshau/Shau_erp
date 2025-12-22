@@ -46,4 +46,4 @@ Content-Type: application/json
 }
 
 ### DELETE
-DELETE http://localhost:3003/input/4 HTTP/1.1
+DELETE http://localhost:3003/input/8 HTTP/1.1

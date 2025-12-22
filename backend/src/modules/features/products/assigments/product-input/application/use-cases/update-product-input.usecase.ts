@@ -48,7 +48,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateProductInputUseCase {
     constructor(private readonly repo: IProductInputRepository) { }
-    async execute(id: string, data: ProductInputUpdateProps): Promise<ProductInputProps> {
+    async execute(id: number, data: ProductInputUpdateProps): Promise<ProductInputProps> {
         const existing: ProductInputProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."

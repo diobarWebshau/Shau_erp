@@ -44,5 +44,5 @@ import type { ProductionLineProps } from "../../domain/production-line.types";
 
 export class GetProductionLineByIdUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
-    execute = async (id: string): Promise<ProductionLineProps | null> => this.repo.findById(id);
+    execute = async (id: number): Promise<ProductionLineProps | null> => this.repo.findById(id);
 };

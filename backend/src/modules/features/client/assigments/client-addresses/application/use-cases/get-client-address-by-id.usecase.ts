@@ -44,5 +44,5 @@ import type { ClientAddressProps } from "../../domain/client-address.types";
 
 export class GetClientAddressByIdUseCase {
     constructor(private readonly repo: IClientAddressRepository) { }
-    execute = async (id: string): Promise<ClientAddressProps | null> => this.repo.findById(id);
+    execute = async (id: number): Promise<ClientAddressProps | null> => this.repo.findById(id);
 };

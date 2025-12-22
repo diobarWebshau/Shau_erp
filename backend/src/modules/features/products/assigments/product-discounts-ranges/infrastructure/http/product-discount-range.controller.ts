@@ -13,6 +13,7 @@ import {
     UpdateProductDiscountRangeSchema, GetByProductIdProductDiscountRangeSchema
 } from "../../application/dto/product_discount-range.endpoint.schema"
 import { ProductDiscountRangeProps } from "../../domain/product-discount-range.types";
+import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -67,6 +68,7 @@ import { ProductDiscountRangeProps } from "../../domain/product-discount-range.t
 export class ProductDiscountRangeController {
 
     private readonly repo: ProductDiscountRangeRepository;
+    private readonly repoProduct: ProductRepository;
     private readonly getAllUseCase: GetAllProductDiscountRangeUseCase;
     private readonly getByIdUseCase: GetProductDiscountRangeByIdUseCase;
     private readonly createUseCase: CreateProductDiscountRangeUseCase;
@@ -76,9 +78,10 @@ export class ProductDiscountRangeController {
 
     constructor() {
         this.repo = new ProductDiscountRangeRepository();
+        this.repoProduct = new ProductRepository();
         this.getAllUseCase = new GetAllProductDiscountRangeUseCase(this.repo);
         this.getByIdUseCase = new GetProductDiscountRangeByIdUseCase(this.repo);
-        this.createUseCase = new CreateProductDiscountRangeUseCase(this.repo);
+        this.createUseCase = new CreateProductDiscountRangeUseCase(this.repo, this.repoProduct);
         this.updateUseCase = new UpdateProductDiscountRangeUseCase(this.repo);
         this.deleteUseCase = new DeleteProductDiscountRangeUseCase(this.repo);
         this.getByProductUseCase = new GetProductDiscountRangeByProductUseCase(this.repo);

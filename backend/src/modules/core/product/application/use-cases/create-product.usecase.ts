@@ -2,6 +2,7 @@ import type { ProductCreateProps, ProductProps } from "../../domain/product.type
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import ImageHandler from "@helpers/imageHandlerClass";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -47,7 +48,7 @@ import ImageHandler from "@helpers/imageHandlerClass";
 export class CreateProductUseCase {
     constructor(private readonly repo: IProductRepository) { }
 
-    async execute(data: ProductCreateProps): Promise<ProductProps> {
+    async execute(data: ProductCreateProps, tx?: Transaction): Promise<ProductProps> {
 
         // ------------------------------------------------------------------
         // 🔎 VALIDACIONES DE NEGOCIO
@@ -95,7 +96,7 @@ export class CreateProductUseCase {
         // ------------------------------------------------------------------
         // 🟢 CREACIÓN INICIAL DEL PRODUCTO (SIN TOCAR FS AÚN)
         // ------------------------------------------------------------------
-        const created: ProductProps = await this.repo.create(data);
+        const created: ProductProps = await this.repo.create(data, tx);
 
         if (!created) {
             throw new HttpError(500, "No fue posible crear el nuevo producto");

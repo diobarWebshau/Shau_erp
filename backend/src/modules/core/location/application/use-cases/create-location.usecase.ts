@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import type { LocationCreateProps, LocationProps } from "../../domain/location.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,7 +46,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class CreateLocationUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    async execute(data: LocationCreateProps): Promise<LocationProps> {
+    async execute(data: LocationCreateProps, tx?: Transaction): Promise<LocationProps> {
         if (data.name) {
             const existsByName: LocationProps | null = await this.repo.findByName(data.name);
             if (existsByName) throw new HttpError(409,
@@ -58,7 +59,7 @@ export class CreateLocationUseCase {
                 "El id unico ingresado para la locación, ya esta utilizado por otra locación."
             );
         }
-        const created: LocationProps = await this.repo.create(data);
+        const created: LocationProps = await this.repo.create(data, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la nueva locación."
         );

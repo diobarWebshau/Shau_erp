@@ -1,95 +1,195 @@
-import { IInputRepository } from "../../domain/input.repository.interface";
-import { InputProps, InputUpdateProps } from "../../domain/input.types";
+import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
+import type { IInputRepository } from "../../domain/input.repository.interface";
+import type { InputProps, InputUpdateProps } from "../../domain/input.types";
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
 import HttpError from "@shared/errors/http/http-error";
+import ImageHandler from "@helpers/imageHandlerClass";
 import { Transaction } from "sequelize";
 
+/**
+ * UseCase
+ * ------------------------------------------------------------------
+ * Representa un caso de uso dentro de la capa de aplicación.
+ * Encapsula una operación del sistema, gestionando validaciones,
+ * reglas de negocio y coordinación con el repositorio. Su propósito
+ * es manejar la lógica de actualización de un registro, asegurando
+ * consistencia y control de la transacción.
+ *
+ * Función técnica:
+ * - Define la semántica de una acción del sistema (ej. crear, actualizar, eliminar).
+ * - Orquesta la interacción entre el dominio (entidades, reglas de negocio) y la infraestructura (repositorios, servicios externos).
+ * - Aplica validaciones previas a la persistencia, como existencia del registro, unicidad de campos, y detección de cambios.
+ * - Coordina operaciones atómicas delegadas al repositorio, garantizando que la transacción se ejecute de forma consistente.
+ * - Devuelve resultados tipados y coherentes con el contrato de la API o capa superior.
+ *
+ * Qué hace:
+ * - Encapsula la lógica de negocio aplicada a una operación concreta.
+ * - Gestiona validaciones y reglas antes de modificar el estado del sistema.
+ * - Controla el flujo de la operación (ej. si no hay cambios, retorna el registro original).
+ * - Delegar la persistencia y transacciones al repositorio, manteniendo separación de responsabilidades.
+ *
+ * Qué no hace:
+ * - No representa una entidad del negocio ni modela conceptos del dominio.
+ * - No maneja directamente infraestructura (bases de datos, frameworks, librerías externas).
+ * - No sustituye a la capa de presentación ni decide cómo se muestran los resultados.
+ * - No expone detalles técnicos de almacenamiento ni protocolos de comunicación.
+ *
+ * Convención de nombres:
+ * Un caso de uso no lleva el sufijo "Entity" porque no representa un objeto del dominio,
+ * sino una acción del sistema. Las entidades modelan conceptos del negocio; los casos de uso
+ * expresan operaciones sobre esos conceptos, por eso se nombran como "UseCase".
+ *
+ * Ubicación en la arquitectura Clean + Core + Features + Orchestrators:
+ * - Clean/Core: las entidades y reglas de negocio puras.
+ * - Features: repositorios, servicios y adaptadores que implementan infraestructura.
+ * - UseCase: capa de aplicación que orquesta la lógica de negocio con infraestructura.
+ * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
+ *   para responder a las solicitudes externas.
+ */
 export class UpdateInputUseCase {
     constructor(private readonly repo: IInputRepository) { }
 
     async execute(id: number, data: InputUpdateProps, tx?: Transaction): Promise<InputProps> {
 
-        // -----------------------------------------------------------
-        // 1️⃣ OBTENER ESTADO ACTUAL
-        // -----------------------------------------------------------
-        const existing = await this.repo.findById(id);
+        // ------------------------------------------------------------------
+        // 🔍 OBTENER ESTADO ACTUAL
+        // ------------------------------------------------------------------
+        const existing: InputProps | null = await this.repo.findById(id);
+
         if (!existing) {
-            throw new HttpError(404, "Input not found.");
+            throw new HttpError(
+                404,
+                "El insumo que se desea actualizar no fue posible encontrarlo."
+            );
         }
 
-        // -----------------------------------------------------------
-        // 2️⃣ FILTRAR CAMPOS EDITABLES
-        // -----------------------------------------------------------
+        // ------------------------------------------------------------------
+        // ✏️ FILTRADO DE CAMPOS EDITABLES
+        // ------------------------------------------------------------------
+        // Se define explícitamente qué campos pueden ser modificados.
+        // Esto evita actualizaciones accidentales o maliciosas de
+        // propiedades no editables del dominio.
         const editableFields: (keyof InputUpdateProps)[] = [
             "custom_id", "name", "description", "sku", "presentation",
             "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
-            "unit_cost", "supplier", "is_draft", "status", "photo"
+            "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
+            "status"
         ];
 
-        const filtered: InputUpdateProps = pickEditableFields(data, editableFields);
+        const filteredBody: InputUpdateProps = pickEditableFields(data, editableFields);
 
-        // -----------------------------------------------------------
-        // 3️⃣ MERGE VIRTUAL DEL ESTADO
-        // -----------------------------------------------------------
-        const merged: InputProps = { ...existing, ...filtered };
+        // ------------------------------------------------------------------
+        // 🔀 MERGE DE ESTADO ACTUAL + CAMBIOS PROPUESTOS
+        // ------------------------------------------------------------------
+        // Se construye un estado "virtual" del Inputo combinando
+        // el estado persistido con los cambios entrantes.
+        const merged: InputProps = { ...existing, ...filteredBody, };
 
-        // Normalización de decimales
+
         const normalizedExisting: InputUpdateProps = deepNormalizeDecimals<InputUpdateProps>(existing, ["unit_cost", "barcode"]);
         const normalizedMerged: InputUpdateProps = deepNormalizeDecimals<InputUpdateProps>(merged, ["unit_cost", "barcode"]);
 
-        // -----------------------------------------------------------
-        // 4️⃣ DETECTAR CAMBIOS EFECTIVOS
-        // -----------------------------------------------------------
-        const diff = await diffObjects(normalizedExisting, normalizedMerged);
+        // ------------------------------------------------------------------
+        // 🧮 DETECCIÓN DE CAMBIOS EFECTIVOS
+        // ------------------------------------------------------------------
+        // Se calcula la diferencia real entre el estado actual y el
+        // estado resultante. Esto evita writes innecesarios en BD.
+        const updateValues: InputUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
 
-        if (!Object.keys(diff).length) {
-            return existing; // No hay cambios reales
+        if (!Object.keys(updateValues).length) {
+            return existing;
         }
 
-        // -----------------------------------------------------------
-        // 5️⃣ VALIDACIONES DE UNICIDAD (solo si se envió en data)
-        // -----------------------------------------------------------
+        // ------------------------------------------------------------------
+        // 🔐 VALIDACIONES DE UNICIDAD
+        // ------------------------------------------------------------------
+        // Las validaciones de unicidad se basan en la intención del usuario
+        // (data), no en los cambios efectivos (updateValues), para evitar
+        // inconsistencias y falsos negativos.
         if (data.name) {
-            const found = await this.repo.findByName(data.name);
-            if (found && found.id !== id) {
-                throw new HttpError(409, "The input name is already in use.");
+            const existsByName = await this.repo.findByName(data.name);
+            if (existsByName && existsByName.id !== existing.id) {
+                throw new HttpError(
+                    409,
+                    "El nombre ingresado para el insumo ya está en uso."
+                );
             }
         }
 
         if (data.sku) {
-            const found = await this.repo.findBySku(data.sku);
-            if (found && found.id !== id) {
-                throw new HttpError(409, "The SKU is already in use.");
+            const existsBySku = await this.repo.findBySku(data.sku);
+            if (existsBySku && existsBySku.id !== existing.id) {
+                throw new HttpError(
+                    409,
+                    "El sku ingresado para el insumo ya está en uso."
+                );
             }
         }
 
         if (data.custom_id) {
-            const found = await this.repo.findByCustomId(data.custom_id);
-            if (found && found.id !== id) {
-                throw new HttpError(409, "The custom_id is already in use.");
+            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+            if (existsByCustomId && existsByCustomId.id !== existing.id) {
+                throw new HttpError(
+                    409,
+                    "El id único ingresado para el insumo ya está en uso."
+                );
             }
         }
 
         if (data.barcode) {
-            const found = await this.repo.findByBarcode(String(data.barcode));
-            if (found && found.id !== id) {
-                throw new HttpError(409, "The barcode is already in use.");
+            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString());
+            if (existsByBarcode && existsByBarcode.id !== existing.id) {
+                throw new HttpError(
+                    409,
+                    "El código de barras ingresado para el insumo ya está en uso."
+                );
             }
         }
 
-        // -----------------------------------------------------------
-        // 6️⃣ UPDATE EN BD
-        // -----------------------------------------------------------
-        const updated = await this.repo.update(id, diff, tx);
+        // ------------------------------------------------------------------
+        // 🖼️ DETECCIÓN DE REEMPLAZO DE IMAGEN
+        // ------------------------------------------------------------------
+        // El caso de uso NO maneja archivos.
+        // Solo compara rutas finales (strings) ya resueltas
+        // por la capa de orquestación (controller).
+        const previousPhoto: string | null = existing.photo ?? null;
+
+        const nextPhoto: string | null =
+            "photo" in updateValues
+                ? updateValues.photo ?? null
+                : null;
+
+        const photoWasReplaced: boolean =
+            previousPhoto !== null &&
+            nextPhoto !== null &&
+            previousPhoto !== nextPhoto;
+
+        // ------------------------------------------------------------------
+        // 💾 ACTUALIZACIÓN DE PERSISTENCIA
+        // ------------------------------------------------------------------
+        // Se delega al repositorio la operación de update, garantizando
+        // que la transacción sea consistente.
+        const updated: InputProps =
+            await this.repo.update(id, updateValues, tx);
+
         if (!updated) {
-            throw new HttpError(500, "Failed to update input.");
+            throw new HttpError(
+                500,
+                "No fue posible actualizar el insumo."
+            );
         }
 
-        // -----------------------------------------------------------
-        // 7️⃣ RETURN FINAL
-        // -----------------------------------------------------------
+        // ------------------------------------------------------------------
+        // 🧹 LIMPIEZA DE IMAGEN ANTERIOR (POST-COMMIT)
+        // ------------------------------------------------------------------
+        // La eliminación del archivo anterior se ejecuta únicamente
+        // después de que la BD fue actualizada correctamente, evitando
+        // inconsistencias en caso de error.
+        if (photoWasReplaced && previousPhoto) {
+            await ImageHandler.removeImageIfExists(previousPhoto);
+        }
+
         return updated;
     }
 }

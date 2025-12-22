@@ -3,6 +3,7 @@ import type { ProcessProps, ProcessUpdateProps } from "../../domain/process.type
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -46,18 +47,15 @@ import HttpError from "@shared/errors/http/http-error";
  */
 export class UpdateProcessUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    execute = async (id: string, data: ProcessUpdateProps) => {
+    execute = async (id: number, data: ProcessUpdateProps, tx?: Transaction) => {
         const existing = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "El tipo de proceso que se desea actualizar no fue posible encontrarlo."
         );
         const editableFields: (keyof ProcessUpdateProps)[] = ["name"];
         const filteredBody: ProcessUpdateProps = pickEditableFields(data, editableFields);
-        // 🌐 MERGE EXACTO AL ORIGINAL
         const merged: ProcessUpdateProps = { ...existing, ...filteredBody };
-        // 🌐 DIFF EXACTO AL ORIGINAL (comportamiento idéntico)
         const updateValues: ProcessUpdateProps = await diffObjects(existing, merged);
-        // 🌐 SI NO HAY CAMBIOS → DEVUELVE EXISTING (igual que service)
         if (!Object.keys(updateValues).length) return existing;
         if (updateValues.name) {
             const existsByName = await this.repo.findByName(updateValues.name);
@@ -67,8 +65,7 @@ export class UpdateProcessUseCase {
                     "El nombre ingresado para el proceso, ya esta utilizado por otro proceso."
                 );
         }
-        // 🌐 ACTUALIZACIÓN REAL (repositorio maneja la transacción)
-        const updated: ProcessProps = await this.repo.update(id, updateValues);
+        const updated: ProcessProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500, "No fue posible actualizar la proceso.");
         return updated;
     }

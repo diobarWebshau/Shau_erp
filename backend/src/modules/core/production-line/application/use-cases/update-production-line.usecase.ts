@@ -3,6 +3,7 @@ import type { IProductionLineRepository } from "../../domain/production-line.rep
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -47,7 +48,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateProductionLineUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
-    async execute(id: string, data: ProductionLineUpdateProps): Promise<ProductionLineProps> {
+    async execute(id: number, data: ProductionLineUpdateProps, tx?: Transaction): Promise<ProductionLineProps> {
         const existing: ProductionLineProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "La línea de producción que se desea actualizar no fue posible encontrarla."
@@ -71,7 +72,7 @@ export class UpdateProductionLineUseCase {
                 "El id unico ingresado para la línea de producción, ya esta utilizado por otra línea de producción."
             );
         }
-        const updated: ProductionLineProps = await this.repo.update(id, updateValues);
+        const updated: ProductionLineProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la locación."
         );

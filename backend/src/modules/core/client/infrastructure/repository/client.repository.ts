@@ -114,7 +114,7 @@ export class ClientRepository implements IClientRepository {
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id: string): Promise<ClientProps | null> => {
+    findById = async (id: number): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findByPk(id, {
             attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
         });
@@ -152,7 +152,7 @@ export class ClientRepository implements IClientRepository {
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: ClientUpdateProps, tx: Transaction): Promise<ClientProps> => {
+    update = async (id: number, data: ClientUpdateProps, tx: Transaction): Promise<ClientProps> => {
         // 1. Verificar existencia
         const existing: ClientModel | null = await ClientModel.findByPk(id);
         if (!existing) throw new HttpError(404,
@@ -176,7 +176,7 @@ export class ClientRepository implements IClientRepository {
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string, tx?: Transaction): Promise<void> => {
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
         const existing: ClientModel | null = await ClientModel.findByPk(id);
         if (!existing) throw new HttpError(404,
             "No se encontro la línea de producción que se pretende eliminar."

@@ -49,7 +49,7 @@ import { Transaction } from "sequelize";
 
 export class UpdateClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    async execute(id: string, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps> {
+    async execute(id: number, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps> {
         const existing: ClientProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "El cliente que se desea actualizar no fue posible encontrarlo."

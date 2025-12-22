@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import { ProductCreateProps, ProductProps, ProductSearchCriteria, ProductUpdateProps } from "./product.types";
 
 /**
@@ -49,7 +50,7 @@ export interface IProductRepository {
     findBySku(sku: string): Promise<ProductProps | null>,
     findByBarcode(barcode: string): Promise<ProductProps | null>,
     findByName(name: string): Promise<ProductProps | null>,
-    create(data: ProductCreateProps): Promise<ProductProps>,
-    update(id: number, data: ProductUpdateProps): Promise<ProductProps>,
-    delete(id: number): Promise<void>
+    create(data: ProductCreateProps, tx?: Transaction): Promise<ProductProps>,
+    update(id: number, data: ProductUpdateProps, tx?: Transaction): Promise<ProductProps>,
+    delete(id: number, tx?: Transaction): Promise<void>
 };

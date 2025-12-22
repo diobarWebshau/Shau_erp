@@ -1,6 +1,8 @@
+import { IProcessRepository } from "@src/modules/core/process/domain/process.repository";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
 import type { ProductProcessProps, ProductProcessCreateProps } from "../../domain/product-process.types";
 import HttpError from "@shared/errors/http/http-error";
+import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 
 /**
  * UseCase
@@ -44,8 +46,24 @@ import HttpError from "@shared/errors/http/http-error";
  */
 
 export class CreateProductProcessUseCase {
-    constructor(private readonly repo: IProductProcessRepository) { }
+    constructor(
+        private readonly repo: IProductProcessRepository,
+        private readonly repoProduct: IProductRepository,
+        private readonly repoProcess: IProcessRepository
+    ) { }
     async execute(data: ProductProcessCreateProps): Promise<ProductProcessProps> {
+        const validateProduct = await this.repoProduct.findById(data.product_id);
+        if (!validateProduct) throw new HttpError(500,
+            "El producto que se pretende asignarle un proceso, no existe."
+        );
+        const validateProcess = await this.repoProcess.findById(data.process_id);
+        if (!validateProcess) throw new HttpError(500,
+            "El proceso que se desea asignar al producto, no existe."
+        );
+        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.process_id);
+        if (validateDuplicate) throw new HttpError(500,
+            "El producto ya tiene asignado el proceso."
+        );
         const created: ProductProcessProps = await this.repo.create(data);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del proceso al producto."

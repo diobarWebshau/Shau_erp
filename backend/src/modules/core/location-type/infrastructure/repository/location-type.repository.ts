@@ -3,7 +3,6 @@ import type { LocationTypeProps, LocationTypeCreateProps, LocationTypeUpdateProp
 import type { ILocationTypeRepository } from "../../domain/location-type.repository";
 import { LocationTypeModel } from "../orm/location-type.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -77,7 +76,7 @@ export class LocationTypeRepository implements ILocationTypeRepository {
         return rows.map(mapModelToDomain);
     }
 
-    async findById(id: string): Promise<LocationTypeProps | null> {
+    async findById(id: number): Promise<LocationTypeProps | null> {
         const row: LocationTypeModel | null = await LocationTypeModel.findByPk(id, {
             attributes: LocationTypeModel.getAllFields() as ((keyof LocationTypeProps)[])
         });
@@ -95,79 +94,50 @@ export class LocationTypeRepository implements ILocationTypeRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    async create(data: LocationTypeCreateProps): Promise<LocationTypeProps> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: LocationTypeModel | null = await LocationTypeModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear el tipo de locación.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    async create(data: LocationTypeCreateProps, tx?: Transaction): Promise<LocationTypeProps> {
+        const created: LocationTypeModel | null = await LocationTypeModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear el tipo de locación.");
+        return mapModelToDomain(created);
     }
 
     // ================================================================
     // UPDATE
     // ================================================================
-    async update(id: string, data: LocationTypeUpdateProps): Promise<LocationTypeProps> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    async update(id: number, data: LocationTypeUpdateProps, tx?: Transaction): Promise<LocationTypeProps> {
+        const existing: LocationTypeProps | null = await LocationTypeModel.findByPk(id);
+        if (!existing) throw new HttpError(
+            404,
+            "El tipo de locación que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await LocationTypeModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: LocationTypeProps | null = await LocationTypeModel.findByPk(id);
-            if (!existing) throw new HttpError(
-                404,
-                "El tipo de locación que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await LocationTypeModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el tipo de locación.");
-            // 3. Obtener la locación actualizada
-            const updated: LocationTypeModel | null = await LocationTypeModel.findByPk(id, {
-                transaction,
-                attributes: LocationTypeModel.getAllFields() as ((keyof LocationTypeProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar el tipo de locación.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el tipo de locación.");
+        // 3. Obtener la locación actualizada
+        const updated: LocationTypeModel | null = await LocationTypeModel.findByPk(id, {
+            attributes: LocationTypeModel.getAllFields() as ((keyof LocationTypeProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar el tipo de locación.");
+        return mapModelToDomain(updated);
     }
 
     // ================================================================
     // DELETE
     // ================================================================
-    async delete(id: string): Promise<void> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    async delete(id: number, tx?: Transaction): Promise<void> {
+        const existing: LocationTypeModel | null = await LocationTypeModel.findByPk(id, {transaction: tx});
+        if (!existing) throw new HttpError(
+            404,
+            "No se encontro el tipo de locación que se pretende eliminar."
+        );
+        const deleted: number = await LocationTypeModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: LocationTypeModel | null = await LocationTypeModel.findByPk(id);
-            if (!existing) throw new HttpError(
-                404,
-                "No se encontro el tipo de locación que se pretende eliminar."
-            );
-            const deleted: number = await LocationTypeModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar el tipo de locación.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar el tipo de locación.");
+        return;
     }
 }
 

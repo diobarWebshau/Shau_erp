@@ -3,6 +3,7 @@ import type { InputTypeProps, InputTypeUpdateProps } from "../../domain/input-ty
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -46,22 +47,17 @@ import HttpError from "@shared/errors/http/http-error";
  */
 export class UpdateInputTypeUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
-    execute = async (id: string, data: InputTypeUpdateProps) => {
-        const existing = await this.repo.findById(id);
-        if (!existing) throw new HttpError(
-            404,
+    execute = async (id: number, data: InputTypeUpdateProps, tx?: Transaction) => {
+        const existing = await this.repo.findById(Number(id));
+        if (!existing) throw new HttpError(404,
             "El tipo de locación que se desea actualizar no fue posible encontrarlo."
         );
         const editableFields: (keyof InputTypeUpdateProps)[] = ["name"];
         const filteredBody: InputTypeUpdateProps = pickEditableFields(data, editableFields);
-        // 🌐 MERGE EXACTO AL ORIGINAL
         const merged: InputTypeUpdateProps = { ...existing, ...filteredBody };
-        // 🌐 DIFF EXACTO AL ORIGINAL (comportamiento idéntico)
         const updateValues: InputTypeUpdateProps = await diffObjects(existing, merged);
-        // 🌐 SI NO HAY CAMBIOS → DEVUELVE EXISTING (igual que service)
         if (!Object.keys(updateValues).length) return existing;
-        // 🌐 ACTUALIZACIÓN REAL (repositorio maneja la transacción)
-        const updated: InputTypeProps = await this.repo.update(id, updateValues);
+        const updated: InputTypeProps = await this.repo.update(Number(id), updateValues, tx);
         if (!updated) throw new HttpError(500, "No fue posible actualizar la locación.");
         return updated;
     }

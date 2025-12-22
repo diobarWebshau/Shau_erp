@@ -3,7 +3,7 @@ import { validateRequest } from "@middlewares/zod/zod.middleware";
 import {
     createLocationProductionLineSchema, deleteLocationProductionLineSchema,
     getAllLocationProductionLineProductionLineSchema, updateLocationProductionLineSchema,
-    getByIdLocationProductionLineSchema
+    getByIdLocationProductionLineSchema, getByLocationProductionLineIdLocationProductionLineSchema
 } from "../../application/dto/location-production-line.endpoint.schema";
 import LocationController from "./location-production-line.controller";
 import { Router } from "express";
@@ -52,6 +52,7 @@ export const locationProductionLineRouter = (): Router => {
     const controller: LocationController = new LocationController();
     router.get("/", validateRequest(getAllLocationProductionLineProductionLineSchema), controller.getAll);
     router.get("/id/:id", validateRequest(getByIdLocationProductionLineSchema), controller.getById);
+    router.get("/location/:location_id/production-line/:production_line_id", validateRequest(getByLocationProductionLineIdLocationProductionLineSchema), controller.getByIdLocationProductionLineId);
     router.post("/", validateRequest(createLocationProductionLineSchema), controller.create);
     router.patch("/:id", validateRequest(updateLocationProductionLineSchema), controller.update);
     router.delete("/:id", validateRequest(deleteLocationProductionLineSchema), controller.delete);

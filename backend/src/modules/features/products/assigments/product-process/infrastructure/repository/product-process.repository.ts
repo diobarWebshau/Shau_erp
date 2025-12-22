@@ -2,7 +2,6 @@ import type { ProductProcessCreateProps, ProductProcessProps, ProductProcessUpda
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
 import { ProductProcessModel } from "../orm/product-process.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -55,7 +54,6 @@ import { Transaction } from "sequelize";
 
 const mapModelToDomain = (model: ProductProcessModel): ProductProcessProps => {
     const json: ProductProcessProps = model.toJSON();
-    console.log(json);
     return {
         id: json.id,
         process_id: json.process_id,
@@ -81,78 +79,60 @@ export class ProductProcessRepository implements IProductProcessRepository {
         });
         return row ? mapModelToDomain(row) : null;
     }
+    findByIdProductInput = async (product_id: number, process_id: number): Promise<ProductProcessProps | null> => {
+        const row: ProductProcessModel | null = await ProductProcessModel.findOne({
+            where: {
+                product_id: product_id,
+                process_id: process_id
+            },
+            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
+        });
+        return row ? mapModelToDomain(row) : null;
+    }
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ProductProcessCreateProps): Promise<ProductProcessProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ProductProcessModel = await ProductProcessModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la asignación del proceso al producto.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: ProductProcessCreateProps, tx?: Transaction): Promise<ProductProcessProps> => {
+        const created: ProductProcessModel = await ProductProcessModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear la asignación del proceso al producto.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: number, data: ProductProcessUpdateProps): Promise<ProductProcessProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: ProductProcessUpdateProps, tx?: Transaction): Promise<ProductProcessProps> => {
+        // 1. Verificar existencia
+        const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ProductProcessModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ProductProcessModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
-            // 3. Obtener la producto actualizada
-            const updated: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
-                transaction,
-                attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
+        // 3. Obtener la producto actualizada
+        const updated: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
+            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: number): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la asignación del proceso al producto que se pretende eliminar."
+        );
+        const deleted: number = await ProductProcessModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la asignación del proceso al producto que se pretende eliminar."
-            );
-            const deleted: number = await ProductProcessModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del proceso al producto.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del proceso al producto.");
+        return;
     }
 }

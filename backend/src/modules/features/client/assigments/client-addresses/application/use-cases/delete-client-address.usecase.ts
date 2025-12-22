@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
 import { ClientAddressProps } from "../../domain/client-address.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,12 +46,12 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteClientAddressUseCase {
     constructor(private readonly repo: IClientAddressRepository) { }
-    async execute(id: string): Promise<void> {
+    async execute(id: number, tx?: Transaction): Promise<void> {
         const exists: ClientAddressProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro la dirección del cliente que se pretende eliminar."
         );
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

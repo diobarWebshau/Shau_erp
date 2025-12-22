@@ -59,33 +59,35 @@ import { sequelize } from "@config/mysql/sequelize";
 
 */
 
-interface ProductInputAttributes {
+interface ProductInputProcessAttributes {
     id: number;
     product_id: number,
-    input_id: number,
-    equivalence: number
+    product_input_id: number,
+    product_process_id: number
+    qty: number
 };
 
-type ProductInputCreateAttributes = Partial<Omit<ProductInputAttributes, "id">>;
-type ProductInputUpdateAttributes = ProductInputCreateAttributes;
+type ProductInputProcessCreateAttributes = Omit<ProductInputProcessAttributes, "id">;
+type ProductInputProcessUpdateAttributes = Partial<ProductInputProcessCreateAttributes>;
 
-class ProductInputModel extends Model<ProductInputAttributes, ProductInputCreateAttributes> {
+class ProductInputProcessModel extends Model<ProductInputProcessAttributes, ProductInputProcessCreateAttributes> {
 
     declare id: number;
     declare product_id: number;
-    declare input_id: number;
-    declare equivalence: number;
+    declare product_input_id: number;
+    declare product_process_id: number;
+    declare qty: number;
 
-    static getEditableFields = (): readonly (keyof ProductInputUpdateAttributes)[] => [
-        "input_id", "product_id", "equivalence"
+    static getEditableFields = (): readonly (keyof ProductInputProcessUpdateAttributes)[] => [
+        "product_input_id", "product_process_id", "product_id", "qty"
     ] as const;
 
-    static getAllFields = (): readonly (keyof ProductInputAttributes)[] => [
-        "id", "input_id", "product_id", "equivalence"
+    static getAllFields = (): readonly (keyof ProductInputProcessAttributes)[] => [
+        "id", "product_input_id", "product_process_id", "product_id", "qty"
     ] as const;
 }
 
-ProductInputModel.init({
+ProductInputProcessModel.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -95,22 +97,26 @@ ProductInputModel.init({
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    input_id: {
+    product_input_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    equivalence: {
+    product_process_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    qty: {
         type: DataTypes.DECIMAL(14, 4),
         allowNull: false
     }
 }, {
     sequelize,
-    tableName: "products_inputs",
+    tableName: "products_inputs_processes",
     timestamps: false,
 });
 
-export { ProductInputModel };
+export { ProductInputProcessModel };
 export type {
-    ProductInputAttributes,
-    ProductInputCreateAttributes
+    ProductInputProcessAttributes,
+    ProductInputProcessCreateAttributes
 }

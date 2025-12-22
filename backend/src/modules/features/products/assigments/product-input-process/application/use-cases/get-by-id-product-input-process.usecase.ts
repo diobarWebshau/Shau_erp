@@ -1,5 +1,5 @@
-import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
-import type { ProductInputProps } from "../../domain/product-input-process.types";
+import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
+import type { ProductInputProcessProps } from "../../domain/product-input-process.types";
 
 /**
  * UseCase
@@ -42,7 +42,7 @@ import type { ProductInputProps } from "../../domain/product-input-process.types
  *   para responder a las solicitudes externas.
  */
 
-export class GetProductInputByIdUseCase {
-    constructor(private readonly repo: IProductInputRepository) { }
-    execute = async (id: string): Promise<ProductInputProps | null> => this.repo.findById(id);
+export class GetByIdProductInputProcessByIdUseCase {
+    constructor(private readonly repo: IProductInputProcessRepository) { }
+    execute = async (id: number): Promise<ProductInputProcessProps | null> => this.repo.findById(id);
 };

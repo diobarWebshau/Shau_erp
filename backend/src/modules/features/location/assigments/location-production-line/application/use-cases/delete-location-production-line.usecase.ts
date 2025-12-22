@@ -47,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteLocationProductionLineUseCase {
     constructor(private readonly repo: ILocationProductionLineRepository) { }
-    async execute(id: string): Promise<void> {
+    async execute(id: number): Promise<void> {
         const exists: LocationProductionLineProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro la asignación de la línea de producción a la ubicacíon que se pretende eliminar."

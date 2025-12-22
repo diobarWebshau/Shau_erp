@@ -53,8 +53,8 @@ interface ProductInputProps {
     equivalence: number
 };
 
-type ProductInputCreateProps = Partial<Omit<ProductInputProps, "id">>;
-type ProductInputUpdateProps = ProductInputCreateProps;
+type ProductInputCreateProps = Omit<ProductInputProps, "id">;
+type ProductInputUpdateProps = Partial<ProductInputCreateProps>;
 
 export type {
     ProductInputProps,

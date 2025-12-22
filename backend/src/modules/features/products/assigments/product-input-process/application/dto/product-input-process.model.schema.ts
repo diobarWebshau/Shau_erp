@@ -42,10 +42,11 @@ import { z } from "zod";
  * Define los campos requeridos para crear un registro mediante POST.
  * Aqui todos los atributos son obligatorios y se validan según su tipo.
  */
-const ProductInputCreateSchema = z.object({
+const productInputProcessCreateSchema = z.object({
     product_id: z.number().int(),
-    input_id: z.number().int(),
-    equivalence: z.number().int()
+    product_input_id: z.number().int(),
+    product_process_id: z.number().int(),
+    qty: z.number()
 });
 
 /**
@@ -54,7 +55,7 @@ const ProductInputCreateSchema = z.object({
  * Define los campos que pueden actualizarse mediante PATCH.
  * Aqui todos los atributos son opcionales para permitir modificaciones parciales.
  */
-const ProductInputUpdateSchema = ProductInputCreateSchema.partial();
+const productInputProcessUpdateSchema = productInputProcessCreateSchema.partial();
 
 /**
  * ResponseSchema
@@ -62,7 +63,7 @@ const ProductInputUpdateSchema = ProductInputCreateSchema.partial();
  * Representa el objeto completo que devuelve la API en las respuestas.
  * Incluye los campos de creación más los metadatos generados por el sistema.
  */
-const ProductInputReponseSchema = ProductInputCreateSchema.extend({
+const productInputProcessReponseSchema = productInputProcessCreateSchema.extend({
     id: z.number().int(),
 });
 
@@ -107,20 +108,20 @@ const ProductInputReponseSchema = ProductInputCreateSchema.extend({
  *   hacia el exterior (ej. controladores, endpoints).
  */
 
-type ProductInputCreateDto = z.infer<typeof ProductInputCreateSchema>;
-type ProductInputResponseDto = z.infer<typeof ProductInputReponseSchema>;
-type ProductInputUpdateDto = z.infer<typeof ProductInputUpdateSchema>;
+type ProductInputProcessCreateDto = z.infer<typeof productInputProcessCreateSchema>;
+type ProductInputProcessResponseDto = z.infer<typeof productInputProcessReponseSchema>;
+type ProductInputProcessUpdateDto = z.infer<typeof productInputProcessUpdateSchema>;
 
 export {
-    ProductInputCreateSchema,
-    ProductInputReponseSchema,
-    ProductInputUpdateSchema
+    productInputProcessCreateSchema,
+    productInputProcessReponseSchema,
+    productInputProcessUpdateSchema
 };
 
 export type {
-    ProductInputResponseDto,
-    ProductInputCreateDto,
-    ProductInputUpdateDto
+    ProductInputProcessResponseDto,
+    ProductInputProcessCreateDto,
+    ProductInputProcessUpdateDto
 };
 
 

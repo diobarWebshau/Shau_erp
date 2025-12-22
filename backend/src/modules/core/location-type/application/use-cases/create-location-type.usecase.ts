@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationTypeRepository } from "../../domain/location-type.repository";
 import type { LocationTypeCreateProps, LocationTypeProps } from "../../domain/location-type.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,8 +46,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class CreateLocationTypeUseCase {
     constructor(private readonly repo: ILocationTypeRepository) { }
-    execute = async (data: LocationTypeCreateProps) => {
-        // ⭐ VALIDACIÓN DE DUPLICADO POR NAME (idéntica al service original)
+    execute = async (data: LocationTypeCreateProps, tx?: Transaction) => {
         if (data.name) {
             const existsByName = await this.repo.findByName(data.name);
             if (existsByName)
@@ -55,17 +55,7 @@ export class CreateLocationTypeUseCase {
                     "El nombre ingresado para el  nueva tipo de locación, ya esta utilizado por otro tipo de locación."
                 );
         }
-        /**
-         * ⭐ CREACIÓN DE LA LOCACIÓN TYPE
-         *
-         * El repositorio se encarga de:
-         *   - crear la transacción
-         *   - ejecutar el insert
-         *   - hacer commit o rollback
-         *
-         * Igual que tu implementación de service, pero desacoplado.
-         */
-        const created: LocationTypeProps = await this.repo.create(data);
+        const created: LocationTypeProps = await this.repo.create(data, tx);
         if (!created)
             throw new HttpError(500, "No fue posible crear el nuevo tipo de locación.");
         return created;

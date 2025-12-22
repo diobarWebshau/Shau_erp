@@ -9,8 +9,11 @@ import { LocationLocationTypeRepository } from "../repository/location-location-
 import {
     CreateLocationLocationTypeSchema, DeleteLocationLocationTypeSchema,
     GetAllLocationLocationTypesSchema, GetByIdLocationLocationTypeSchema,
-    UpdateLocationLocationTypeSchema
+    UpdateLocationLocationTypeSchema, GetByLocationIdLocationTypeIdLocationLocationTypeSchema
 } from "./../../application/dto/location-location-type.endpoint.schema"
+import { LocationRepository } from "@src/modules/core/location/infrastructure/repository/location.repository";
+import LocationTypeRepository from "@src/modules/core/location-type/infrastructure/repository/location-type.repository";
+import { GetByLocationIdLocationTypeIdLocationLocationTypeUseCase } from "../../application/use-cases/get-by-location-Id-Location-type-Id-location-location-type.usecase";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -65,6 +68,9 @@ import {
 export class LocationLocationTypeController {
 
     private readonly repo: LocationLocationTypeRepository;
+    private readonly repoLocation: LocationRepository;
+    private readonly repoLocationType: LocationTypeRepository;
+    private readonly getByLocationLocationType: GetByLocationIdLocationTypeIdLocationLocationTypeUseCase;
     private readonly getAllUseCase: GetAllLocationLocationTypeUseCase;
     private readonly getByIdUseCase: GetLocationLocationTypeByIdUseCase;
     private readonly createUseCase: CreateLocationLocationTypeUseCase;
@@ -73,11 +79,14 @@ export class LocationLocationTypeController {
 
     constructor() {
         this.repo = new LocationLocationTypeRepository();
+        this.repoLocation = new LocationRepository();
+        this.repoLocationType = new LocationTypeRepository();
         this.getAllUseCase = new GetAllLocationLocationTypeUseCase(this.repo);
         this.getByIdUseCase = new GetLocationLocationTypeByIdUseCase(this.repo);
-        this.createUseCase = new CreateLocationLocationTypeUseCase(this.repo);
+        this.createUseCase = new CreateLocationLocationTypeUseCase(this.repo, this.repoLocation, this.repoLocationType);
         this.updateUseCase = new UpdateLocationLocationTypeUseCase(this.repo);
         this.deleteUseCase = new DeleteLocationLocationTypeUseCase(this.repo);
+        this.getByLocationLocationType = new GetByLocationIdLocationTypeIdLocationLocationTypeUseCase(this.repo);
     };
 
     // ============================================================
@@ -93,7 +102,14 @@ export class LocationLocationTypeController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdLocationLocationTypeSchema>, res: ApiResponse<GetByIdLocationLocationTypeSchema>) => {
         const { id }: GetByIdLocationLocationTypeSchema["params"] = req.params
-        const result: LocationLocationTypeResponseDto | null = await this.getByIdUseCase.execute(id);
+        const result: LocationLocationTypeResponseDto | null = await this.getByIdUseCase.execute(Number(id));
+        if (!result) return res.status(204).send(null);
+        return res.status(200).send(result);
+    };
+
+    getByIdLocationLocationType = async (req: ApiRequest<GetByLocationIdLocationTypeIdLocationLocationTypeSchema>, res: ApiResponse<GetByLocationIdLocationTypeIdLocationLocationTypeSchema>) => {
+        const { location_id, location_type_id }: GetByLocationIdLocationTypeIdLocationLocationTypeSchema["params"] = req.params
+        const result: LocationLocationTypeResponseDto | null = await this.getByLocationLocationType.execute(Number(location_id), Number(location_type_id));
         if (!result) return res.status(204).send(null);
         return res.status(200).send(result);
     };
@@ -113,7 +129,7 @@ export class LocationLocationTypeController {
     update = async (req: ApiRequest<UpdateLocationLocationTypeSchema>, res: ApiResponse<UpdateLocationLocationTypeSchema>) => {
         const { id }: UpdateLocationLocationTypeSchema["params"] = req.params;
         const body: LocationLocationTypeUpdateDto = req.body;
-        const updated: LocationLocationTypeResponseDto = await this.updateUseCase.execute(id, body);
+        const updated: LocationLocationTypeResponseDto = await this.updateUseCase.execute(Number(id), body);
         return res.status(200).send(updated);
     };
 
@@ -122,7 +138,7 @@ export class LocationLocationTypeController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteLocationLocationTypeSchema>, res: ApiResponse<DeleteLocationLocationTypeSchema>) => {
         const { id }: DeleteLocationLocationTypeSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 }

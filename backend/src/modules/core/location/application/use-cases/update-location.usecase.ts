@@ -4,6 +4,7 @@ import type { ILocationRepository } from "../../domain/location.repository.inter
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -49,7 +50,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateLocationUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    async execute(id: string, data: LocationUpdateProps): Promise<LocationProps> {
+    async execute(id: number, data: LocationUpdateProps, tx?: Transaction): Promise<LocationProps> {
         const existing: LocationProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "La locación que se desea actualizar no fue posible encontrarla."
@@ -79,7 +80,7 @@ export class UpdateLocationUseCase {
                 "El id unico ingresado para la locación, ya esta utilizado por otra locación."
             );
         }
-        const updated: LocationProps = await this.repo.update(id, updateValues);
+        const updated: LocationProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la locación."
         );

@@ -47,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateLocationProductionLineUseCase {
     constructor(private readonly repo: ILocationProductionLineRepository) { }
-    async execute(id: string, data: LocationProductionLineUpdateProps): Promise<LocationProductionLineProps> {
+    async execute(id: number, data: LocationProductionLineUpdateProps): Promise<LocationProductionLineProps> {
         const existing: LocationProductionLineProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."

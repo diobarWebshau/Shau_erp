@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
 
 /**
@@ -43,7 +44,7 @@ import type { IInputTypeRepository } from "../../domain/input-type.repository";
 
 export class DeleteInputTypeUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
-    async execute(id: string): Promise<void> {
-        await this.repo.delete(id);
+    async execute(id: number, tx?: Transaction): Promise<void> {
+        await this.repo.delete(id, tx);
     }
 }

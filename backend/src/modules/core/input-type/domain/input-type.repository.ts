@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { InputTypeCreateProps, InputTypeUpdateProps, InputTypeProps } from "./input-type.types";
 
 /**
@@ -44,9 +45,9 @@ import type { InputTypeCreateProps, InputTypeUpdateProps, InputTypeProps } from 
 
 export interface IInputTypeRepository {
     findAll(): Promise<InputTypeProps[]>,
-    findById(id: string): Promise<InputTypeProps | null>,
+    findById(id: number): Promise<InputTypeProps | null>,
     findByName(name: string): Promise<InputTypeProps | null>,
-    create(data: InputTypeCreateProps): Promise<InputTypeProps>;
-    update(id: string, data: InputTypeUpdateProps): Promise<InputTypeProps>;
-    delete(id: string): Promise<void>;
+    create(data: InputTypeCreateProps, tx?: Transaction): Promise<InputTypeProps>;
+    update(id: number, data: InputTypeUpdateProps, tx?: Transaction): Promise<InputTypeProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 }

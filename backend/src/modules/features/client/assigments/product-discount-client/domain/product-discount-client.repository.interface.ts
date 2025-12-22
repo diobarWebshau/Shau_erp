@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ProductDiscountClientProps, ProductDiscountClientCreateProps, ProductDiscountClientUpdateProps } from "./product-discount-client.types";
 
 /**
@@ -47,7 +48,7 @@ export interface IProductDiscountClientRepository {
     findById(id: number): Promise<ProductDiscountClientProps | null>;
     findByClientId(client_id: number): Promise<ProductDiscountClientProps[]>;
     findByProductClientId(product_id: number, client_id: number): Promise<ProductDiscountClientProps | null>;
-    create(data: ProductDiscountClientCreateProps | null): Promise<ProductDiscountClientProps>;
-    update(id: number, data: ProductDiscountClientUpdateProps): Promise<ProductDiscountClientProps>;
-    delete(id: number): Promise<void>;
+    create(data: ProductDiscountClientCreateProps, tx?: Transaction): Promise<ProductDiscountClientProps>;
+    update(id: number, data: ProductDiscountClientUpdateProps, tx?: Transaction): Promise<ProductDiscountClientProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 };

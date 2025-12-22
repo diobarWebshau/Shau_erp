@@ -114,7 +114,7 @@ export class ProductionLineController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdProductionLineSchema>, res: ApiResponse<GetByIdProductionLineSchema>) => {
         const { id }: GetByIdProductionLineSchema["params"] = req.params
-        const result: ProductionLineProps | null = await this.getByIdUseCase.execute(id);
+        const result: ProductionLineProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: ProductionLineResponseDto = this.formatResponse(result)
         return res.status(200).send(formatted);
@@ -158,7 +158,7 @@ export class ProductionLineController {
     update = async (req: ApiRequest<UpdateProducionLineSchema>, res: ApiResponse<UpdateProducionLineSchema>) => {
         const { id }: UpdateProducionLineSchema["params"] = req.params;
         const body: ProductionLineUpdateDto = req.body;
-        const updated = await this.updateUseCase.execute(id, body);
+        const updated = await this.updateUseCase.execute(Number(id), body);
         const formatted: ProductionLineResponseDto = this.formatResponse(updated);
         return res.status(200).send(formatted);
     };
@@ -168,7 +168,7 @@ export class ProductionLineController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteProducionLineSchema>, res: ApiResponse<DeleteProducionLineSchema>) => {
         const { id }: DeleteProducionLineSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 };

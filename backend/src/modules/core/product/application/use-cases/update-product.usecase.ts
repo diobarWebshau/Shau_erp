@@ -5,6 +5,7 @@ import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import ImageHandler from "@helpers/imageHandlerClass";
 import { deepNormalizeDecimals } from "@src/helpers/decimal-normalization-and-cleaning.utils";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -49,7 +50,7 @@ import { deepNormalizeDecimals } from "@src/helpers/decimal-normalization-and-cl
 export class UpdateProductUseCase {
     constructor(private readonly repo: IProductRepository) { }
 
-    async execute(id: number, data: ProductUpdateProps): Promise<ProductProps> {
+    async execute(id: number, data: ProductUpdateProps, tx?: Transaction): Promise<ProductProps> {
 
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
@@ -160,7 +161,7 @@ export class UpdateProductUseCase {
         // ------------------------------------------------------------------
         // Se delega al repositorio la operación de update, garantizando
         // que la transacción sea consistente.
-        const updated: ProductProps = await this.repo.update(id, updateValues);
+        const updated: ProductProps = await this.repo.update(id, updateValues, tx);
 
         if (!updated) {
             throw new HttpError(

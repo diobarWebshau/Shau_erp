@@ -1,11 +1,11 @@
 // src/modules/location/infrastructure/http/location.router.ts
 import { validateRequest } from "@middlewares/zod/zod.middleware";
 import {
-    createProductInputSchema, deleteProductInputSchema,
-    getAllProductInputSchema, getByIdProductInputSchema,
-    updateProductInputSchema
+    createProductInputProcessSchema, deleteProductInputProcessSchema,
+    getAllProductInputProcessSchema, getByIdProductInputProcessSchema,
+    updateProductInputProcessSchema, getByProductInputProcessSchema
 } from "../../application/dto/product-input-process.endpoint.schema";
-import { ProductInputController } from "./product-input-process.controller";
+import { ProductInputProcessController } from "./product-input-process.controller";
 import { Router } from "express";
 
 /**
@@ -46,14 +46,16 @@ import { Router } from "express";
  * - Orchestrators: pueden agrupar routers y exponer la API completa hacia clientes externos.
  */
 
-export const ProductInputRouter = (): Router => {
+export const ProductInputProcessRouter = (): Router => {
     const router: Router = Router();
-    const controller: ProductInputController = new ProductInputController();
-    router.get("/", validateRequest(getAllProductInputSchema), controller.getAll);
-    router.get("/id/:id", validateRequest(getByIdProductInputSchema), controller.getById);
-    router.post("/", validateRequest(createProductInputSchema), controller.create);
-    router.patch("/:id", validateRequest(updateProductInputSchema), controller.update);
-    router.delete("/:id", validateRequest(deleteProductInputSchema), controller.delete);
+    const controller: ProductInputProcessController = new ProductInputProcessController();
+    router.get("/", validateRequest(getAllProductInputProcessSchema), controller.getAll);
+    router.get("/id/:id", validateRequest(getByIdProductInputProcessSchema), controller.getById);
+    router.get("/product/:product_id/product-input/:product_input_id/product-process/:product_process_id",
+        validateRequest(getByProductInputProcessSchema), controller.getByProductInputProcess);
+    router.post("/", validateRequest(createProductInputProcessSchema), controller.create);
+    router.patch("/:id", validateRequest(updateProductInputProcessSchema), controller.update);
+    router.delete("/:id", validateRequest(deleteProductInputProcessSchema), controller.delete);
     return router;
 };
 

@@ -3,6 +3,7 @@
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import { LocationProps } from "../../domain/location.types";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -48,12 +49,12 @@ import { LocationProps } from "../../domain/location.types";
 
 export class DeleteLocationUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    async execute(id: string): Promise<void> {
+    async execute(id: number, tx?: Transaction): Promise<void> {
         const exists: LocationProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro la locación que se pretende eliminar."
         );
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

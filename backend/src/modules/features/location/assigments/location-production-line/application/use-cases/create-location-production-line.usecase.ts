@@ -1,6 +1,8 @@
+import { IProductionLineRepository } from "@src/modules/core/production-line/domain/production-line.repository.interface";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import type { LocationProductionLineProps, LocationProductionLineCreateProps } from "../../domain/location-production-line.types";
 import HttpError from "@shared/errors/http/http-error";
+import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
 
 /**
  * UseCase
@@ -44,8 +46,24 @@ import HttpError from "@shared/errors/http/http-error";
  */
 
 export class CreateLocationProductionLineUseCase {
-    constructor(private readonly repo: ILocationProductionLineRepository) { }
+    constructor(
+        private readonly repo: ILocationProductionLineRepository,
+        private readonly repoLocation: ILocationRepository,
+        private readonly repoProductionLine: IProductionLineRepository
+    ) { }
     async execute(data: LocationProductionLineCreateProps): Promise<LocationProductionLineProps> {
+        const validateLocation = await this.repoLocation.findById(data.location_id);
+        if (!validateLocation) throw new HttpError(404,
+            "La locación seleccionada no existe."
+        );
+        const validateProductionLine = await this.repoProductionLine.findById(data.production_line_id);
+        if (!validateProductionLine) throw new HttpError(404,
+            "La línea de producción seleccionada no existe."
+        );
+        const validateDuplicate = await this.repo.findByIdLocationProductionLine(data.location_id, data.production_line_id);
+        if (validateDuplicate) throw new HttpError(409,
+            "La locación ya tiene actualmente asignada la línea de producción."
+        );
         const created: LocationProductionLineProps = await this.repo.create(data);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación de la línea de producción a la locación."

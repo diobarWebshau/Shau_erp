@@ -39,6 +39,17 @@ const getByIdProductInputSchema = z.object({
 });
 
 /**
+ * Schema: GET /location-location-type/id/:id
+ * ------------------------------------------------------------------
+ */
+const getByIdProductInputProductInputSchema = z.object({
+    params: z.object({ product_id: z.string(), input_id: z.string() }),
+    query: z.object({}).strict(),
+    body: z.object({}).strict(),
+    response: ProductInputReponseSchema.nullable(),
+});
+
+/**
  * Schema: POST /location-location-type
  * ------------------------------------------------------------------
  */
@@ -140,12 +151,21 @@ type DeleteProductInputSchema = EndpointSchema<
     z.infer<typeof deleteProductInputSchema>["response"]
 >;
 
+type GetByIdProductInputProductInputSchema = EndpointSchema<
+    z.infer<typeof getByIdProductInputProductInputSchema>["params"],
+    z.infer<typeof getByIdProductInputProductInputSchema>["body"],
+    z.infer<typeof getByIdProductInputProductInputSchema>["query"],
+    z.infer<typeof getByIdProductInputProductInputSchema>["response"]
+>;
+
+
 export {
     deleteProductInputSchema,
     createProductInputSchema,
     getAllProductInputSchema,
     updateProductInputSchema,
-    getByIdProductInputSchema
+    getByIdProductInputSchema,
+    getByIdProductInputProductInputSchema
 };
 
 export type {
@@ -153,5 +173,6 @@ export type {
     GetAllProductInputsSchema,
     GetByIdProductInputSchema,
     UpdateProductInputSchema,
-    DeleteProductInputSchema
+    DeleteProductInputSchema,
+    GetByIdProductInputProductInputSchema
 };

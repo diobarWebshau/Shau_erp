@@ -1,6 +1,9 @@
+import { Transaction } from "sequelize";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
 import type { LocationLocationTypeProps, LocationLocationTypeCreateProps } from "../../domain/location-location-type.types";
 import HttpError from "@shared/errors/http/http-error";
+import { ILocationTypeRepository } from "@src/modules/core/location-type/domain/location-type.repository";
+import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
 
 /**
  * UseCase
@@ -44,9 +47,25 @@ import HttpError from "@shared/errors/http/http-error";
  */
 
 export class CreateLocationLocationTypeUseCase {
-    constructor(private readonly repo: ILocationLocationTypeRepository) { }
-    async execute(data: LocationLocationTypeCreateProps): Promise<LocationLocationTypeProps> {
-        const created: LocationLocationTypeProps = await this.repo.create(data);
+    constructor(
+        private readonly repo: ILocationLocationTypeRepository,
+        private readonly repoLocation: ILocationRepository,
+        private readonly repoLocationType: ILocationTypeRepository
+    ) { }
+    async execute(data: LocationLocationTypeCreateProps, tx?: Transaction): Promise<LocationLocationTypeProps> {
+        const validLocation = await this.repoLocation.findById(data.location_id);
+        if (!validLocation) throw new HttpError(404,
+            "La locación seleccionada no existe."
+        );
+        const validLocationType = await this.repoLocationType.findById(data.location_type_id);
+        if (!validLocationType) throw new HttpError(404,
+            "El tipo de locación seleccionado no existe."
+        );
+        const validDuplicate = await this.repo.findByLocationLocationType(data.location_id, data.location_type_id);
+        if (validDuplicate) throw new HttpError(409,
+            "La locación ya tiene asignado ese tipo de locación."
+        );
+        const created: LocationLocationTypeProps = await this.repo.create(data, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del tipo de locación a la locación."
         );

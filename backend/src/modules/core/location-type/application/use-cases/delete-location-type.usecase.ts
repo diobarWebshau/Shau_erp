@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationTypeRepository } from "../../domain/location-type.repository";
 
 /**
@@ -43,7 +44,7 @@ import type { ILocationTypeRepository } from "../../domain/location-type.reposit
 
 export class DeleteLocationTypeUseCase {
     constructor(private readonly repo: ILocationTypeRepository) { }
-    async execute(id: string): Promise<void> {
-        await this.repo.delete(id);
+    async execute(id: number, tx?: Transaction): Promise<void> {
+        await this.repo.delete(id, tx);
     }
 }

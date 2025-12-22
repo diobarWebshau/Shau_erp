@@ -44,5 +44,5 @@ import type { ProductInputProps } from "../../domain/product-input.types";
 
 export class GetProductInputByIdUseCase {
     constructor(private readonly repo: IProductInputRepository) { }
-    execute = async (id: string): Promise<ProductInputProps | null> => this.repo.findById(id);
+    execute = async (id: number): Promise<ProductInputProps | null> => this.repo.findById(id);
 };

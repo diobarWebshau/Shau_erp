@@ -1,4 +1,4 @@
-import type { CreateLocationProductionLineSchema, DeleteLocationProductionLineSchema, GetAllLocationProductionLinesSchema, GetByIdLocationProductionLineSchema, UpdateLocationProductionLineSchema } from "../../application/dto/location-production-line.endpoint.schema";
+import type { CreateLocationProductionLineSchema, DeleteLocationProductionLineSchema, GetAllLocationProductionLinesSchema, GetByIdLocationProductionLineSchema, GetByLocationProductionLineIdLocationProductionLineSchema, UpdateLocationProductionLineSchema } from "../../application/dto/location-production-line.endpoint.schema";
 import type { LocationProductionLineCreateDto, LocationProductionLineResponseDto, LocationProductionLineUpdateDto } from "../../application/dto/location-production-line.model.schema";
 import { GetLocationProductionLineByIdUseCase } from "../../application/use-cases/get-location-production-line-by-id.usecase";
 import { CreateLocationProductionLineUseCase } from "../../application/use-cases/create-location-production-line.usecase";
@@ -7,6 +7,9 @@ import { GetAllLocationProductionLineUseCase } from "../../application/use-cases
 import { DeleteLocationProductionLineUseCase } from "../../application/use-cases/delete-location-production-line.usecase";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { LocationProductionLineRepository } from "../repository/location-production-line.repository";
+import { GetLocationProductionLineByIdLocationProductionLineUseCase } from "../../application/use-cases/get-location-production-line-by-location-location-type.usecase";
+import { ProductionLineRepository } from "@src/modules/core/production-line/infrastructure/repository/production-line.repository";
+import { LocationRepository } from "@src/modules/core/location/infrastructure/repository/location.repository";
 
 /**
  * Router (Infrastructure / HTTP)
@@ -49,21 +52,27 @@ import { LocationProductionLineRepository } from "../repository/location-product
 export class LocationProductionLineController {
 
     private readonly repo: LocationProductionLineRepository;
+    private readonly repoLocation: LocationRepository;
+    private readonly repoProductionLine: ProductionLineRepository;
     private readonly getAllUseCase: GetAllLocationProductionLineUseCase;
     private readonly getByIdUseCase: GetLocationProductionLineByIdUseCase;
+    private readonly getByIdLocationProductionLine: GetLocationProductionLineByIdLocationProductionLineUseCase;
     private readonly createUseCase: CreateLocationProductionLineUseCase;
     private readonly updateUseCase: UpdateLocationProductionLineUseCase;
     private readonly deleteUseCase: DeleteLocationProductionLineUseCase;
 
     constructor() {
         this.repo = new LocationProductionLineRepository();
+        this.repoLocation = new LocationRepository();
+        this.repoProductionLine = new ProductionLineRepository();
         this.getAllUseCase = new GetAllLocationProductionLineUseCase(this.repo);
         this.getByIdUseCase = new GetLocationProductionLineByIdUseCase(this.repo);
-        this.createUseCase = new CreateLocationProductionLineUseCase(this.repo);
+        this.createUseCase = new CreateLocationProductionLineUseCase(this.repo, this.repoLocation, this.repoProductionLine);
         this.updateUseCase = new UpdateLocationProductionLineUseCase(this.repo);
         this.deleteUseCase = new DeleteLocationProductionLineUseCase(this.repo);
+        this.getByIdLocationProductionLine = new GetLocationProductionLineByIdLocationProductionLineUseCase(this.repo);
     };
-    
+
     // ============================================================
     // GET ALL
     // ============================================================
@@ -77,7 +86,16 @@ export class LocationProductionLineController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdLocationProductionLineSchema>, res: ApiResponse<GetByIdLocationProductionLineSchema>) => {
         const { id }: GetByIdLocationProductionLineSchema["params"] = req.params
-        const result: LocationProductionLineResponseDto | null = await this.getByIdUseCase.execute(id);
+        const result: LocationProductionLineResponseDto | null = await this.getByIdUseCase.execute(Number(id));
+        if (!result) return res.status(204).send(null);
+        return res.status(200).send(result);
+    };
+    // ============================================================
+    // GET BY ID
+    // ============================================================
+    getByIdLocationProductionLineId = async (req: ApiRequest<GetByLocationProductionLineIdLocationProductionLineSchema>, res: ApiResponse<GetByLocationProductionLineIdLocationProductionLineSchema>) => {
+        const { location_id, production_line_id }: GetByLocationProductionLineIdLocationProductionLineSchema["params"] = req.params
+        const result: LocationProductionLineResponseDto | null = await this.getByIdLocationProductionLine.execute(Number(location_id), Number(production_line_id));
         if (!result) return res.status(204).send(null);
         return res.status(200).send(result);
     };
@@ -97,7 +115,7 @@ export class LocationProductionLineController {
     update = async (req: ApiRequest<UpdateLocationProductionLineSchema>, res: ApiResponse<UpdateLocationProductionLineSchema>) => {
         const { id }: UpdateLocationProductionLineSchema["params"] = req.params;
         const body: LocationProductionLineUpdateDto = req.body;
-        const updated = await this.updateUseCase.execute(id, body);
+        const updated = await this.updateUseCase.execute(Number(id), body);
         return res.status(200).send(updated);
     };
 
@@ -106,7 +124,7 @@ export class LocationProductionLineController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteLocationProductionLineSchema>, res: ApiResponse<DeleteLocationProductionLineSchema>) => {
         const { id }: DeleteLocationProductionLineSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 }

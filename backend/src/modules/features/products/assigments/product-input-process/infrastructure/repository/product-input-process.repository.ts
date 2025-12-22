@@ -1,8 +1,7 @@
-import type { ProductInputCreateProps, ProductInputProps, ProductInputUpdateProps } from "../../domain/product-input-process.types";
-import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
-import { ProductInputModel } from "../orm/product-input-process.orm";
+import type { ProductInputProcessCreateProps, ProductInputProcessProps, ProductInputProcessUpdateProps } from "../../domain/product-input-process.types";
+import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
+import { ProductInputProcessModel } from "../orm/product-input-process.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -53,105 +52,90 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductInputModel): ProductInputProps => {
-    const json: ProductInputProps = model.toJSON();
+const mapModelToDomain = (model: ProductInputProcessModel): ProductInputProcessProps => {
+    const json: ProductInputProcessProps = model.toJSON();
     return {
         id: json.id,
-        input_id: json.input_id,
+        product_input_id: json.product_input_id,
+        product_process_id: json.product_process_id,
         product_id: json.product_id,
-        equivalence: json.equivalence
+        qty: json.qty
     };
 };
 
-export class ProductInputRepository implements IProductInputRepository {
+export class ProductInputProcessRepository implements IProductInputProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductInputProps[]> => {
-        const rows: ProductInputModel[] = await ProductInputModel.findAll({
-            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
+    findAll = async (): Promise<ProductInputProcessProps[]> => {
+        const rows: ProductInputProcessModel[] = await ProductInputProcessModel.findAll({
+            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
         });
-        const rowsMap: ProductInputProps[] = rows.map((r) => mapModelToDomain(r));
+        const rowsMap: ProductInputProcessProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: string): Promise<ProductInputProps | null> => {
-        const row: ProductInputModel | null = await ProductInputModel.findByPk(id, {
-            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
+    findById = async (id: number): Promise<ProductInputProcessProps | null> => {
+        const row: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
+            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
+        });
+        return row ? mapModelToDomain(row) : null;
+    }
+
+    findByProductInputProcess = async (product_id: number, product_input_id: number, product_process_id: number): Promise<ProductInputProcessProps | null> => {
+        const row: ProductInputProcessModel | null = await ProductInputProcessModel.findOne({
+            where: {
+                product_id: product_id,
+                product_input_id: product_input_id,
+                product_process_id: product_process_id
+            },
+            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ProductInputCreateProps): Promise<ProductInputProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ProductInputModel = await ProductInputModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la asignación del insumo al producto.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: ProductInputProcessCreateProps, tx?: Transaction): Promise<ProductInputProcessProps> => {
+        const created: ProductInputProcessModel = await ProductInputProcessModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible asignar la cantidad de insumos consumidos para este proceso del producto.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: ProductInputUpdateProps): Promise<ProductInputProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: ProductInputProcessUpdateProps, tx?: Transaction): Promise<ProductInputProcessProps> => {
+        // 1. Verificar existencia
+        const existing: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La asignación de la cantidad de insumos consumidos en un proceso del producto, no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ProductInputProcessModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ProductInputModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
-            // 3. Obtener la producto actualizada
-            const updated: ProductInputModel | null = await ProductInputModel.findByPk(id, {
-                transaction,
-                attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
+        // 3. Obtener la producto actualizada
+        const updated: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
+            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la asignación de la cantidad de insumos consumidos para este proceso del producto que se pretende eliminar."
+        );
+        const deleted: number = await ProductInputProcessModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la asignación del insumo al producto que se pretende eliminar."
-            );
-            const deleted: number = await ProductInputModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del insumo al producto.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminarla la asignación de la cantidad de insumos consumidos para este proceso del producto.");
+        return;
     }
 }

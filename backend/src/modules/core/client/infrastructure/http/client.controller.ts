@@ -117,7 +117,7 @@ export class ClientController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdClientSchema>, res: ApiResponse<GetByIdClientSchema>) => {
         const { id }: GetByIdClientSchema["params"] = req.params
-        const result: ClientProps | null = await this.getByIdUseCase.execute(id);
+        const result: ClientProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: ClientResponseDto = this.formatResponse(result)
         return res.status(200).send(formatted);
@@ -128,7 +128,7 @@ export class ClientController {
     // ============================================================
     getByCfdi = async (req: ApiRequest<GetByIdClientSchema>, res: ApiResponse<GetByIdClientSchema>) => {
         const { id }: GetByIdClientSchema["params"] = req.params
-        const result: ClientProps | null = await this.getByIdUseCase.execute(id);
+        const result: ClientProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: ClientResponseDto = this.formatResponse(result)
         return res.status(200).send(formatted);
@@ -172,7 +172,7 @@ export class ClientController {
     update = async (req: ApiRequest<UpdateClientSchema>, res: ApiResponse<UpdateClientSchema>) => {
         const { id }: UpdateClientSchema["params"] = req.params;
         const body: UpdateClientSchema["body"] = req.body;
-        const updated = await this.updateUseCase.execute(id, body);
+        const updated = await this.updateUseCase.execute(Number(id), body);
         const formatted: ClientResponseDto = this.formatResponse(updated);
         return res.status(200).send(formatted);
     };
@@ -182,7 +182,7 @@ export class ClientController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteClientSchema>, res: ApiResponse<DeleteClientSchema>) => {
         const { id }: DeleteClientSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 };

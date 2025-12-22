@@ -1,15 +1,18 @@
 import type { ProductProcessCreateDto, ProductProcessResponseDto, ProductProcessUpdateDto } from "../../application/dto/product-process.model.schema";
+import { GetProductProcessByIdProductProcessUseCase } from "../../application/use-cases/get-product-process-by-id-product-process.usecase";
 import { GetProductProcessByIdUseCase } from "../../application/use-cases/get-product-process-by-id.usecase";
+import { GetAllProductProcessUseCase } from "../../application/use-cases/get-all-product-process.usecase";
 import { CreateProductProcessUseCase } from "../../application/use-cases/create-product-process.usecase";
 import { UpdateProductProcessUseCase } from "../../application/use-cases/update-product-process.usecase";
-import { GetAllProductProcessUseCase } from "../../application/use-cases/get-all-product-process.usecase";
 import { DeleteProductProcessUseCase } from "../../application/use-cases/delete-product-process.usecase";
+import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
+import ProcessRepository from "@modules/core/process/infrastructure/repository/process.repository";
 import { ProductProcessRepository } from "../repository/product-process.repository";
 import {
     CreateProductProcessSchema, DeleteProductProcessSchema,
     GetAllProductProcesssSchema, GetByIdProductProcessSchema,
-    UpdateProductProcessSchema
+    UpdateProductProcessSchema, GetByIdProductProcessProductProcesSchema
 } from "../../application/dto/product-process.endpoint.schema"
 
 /**
@@ -65,17 +68,23 @@ import {
 export class ProductProcessController {
 
     private readonly repo: ProductProcessRepository;
+    private readonly repoProduct: ProductRepository;
+    private readonly repoProcess: ProcessRepository;
     private readonly getAllUseCase: GetAllProductProcessUseCase;
     private readonly getByIdUseCase: GetProductProcessByIdUseCase;
+    private readonly getByIdProductProcessUseCase: GetProductProcessByIdProductProcessUseCase;
     private readonly createUseCase: CreateProductProcessUseCase;
     private readonly updateUseCase: UpdateProductProcessUseCase;
     private readonly deleteUseCase: DeleteProductProcessUseCase;
 
     constructor() {
         this.repo = new ProductProcessRepository();
+        this.repoProduct = new ProductRepository();
+        this.repoProcess = new ProcessRepository();
+        this.getByIdProductProcessUseCase = new GetProductProcessByIdProductProcessUseCase(this.repo);
         this.getAllUseCase = new GetAllProductProcessUseCase(this.repo);
         this.getByIdUseCase = new GetProductProcessByIdUseCase(this.repo);
-        this.createUseCase = new CreateProductProcessUseCase(this.repo);
+        this.createUseCase = new CreateProductProcessUseCase(this.repo, this.repoProduct, this.repoProcess);
         this.updateUseCase = new UpdateProductProcessUseCase(this.repo);
         this.deleteUseCase = new DeleteProductProcessUseCase(this.repo);
     };
@@ -94,6 +103,16 @@ export class ProductProcessController {
     getById = async (req: ApiRequest<GetByIdProductProcessSchema>, res: ApiResponse<GetByIdProductProcessSchema>) => {
         const { id }: GetByIdProductProcessSchema["params"] = req.params
         const result: ProductProcessResponseDto | null = await this.getByIdUseCase.execute(Number(id));
+        if (!result) return res.status(204).send(null);
+        return res.status(200).send(result);
+    };
+
+    // ============================================================
+    // GET BY ID
+    // ============================================================
+    getByIdProductProcess = async (req: ApiRequest<GetByIdProductProcessProductProcesSchema>, res: ApiResponse<GetByIdProductProcessProductProcesSchema>) => {
+        const { process_id, product_id }: GetByIdProductProcessProductProcesSchema["params"] = req.params
+        const result: ProductProcessResponseDto | null = await this.getByIdProductProcessUseCase.execute(Number(product_id), Number(process_id));
         if (!result) return res.status(204).send(null);
         return res.status(200).send(result);
     };

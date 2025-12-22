@@ -3,7 +3,7 @@ import { validateRequest } from "@middlewares/zod/zod.middleware";
 import {
     createProductProcessSchema, deleteProductProcessSchema,
     getAllProductProcessSchema, getByIdProductProcessSchema,
-    updateProductProcessSchema
+    updateProductProcessSchema, getByIdProductProcessProductProcesSchema
 } from "../../application/dto/product-process.endpoint.schema";
 import { ProductProcessController } from "./product-process.controller";
 import { Router } from "express";
@@ -51,6 +51,7 @@ export const ProductProcessRouter = (): Router => {
     const controller: ProductProcessController = new ProductProcessController();
     router.get("/", validateRequest(getAllProductProcessSchema), controller.getAll);
     router.get("/id/:id", validateRequest(getByIdProductProcessSchema), controller.getById);
+    router.get("/product/:product_id/process/:process_id ", validateRequest(getByIdProductProcessProductProcesSchema), controller.getByIdProductProcess);
     router.post("/", validateRequest(createProductProcessSchema), controller.create);
     router.patch("/:id", validateRequest(updateProductProcessSchema), controller.update);
     router.delete("/:id", validateRequest(deleteProductProcessSchema), controller.delete);

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
 
 /**
@@ -43,7 +44,7 @@ import type { IProcessRepository } from "../../domain/process.repository";
 
 export class DeleteProcessUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    async execute(id: string): Promise<void> {
-        await this.repo.delete(id);
+    async execute(id: number, tx?: Transaction): Promise<void> {
+        await this.repo.delete(id, tx);
     }
 }

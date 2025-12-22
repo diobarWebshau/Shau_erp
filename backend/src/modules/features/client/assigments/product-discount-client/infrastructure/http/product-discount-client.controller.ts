@@ -15,6 +15,8 @@ import {
     UpdateProductDiscountClientSchema, GetByProductIdProductDiscountClientSchema,
     GetByProductIdClientIdProductDiscountClientSchema
 } from "../../application/dto/product_discount-client.endpoint.schema"
+import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
+import { ClientRepository } from "@src/modules/core/client/infrastructure/repository/client.repository";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -69,6 +71,8 @@ import {
 export class ProductDiscountClientController {
 
     private readonly repo: ProductDiscountClientRepository;
+    private readonly repoProduct: ProductRepository;
+    private readonly repoClient: ClientRepository;
     private readonly getAllUseCase: GetAllProductDiscountClientUseCase;
     private readonly getByIdUseCase: GetProductDiscountClientByIdUseCase;
     private readonly createUseCase: CreateProductDiscountClientUseCase;
@@ -79,9 +83,11 @@ export class ProductDiscountClientController {
 
     constructor() {
         this.repo = new ProductDiscountClientRepository();
+        this.repoProduct = new ProductRepository();
+        this.repoClient = new ClientRepository();
         this.getAllUseCase = new GetAllProductDiscountClientUseCase(this.repo);
         this.getByIdUseCase = new GetProductDiscountClientByIdUseCase(this.repo);
-        this.createUseCase = new CreateProductDiscountClientUseCase(this.repo);
+        this.createUseCase = new CreateProductDiscountClientUseCase(this.repo, this.repoProduct, this.repoClient);
         this.updateUseCase = new UpdateProductDiscountClientUseCase(this.repo);
         this.deleteUseCase = new DeleteProductDiscountClientUseCase(this.repo);
         this.getByProductUseCase = new GetProductDiscountClientByProductUseCase(this.repo);

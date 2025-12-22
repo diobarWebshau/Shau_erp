@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ProductProcessProps, ProductProcessCreateProps, ProductProcessUpdateProps } from "./product-process.types";
 
 /**
@@ -45,7 +46,8 @@ import type { ProductProcessProps, ProductProcessCreateProps, ProductProcessUpda
 export interface IProductProcessRepository {
     findAll(): Promise<ProductProcessProps[]>;
     findById(id: number): Promise<ProductProcessProps | null>;
-    create(data: ProductProcessCreateProps): Promise<ProductProcessProps>;
-    update(id: number, data: ProductProcessUpdateProps): Promise<ProductProcessProps>;
-    delete(id: number): Promise<void>;
+    findByIdProductInput(product_id: number, input_id: number): Promise<ProductProcessProps | null>;
+    create(data: ProductProcessCreateProps, tx?: Transaction): Promise<ProductProcessProps>;
+    update(id: number, data: ProductProcessUpdateProps, tx?: Transaction): Promise<ProductProcessProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 };

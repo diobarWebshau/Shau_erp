@@ -5,6 +5,7 @@ import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { checkRangeConflicts } from "@src/helpers/check-range-conflicts";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -49,7 +50,7 @@ import { checkRangeConflicts } from "@src/helpers/check-range-conflicts";
 
 export class UpdateProductDiscountRangeUseCase {
     constructor(private readonly repo: IProductDiscountRangeRepository) { }
-    async execute(id: number, data: ProductDiscountRangeUpdateProps): Promise<ProductDiscountRangeProps> {
+    async execute(id: number, data: ProductDiscountRangeUpdateProps, tx?: Transaction): Promise<ProductDiscountRangeProps> {
         const existing: ProductDiscountRangeProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
@@ -90,7 +91,7 @@ export class UpdateProductDiscountRangeUseCase {
                 "El rango del descueto se traslapa con otro descuento ya existente para el producto."
             );
         }
-        const updated: ProductDiscountRangeProps = await this.repo.update(id, updateValues);
+        const updated: ProductDiscountRangeProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion del insumo al producto."
         );

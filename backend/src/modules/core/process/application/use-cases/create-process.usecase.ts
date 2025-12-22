@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
 import type { ProcessCreateProps, ProcessProps } from "../../domain/process.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,8 +46,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class CreateProcessUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    execute = async (data: ProcessCreateProps) => {
-        // ⭐ VALIDACIÓN DE DUPLICADO POR NAME (idéntica al service original)
+    execute = async (data: ProcessCreateProps, tx?: Transaction) => {
         if (data.name) {
             const existsByName = await this.repo.findByName(data.name);
             if (existsByName)
@@ -55,17 +55,7 @@ export class CreateProcessUseCase {
                     "El nombre ingresado para el nuevo proceso, ya esta utilizado por otro proceso."
                 );
         }
-        /**
-         * ⭐ CREACIÓN DEL TIPO DE proceso
-         *
-         * El repositorio se encarga de:
-         *   - crear la transacción
-         *   - ejecutar el insert
-         *   - hacer commit o rollback
-         *
-         * Igual que tu implementación de service, pero desacoplado.
-         */
-        const created: ProcessProps = await this.repo.create(data);
+        const created: ProcessProps = await this.repo.create(data, tx);
         if (!created)
             throw new HttpError(500, "No fue posible crear el nuevo tipo de proceso.");
         return created;

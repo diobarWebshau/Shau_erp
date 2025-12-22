@@ -3,7 +3,6 @@ import type { InputTypeProps, InputTypeCreateProps, InputTypeUpdateProps } from 
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
 import { InputTypeModel } from "../orm/input-type.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -77,7 +76,7 @@ export class InputTypeRepository implements IInputTypeRepository {
         return rows.map(mapModelToDomain);
     }
 
-    async findById(id: string): Promise<InputTypeProps | null> {
+    async findById(id: number): Promise<InputTypeProps | null> {
         const row: InputTypeModel | null = await InputTypeModel.findByPk(id, {
             attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[])
         });
@@ -95,79 +94,51 @@ export class InputTypeRepository implements IInputTypeRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    async create(data: InputTypeCreateProps): Promise<InputTypeProps> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: InputTypeModel | null = await InputTypeModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear el tipo de insumo.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    async create(data: InputTypeCreateProps, tx?: Transaction): Promise<InputTypeProps> {
+        const created: InputTypeModel | null = await InputTypeModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear el tipo de insumo.");
+        return mapModelToDomain(created);
     }
 
     // ================================================================
     // UPDATE
     // ================================================================
-    async update(id: string, data: InputTypeUpdateProps): Promise<InputTypeProps> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    async update(id: number, data: InputTypeUpdateProps, tx?: Transaction): Promise<InputTypeProps> {
+        // 1. Verificar existencia
+        const existing: InputTypeProps | null = await InputTypeModel.findByPk(id);
+        if (!existing) throw new HttpError(
+            404,
+            "El tipo de insumo que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await InputTypeModel.update(data, {
+            where: { id },
+            transaction: tx
         });
-        try {
-            // 1. Verificar existencia
-            const existing: InputTypeProps | null = await InputTypeModel.findByPk(id);
-            if (!existing) throw new HttpError(
-                404,
-                "El tipo de insumo que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await InputTypeModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el tipo de insumo.");
-            // 3. Obtener la insumo actualizada
-            const updated: InputTypeModel | null = await InputTypeModel.findByPk(id, {
-                transaction,
-                attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar el tipo de insumo.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el tipo de insumo.");
+        // 3. Obtener la insumo actualizada
+        const updated: InputTypeModel | null = await InputTypeModel.findByPk(id, {
+            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar el tipo de insumo.");
+        return mapModelToDomain(updated);
     }
 
     // ================================================================
     // DELETE
     // ================================================================
-    async delete(id: string): Promise<void> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    async delete(id: number, tx?: Transaction): Promise<void> {
+        const existing: InputTypeModel | null = await InputTypeModel.findByPk(id);
+        if (!existing) throw new HttpError(
+            404,
+            "No se encontro el tipo de insumo que se pretende eliminar."
+        );
+        const deleted: number = await InputTypeModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: InputTypeModel | null = await InputTypeModel.findByPk(id);
-            if (!existing) throw new HttpError(
-                404,
-                "No se encontro el tipo de insumo que se pretende eliminar."
-            );
-            const deleted: number = await InputTypeModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar el tipo de insumo.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar el tipo de insumo.");
+        return;
     }
 }
 

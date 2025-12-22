@@ -2,7 +2,6 @@ import type { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateP
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import { ClientAddressModel } from "../orm/client-address.orm";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 const mapModelToDomain = (model: ClientAddressModel): ClientAddressProps => {
@@ -33,7 +32,7 @@ export class ClientAddressRepository implements IClientAddressRepository {
         const rowsMap: ClientAddressProps[] = rows.map((pl) => mapModelToDomain(pl));
         return rowsMap;
     }
-    findById = async (id: string): Promise<ClientAddressProps | null> => {
+    findById = async (id: number): Promise<ClientAddressProps | null> => {
         const row: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
             attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[])
         });
@@ -49,76 +48,48 @@ export class ClientAddressRepository implements IClientAddressRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ClientAddressCreateProps): Promise<ClientAddressProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ClientAddressModel = await ClientAddressModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la nueva dirección del cliente.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: ClientAddressCreateProps, tx?: Transaction): Promise<ClientAddressProps> => {
+        const created: ClientAddressModel = await ClientAddressModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear la nueva dirección del cliente.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: ClientAddressUpdateProps): Promise<ClientAddressProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: ClientAddressUpdateProps, tx?: Transaction): Promise<ClientAddressProps> => {
+        // 1. Verificar existencia
+        const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La dirección del cliente que se desea actualizar no fue posible encontrarlo."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ClientAddressModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La dirección del cliente que se desea actualizar no fue posible encontrarlo."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ClientAddressModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
-            // 3. Obtener la locación actualizada
-            const updated: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
-                transaction,
-                attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
+        // 3. Obtener la locación actualizada
+        const updated: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
+            attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la dirección del cliente que se pretende eliminar."
+        );
+        const deleted: number = await ClientAddressModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la dirección del cliente que se pretende eliminar."
-            );
-            const deleted: number = await ClientAddressModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar el cliente.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar el cliente.");
+        return;
     }
 }
 

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ProductInputProps, ProductInputCreateProps, ProductInputUpdateProps } from "./product-input.types";
 
 /**
@@ -44,8 +45,9 @@ import type { ProductInputProps, ProductInputCreateProps, ProductInputUpdateProp
 
 export interface IProductInputRepository {
     findAll(): Promise<ProductInputProps[]>;
-    findById(id: string): Promise<ProductInputProps | null>;
-    create(data: ProductInputCreateProps): Promise<ProductInputProps>;
-    update(id: string, data: ProductInputUpdateProps): Promise<ProductInputProps>;
-    delete(id: string): Promise<void>;
+    findById(id: number): Promise<ProductInputProps | null>;
+    findByIdProductInput(product_id: number, input_id: number): Promise<ProductInputProps | null>;
+    create(data: ProductInputCreateProps, tx?: Transaction): Promise<ProductInputProps>;
+    update(id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 };

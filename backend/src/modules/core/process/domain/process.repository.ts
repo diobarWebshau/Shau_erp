@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ProcessCreateProps, ProcessUpdateProps, ProcessProps, ProcessSearchCriteria } from "./process.types";
 
 /**
@@ -44,9 +45,9 @@ import type { ProcessCreateProps, ProcessUpdateProps, ProcessProps, ProcessSearc
 
 export interface IProcessRepository {
     findAll(query: ProcessSearchCriteria): Promise<ProcessProps[]>,
-    findById(id: string): Promise<ProcessProps | null>,
+    findById(id: number): Promise<ProcessProps | null>,
     findByName(name: string): Promise<ProcessProps | null>,
-    create(data: ProcessCreateProps): Promise<ProcessProps>;
-    update(id: string, data: ProcessUpdateProps): Promise<ProcessProps>;
-    delete(id: string): Promise<void>;
+    create(data: ProcessCreateProps, tx?: Transaction): Promise<ProcessProps>;
+    update(id: number, data: ProcessUpdateProps, tx?: Transaction): Promise<ProcessProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 }

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
 import { ProductionLineProps } from "../../domain/production-line.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,12 +46,12 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteProductionLineUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
-    async execute(id: string): Promise<void> {
+    async execute(id: number, tx?: Transaction): Promise<void> {
         const exists: ProductionLineProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro la línea de producción que se pretende eliminar."
         );
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

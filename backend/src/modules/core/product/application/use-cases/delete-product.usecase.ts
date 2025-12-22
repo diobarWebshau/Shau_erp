@@ -1,6 +1,7 @@
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -50,7 +51,7 @@ export class DeleteProductUseCase {
         private readonly fileCleanup: IFileCleanupPort
     ) { }
 
-    async execute(id: number): Promise<void> {
+    async execute(id: number, tx?: Transaction): Promise<void> {
         const exists = await this.repo.findById(id);
 
         if (!exists) {
@@ -61,7 +62,7 @@ export class DeleteProductUseCase {
         }
 
         // 1️⃣ Eliminar en BD (operación crítica)
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
 
         // 2️⃣ Programar limpieza de archivos (NO crítica)
         this.fileCleanup.scheduleCleanup(`products/${id}`);

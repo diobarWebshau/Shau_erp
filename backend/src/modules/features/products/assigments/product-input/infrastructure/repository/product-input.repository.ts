@@ -2,7 +2,6 @@ import type { ProductInputCreateProps, ProductInputProps, ProductInputUpdateProp
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
 import { ProductInputModel } from "../orm/product-inputs.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -74,8 +73,18 @@ export class ProductInputRepository implements IProductInputRepository {
         const rowsMap: ProductInputProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: string): Promise<ProductInputProps | null> => {
+    findById = async (id: number): Promise<ProductInputProps | null> => {
         const row: ProductInputModel | null = await ProductInputModel.findByPk(id, {
+            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
+        });
+        return row ? mapModelToDomain(row) : null;
+    }
+    findByIdProductInput = async (product_id: number, input_id: number): Promise<ProductInputProps | null> => {
+        const row: ProductInputModel | null = await ProductInputModel.findOne({
+            where: {
+                product_id: product_id,
+                input_id: input_id
+            },
             attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
@@ -83,75 +92,47 @@ export class ProductInputRepository implements IProductInputRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ProductInputCreateProps): Promise<ProductInputProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ProductInputModel = await ProductInputModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la asignación del insumo al producto.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: ProductInputCreateProps, tx?: Transaction): Promise<ProductInputProps> => {
+        const created: ProductInputModel = await ProductInputModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear la asignación del insumo al producto.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: ProductInputUpdateProps): Promise<ProductInputProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps> => {
+        // 1. Verificar existencia
+        const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ProductInputModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ProductInputModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
-            // 3. Obtener la producto actualizada
-            const updated: ProductInputModel | null = await ProductInputModel.findByPk(id, {
-                transaction,
-                attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
+        // 3. Obtener la producto actualizada
+        const updated: ProductInputModel | null = await ProductInputModel.findByPk(id, {
+            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la asignación del insumo al producto que se pretende eliminar."
+        );
+        const deleted: number = await ProductInputModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la asignación del insumo al producto que se pretende eliminar."
-            );
-            const deleted: number = await ProductInputModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del insumo al producto.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del insumo al producto.");
+        return;
     }
 }

@@ -1,5 +1,5 @@
-import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
-import { ProductInputProps } from "../../domain/product-input-process.types";
+import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
+import { ProductInputProcessProps } from "../../domain/product-input-process.types";
 import HttpError from "@shared/errors/http/http-error";
 
 /**
@@ -43,12 +43,12 @@ import HttpError from "@shared/errors/http/http-error";
  *   para responder a las solicitudes externas.
  */
 
-export class DeleteProductInputUseCase {
-    constructor(private readonly repo: IProductInputRepository) { }
-    async execute(id: string): Promise<void> {
-        const exists: ProductInputProps | null = await this.repo.findById(id);
+export class DeleteProductInputProcessUseCase {
+    constructor(private readonly repo: IProductInputProcessRepository) { }
+    async execute(id: number): Promise<void> {
+        const exists: ProductInputProcessProps | null = await this.repo.findById(Number(id));
         if (!exists) throw new HttpError(404,
-            "No se encontro la asignación del insumo al producto que se pretende eliminar."
+            "No se encontro la asignación de la cantidad de insumos consumidos para este proceso del producto que se pretende eliminar."
         );
         await this.repo.delete(id);
         return;

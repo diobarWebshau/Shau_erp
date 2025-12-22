@@ -2,7 +2,6 @@ import type { ProductDiscountClientCreateProps, ProductDiscountClientProps, Prod
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
 import { ProductDiscountClientModel } from "../orm/product-discount-client.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -105,75 +104,47 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ProductDiscountClientCreateProps): Promise<ProductDiscountClientProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ProductDiscountClientModel = await ProductDiscountClientModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la asignación del descuento por rango al producto.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: ProductDiscountClientCreateProps, tx?: Transaction): Promise<ProductDiscountClientProps> => {
+        const created: ProductDiscountClientModel = await ProductDiscountClientModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear la asignación del descuento por rango al producto.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: number, data: ProductDiscountClientUpdateProps): Promise<ProductDiscountClientProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: ProductDiscountClientUpdateProps, tx?: Transaction): Promise<ProductDiscountClientProps> => {
+        // 1. Verificar existencia
+        const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ProductDiscountClientModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ProductDiscountClientModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
-            // 3. Obtener la producto actualizada
-            const updated: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id, {
-                transaction,
-                attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
+        // 3. Obtener la producto actualizada
+        const updated: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id, {
+            attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: number): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la asignación del descuento del producto para el cliente que se pretende eliminar."
+        );
+        const deleted: number = await ProductDiscountClientModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la asignación del descuento del producto para el cliente que se pretende eliminar."
-            );
-            const deleted: number = await ProductDiscountClientModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del descuento del producto al cliente.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación del descuento del producto al cliente.");
+        return;
     }
 }

@@ -3,6 +3,7 @@ import type { ILocationLocationTypeRepository } from "../../domain/location-loca
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -47,7 +48,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateLocationLocationTypeUseCase {
     constructor(private readonly repo: ILocationLocationTypeRepository) { }
-    async execute(id: string, data: LocationLocationTypeUpdateProps): Promise<LocationLocationTypeProps> {
+    async execute(id: number, data: LocationLocationTypeUpdateProps, tx?: Transaction): Promise<LocationLocationTypeProps> {
         const existing: LocationLocationTypeProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "La asignación del tipo de locacíon a la locación que se desea actualizar no fue posible encontrarla."
@@ -59,7 +60,7 @@ export class UpdateLocationLocationTypeUseCase {
         const merged: LocationLocationTypeProps = { ...existing, ...filteredBody };
         const updateValues: LocationLocationTypeUpdateProps = await diffObjects(existing, merged);
         if (!Object.keys(updateValues).length) return existing;
-        const updated: LocationLocationTypeProps = await this.repo.update(id, updateValues);
+        const updated: LocationLocationTypeProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion del tipo de locacíon a la locación."
         );

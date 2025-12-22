@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateProps } from "./client-address.types";
 
 /**
@@ -44,9 +45,9 @@ import { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateProps 
 
 export interface IClientAddressRepository {
     findAll(): Promise<ClientAddressProps[]>,
-    findById(id: string): Promise<ClientAddressProps | null>,
+    findById(id: number): Promise<ClientAddressProps | null>,
     findByClientId(company_name: string): Promise<ClientAddressProps | null>,
-    create(data: ClientAddressCreateProps): Promise<ClientAddressProps>,
-    update(id: string, data: ClientAddressUpdateProps): Promise<ClientAddressProps>,
-    delete(id: string): Promise<void>
+    create(data: ClientAddressCreateProps, tx?: Transaction): Promise<ClientAddressProps>,
+    update(id: number, data: ClientAddressUpdateProps, tx?: Transaction): Promise<ClientAddressProps>,
+    delete(id: number, tx?: Transaction): Promise<void>
 };

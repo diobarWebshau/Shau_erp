@@ -4,13 +4,16 @@ GET http://localhost:3003/location-production-line HTTP/1.1
 ### GET BY ID
 GET http://localhost:3003/location-production-line/id/2 HTTP/1.1
 
+### GET BY ID
+GET http://localhost:3003/location-production-line/location/3/production-line/1 HTTP/1.1
+
 ### CREATE
 POST http://localhost:3003/location-production-line HTTP/1.1
 Content-Type: application/json
 
 {
-  "location_id": 25,
-  "production_line_id": 26
+  "location_id": 1,
+  "production_line_id": 1
 }
 
 

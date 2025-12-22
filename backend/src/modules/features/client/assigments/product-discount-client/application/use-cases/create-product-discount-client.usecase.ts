@@ -1,6 +1,10 @@
+import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
 import type { ProductDiscountClientProps, ProductDiscountClientCreateProps } from "../../domain/product-discount-client.types";
 import HttpError from "@shared/errors/http/http-error";
+import { IClientRepository } from "@src/modules/core/client/domain/client.repository.interface";
+import { ClientProps } from "@src/modules/core/client/domain/client.types";
+import { ProductProps } from "@src/modules/core/product/domain/product.types";
 
 /**
  * UseCase
@@ -44,14 +48,25 @@ import HttpError from "@shared/errors/http/http-error";
  */
 
 export class CreateProductDiscountClientUseCase {
-    constructor(private readonly repo: IProductDiscountClientRepository) { }
+    constructor(
+        private readonly repo: IProductDiscountClientRepository,
+        private readonly repoProduct: IProductRepository,
+        private readonly repoClient: IClientRepository
+    ) { }
     async execute(data: ProductDiscountClientCreateProps): Promise<ProductDiscountClientProps> {
-        const isExistingDiscount = await this.repo.findByProductClientId(data.product_id, data.client_id);
-        if (isExistingDiscount){
-            throw new HttpError(409,
-                "Ya existe un descuento del producto para este cliente."
-            );
-        }
+        const validClient: ClientProps | null = await this.repoClient.findById(data.client_id);
+        if (!validClient) throw new HttpError(404,
+            "El cliente seleccionado no existe."
+        );
+        const validProduct: ProductProps | null = await this.repoProduct.findById(data.product_id);
+        if (!validProduct) throw new HttpError(404,
+            "El producto seleccionado no existe."
+        );
+        const validDuplicate: ProductDiscountClientProps | null =
+            await this.repo.findByProductClientId(data.product_id, data.product_id);
+        if (validDuplicate) throw new HttpError(409,
+            "El cliente ya tiene un descuento para el producto ingresado."
+        );
         const created: ProductDiscountClientProps = await this.repo.create(data);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del descueto del producto al cliente."

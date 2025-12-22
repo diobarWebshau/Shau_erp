@@ -8,9 +8,12 @@ import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typ
 import { ProductInputRepository } from "../repository/product-input.repository";
 import {
     CreateProductInputSchema, DeleteProductInputSchema,
-    GetAllProductInputsSchema, GetByIdProductInputSchema,
+    GetAllProductInputsSchema, GetByIdProductInputProductInputSchema, GetByIdProductInputSchema,
     UpdateProductInputSchema
 } from "../../application/dto/product-input.endpoint.schema"
+import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
+import { InputRepository } from "@src/modules/core/input/infrastructure/repository/input.repository";
+import { GetProductInputByIdProductInputUseCase } from "../../application/use-cases/get-product-input-by-id-product-input.usecase";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -65,17 +68,23 @@ import {
 export class ProductInputController {
 
     private readonly repo: ProductInputRepository;
+    private readonly repoProduct: ProductRepository;
+    private readonly repoInput: InputRepository;
     private readonly getAllUseCase: GetAllProductInputUseCase;
     private readonly getByIdUseCase: GetProductInputByIdUseCase;
+    private readonly getByIdProductInputUseCase: GetProductInputByIdProductInputUseCase;
     private readonly createUseCase: CreateProductInputUseCase;
     private readonly updateUseCase: UpdateProductInputUseCase;
     private readonly deleteUseCase: DeleteProductInputUseCase;
 
     constructor() {
         this.repo = new ProductInputRepository();
+        this.repoProduct = new ProductRepository();
+        this.repoInput = new InputRepository();
+        this.getByIdProductInputUseCase = new GetProductInputByIdProductInputUseCase(this.repo);
         this.getAllUseCase = new GetAllProductInputUseCase(this.repo);
         this.getByIdUseCase = new GetProductInputByIdUseCase(this.repo);
-        this.createUseCase = new CreateProductInputUseCase(this.repo);
+        this.createUseCase = new CreateProductInputUseCase(this.repo, this.repoProduct, this.repoInput);
         this.updateUseCase = new UpdateProductInputUseCase(this.repo);
         this.deleteUseCase = new DeleteProductInputUseCase(this.repo);
     };
@@ -93,7 +102,17 @@ export class ProductInputController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdProductInputSchema>, res: ApiResponse<GetByIdProductInputSchema>) => {
         const { id }: GetByIdProductInputSchema["params"] = req.params
-        const result: ProductInputResponseDto | null = await this.getByIdUseCase.execute(id);
+        const result: ProductInputResponseDto | null = await this.getByIdUseCase.execute(Number(id));
+        if (!result) return res.status(204).send(null);
+        return res.status(200).send(result);
+    };
+
+    // ============================================================
+    // GET BY ID
+    // ============================================================
+    getByIdProductInput = async (req: ApiRequest<GetByIdProductInputProductInputSchema>, res: ApiResponse<GetByIdProductInputProductInputSchema>) => {
+        const { input_id, product_id }: GetByIdProductInputProductInputSchema["params"] = req.params
+        const result: ProductInputResponseDto | null = await this.getByIdProductInputUseCase.execute(Number(product_id), Number(input_id));
         if (!result) return res.status(204).send(null);
         return res.status(200).send(result);
     };
@@ -113,7 +132,7 @@ export class ProductInputController {
     update = async (req: ApiRequest<UpdateProductInputSchema>, res: ApiResponse<UpdateProductInputSchema>) => {
         const { id }: UpdateProductInputSchema["params"] = req.params;
         const body: ProductInputUpdateDto = req.body;
-        const updated: ProductInputResponseDto = await this.updateUseCase.execute(id, body);
+        const updated: ProductInputResponseDto = await this.updateUseCase.execute(Number(id), body);
         return res.status(200).send(updated);
     };
 
@@ -122,7 +141,7 @@ export class ProductInputController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteProductInputSchema>, res: ApiResponse<DeleteProductInputSchema>) => {
         const { id }: DeleteProductInputSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 }

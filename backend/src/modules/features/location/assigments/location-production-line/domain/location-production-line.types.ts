@@ -52,7 +52,7 @@ interface LocationProductionLineProps {
     production_line_id: number
 }
 
-type LocationProductionLineCreateProps = Partial<Omit<LocationProductionLineProps, "id">>;
+type LocationProductionLineCreateProps = Omit<LocationProductionLineProps, "id">;
 
 type LocationProductionLineUpdateProps = Partial<LocationProductionLineCreateProps>;
 

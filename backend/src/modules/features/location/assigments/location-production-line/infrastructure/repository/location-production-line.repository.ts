@@ -2,7 +2,6 @@ import type { LocationProductionLineCreateProps, LocationProductionLineProps, Lo
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import { LocationProductionLineModel } from "../orm/location-production-line.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
 
 /**
@@ -73,8 +72,18 @@ export class LocationProductionLineRepository implements ILocationProductionLine
         const rowsMap: LocationProductionLineProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: string): Promise<LocationProductionLineProps | null> => {
+    findById = async (id: number): Promise<LocationProductionLineProps | null> => {
         const row: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
+            attributes: LocationProductionLineModel.getAllFields() as ((keyof LocationProductionLineProps)[])
+        });
+        return row ? mapModelToDomain(row) : null;
+    }
+    findByIdLocationProductionLine = async (location_id: number, production_line_id: number): Promise<LocationProductionLineProps | null> => {
+        const row: LocationProductionLineModel | null = await LocationProductionLineModel.findOne({
+            where: {
+                location_id: location_id,
+                production_line_id: production_line_id
+            },
             attributes: LocationProductionLineModel.getAllFields() as ((keyof LocationProductionLineProps)[])
         });
         return row ? mapModelToDomain(row) : null;
@@ -82,75 +91,47 @@ export class LocationProductionLineRepository implements ILocationProductionLine
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: LocationProductionLineCreateProps): Promise<LocationProductionLineProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: LocationProductionLineModel = await LocationProductionLineModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la asignación de la línea de producción a la locación.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: LocationProductionLineCreateProps, tx?: Transaction): Promise<LocationProductionLineProps> => {
+        const created: LocationProductionLineModel = await LocationProductionLineModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear la asignación de la línea de producción a la locación.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: LocationProductionLineUpdateProps): Promise<LocationProductionLineProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: LocationProductionLineUpdateProps, tx?: Transaction): Promise<LocationProductionLineProps> => {
+        // 1. Verificar existencia
+        const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await LocationProductionLineModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await LocationProductionLineModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
-            // 3. Obtener la locación actualizada
-            const updated: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
-                transaction,
-                attributes: LocationProductionLineModel.getAllFields() as ((keyof LocationProductionLineProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
+        // 3. Obtener la locación actualizada
+        const updated: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
+            attributes: LocationProductionLineModel.getAllFields() as ((keyof LocationProductionLineProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la asignación de la línea de producción a la locacíon que se pretende eliminar."
+        );
+        const deleted: number = await LocationProductionLineModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la asignación de la línea de producción a la locacíon que se pretende eliminar."
-            );
-            const deleted: number = await LocationProductionLineModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación de la línea de producción a la locación.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar la asignación de la línea de producción a la locación.");
+        return;
     }
 }

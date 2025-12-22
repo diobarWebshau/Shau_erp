@@ -44,7 +44,7 @@ import type { ProcessProps } from "../../domain/process.types";
 
 export class GetProcessByIdUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    async execute(id: string): Promise<ProcessProps | null> {
+    async execute(id: number): Promise<ProcessProps | null> {
         return await this.repo.findById(id);
     }
 }

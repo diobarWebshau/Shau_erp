@@ -3,7 +3,6 @@ import type { ProcessProps, ProcessCreateProps, ProcessUpdateProps, ProcessSearc
 import type { IProcessRepository } from "../../domain/process.repository";
 import { ProcessModel } from "../orm/process.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { sequelize } from "@config/mysql/sequelize";
 import { Op, Transaction, WhereOptions } from "sequelize";
 
 /**
@@ -104,7 +103,7 @@ export class ProcessRepository implements IProcessRepository {
         return rows.map(mapModelToDomain);
     }
 
-    async findById(id: string): Promise<ProcessProps | null> {
+    async findById(id: number): Promise<ProcessProps | null> {
         const row: ProcessModel | null = await ProcessModel.findByPk(id, {
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[])
         });
@@ -122,79 +121,51 @@ export class ProcessRepository implements IProcessRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    async create(data: ProcessCreateProps): Promise<ProcessProps> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: ProcessModel | null = await ProcessModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear el tipo de proceso.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    async create(data: ProcessCreateProps, tx?: Transaction): Promise<ProcessProps> {
+        const created: ProcessModel | null = await ProcessModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear el tipo de proceso.");
+        return mapModelToDomain(created);
     }
 
     // ================================================================
     // UPDATE
     // ================================================================
-    async update(id: string, data: ProcessUpdateProps): Promise<ProcessProps> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    async update(id: number, data: ProcessUpdateProps, tx?: Transaction): Promise<ProcessProps> {
+        // 1. Verificar existencia
+        const existing: ProcessProps | null = await ProcessModel.findByPk(id);
+        if (!existing) throw new HttpError(
+            404,
+            "El proceso que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await ProcessModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: ProcessProps | null = await ProcessModel.findByPk(id);
-            if (!existing) throw new HttpError(
-                404,
-                "El proceso que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await ProcessModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el proceso.");
-            // 3. Obtener la proceso actualizada
-            const updated: ProcessModel | null = await ProcessModel.findByPk(id, {
-                transaction,
-                attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar el proceso.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el proceso.");
+        // 3. Obtener la proceso actualizada
+        const updated: ProcessModel | null = await ProcessModel.findByPk(id, {
+            attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar el proceso.");
+        return mapModelToDomain(updated);
     }
 
     // ================================================================
     // DELETE
     // ================================================================
-    async delete(id: string): Promise<void> {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    async delete(id: number, tx?: Transaction): Promise<void> {
+        const existing: ProcessModel | null = await ProcessModel.findByPk(id);
+        if (!existing) throw new HttpError(
+            404,
+            "No se encontro el proceso que se pretende eliminar."
+        );
+        const deleted: number = await ProcessModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing: ProcessModel | null = await ProcessModel.findByPk(id);
-            if (!existing) throw new HttpError(
-                404,
-                "No se encontro el proceso que se pretende eliminar."
-            );
-            const deleted: number = await ProcessModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar el proceso.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar el proceso.");
+        return;
     }
 }
 

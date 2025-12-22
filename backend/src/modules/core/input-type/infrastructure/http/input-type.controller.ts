@@ -1,4 +1,3 @@
-// src/modules/Input/infrastructure/http/Input.controller.ts
 import { GetInputTypeByNameUseCase } from "../../application/use-cases/get-input-type-by-name.usecase";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { GetInputTypeByIdUseCase } from "../../application/use-cases/get-input-type-by-id.usecase";
@@ -111,7 +110,7 @@ export class InputTypeController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdinputTypeSchema>, res: ApiResponse<GetByIdinputTypeSchema>) => {
         const { id }: GetByIdinputTypeSchema["params"] = req.params;
-        const result: InputTypeProps | null = await this.getByIdUseCase.execute(id);
+        const result: InputTypeProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: InputTypeResponseDto = this.formatResponse(result);
         return res.status(200).send(formatted);
@@ -143,7 +142,7 @@ export class InputTypeController {
     update = async (req: ApiRequest<UpdateinputTypeSchema>, res: ApiResponse<UpdateinputTypeSchema>) => {
         const { id }: UpdateinputTypeSchema["params"] = req.params;
         const body: UpdateinputTypeSchema["body"] = req.body;
-        const updated: InputTypeProps | null = await this.updateUseCase.execute(id, body);
+        const updated: InputTypeProps | null = await this.updateUseCase.execute(Number(id), body);
         const formatted: InputTypeResponseDto = this.formatResponse(updated);
         return res.status(200).send(formatted);
     };
@@ -153,7 +152,7 @@ export class InputTypeController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteinputTypeSchema>, res: ApiResponse<DeleteinputTypeSchema>) => {
         const { id }: DeleteinputTypeSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(204).send(null);
     };
 }

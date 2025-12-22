@@ -39,6 +39,18 @@ const getByIdProductProcessSchema = z.object({
 });
 
 /**
+ * Schema: GET /location-location-type/id/:id
+ * ------------------------------------------------------------------
+ */
+
+const getByIdProductProcessProductProcesSchema = z.object({
+    params: z.object({ product_id: z.string(), process_id: z.string() }),
+    query: z.object({}).strict(),
+    body: z.object({}).strict(),
+    response: ProductProcessReponseSchema.nullable(),
+});
+
+/**
  * Schema: POST /location-location-type
  * ------------------------------------------------------------------
  */
@@ -140,12 +152,21 @@ type DeleteProductProcessSchema = EndpointSchema<
     z.infer<typeof deleteProductProcessSchema>["response"]
 >;
 
+
+type GetByIdProductProcessProductProcesSchema = EndpointSchema<
+    z.infer<typeof getByIdProductProcessProductProcesSchema>["params"],
+    z.infer<typeof getByIdProductProcessProductProcesSchema>["body"],
+    z.infer<typeof getByIdProductProcessProductProcesSchema>["query"],
+    z.infer<typeof getByIdProductProcessProductProcesSchema>["response"]
+>;
+
 export {
     deleteProductProcessSchema,
     createProductProcessSchema,
     getAllProductProcessSchema,
     updateProductProcessSchema,
-    getByIdProductProcessSchema
+    getByIdProductProcessSchema,
+    getByIdProductProcessProductProcesSchema
 };
 
 export type {
@@ -153,5 +174,6 @@ export type {
     GetAllProductProcesssSchema,
     GetByIdProductProcessSchema,
     UpdateProductProcessSchema,
-    DeleteProductProcessSchema
+    DeleteProductProcessSchema,
+    GetByIdProductProcessProductProcesSchema
 };

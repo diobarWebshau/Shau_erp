@@ -8,26 +8,40 @@ import { ProductResponseDto } from "@src/modules/core/product/application/dto/pr
 import { ProductInputResponseDto } from "../../assigments/product-input/application/dto/product-input.model.schema";
 import { ProductProcessResponseDto } from "../../assigments/product-process/application/dto/product-process.model.schema";
 import { ProductDiscountRangeResponseDto } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
+import { } from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
+import { ProductInputProcessCreateProps, ProductInputProcessProps, ProductInputProcessUpdateProps } from "../../assigments/product-input-process/domain/product-input-process.types";
 
 // =========================
 // ORCHESTRATOR — CREATE
 // =========================
 
+type ProductInputOrchestor = ProductInputCreateProps & {
+    input?: InputProps
+    product?: ProductProps
+};
+
+type ProductInputOrchestorCreate = Omit<ProductInputOrchestor, "">
+
+type ProductProcessOrchestratorForAsign = Omit<ProductProcessCreateProps, "process_id"> & {
+    process_id: number;
+    process?: ProcessProps;
+    product?: ProductProps;
+};
+
+type ProductProcessOrchestratorForCreate = Omit<ProductProcessCreateProps, "process_id"> & {
+    process: ProcessCreateProps;
+    process_id?: undefined;
+    product?: ProductProps;
+};
+
 // 🔵 ProductProcess CREATE (existing OR new)
 type ProductProcessOrchestratorCreate =
     // A) existing process
-    (Omit<ProductProcessCreateProps, "process_id"> & {
-        process_id: number;
-        process?: ProcessProps;
-        product?: ProductProps;
-    })
+    ProductProcessOrchestratorForAsign
     |
     // B) new process
-    (Omit<ProductProcessCreateProps, "process_id"> & {
-        process: ProcessCreateProps;
-        process_id?: undefined;
-        product?: ProductProps;
-    });
+    ProductProcessOrchestratorForCreate
+
 
 // 🔵 ProductInput CREATE
 interface ProductInputOrchestratorCreate
@@ -139,10 +153,12 @@ export type {
     ProductInputManager,
     ProductDiscountRangeManager,
     ProductOrchestratorUpdate,
+    ProductProcessOrchestratorForAsign,
+    ProductProcessOrchestratorForCreate,
 
     // SEARCH QUERY
     ProcessSearchCriteria,
-    
+
     // RESPONSE
     ProductOrchestrator,
     ProductOrchestratorResponse,

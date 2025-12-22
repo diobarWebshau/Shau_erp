@@ -116,7 +116,7 @@ export class ProcessController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdProcessSchema>, res: ApiResponse<GetByIdProcessSchema>) => {
         const { id }: GetByIdProcessSchema["params"] = req.params;
-        const result: ProcessProps | null = await this.getByIdUseCase.execute(id);
+        const result: ProcessProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: ProcessResponseDto = this.formatResponse(result);
         return res.status(200).send(formatted);
@@ -152,7 +152,7 @@ export class ProcessController {
     update = async (req: ApiRequest<UpdateProcessSchema>, res: ApiResponse<UpdateProcessSchema>) => {
         const { id }: UpdateProcessSchema["params"] = req.params;
         const body: UpdateProcessSchema["body"] = req.body;
-        const updated: ProcessProps | null = await this.updateUseCase.execute(id, body);
+        const updated: ProcessProps | null = await this.updateUseCase.execute(Number(id), body);
         const formatted: ProcessResponseDto = this.formatResponse(updated);
         return res.status(200).send(formatted);
     };
@@ -163,7 +163,7 @@ export class ProcessController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteProcessSchema>, res: ApiResponse<DeleteProcessSchema>) => {
         const { id }: DeleteProcessSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(204).send(null);
     };
 }

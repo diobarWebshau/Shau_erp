@@ -9,14 +9,17 @@ import { ClientAddressResponseDto } from "../../application/dto/client-address.m
 import { ClientAddressRepository } from "../repository/client-address.repository";
 import { ClientAddressProps } from "../../domain/client-address.types"
 import {
-    GetAllClientAddresssSchema, CreateClientAddressSchema, UpdateClientAddressSchema, DeleteClientAddressSchema,
+    GetAllClientAddresssSchema, CreateClientAddressSchema,
+    UpdateClientAddressSchema, DeleteClientAddressSchema,
     GetByClientIdClientAddressSchema, GetByIdClientAddressSchema
 } from "../../application/dto/client-address.endpoint.schema";
+import { ClientRepository } from "@modules/core/client/infrastructure/repository/client.repository";
 
 
 export class ClientAddressController {
 
-    private readonly repo: ClientAddressRepository;
+    private readonly repoClientAddress: ClientAddressRepository;
+    private readonly repoClient: ClientRepository;
     private readonly getAllUseCase: GetAllClientAddressesUseCase;
     private readonly getByIdUseCase: GetClientAddressByIdUseCase;
     private readonly getByClientIdUseCase: GetClienAddressByClientIdUseCase;
@@ -25,13 +28,14 @@ export class ClientAddressController {
     private readonly deleteUseCase: DeleteClientAddressUseCase;
 
     constructor() {
-        this.repo = new ClientAddressRepository();
-        this.getAllUseCase = new GetAllClientAddressesUseCase(this.repo);
-        this.getByIdUseCase = new GetClientAddressByIdUseCase(this.repo);
-        this.getByClientIdUseCase = new GetClienAddressByClientIdUseCase(this.repo);
-        this.createUseCase = new CreateClientAddressUseCase(this.repo);
-        this.updateUseCase = new UpdateClientAddressUseCase(this.repo);
-        this.deleteUseCase = new DeleteClientAddressUseCase(this.repo);
+        this.repoClientAddress = new ClientAddressRepository();
+        this.repoClient = new ClientRepository();
+        this.getAllUseCase = new GetAllClientAddressesUseCase(this.repoClientAddress);
+        this.getByIdUseCase = new GetClientAddressByIdUseCase(this.repoClientAddress);
+        this.getByClientIdUseCase = new GetClienAddressByClientIdUseCase(this.repoClientAddress);
+        this.createUseCase = new CreateClientAddressUseCase(this.repoClientAddress, this.repoClient);
+        this.updateUseCase = new UpdateClientAddressUseCase(this.repoClientAddress);
+        this.deleteUseCase = new DeleteClientAddressUseCase(this.repoClientAddress);
     }
 
     // ============================================================
@@ -61,7 +65,7 @@ export class ClientAddressController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdClientAddressSchema>, res: ApiResponse<GetByIdClientAddressSchema>) => {
         const { id }: GetByIdClientAddressSchema["params"] = req.params
-        const result: ClientAddressProps | null = await this.getByIdUseCase.execute(id);
+        const result: ClientAddressProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: ClientAddressResponseDto = this.formatResponse(result)
         return res.status(200).send(formatted);
@@ -94,7 +98,7 @@ export class ClientAddressController {
     update = async (req: ApiRequest<UpdateClientAddressSchema>, res: ApiResponse<UpdateClientAddressSchema>) => {
         const { id }: UpdateClientAddressSchema["params"] = req.params;
         const body: UpdateClientAddressSchema["body"] = req.body;
-        const updated = await this.updateUseCase.execute(id, body);
+        const updated = await this.updateUseCase.execute(Number(id), body);
         const formatted: ClientAddressResponseDto = this.formatResponse(updated);
         return res.status(200).send(formatted);
     };
@@ -104,7 +108,7 @@ export class ClientAddressController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteClientAddressSchema>, res: ApiResponse<DeleteClientAddressSchema>) => {
         const { id }: DeleteClientAddressSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 };

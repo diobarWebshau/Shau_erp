@@ -50,6 +50,17 @@ const createLocationLocationTypeSchema = z.object({
 });
 
 /**
+ * Schema: POST /location-location-type
+ * ------------------------------------------------------------------
+ */
+const getByLocationIdLocationTypeIdLocationLocationTypeSchema = z.object({
+    params: z.object({ location_id: z.string(), location_type_id: z.string() }),
+    query: z.object({}).strict(),
+    body: z.object({}).strict(),
+    response: locationLocationTypeReponseSchema.nullable(),
+});
+
+/**
  * Schema: PATCH /location-location-type/:id
  * ------------------------------------------------------------------
  */
@@ -140,12 +151,20 @@ type DeleteLocationLocationTypeSchema = EndpointSchema<
     z.infer<typeof deleteLocationLocationTypeSchema>["response"]
 >;
 
+type GetByLocationIdLocationTypeIdLocationLocationTypeSchema = EndpointSchema<
+    z.infer<typeof getByLocationIdLocationTypeIdLocationLocationTypeSchema>["params"],
+    z.infer<typeof getByLocationIdLocationTypeIdLocationLocationTypeSchema>["body"],
+    z.infer<typeof getByLocationIdLocationTypeIdLocationLocationTypeSchema>["query"],
+    z.infer<typeof getByLocationIdLocationTypeIdLocationLocationTypeSchema>["response"]
+>;
+
 export {
     deleteLocationLocationTypeSchema,
     createLocationLocationTypeSchema,
     getAllLocationLocationTypeSchema,
     updateLocationLocationTypeSchema,
-    getByIdLocationLocationTypeSchema
+    getByIdLocationLocationTypeSchema,
+    getByLocationIdLocationTypeIdLocationLocationTypeSchema
 };
 
 export type {
@@ -153,5 +172,6 @@ export type {
     GetAllLocationLocationTypesSchema,
     GetByIdLocationLocationTypeSchema,
     UpdateLocationLocationTypeSchema,
-    DeleteLocationLocationTypeSchema
+    DeleteLocationLocationTypeSchema,
+    GetByLocationIdLocationTypeIdLocationLocationTypeSchema
 };

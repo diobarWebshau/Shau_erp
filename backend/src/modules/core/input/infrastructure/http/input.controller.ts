@@ -187,9 +187,6 @@ export class InputController {
     // ============================================================
     // CREATE
     // ============================================================
-    // ============================================================
-    // CREATE
-    // ============================================================
     create = async (req: ApiRequest<CreateinputSchema>, res: ApiResponse<CreateinputSchema>) => {
         const body = req.body;
 

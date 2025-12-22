@@ -53,7 +53,7 @@ interface ProcessProps {
     created_at: Date,
     updated_at: Date
 };
-type ProcessCreateProps = Partial<Omit<ProcessProps, "created_at" | "updated_at" | "id">>
+type ProcessCreateProps = Omit<ProcessProps, "created_at" | "updated_at" | "id">
 type ProcessUpdateProps = Partial<ProcessCreateProps>;
 
 interface ProcessSearchCriteria {

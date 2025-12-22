@@ -1,6 +1,8 @@
+import { IInputRepository } from "@src/modules/core/input/domain/input.repository.interface";
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
 import type { ProductInputProps, ProductInputCreateProps } from "../../domain/product-input.types";
 import HttpError from "@shared/errors/http/http-error";
+import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 
 /**
  * UseCase
@@ -44,8 +46,24 @@ import HttpError from "@shared/errors/http/http-error";
  */
 
 export class CreateProductInputUseCase {
-    constructor(private readonly repo: IProductInputRepository) { }
+    constructor(
+        private readonly repo: IProductInputRepository,
+        private readonly repoProduct: IProductRepository,
+        private readonly repoInput: IInputRepository
+    ) { }
     async execute(data: ProductInputCreateProps): Promise<ProductInputProps> {
+        const validateProduct = await this.repoProduct.findById(data.product_id);
+        if (!validateProduct) throw new HttpError(404,
+            "El producto seleccionado al que se desea asignar un insumono existe."
+        );
+        const validateInput = await this.repoInput.findById(data.input_id);
+        if (!validateInput) throw new HttpError(404,
+            "El insumo que se desea asignar al producto no existe."
+        );
+        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.input_id);
+        if (validateDuplicate) throw new HttpError(409,
+            "El producto ya tiene asignado el mismo seleccionado."
+        );
         const created: ProductInputProps = await this.repo.create(data);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del insumo al producto."

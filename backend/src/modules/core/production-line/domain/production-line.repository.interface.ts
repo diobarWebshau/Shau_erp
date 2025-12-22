@@ -1,4 +1,5 @@
 import { ProductionLineProps, ProductionLineCreateProps, ProductionLineUpdateProps } from "./production-line.types";
+import { Transaction } from "sequelize";
 
 /**
  * IRepository
@@ -44,10 +45,10 @@ import { ProductionLineProps, ProductionLineCreateProps, ProductionLineUpdatePro
 
 export interface IProductionLineRepository {
     findAll(): Promise<ProductionLineProps[]>,
-    findById(id: string): Promise<ProductionLineProps | null>,
+    findById(id: number): Promise<ProductionLineProps | null>,
     findByName(name: string): Promise<ProductionLineProps | null>,
     findByCustomId(custom_id: string): Promise<ProductionLineProps | null>,
-    create(data: ProductionLineCreateProps): Promise<ProductionLineProps>,
-    update(id: string, data: ProductionLineUpdateProps): Promise<ProductionLineProps>,
-    delete(id: string): Promise<void>
+    create(data: ProductionLineCreateProps, tx?: Transaction): Promise<ProductionLineProps>,
+    update(id: number, data: ProductionLineUpdateProps, tx?: Transaction): Promise<ProductionLineProps>,
+    delete(id: number, tx?: Transaction): Promise<void>
 };

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
 import { ProductDiscountRangeProps } from "../../domain/product-discount-range.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,12 +46,12 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteProductDiscountRangeUseCase {
     constructor(private readonly repo: IProductDiscountRangeRepository) { }
-    async execute(id: number): Promise<void> {
+    async execute(id: number, tx?: Transaction): Promise<void> {
         const exists: ProductDiscountRangeProps | null = await this.repo.findById(id);
         if (!exists) throw new HttpError(404,
             "No se encontro la asignación del descuento por rango al producto que se pretende eliminar."
         );
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

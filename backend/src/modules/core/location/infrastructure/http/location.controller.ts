@@ -118,7 +118,7 @@ export class LocationController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdLocationSchema>, res: ApiResponse<GetByIdLocationSchema>) => {
         const { id }: GetByIdLocationSchema["params"] = req.params
-        const result: LocationProps | null = await this.getByIdUseCase.execute(id);
+        const result: LocationProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         const formatted: LocationResponseDto = this.formatResponse(result)
         return res.status(200).send(formatted);
@@ -162,7 +162,7 @@ export class LocationController {
     update = async (req: ApiRequest<UpdateLocationSchema>, res: ApiResponse<UpdateLocationSchema>) => {
         const { id }: UpdateLocationSchema["params"] = req.params;
         const body: LocationUpdateDto = req.body;
-        const updated = await this.updateUseCase.execute(id, body);
+        const updated = await this.updateUseCase.execute(Number(id), body);
         const formatted: LocationResponseDto = this.formatResponse(updated);
         return res.status(200).send(formatted);
     };
@@ -172,7 +172,7 @@ export class LocationController {
     // ============================================================
     delete = async (req: ApiRequest<DeleteLocationSchema>, res: ApiResponse<DeleteLocationSchema>) => {
         const { id }: DeleteLocationSchema["params"] = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 };

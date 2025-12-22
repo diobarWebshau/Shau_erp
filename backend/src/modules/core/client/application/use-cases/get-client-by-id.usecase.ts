@@ -44,5 +44,5 @@ import type { ClientProps } from "../../domain/client.types";
 
 export class GetClientByIdUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    execute = async (id: string): Promise<ClientProps | null> => this.repo.findById(id);
+    execute = async (id: number): Promise<ClientProps | null> => this.repo.findById(id);
 };

@@ -44,5 +44,5 @@ import type { LocationProductionLineProps } from "../../domain/location-producti
 
 export class GetLocationProductionLineByIdUseCase {
     constructor(private readonly repo: ILocationProductionLineRepository) { }
-    execute = async (id: string): Promise<LocationProductionLineProps | null> => this.repo.findById(id);
+    execute = async (id: number): Promise<LocationProductionLineProps | null> => this.repo.findById(id);
 };

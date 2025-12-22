@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type {
     LocationProductionLineProps, LocationProductionLineCreateProps,
     LocationProductionLineUpdateProps
@@ -47,8 +48,9 @@ import type {
 
 export interface ILocationProductionLineRepository {
     findAll(): Promise<LocationProductionLineProps[]>;
-    findById(id: string): Promise<LocationProductionLineProps | null>;
-    create(data: LocationProductionLineCreateProps): Promise<LocationProductionLineProps>;
-    update(id: string, data: LocationProductionLineUpdateProps): Promise<LocationProductionLineProps>;
-    delete(id: string): Promise<void>;
+    findById(id: number): Promise<LocationProductionLineProps | null>;
+    findByIdLocationProductionLine(location_id: number, production_line_id: number): Promise<LocationProductionLineProps | null>;
+    create(data: LocationProductionLineCreateProps, tx?: Transaction): Promise<LocationProductionLineProps>;
+    update(id: number, data: LocationProductionLineUpdateProps, tx?: Transaction): Promise<LocationProductionLineProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 };

@@ -45,11 +45,11 @@ import { Transaction } from "sequelize";
 
 export interface IClientRepository {
     findAll(query: ClientSearchCriteria): Promise<ClientProps[]>,
-    findById(id: string): Promise<ClientProps | null>,
+    findById(id: number): Promise<ClientProps | null>,
     findByCfdi(cfdi: string): Promise<ClientProps | null>,
     findByTaxId(tax_id: string): Promise<ClientProps | null>,
     findByCompanyName(company_name: string): Promise<ClientProps | null>,
     create(data: ClientCreateProps, tx?: Transaction): Promise<ClientProps>,
-    update(id: string, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps>,
-    delete(id: string, tx?: Transaction): Promise<void>
+    update(id: number, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps>,
+    delete(id: number, tx?: Transaction): Promise<void>
 };

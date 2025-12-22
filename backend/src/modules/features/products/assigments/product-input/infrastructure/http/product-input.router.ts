@@ -3,7 +3,7 @@ import { validateRequest } from "@middlewares/zod/zod.middleware";
 import {
     createProductInputSchema, deleteProductInputSchema,
     getAllProductInputSchema, getByIdProductInputSchema,
-    updateProductInputSchema
+    updateProductInputSchema, getByIdProductInputProductInputSchema
 } from "../../application/dto/product-input.endpoint.schema";
 import { ProductInputController } from "./product-input.controller";
 import { Router } from "express";
@@ -51,6 +51,7 @@ export const ProductInputRouter = (): Router => {
     const controller: ProductInputController = new ProductInputController();
     router.get("/", validateRequest(getAllProductInputSchema), controller.getAll);
     router.get("/id/:id", validateRequest(getByIdProductInputSchema), controller.getById);
+    router.get("/product/:product_id/input/:input_id", validateRequest(getByIdProductInputProductInputSchema), controller.getByIdProductInput);
     router.post("/", validateRequest(createProductInputSchema), controller.create);
     router.patch("/:id", validateRequest(updateProductInputSchema), controller.update);
     router.delete("/:id", validateRequest(deleteProductInputSchema), controller.delete);

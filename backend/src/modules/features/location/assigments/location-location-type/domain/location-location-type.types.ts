@@ -52,7 +52,7 @@ interface LocationLocationTypeProps {
     location_type_id: number
 };
 
-type LocationLocationTypeCreateProps = Partial<Omit<LocationLocationTypeProps, "id">>;
+type LocationLocationTypeCreateProps = Omit<LocationLocationTypeProps, "id">;
 type LocationLocationTypeUpdateProps = Partial<LocationLocationTypeCreateProps>;
 
 export type {

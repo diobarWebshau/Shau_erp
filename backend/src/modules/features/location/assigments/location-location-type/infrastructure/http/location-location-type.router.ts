@@ -3,7 +3,7 @@ import { validateRequest } from "@middlewares/zod/zod.middleware";
 import {
     createLocationLocationTypeSchema, deleteLocationLocationTypeSchema,
     getAllLocationLocationTypeSchema, getByIdLocationLocationTypeSchema,
-    updateLocationLocationTypeSchema
+    updateLocationLocationTypeSchema, getByLocationIdLocationTypeIdLocationLocationTypeSchema
 } from "../../application/dto/location-location-type.endpoint.schema";
 import { LocationLocationTypeController } from "./location-location-type.controller";
 import { Router } from "express";
@@ -51,6 +51,7 @@ export const locationLocationTypeRouter = (): Router => {
     const controller: LocationLocationTypeController = new LocationLocationTypeController();
     router.get("/", validateRequest(getAllLocationLocationTypeSchema), controller.getAll);
     router.get("/id/:id", validateRequest(getByIdLocationLocationTypeSchema), controller.getById);
+    router.get("/location/:location_id/location-type/:location_type_id", validateRequest(getByLocationIdLocationTypeIdLocationLocationTypeSchema), controller.getByIdLocationLocationType);
     router.post("/", validateRequest(createLocationLocationTypeSchema), controller.create);
     router.patch("/:id", validateRequest(updateLocationLocationTypeSchema), controller.update);
     router.delete("/:id", validateRequest(deleteLocationLocationTypeSchema), controller.delete);

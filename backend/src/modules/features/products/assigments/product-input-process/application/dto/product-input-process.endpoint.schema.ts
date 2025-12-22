@@ -1,4 +1,4 @@
-import { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdateSchema } from "./product-input-process.model.schema";
+import { productInputProcessCreateSchema, productInputProcessReponseSchema, productInputProcessUpdateSchema } from "./product-input-process.model.schema";
 import type { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 
@@ -20,51 +20,59 @@ import { z } from "zod";
  * Schema: GET /location-location-type
  * ------------------------------------------------------------------
  */
-const getAllProductInputSchema = z.object({
+const getAllProductInputProcessSchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
     body: z.object({}).strict(),
-    response: z.array(ProductInputReponseSchema),
+    response: z.array(productInputProcessReponseSchema),
 });
 
 /**
  * Schema: GET /location-location-type/id/:id
  * ------------------------------------------------------------------
  */
-const getByIdProductInputSchema = z.object({
+const getByIdProductInputProcessSchema = z.object({
     params: z.object({ id: z.string() }),
     query: z.object({}).strict(),
     body: z.object({}).strict(),
-    response: ProductInputReponseSchema.nullable(),
+    response: productInputProcessReponseSchema.nullable(),
+});
+
+
+const getByProductInputProcessSchema = z.object({
+    params: z.object({ product_id: z.string(), product_input_id: z.string(), product_process_id: z.string() }),
+    query: z.object({}).strict(),
+    body: z.object({}).strict(),
+    response: productInputProcessReponseSchema.nullable(),
 });
 
 /**
  * Schema: POST /location-location-type
  * ------------------------------------------------------------------
  */
-const createProductInputSchema = z.object({
+const createProductInputProcessSchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
-    body: ProductInputCreateSchema,
-    response: ProductInputReponseSchema,
+    body: productInputProcessCreateSchema,
+    response: productInputProcessReponseSchema,
 });
 
 /**
  * Schema: PATCH /location-location-type/:id
  * ------------------------------------------------------------------
  */
-const updateProductInputSchema = z.object({
+const updateProductInputProcessSchema = z.object({
     params: z.object({ id: z.string() }),
     query: z.object({}).strict(),
-    body: ProductInputUpdateSchema,
-    response: ProductInputReponseSchema,
+    body: productInputProcessUpdateSchema,
+    response: productInputProcessReponseSchema,
 });
 
 /**
  * Schema: DELETE /location-location-type/:id
  * ------------------------------------------------------------------
  */
-const deleteProductInputSchema = z.object({
+const deleteProductInputProcessSchema = z.object({
     params: z.object({ id: z.string() }),
     query: z.object({}).strict(),
     body: z.object({}).strict(),
@@ -105,53 +113,62 @@ const deleteProductInputSchema = z.object({
  *   integridad en la comunicación externa.
  */
 
-type GetAllProductInputsSchema = EndpointSchema<
-    z.infer<typeof getAllProductInputSchema>["params"],
-    z.infer<typeof getAllProductInputSchema>["body"],
-    z.infer<typeof getAllProductInputSchema>["query"],
-    z.infer<typeof getAllProductInputSchema>["response"]
+type GetAllProductInputProcessSchema = EndpointSchema<
+    z.infer<typeof getAllProductInputProcessSchema>["params"],
+    z.infer<typeof getAllProductInputProcessSchema>["body"],
+    z.infer<typeof getAllProductInputProcessSchema>["query"],
+    z.infer<typeof getAllProductInputProcessSchema>["response"]
 >;
 
-type GetByIdProductInputSchema = EndpointSchema<
-    z.infer<typeof getByIdProductInputSchema>["params"],
-    z.infer<typeof getByIdProductInputSchema>["body"],
-    z.infer<typeof getByIdProductInputSchema>["query"],
-    z.infer<typeof getByIdProductInputSchema>["response"]
+type GetByProductInputProcessSchema = EndpointSchema<
+    z.infer<typeof getByProductInputProcessSchema>["params"],
+    z.infer<typeof getByProductInputProcessSchema>["body"],
+    z.infer<typeof getByProductInputProcessSchema>["query"],
+    z.infer<typeof getByProductInputProcessSchema>["response"]
 >;
 
-type CreateProductInputSchema = EndpointSchema<
-    z.infer<typeof createProductInputSchema>["params"],
-    z.infer<typeof createProductInputSchema>["body"],
-    z.infer<typeof createProductInputSchema>["query"],
-    z.infer<typeof createProductInputSchema>["response"]
+type GetByIdProductInputProcessSchema = EndpointSchema<
+    z.infer<typeof getByIdProductInputProcessSchema>["params"],
+    z.infer<typeof getByIdProductInputProcessSchema>["body"],
+    z.infer<typeof getByIdProductInputProcessSchema>["query"],
+    z.infer<typeof getByIdProductInputProcessSchema>["response"]
 >;
 
-type UpdateProductInputSchema = EndpointSchema<
-    z.infer<typeof updateProductInputSchema>["params"],
-    z.infer<typeof updateProductInputSchema>["body"],
-    z.infer<typeof updateProductInputSchema>["query"],
-    z.infer<typeof updateProductInputSchema>["response"]
+type CreateProductInputProcessSchema = EndpointSchema<
+    z.infer<typeof createProductInputProcessSchema>["params"],
+    z.infer<typeof createProductInputProcessSchema>["body"],
+    z.infer<typeof createProductInputProcessSchema>["query"],
+    z.infer<typeof createProductInputProcessSchema>["response"]
 >;
 
-type DeleteProductInputSchema = EndpointSchema<
-    z.infer<typeof deleteProductInputSchema>["params"],
-    z.infer<typeof deleteProductInputSchema>["body"],
-    z.infer<typeof deleteProductInputSchema>["query"],
-    z.infer<typeof deleteProductInputSchema>["response"]
+type UpdateProductInputProcessSchema = EndpointSchema<
+    z.infer<typeof updateProductInputProcessSchema>["params"],
+    z.infer<typeof updateProductInputProcessSchema>["body"],
+    z.infer<typeof updateProductInputProcessSchema>["query"],
+    z.infer<typeof updateProductInputProcessSchema>["response"]
+>;
+
+type DeleteProductInputProcessSchema = EndpointSchema<
+    z.infer<typeof deleteProductInputProcessSchema>["params"],
+    z.infer<typeof deleteProductInputProcessSchema>["body"],
+    z.infer<typeof deleteProductInputProcessSchema>["query"],
+    z.infer<typeof deleteProductInputProcessSchema>["response"]
 >;
 
 export {
-    deleteProductInputSchema,
-    createProductInputSchema,
-    getAllProductInputSchema,
-    updateProductInputSchema,
-    getByIdProductInputSchema
+    deleteProductInputProcessSchema,
+    createProductInputProcessSchema,
+    getAllProductInputProcessSchema,
+    updateProductInputProcessSchema,
+    getByIdProductInputProcessSchema,
+    getByProductInputProcessSchema
 };
 
 export type {
-    CreateProductInputSchema,
-    GetAllProductInputsSchema,
-    GetByIdProductInputSchema,
-    UpdateProductInputSchema,
-    DeleteProductInputSchema
+    CreateProductInputProcessSchema,
+    GetByProductInputProcessSchema,
+    GetAllProductInputProcessSchema,
+    GetByIdProductInputProcessSchema,
+    UpdateProductInputProcessSchema,
+    DeleteProductInputProcessSchema
 };

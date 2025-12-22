@@ -4,6 +4,7 @@ import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleani
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -48,7 +49,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateClientAddressUseCase {
     constructor(private readonly repo: IClientAddressRepository) { }
-    async execute(id: string, data: ClientAddressUpdateProps): Promise<ClientAddressProps> {
+    async execute(id: number, data: ClientAddressUpdateProps, tx?: Transaction): Promise<ClientAddressProps> {
         const existing: ClientAddressProps | null = await this.repo.findById(id);
         if (!existing) throw new HttpError(404,
             "El cliente que se desea actualizar no fue posible encontrarlo."
@@ -64,7 +65,7 @@ export class UpdateClientAddressUseCase {
         const normalizedMerged: ClientAddressUpdateProps = deepNormalizeDecimals<ClientAddressUpdateProps>(merged, ["zip_code", "street_number"]);
         const updateValues: ClientAddressUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
-        const updated: ClientAddressProps = await this.repo.update(id, updateValues);
+        const updated: ClientAddressProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar el cliente."
         );

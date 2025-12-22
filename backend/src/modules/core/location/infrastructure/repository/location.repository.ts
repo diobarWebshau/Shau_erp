@@ -2,7 +2,6 @@ import type { LocationCreateProps, LocationProps, LocationUpdateProps } from "..
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import { LocationModel } from "../orm/location.orm";
-import { sequelize } from "@config/mysql/sequelize";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import { ClientSearchCriteria } from "@src/modules/core/client/domain/client.types";
 
@@ -114,7 +113,7 @@ export class LocationRepository implements ILocationRepository {
         const rowsMap: LocationProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: string): Promise<LocationProps | null> => {
+    findById = async (id: number): Promise<LocationProps | null> => {
         const row: LocationModel | null = await LocationModel.findByPk(id, {
             attributes: LocationModel.getAllFields() as ((keyof LocationProps)[])
         });
@@ -137,75 +136,47 @@ export class LocationRepository implements ILocationRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: LocationCreateProps): Promise<LocationProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created: LocationModel = await LocationModel.create(data, { transaction });
-            if (!created) throw new HttpError(500, "No fue posible crear la nueva locación.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data: LocationCreateProps, tx?: Transaction): Promise<LocationProps> => {
+        const created: LocationModel = await LocationModel.create(data, { transaction: tx });
+        if (!created) throw new HttpError(500, "No fue posible crear la nueva locación.");
+        return mapModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: string, data: LocationUpdateProps): Promise<LocationProps> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id: number, data: LocationUpdateProps, tx?: Transaction): Promise<LocationProps> => {
+        // 1. Verificar existencia
+        const existing: LocationModel | null = await LocationModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "La locación que se desea actualizar no fue posible encontrarla."
+        );
+        // 2. Aplicar UPDATE
+        const [affectedCount]: [affectedCount: number] = await LocationModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing: LocationModel | null = await LocationModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "La locación que se desea actualizar no fue posible encontrarla."
-            );
-            // 2. Aplicar UPDATE
-            const [affectedCount]: [affectedCount: number] = await LocationModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new HttpError(500, "No fue posible actualizar la locación.");
-            // 3. Obtener la locación actualizada
-            const updated: LocationModel | null = await LocationModel.findByPk(id, {
-                transaction,
-                attributes: LocationModel.getAllFields() as ((keyof LocationProps)[]),
-            });
-            await transaction.commit();
-            if (!updated) throw new HttpError(500, "No fue posible actualizar la locación actualizada.");
-            return mapModelToDomain(updated);
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new HttpError(500, "No fue posible actualizar la locación.");
+        // 3. Obtener la locación actualizada
+        const updated: LocationModel | null = await LocationModel.findByPk(id, {
+            attributes: LocationModel.getAllFields() as ((keyof LocationProps)[]),
+        });
+        if (!updated) throw new HttpError(500, "No fue posible actualizar la locación actualizada.");
+        return mapModelToDomain(updated);
     }
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id: string): Promise<void> => {
-        const transaction: Transaction = await sequelize.transaction({
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id: number, tx?: Transaction): Promise<void> => {
+        const existing: LocationModel | null = await LocationModel.findByPk(id);
+        if (!existing) throw new HttpError(404,
+            "No se encontro la locación que se pretende eliminar."
+        );
+        const deleted: number = await LocationModel.destroy({
+            where: { id },
+            transaction: tx
         });
-        try {
-            const existing: LocationModel | null = await LocationModel.findByPk(id);
-            if (!existing) throw new HttpError(404,
-                "No se encontro la locación que se pretende eliminar."
-            );
-            const deleted: number = await LocationModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted) throw new HttpError(500, "No fue posible eliminar la locación.");
-            await transaction.commit();
-            return;
-        } catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted) throw new HttpError(500, "No fue posible eliminar la locación.");
+        return;
     }
 }

@@ -38,6 +38,18 @@ const getByIdLocationProductionLineSchema = z.object({
     response: locationProductionLineReponseSchema.nullable(),
 });
 
+
+/**
+ * Schema: GET /location-production-line/id/:id
+ * ------------------------------------------------------------------
+ */
+const getByLocationProductionLineIdLocationProductionLineSchema = z.object({
+    params: z.object({ location_id: z.string(), production_line_id: z.string() }),
+    query: z.object({}).strict(),
+    body: z.object({}).strict(),
+    response: locationProductionLineReponseSchema.nullable(),
+});
+
 /**
  * Schema: POST /location-production-line
  * ------------------------------------------------------------------
@@ -141,12 +153,20 @@ type DeleteLocationProductionLineSchema = EndpointSchema<
     z.infer<typeof deleteLocationProductionLineSchema>["response"]
 >;
 
+type GetByLocationProductionLineIdLocationProductionLineSchema = EndpointSchema<
+    z.infer<typeof getByLocationProductionLineIdLocationProductionLineSchema>["params"],
+    z.infer<typeof getByLocationProductionLineIdLocationProductionLineSchema>["body"],
+    z.infer<typeof getByLocationProductionLineIdLocationProductionLineSchema>["query"],
+    z.infer<typeof getByLocationProductionLineIdLocationProductionLineSchema>["response"]
+>;
+
 export {
     deleteLocationProductionLineSchema,
     createLocationProductionLineSchema,
     getAllLocationProductionLineProductionLineSchema,
     updateLocationProductionLineSchema,
-    getByIdLocationProductionLineSchema
+    getByIdLocationProductionLineSchema,
+    getByLocationProductionLineIdLocationProductionLineSchema
 };
 
 export type {
@@ -154,5 +174,6 @@ export type {
     GetAllLocationProductionLinesSchema,
     GetByIdLocationProductionLineSchema,
     UpdateLocationProductionLineSchema,
-    DeleteLocationProductionLineSchema
+    DeleteLocationProductionLineSchema,
+    GetByLocationProductionLineIdLocationProductionLineSchema
 };

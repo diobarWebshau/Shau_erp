@@ -17,14 +17,15 @@ import { z } from "zod";
  * Schema: GET /location-location-type
  * ------------------------------------------------------------------
  */
-declare const getAllProductInputSchema: z.ZodObject<{
+declare const getAllProductInputProcessSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
-        input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        product_input_id: z.ZodNumber;
+        product_process_id: z.ZodNumber;
+        qty: z.ZodNumber;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -32,7 +33,7 @@ declare const getAllProductInputSchema: z.ZodObject<{
  * Schema: GET /location-location-type/id/:id
  * ------------------------------------------------------------------
  */
-declare const getByIdProductInputSchema: z.ZodObject<{
+declare const getByIdProductInputProcessSchema: z.ZodObject<{
     params: z.ZodObject<{
         id: z.ZodString;
     }, z.core.$strip>;
@@ -40,8 +41,25 @@ declare const getByIdProductInputSchema: z.ZodObject<{
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodNullable<z.ZodObject<{
         product_id: z.ZodNumber;
-        input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        product_input_id: z.ZodNumber;
+        product_process_id: z.ZodNumber;
+        qty: z.ZodNumber;
+        id: z.ZodNumber;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
+declare const getByProductInputProcessSchema: z.ZodObject<{
+    params: z.ZodObject<{
+        product_id: z.ZodString;
+        product_input_id: z.ZodString;
+        product_process_id: z.ZodString;
+    }, z.core.$strip>;
+    query: z.ZodObject<{}, z.core.$strict>;
+    body: z.ZodObject<{}, z.core.$strict>;
+    response: z.ZodNullable<z.ZodObject<{
+        product_id: z.ZodNumber;
+        product_input_id: z.ZodNumber;
+        product_process_id: z.ZodNumber;
+        qty: z.ZodNumber;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -49,18 +67,20 @@ declare const getByIdProductInputSchema: z.ZodObject<{
  * Schema: POST /location-location-type
  * ------------------------------------------------------------------
  */
-declare const createProductInputSchema: z.ZodObject<{
+declare const createProductInputProcessSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{
         product_id: z.ZodNumber;
-        input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        product_input_id: z.ZodNumber;
+        product_process_id: z.ZodNumber;
+        qty: z.ZodNumber;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
-        input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        product_input_id: z.ZodNumber;
+        product_process_id: z.ZodNumber;
+        qty: z.ZodNumber;
         id: z.ZodNumber;
     }, z.core.$strip>;
 }, z.core.$strip>;
@@ -68,20 +88,22 @@ declare const createProductInputSchema: z.ZodObject<{
  * Schema: PATCH /location-location-type/:id
  * ------------------------------------------------------------------
  */
-declare const updateProductInputSchema: z.ZodObject<{
+declare const updateProductInputProcessSchema: z.ZodObject<{
     params: z.ZodObject<{
         id: z.ZodString;
     }, z.core.$strip>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{
         product_id: z.ZodOptional<z.ZodNumber>;
-        input_id: z.ZodOptional<z.ZodNumber>;
-        equivalence: z.ZodOptional<z.ZodNumber>;
+        product_input_id: z.ZodOptional<z.ZodNumber>;
+        product_process_id: z.ZodOptional<z.ZodNumber>;
+        qty: z.ZodOptional<z.ZodNumber>;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
-        input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        product_input_id: z.ZodNumber;
+        product_process_id: z.ZodNumber;
+        qty: z.ZodNumber;
         id: z.ZodNumber;
     }, z.core.$strip>;
 }, z.core.$strip>;
@@ -89,7 +111,7 @@ declare const updateProductInputSchema: z.ZodObject<{
  * Schema: DELETE /location-location-type/:id
  * ------------------------------------------------------------------
  */
-declare const deleteProductInputSchema: z.ZodObject<{
+declare const deleteProductInputProcessSchema: z.ZodObject<{
     params: z.ZodObject<{
         id: z.ZodString;
     }, z.core.$strip>;
@@ -130,10 +152,11 @@ declare const deleteProductInputSchema: z.ZodObject<{
  * - Orchestrators: exponen endpoints que utilizan estos tipos para garantizar
  *   integridad en la comunicación externa.
  */
-type GetAllProductInputsSchema = EndpointSchema<z.infer<typeof getAllProductInputSchema>["params"], z.infer<typeof getAllProductInputSchema>["body"], z.infer<typeof getAllProductInputSchema>["query"], z.infer<typeof getAllProductInputSchema>["response"]>;
-type GetByIdProductInputSchema = EndpointSchema<z.infer<typeof getByIdProductInputSchema>["params"], z.infer<typeof getByIdProductInputSchema>["body"], z.infer<typeof getByIdProductInputSchema>["query"], z.infer<typeof getByIdProductInputSchema>["response"]>;
-type CreateProductInputSchema = EndpointSchema<z.infer<typeof createProductInputSchema>["params"], z.infer<typeof createProductInputSchema>["body"], z.infer<typeof createProductInputSchema>["query"], z.infer<typeof createProductInputSchema>["response"]>;
-type UpdateProductInputSchema = EndpointSchema<z.infer<typeof updateProductInputSchema>["params"], z.infer<typeof updateProductInputSchema>["body"], z.infer<typeof updateProductInputSchema>["query"], z.infer<typeof updateProductInputSchema>["response"]>;
-type DeleteProductInputSchema = EndpointSchema<z.infer<typeof deleteProductInputSchema>["params"], z.infer<typeof deleteProductInputSchema>["body"], z.infer<typeof deleteProductInputSchema>["query"], z.infer<typeof deleteProductInputSchema>["response"]>;
-export { deleteProductInputSchema, createProductInputSchema, getAllProductInputSchema, updateProductInputSchema, getByIdProductInputSchema };
-export type { CreateProductInputSchema, GetAllProductInputsSchema, GetByIdProductInputSchema, UpdateProductInputSchema, DeleteProductInputSchema };
+type GetAllProductInputProcessSchema = EndpointSchema<z.infer<typeof getAllProductInputProcessSchema>["params"], z.infer<typeof getAllProductInputProcessSchema>["body"], z.infer<typeof getAllProductInputProcessSchema>["query"], z.infer<typeof getAllProductInputProcessSchema>["response"]>;
+type GetByProductInputProcessSchema = EndpointSchema<z.infer<typeof getByProductInputProcessSchema>["params"], z.infer<typeof getByProductInputProcessSchema>["body"], z.infer<typeof getByProductInputProcessSchema>["query"], z.infer<typeof getByProductInputProcessSchema>["response"]>;
+type GetByIdProductInputProcessSchema = EndpointSchema<z.infer<typeof getByIdProductInputProcessSchema>["params"], z.infer<typeof getByIdProductInputProcessSchema>["body"], z.infer<typeof getByIdProductInputProcessSchema>["query"], z.infer<typeof getByIdProductInputProcessSchema>["response"]>;
+type CreateProductInputProcessSchema = EndpointSchema<z.infer<typeof createProductInputProcessSchema>["params"], z.infer<typeof createProductInputProcessSchema>["body"], z.infer<typeof createProductInputProcessSchema>["query"], z.infer<typeof createProductInputProcessSchema>["response"]>;
+type UpdateProductInputProcessSchema = EndpointSchema<z.infer<typeof updateProductInputProcessSchema>["params"], z.infer<typeof updateProductInputProcessSchema>["body"], z.infer<typeof updateProductInputProcessSchema>["query"], z.infer<typeof updateProductInputProcessSchema>["response"]>;
+type DeleteProductInputProcessSchema = EndpointSchema<z.infer<typeof deleteProductInputProcessSchema>["params"], z.infer<typeof deleteProductInputProcessSchema>["body"], z.infer<typeof deleteProductInputProcessSchema>["query"], z.infer<typeof deleteProductInputProcessSchema>["response"]>;
+export { deleteProductInputProcessSchema, createProductInputProcessSchema, getAllProductInputProcessSchema, updateProductInputProcessSchema, getByIdProductInputProcessSchema, getByProductInputProcessSchema };
+export type { CreateProductInputProcessSchema, GetByProductInputProcessSchema, GetAllProductInputProcessSchema, GetByIdProductInputProcessSchema, UpdateProductInputProcessSchema, DeleteProductInputProcessSchema };

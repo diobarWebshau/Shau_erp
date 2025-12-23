@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductInputEntity = void 0;
+exports.ProductInputProcessEntity = void 0;
 /**
  * Entity
  * ------------------------------------------------------------------
@@ -38,7 +38,7 @@ exports.ProductInputEntity = void 0;
  * - Orchestrators: exponen endpoints que utilizan entidades y casos de uso
  *   para responder a solicitudes externas.
  */
-class ProductInputEntity {
+class ProductInputProcessEntity {
     props;
     constructor(props) {
         this.props = props;
@@ -47,5 +47,5 @@ class ProductInputEntity {
         return this.props;
     }
 }
-exports.ProductInputEntity = ProductInputEntity;
+exports.ProductInputProcessEntity = ProductInputProcessEntity;
 ;

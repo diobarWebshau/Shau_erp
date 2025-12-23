@@ -42,21 +42,23 @@ import { Model } from "sequelize";
  * - Orchestrators: exponen endpoints que terminan invocando casos de uso,
  *   los cuales delegan en repositorios que interactúan con el modelo.
  */
-interface ProductInputAttributes {
+interface ProductInputProcessAttributes {
     id: number;
     product_id: number;
-    input_id: number;
-    equivalence: number;
+    product_input_id: number;
+    product_process_id: number;
+    qty: number;
 }
-type ProductInputCreateAttributes = Partial<Omit<ProductInputAttributes, "id">>;
-type ProductInputUpdateAttributes = ProductInputCreateAttributes;
-declare class ProductInputModel extends Model<ProductInputAttributes, ProductInputCreateAttributes> {
+type ProductInputProcessCreateAttributes = Omit<ProductInputProcessAttributes, "id">;
+type ProductInputProcessUpdateAttributes = Partial<ProductInputProcessCreateAttributes>;
+declare class ProductInputProcessModel extends Model<ProductInputProcessAttributes, ProductInputProcessCreateAttributes> {
     id: number;
     product_id: number;
-    input_id: number;
-    equivalence: number;
-    static getEditableFields: () => readonly (keyof ProductInputUpdateAttributes)[];
-    static getAllFields: () => readonly (keyof ProductInputAttributes)[];
+    product_input_id: number;
+    product_process_id: number;
+    qty: number;
+    static getEditableFields: () => readonly (keyof ProductInputProcessUpdateAttributes)[];
+    static getAllFields: () => readonly (keyof ProductInputProcessAttributes)[];
 }
-export { ProductInputModel };
-export type { ProductInputAttributes, ProductInputCreateAttributes };
+export { ProductInputProcessModel };
+export type { ProductInputProcessAttributes, ProductInputProcessCreateAttributes };

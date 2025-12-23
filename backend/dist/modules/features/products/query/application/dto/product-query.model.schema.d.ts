@@ -1,4 +1,4 @@
-import { productOrchestratorResponseSchema } from "../../../../../../modules/features/products/orchestrator/application/product-orchestrator.model.schema";
+import { productOrchestratorResponseSchema } from "../../../../../features/products/orchestrator/application/product-orchestrator.model.schema";
 import { productQuerySchema } from "../../../../../core/product/application/dto/product.model.schema";
 import z from "zod";
 declare const productQueryOrchestratorSchema: z.ZodObject<{
@@ -32,6 +32,13 @@ declare const productQueryOrchestratorSchema: z.ZodObject<{
         process_id: z.ZodNumber;
         sort_order: z.ZodNumber;
         id: z.ZodNumber;
+        product_input_process: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            product_id: z.ZodNumber;
+            product_input_id: z.ZodNumber;
+            product_process_id: z.ZodNumber;
+            qty: z.ZodNumber;
+            id: z.ZodNumber;
+        }, z.core.$strip>>>;
     }, z.core.$strip>>;
     product_discount_ranges: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;

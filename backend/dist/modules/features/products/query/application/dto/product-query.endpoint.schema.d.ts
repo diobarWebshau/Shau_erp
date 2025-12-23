@@ -47,6 +47,13 @@ declare const getAllProductOrchestratorSchema: z.ZodObject<{
             process_id: z.ZodNumber;
             sort_order: z.ZodNumber;
             id: z.ZodNumber;
+            product_input_process: z.ZodOptional<z.ZodArray<z.ZodObject<{
+                product_id: z.ZodNumber;
+                product_input_id: z.ZodNumber;
+                product_process_id: z.ZodNumber;
+                qty: z.ZodNumber;
+                id: z.ZodNumber;
+            }, z.core.$strip>>>;
         }, z.core.$strip>>;
         product_discount_ranges: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
@@ -96,6 +103,13 @@ declare const getByIdProductOrchestratorSchema: z.ZodObject<{
             process_id: z.ZodNumber;
             sort_order: z.ZodNumber;
             id: z.ZodNumber;
+            product_input_process: z.ZodOptional<z.ZodArray<z.ZodObject<{
+                product_id: z.ZodNumber;
+                product_input_id: z.ZodNumber;
+                product_process_id: z.ZodNumber;
+                qty: z.ZodNumber;
+                id: z.ZodNumber;
+            }, z.core.$strip>>>;
         }, z.core.$strip>>;
         product_discount_ranges: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;

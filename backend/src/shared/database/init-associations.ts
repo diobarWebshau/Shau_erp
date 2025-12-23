@@ -22,10 +22,22 @@ import { InputTypeModel } from "@modules/core/input-type/infrastructure/orm/inpu
 import { InputModel } from "@modules/core/input/infrastructure/orm/input.orm";
 
 import { ProductDiscountRangeModel } from "@src/modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
+import { ProductInputProcessModel } from "@modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm";
 import { ProductProcessModel } from "@src/modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
 import { ProductInputModel } from "@src/modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
 import { ProcessModel } from "@modules/core/process/infrastructure/orm/process.orm";
 import { ProductModel } from "@modules/core/product/infrastructure/orm/product.orm";
+
+
+/*
+    En Sequelize (y en cualquier ORM con asociaciones), la regla de oro es:
+
+    El modelo que contiene la clave foránea (foreignKey) usa belongsTo.
+
+    El modelo referenciado (la tabla “padre”) usa hasOne o hasMany dependiendo de la cardinalidad.
+
+*/
+
 
 export function initAssociations() {
 
@@ -187,4 +199,51 @@ export function initAssociations() {
         onDelete: "CASCADE",
         as: "product"
     });
+
+    // ? ******* Product-Input-Process *******
+
+    // Un registro de products_inputs_processes pertenece a un product_input
+    ProductInputProcessModel.belongsTo(ProductInputModel, {
+        foreignKey: "product_input_id",
+        as: "product_input",
+        onDelete: "CASCADE"
+    });
+
+    // Un registro de products_inputs_processes pertenece a un product_process
+    ProductInputProcessModel.belongsTo(ProductProcessModel, {
+        foreignKey: "product_process_id",
+        as: "product_process",
+        onDelete: "CASCADE"
+    });
+
+    // Y cada ProductInputProcess pertenece a un Product
+    ProductInputProcessModel.belongsTo(ProductModel, {
+        foreignKey: "product_id",
+        as: "product",
+        onDelete: "CASCADE"
+    });
+
+
+    // Un product_input puede estar en muchas relaciones products_inputs_processes
+    ProductInputModel.hasMany(ProductInputProcessModel, {
+        foreignKey: "product_input_id",
+        as: "product_input_process",
+        onDelete: "CASCADE"
+    });
+
+    // Un product_process puede estar en muchas relaciones products_inputs_processes
+    ProductProcessModel.hasMany(ProductInputProcessModel, {
+        foreignKey: "product_process_id",
+        as: "product_input_process",
+        onDelete: "CASCADE"
+    });
+
+    // Un Product tiene muchos ProductInputProcess
+    ProductModel.hasMany(ProductInputProcessModel, {
+        foreignKey: "product_id",
+        as: "product_input_processes",
+        onDelete: "CASCADE"
+    });
+
+
 };

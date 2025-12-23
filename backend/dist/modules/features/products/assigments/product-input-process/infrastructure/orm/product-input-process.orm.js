@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductInputModel = void 0;
+exports.ProductInputProcessModel = void 0;
 const sequelize_1 = require("sequelize");
 const sequelize_2 = require("../../../../../../../config/mysql/sequelize");
 ;
-class ProductInputModel extends sequelize_1.Model {
+class ProductInputProcessModel extends sequelize_1.Model {
     static getEditableFields = () => [
-        "input_id", "product_id", "equivalence"
+        "product_input_id", "product_process_id", "product_id", "qty"
     ];
     static getAllFields = () => [
-        "id", "input_id", "product_id", "equivalence"
+        "id", "product_input_id", "product_process_id", "product_id", "qty"
     ];
 }
-exports.ProductInputModel = ProductInputModel;
-ProductInputModel.init({
+exports.ProductInputProcessModel = ProductInputProcessModel;
+ProductInputProcessModel.init({
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
@@ -23,16 +23,20 @@ ProductInputModel.init({
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
-    input_id: {
+    product_input_id: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
-    equivalence: {
+    product_process_id: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false
+    },
+    qty: {
         type: sequelize_1.DataTypes.DECIMAL(14, 4),
         allowNull: false
     }
 }, {
     sequelize: sequelize_2.sequelize,
-    tableName: "products_inputs",
+    tableName: "products_inputs_processes",
     timestamps: false,
 });

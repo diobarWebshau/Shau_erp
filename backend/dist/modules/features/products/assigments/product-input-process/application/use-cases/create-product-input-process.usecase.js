@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateProductInputUseCase = void 0;
+exports.CreateProductInputProcessUseCase = void 0;
 const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
 /**
  * UseCase
@@ -45,16 +45,31 @@ const http_error_1 = __importDefault(require("../../../../../../../shared/errors
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
-class CreateProductInputUseCase {
+class CreateProductInputProcessUseCase {
     repo;
-    constructor(repo) {
+    repoProduct;
+    repoProductInput;
+    repoProductProcess;
+    constructor(repo, repoProduct, repoProductInput, repoProductProcess) {
         this.repo = repo;
+        this.repoProduct = repoProduct;
+        this.repoProductInput = repoProductInput;
+        this.repoProductProcess = repoProductProcess;
     }
     async execute(data) {
+        const validateProduct = await this.repoProduct.findById(data.product_id);
+        if (validateProduct)
+            throw new http_error_1.default(404, "El producto que se desea asignar un consumo de insumos para un proceso, no existe");
+        const validateProductInput = await this.repoProductInput.findById(data.product_input_id);
+        if (validateProductInput)
+            throw new http_error_1.default(404, "La asignación del insumo al producto que se desea asignar a un proceso, no existe");
+        const validateProductProcess = await this.repoProductProcess.findById(data.product_process_id);
+        if (validateProductProcess)
+            throw new http_error_1.default(404, "La asignacion del proceso al producto que se le desea asignar el consumo de un insumo, no existe");
         const created = await this.repo.create(data);
         if (!created)
-            throw new http_error_1.default(500, "No fue posible crear la asignación del insumo al producto.");
+            throw new http_error_1.default(500, "No fue posible crear la asignación de la cantidad de insumos consumidos para este proceso del producto.");
         return created;
     }
 }
-exports.CreateProductInputUseCase = CreateProductInputUseCase;
+exports.CreateProductInputProcessUseCase = CreateProductInputProcessUseCase;

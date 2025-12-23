@@ -1,5 +1,8 @@
-import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
-import type { ProductInputProps, ProductInputCreateProps } from "../../domain/product-input-process.types";
+import type { ProductInputProcessProps, ProductInputProcessCreateProps } from "../../domain/product-input-process.types";
+import { IProductProcessRepository } from "../../../product-process/domain/product-process.repository.interface";
+import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
+import { IProductInputRepository } from "../../../product-input/domain/product-input.repository.interface";
+import { IProductRepository } from "../../../../../../core/product/domain/product.repository.interface";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -40,8 +43,11 @@ import type { ProductInputProps, ProductInputCreateProps } from "../../domain/pr
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
-export declare class CreateProductInputUseCase {
+export declare class CreateProductInputProcessUseCase {
     private readonly repo;
-    constructor(repo: IProductInputRepository);
-    execute(data: ProductInputCreateProps): Promise<ProductInputProps>;
+    private readonly repoProduct;
+    private readonly repoProductInput;
+    private readonly repoProductProcess;
+    constructor(repo: IProductInputProcessRepository, repoProduct: IProductRepository, repoProductInput: IProductInputRepository, repoProductProcess: IProductProcessRepository);
+    execute(data: ProductInputProcessCreateProps): Promise<ProductInputProcessProps>;
 }

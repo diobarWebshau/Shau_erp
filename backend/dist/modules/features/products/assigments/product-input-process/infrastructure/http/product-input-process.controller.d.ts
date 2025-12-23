@@ -1,5 +1,5 @@
 import type { ApiRequest, ApiResponse } from "../../../../../../../shared/typed-request-endpoint/typed-request.interface";
-import { CreateProductInputSchema, DeleteProductInputSchema, GetAllProductInputsSchema, GetByIdProductInputSchema, UpdateProductInputSchema } from "../../application/dto/product-input-process.endpoint.schema";
+import { CreateProductInputProcessSchema, DeleteProductInputProcessSchema, GetAllProductInputProcessSchema, GetByIdProductInputProcessSchema, UpdateProductInputProcessSchema, GetByProductInputProcessSchema } from "../../application/dto/product-input-process.endpoint.schema";
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -49,18 +49,23 @@ import { CreateProductInputSchema, DeleteProductInputSchema, GetAllProductInputs
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
-export declare class ProductInputController {
+export declare class ProductInputProcessController {
     private readonly repo;
+    private readonly repoProduct;
+    private readonly repoProductInput;
+    private readonly repoProductProcess;
     private readonly getAllUseCase;
     private readonly getByIdUseCase;
+    private readonly getByProductInputProcessId;
     private readonly createUseCase;
     private readonly updateUseCase;
     private readonly deleteUseCase;
     constructor();
-    getAll: (_req: ApiRequest<GetAllProductInputsSchema>, res: ApiResponse<GetAllProductInputsSchema>) => Promise<ApiResponse<GetAllProductInputsSchema>>;
-    getById: (req: ApiRequest<GetByIdProductInputSchema>, res: ApiResponse<GetByIdProductInputSchema>) => Promise<ApiResponse<GetByIdProductInputSchema>>;
-    create: (req: ApiRequest<CreateProductInputSchema>, res: ApiResponse<CreateProductInputSchema>) => Promise<ApiResponse<CreateProductInputSchema>>;
-    update: (req: ApiRequest<UpdateProductInputSchema>, res: ApiResponse<UpdateProductInputSchema>) => Promise<ApiResponse<UpdateProductInputSchema>>;
-    delete: (req: ApiRequest<DeleteProductInputSchema>, res: ApiResponse<DeleteProductInputSchema>) => Promise<ApiResponse<DeleteProductInputSchema>>;
+    getAll: (_req: ApiRequest<GetAllProductInputProcessSchema>, res: ApiResponse<GetAllProductInputProcessSchema>) => Promise<ApiResponse<GetAllProductInputProcessSchema>>;
+    getById: (req: ApiRequest<GetByIdProductInputProcessSchema>, res: ApiResponse<GetByIdProductInputProcessSchema>) => Promise<ApiResponse<GetByIdProductInputProcessSchema>>;
+    getByProductInputProcess: (req: ApiRequest<GetByProductInputProcessSchema>, res: ApiResponse<GetByProductInputProcessSchema>) => Promise<ApiResponse<GetByProductInputProcessSchema>>;
+    create: (req: ApiRequest<CreateProductInputProcessSchema>, res: ApiResponse<CreateProductInputProcessSchema>) => Promise<ApiResponse<CreateProductInputProcessSchema>>;
+    update: (req: ApiRequest<UpdateProductInputProcessSchema>, res: ApiResponse<UpdateProductInputProcessSchema>) => Promise<ApiResponse<UpdateProductInputProcessSchema>>;
+    delete: (req: ApiRequest<DeleteProductInputProcessSchema>, res: ApiResponse<DeleteProductInputProcessSchema>) => Promise<ApiResponse<DeleteProductInputProcessSchema>>;
 }
-export default ProductInputController;
+export default ProductInputProcessController;

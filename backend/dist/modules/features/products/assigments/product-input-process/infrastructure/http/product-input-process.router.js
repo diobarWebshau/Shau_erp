@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductInputRouter = void 0;
+exports.ProductInputProcessRouter = void 0;
 // src/modules/location/infrastructure/http/location.router.ts
 const zod_middleware_1 = require("../../../../../../../middlewares/zod/zod.middleware");
 const product_input_process_endpoint_schema_1 = require("../../application/dto/product-input-process.endpoint.schema");
@@ -43,14 +43,15 @@ const express_1 = require("express");
  * - Infrastructure/HTTP: routers y controladores que conectan Express con la aplicación.
  * - Orchestrators: pueden agrupar routers y exponer la API completa hacia clientes externos.
  */
-const ProductInputRouter = () => {
+const ProductInputProcessRouter = () => {
     const router = (0, express_1.Router)();
-    const controller = new product_input_process_controller_1.ProductInputController();
-    router.get("/", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.getAllProductInputSchema), controller.getAll);
-    router.get("/id/:id", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.getByIdProductInputSchema), controller.getById);
-    router.post("/", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.createProductInputSchema), controller.create);
-    router.patch("/:id", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.updateProductInputSchema), controller.update);
-    router.delete("/:id", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.deleteProductInputSchema), controller.delete);
+    const controller = new product_input_process_controller_1.ProductInputProcessController();
+    router.get("/", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.getAllProductInputProcessSchema), controller.getAll);
+    router.get("/id/:id", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.getByIdProductInputProcessSchema), controller.getById);
+    router.get("/product/:product_id/product-input/:product_input_id/product-process/:product_process_id", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.getByProductInputProcessSchema), controller.getByProductInputProcess);
+    router.post("/", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.createProductInputProcessSchema), controller.create);
+    router.patch("/:id", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.updateProductInputProcessSchema), controller.update);
+    router.delete("/:id", (0, zod_middleware_1.validateRequest)(product_input_process_endpoint_schema_1.deleteProductInputProcessSchema), controller.delete);
     return router;
 };
-exports.ProductInputRouter = ProductInputRouter;
+exports.ProductInputProcessRouter = ProductInputProcessRouter;

@@ -36,4 +36,4 @@ import { Router } from "express";
  * - Infrastructure/HTTP: routers y controladores que conectan Express con la aplicación.
  * - Orchestrators: pueden agrupar routers y exponer la API completa hacia clientes externos.
  */
-export declare const ProductInputRouter: () => Router;
+export declare const ProductInputProcessRouter: () => Router;

@@ -1,12 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductInputController = void 0;
+exports.ProductInputProcessController = void 0;
 const get_by_id_product_input_process_usecase_1 = require("../../application/use-cases/get-by-id-product-input-process.usecase");
+const product_process_repository_1 = require("../../../product-process/infrastructure/repository/product-process.repository");
 const create_product_input_process_usecase_1 = require("../../application/use-cases/create-product-input-process.usecase");
 const update_product_input_process_usecase_1 = require("../../application/use-cases/update-product-input-process.usecase");
-const get_all_product_input_usecase_1 = require("../../application/use-cases/get-all-product-input.usecase");
+const get_all_product_input_process_usecase_1 = require("../../application/use-cases/get-all-product-input-process.usecase");
+const get_by_product_input_process_usecase_1 = require("../../application/use-cases/get-by-product-input-process.usecase");
 const delete_product_input_process_usecase_1 = require("../../application/use-cases/delete-product-input-process.usecase");
 const product_input_process_repository_1 = require("../repository/product-input-process.repository");
+const producto_repository_1 = require("../../../../../../../modules/core/product/infrastructure/repository/producto.repository");
+const product_input_repository_1 = require("../../../product-input/infrastructure/repository/product-input.repository");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -56,20 +60,28 @@ const product_input_process_repository_1 = require("../repository/product-input-
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
-class ProductInputController {
+class ProductInputProcessController {
     repo;
+    repoProduct;
+    repoProductInput;
+    repoProductProcess;
     getAllUseCase;
     getByIdUseCase;
+    getByProductInputProcessId;
     createUseCase;
     updateUseCase;
     deleteUseCase;
     constructor() {
-        this.repo = new product_input_process_repository_1.ProductInputRepository();
-        this.getAllUseCase = new get_all_product_input_usecase_1.GetAllProductInputUseCase(this.repo);
-        this.getByIdUseCase = new get_by_id_product_input_process_usecase_1.GetProductInputByIdUseCase(this.repo);
-        this.createUseCase = new create_product_input_process_usecase_1.CreateProductInputUseCase(this.repo);
-        this.updateUseCase = new update_product_input_process_usecase_1.UpdateProductInputUseCase(this.repo);
-        this.deleteUseCase = new delete_product_input_process_usecase_1.DeleteProductInputUseCase(this.repo);
+        this.repo = new product_input_process_repository_1.ProductInputProcessRepository();
+        this.repoProduct = new producto_repository_1.ProductRepository();
+        this.repoProductInput = new product_input_repository_1.ProductInputRepository();
+        this.repoProductProcess = new product_process_repository_1.ProductProcessRepository();
+        this.getAllUseCase = new get_all_product_input_process_usecase_1.GetAllProductInputProcessUseCase(this.repo);
+        this.getByProductInputProcessId = new get_by_product_input_process_usecase_1.GetProductInputProcessByIdUseCase(this.repo);
+        this.getByIdUseCase = new get_by_id_product_input_process_usecase_1.GetByIdProductInputProcessByIdUseCase(this.repo);
+        this.createUseCase = new create_product_input_process_usecase_1.CreateProductInputProcessUseCase(this.repo, this.repoProduct, this.repoProductInput, this.repoProductProcess);
+        this.updateUseCase = new update_product_input_process_usecase_1.UpdateProductInputProcessUseCase(this.repo);
+        this.deleteUseCase = new delete_product_input_process_usecase_1.DeleteProductInputProcessUseCase(this.repo);
     }
     ;
     // ============================================================
@@ -84,7 +96,17 @@ class ProductInputController {
     // ============================================================
     getById = async (req, res) => {
         const { id } = req.params;
-        const result = await this.getByIdUseCase.execute(id);
+        const result = await this.getByIdUseCase.execute(Number(id));
+        if (!result)
+            return res.status(204).send(null);
+        return res.status(200).send(result);
+    };
+    // ============================================================
+    // GET BY ID
+    // ============================================================
+    getByProductInputProcess = async (req, res) => {
+        const { product_id, product_input_id, product_process_id } = req.params;
+        const result = await this.getByProductInputProcessId.execute(Number(product_id), Number(product_input_id), Number(product_process_id));
         if (!result)
             return res.status(204).send(null);
         return res.status(200).send(result);
@@ -103,7 +125,7 @@ class ProductInputController {
     update = async (req, res) => {
         const { id } = req.params;
         const body = req.body;
-        const updated = await this.updateUseCase.execute(id, body);
+        const updated = await this.updateUseCase.execute(Number(id), body);
         return res.status(200).send(updated);
     };
     // ============================================================
@@ -111,9 +133,9 @@ class ProductInputController {
     // ============================================================
     delete = async (req, res) => {
         const { id } = req.params;
-        await this.deleteUseCase.execute(id);
+        await this.deleteUseCase.execute(Number(id));
         return res.status(201).send(null);
     };
 }
-exports.ProductInputController = ProductInputController;
-exports.default = ProductInputController;
+exports.ProductInputProcessController = ProductInputProcessController;
+exports.default = ProductInputProcessController;

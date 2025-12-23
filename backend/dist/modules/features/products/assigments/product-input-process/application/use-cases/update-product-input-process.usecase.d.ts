@@ -1,5 +1,5 @@
-import type { ProductInputUpdateProps, ProductInputProps } from "../../domain/product-input-process.types";
-import type { IProductInputRepository } from "../../domain/product-input-process.repository.interface";
+import type { ProductInputProcessUpdateProps, ProductInputProcessProps } from "../../domain/product-input-process.types";
+import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -40,8 +40,8 @@ import type { IProductInputRepository } from "../../domain/product-input-process
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
-export declare class UpdateProductInputUseCase {
+export declare class UpdateProductInputProcessUseCase {
     private readonly repo;
-    constructor(repo: IProductInputRepository);
-    execute(id: string, data: ProductInputUpdateProps): Promise<ProductInputProps>;
+    constructor(repo: IProductInputProcessRepository);
+    execute(id: number, data: ProductInputProcessUpdateProps): Promise<ProductInputProcessProps>;
 }

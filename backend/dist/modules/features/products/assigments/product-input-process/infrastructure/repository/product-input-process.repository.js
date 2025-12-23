@@ -3,11 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductInputRepository = void 0;
+exports.ProductInputProcessRepository = void 0;
 const product_input_process_orm_1 = require("../orm/product-input-process.orm");
 const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
-const sequelize_1 = require("../../../../../../../config/mysql/sequelize");
-const sequelize_2 = require("sequelize");
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -59,105 +57,86 @@ const mapModelToDomain = (model) => {
     const json = model.toJSON();
     return {
         id: json.id,
-        input_id: json.input_id,
+        product_input_id: json.product_input_id,
+        product_process_id: json.product_process_id,
         product_id: json.product_id,
-        equivalence: json.equivalence
+        qty: json.qty
     };
 };
-class ProductInputRepository {
+class ProductInputProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
     findAll = async () => {
-        const rows = await product_input_process_orm_1.ProductInputModel.findAll({
-            attributes: product_input_process_orm_1.ProductInputModel.getAllFields()
+        const rows = await product_input_process_orm_1.ProductInputProcessModel.findAll({
+            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
     findById = async (id) => {
-        const row = await product_input_process_orm_1.ProductInputModel.findByPk(id, {
-            attributes: product_input_process_orm_1.ProductInputModel.getAllFields()
+        const row = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
+            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
+        });
+        return row ? mapModelToDomain(row) : null;
+    };
+    findByProductInputProcess = async (product_id, product_input_id, product_process_id) => {
+        const row = await product_input_process_orm_1.ProductInputProcessModel.findOne({
+            where: {
+                product_id: product_id,
+                product_input_id: product_input_id,
+                product_process_id: product_process_id
+            },
+            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data) => {
-        const transaction = await sequelize_1.sequelize.transaction({
-            isolationLevel: sequelize_2.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        });
-        try {
-            const created = await product_input_process_orm_1.ProductInputModel.create(data, { transaction });
-            if (!created)
-                throw new http_error_1.default(500, "No fue posible crear la asignación del insumo al producto.");
-            await transaction.commit();
-            return mapModelToDomain(created);
-        }
-        catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+    create = async (data, tx) => {
+        const created = await product_input_process_orm_1.ProductInputProcessModel.create(data, { transaction: tx });
+        if (!created)
+            throw new http_error_1.default(500, "No fue posible asignar la cantidad de insumos consumidos para este proceso del producto.");
+        return mapModelToDomain(created);
     };
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id, data) => {
-        const transaction = await sequelize_1.sequelize.transaction({
-            isolationLevel: sequelize_2.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    update = async (id, data, tx) => {
+        // 1. Verificar existencia
+        const existing = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id);
+        if (!existing)
+            throw new http_error_1.default(404, "La asignación de la cantidad de insumos consumidos en un proceso del producto, no fue posible encontrarla.");
+        // 2. Aplicar UPDATE
+        const [affectedCount] = await product_input_process_orm_1.ProductInputProcessModel.update(data, {
+            where: { id },
+            transaction: tx,
         });
-        try {
-            // 1. Verificar existencia
-            const existing = await product_input_process_orm_1.ProductInputModel.findByPk(id);
-            if (!existing)
-                throw new http_error_1.default(404, "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla.");
-            // 2. Aplicar UPDATE
-            const [affectedCount] = await product_input_process_orm_1.ProductInputModel.update(data, {
-                where: { id },
-                transaction,
-            });
-            if (!affectedCount)
-                throw new http_error_1.default(500, "No fue posible actualizar la asignación del insumo al producto.");
-            // 3. Obtener la producto actualizada
-            const updated = await product_input_process_orm_1.ProductInputModel.findByPk(id, {
-                transaction,
-                attributes: product_input_process_orm_1.ProductInputModel.getAllFields(),
-            });
-            await transaction.commit();
-            if (!updated)
-                throw new http_error_1.default(500, "No fue posible actualizar la asignación del insumo al producto.");
-            return mapModelToDomain(updated);
-        }
-        catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!affectedCount)
+            throw new http_error_1.default(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
+        // 3. Obtener la producto actualizada
+        const updated = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
+            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields(),
+        });
+        if (!updated)
+            throw new http_error_1.default(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
+        return mapModelToDomain(updated);
     };
     // ================================================================
     // DELETE
     // ================================================================
-    delete = async (id) => {
-        const transaction = await sequelize_1.sequelize.transaction({
-            isolationLevel: sequelize_2.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    delete = async (id, tx) => {
+        const existing = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id);
+        if (!existing)
+            throw new http_error_1.default(404, "No se encontro la asignación de la cantidad de insumos consumidos para este proceso del producto que se pretende eliminar.");
+        const deleted = await product_input_process_orm_1.ProductInputProcessModel.destroy({
+            where: { id },
+            transaction: tx,
         });
-        try {
-            const existing = await product_input_process_orm_1.ProductInputModel.findByPk(id);
-            if (!existing)
-                throw new http_error_1.default(404, "No se encontro la asignación del insumo al producto que se pretende eliminar.");
-            const deleted = await product_input_process_orm_1.ProductInputModel.destroy({
-                where: { id },
-                transaction,
-            });
-            if (!deleted)
-                throw new http_error_1.default(500, "No fue posible eliminar la asignación del insumo al producto.");
-            await transaction.commit();
-            return;
-        }
-        catch (err) {
-            await transaction.rollback();
-            throw err;
-        }
+        if (!deleted)
+            throw new http_error_1.default(500, "No fue posible eliminarla la asignación de la cantidad de insumos consumidos para este proceso del producto.");
+        return;
     };
 }
-exports.ProductInputRepository = ProductInputRepository;
+exports.ProductInputProcessRepository = ProductInputProcessRepository;

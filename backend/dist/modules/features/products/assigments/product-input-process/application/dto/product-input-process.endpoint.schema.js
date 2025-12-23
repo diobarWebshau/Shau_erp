@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getByIdProductInputSchema = exports.updateProductInputSchema = exports.getAllProductInputSchema = exports.createProductInputSchema = exports.deleteProductInputSchema = void 0;
+exports.getByProductInputProcessSchema = exports.getByIdProductInputProcessSchema = exports.updateProductInputProcessSchema = exports.getAllProductInputProcessSchema = exports.createProductInputProcessSchema = exports.deleteProductInputProcessSchema = void 0;
 const product_input_process_model_schema_1 = require("./product-input-process.model.schema");
 const zod_1 = require("zod");
 /**
@@ -20,54 +20,61 @@ const zod_1 = require("zod");
  * Schema: GET /location-location-type
  * ------------------------------------------------------------------
  */
-const getAllProductInputSchema = zod_1.z.object({
+const getAllProductInputProcessSchema = zod_1.z.object({
     params: zod_1.z.object({}).strict(),
     query: zod_1.z.object({}).strict(),
     body: zod_1.z.object({}).strict(),
-    response: zod_1.z.array(product_input_process_model_schema_1.ProductInputReponseSchema),
+    response: zod_1.z.array(product_input_process_model_schema_1.productInputProcessReponseSchema),
 });
-exports.getAllProductInputSchema = getAllProductInputSchema;
+exports.getAllProductInputProcessSchema = getAllProductInputProcessSchema;
 /**
  * Schema: GET /location-location-type/id/:id
  * ------------------------------------------------------------------
  */
-const getByIdProductInputSchema = zod_1.z.object({
+const getByIdProductInputProcessSchema = zod_1.z.object({
     params: zod_1.z.object({ id: zod_1.z.string() }),
     query: zod_1.z.object({}).strict(),
     body: zod_1.z.object({}).strict(),
-    response: product_input_process_model_schema_1.ProductInputReponseSchema.nullable(),
+    response: product_input_process_model_schema_1.productInputProcessReponseSchema.nullable(),
 });
-exports.getByIdProductInputSchema = getByIdProductInputSchema;
+exports.getByIdProductInputProcessSchema = getByIdProductInputProcessSchema;
+const getByProductInputProcessSchema = zod_1.z.object({
+    params: zod_1.z.object({ product_id: zod_1.z.string(), product_input_id: zod_1.z.string(), product_process_id: zod_1.z.string() }),
+    query: zod_1.z.object({}).strict(),
+    body: zod_1.z.object({}).strict(),
+    response: product_input_process_model_schema_1.productInputProcessReponseSchema.nullable(),
+});
+exports.getByProductInputProcessSchema = getByProductInputProcessSchema;
 /**
  * Schema: POST /location-location-type
  * ------------------------------------------------------------------
  */
-const createProductInputSchema = zod_1.z.object({
+const createProductInputProcessSchema = zod_1.z.object({
     params: zod_1.z.object({}).strict(),
     query: zod_1.z.object({}).strict(),
-    body: product_input_process_model_schema_1.ProductInputCreateSchema,
-    response: product_input_process_model_schema_1.ProductInputReponseSchema,
+    body: product_input_process_model_schema_1.productInputProcessCreateSchema,
+    response: product_input_process_model_schema_1.productInputProcessReponseSchema,
 });
-exports.createProductInputSchema = createProductInputSchema;
+exports.createProductInputProcessSchema = createProductInputProcessSchema;
 /**
  * Schema: PATCH /location-location-type/:id
  * ------------------------------------------------------------------
  */
-const updateProductInputSchema = zod_1.z.object({
+const updateProductInputProcessSchema = zod_1.z.object({
     params: zod_1.z.object({ id: zod_1.z.string() }),
     query: zod_1.z.object({}).strict(),
-    body: product_input_process_model_schema_1.ProductInputUpdateSchema,
-    response: product_input_process_model_schema_1.ProductInputReponseSchema,
+    body: product_input_process_model_schema_1.productInputProcessUpdateSchema,
+    response: product_input_process_model_schema_1.productInputProcessReponseSchema,
 });
-exports.updateProductInputSchema = updateProductInputSchema;
+exports.updateProductInputProcessSchema = updateProductInputProcessSchema;
 /**
  * Schema: DELETE /location-location-type/:id
  * ------------------------------------------------------------------
  */
-const deleteProductInputSchema = zod_1.z.object({
+const deleteProductInputProcessSchema = zod_1.z.object({
     params: zod_1.z.object({ id: zod_1.z.string() }),
     query: zod_1.z.object({}).strict(),
     body: zod_1.z.object({}).strict(),
     response: zod_1.z.null(),
 });
-exports.deleteProductInputSchema = deleteProductInputSchema;
+exports.deleteProductInputProcessSchema = deleteProductInputProcessSchema;

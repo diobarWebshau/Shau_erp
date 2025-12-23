@@ -16,10 +16,19 @@ const production_lines_orm_1 = require("../../modules/core/production-line/infra
 const input_type_orm_1 = require("../../modules/core/input-type/infrastructure/orm/input-type.orm");
 const input_orm_1 = require("../../modules/core/input/infrastructure/orm/input.orm");
 const product_discount_range_orm_1 = require("../../modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm");
+const product_input_process_orm_1 = require("../../modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm");
 const product_process_orm_1 = require("../../modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm");
 const product_inputs_orm_1 = require("../../modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm");
 const process_orm_1 = require("../../modules/core/process/infrastructure/orm/process.orm");
 const product_orm_1 = require("../../modules/core/product/infrastructure/orm/product.orm");
+/*
+    En Sequelize (y en cualquier ORM con asociaciones), la regla de oro es:
+
+    El modelo que contiene la clave foránea (foreignKey) usa belongsTo.
+
+    El modelo referenciado (la tabla “padre”) usa hasOne o hasMany dependiendo de la cardinalidad.
+
+*/
 function initAssociations() {
     // ******* PRODUCTS MODULE *******
     // product-product-discount-ranges
@@ -145,6 +154,43 @@ function initAssociations() {
         foreignKey: "product_id",
         onDelete: "CASCADE",
         as: "product"
+    });
+    // ? ******* Product-Input-Process *******
+    // Un registro de products_inputs_processes pertenece a un product_input
+    product_input_process_orm_1.ProductInputProcessModel.belongsTo(product_inputs_orm_1.ProductInputModel, {
+        foreignKey: "product_input_id",
+        as: "product_input",
+        onDelete: "CASCADE"
+    });
+    // Un registro de products_inputs_processes pertenece a un product_process
+    product_input_process_orm_1.ProductInputProcessModel.belongsTo(product_process_orm_1.ProductProcessModel, {
+        foreignKey: "product_process_id",
+        as: "product_process",
+        onDelete: "CASCADE"
+    });
+    // Y cada ProductInputProcess pertenece a un Product
+    product_input_process_orm_1.ProductInputProcessModel.belongsTo(product_orm_1.ProductModel, {
+        foreignKey: "product_id",
+        as: "product",
+        onDelete: "CASCADE"
+    });
+    // Un product_input puede estar en muchas relaciones products_inputs_processes
+    product_inputs_orm_1.ProductInputModel.hasMany(product_input_process_orm_1.ProductInputProcessModel, {
+        foreignKey: "product_input_id",
+        as: "product_input_process",
+        onDelete: "CASCADE"
+    });
+    // Un product_process puede estar en muchas relaciones products_inputs_processes
+    product_process_orm_1.ProductProcessModel.hasMany(product_input_process_orm_1.ProductInputProcessModel, {
+        foreignKey: "product_process_id",
+        as: "product_input_process",
+        onDelete: "CASCADE"
+    });
+    // Un Product tiene muchos ProductInputProcess
+    product_orm_1.ProductModel.hasMany(product_input_process_orm_1.ProductInputProcessModel, {
+        foreignKey: "product_id",
+        as: "product_input_processes",
+        onDelete: "CASCADE"
     });
 }
 ;

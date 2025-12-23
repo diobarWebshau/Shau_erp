@@ -1,4 +1,4 @@
-import type { ProductInputProps } from "./product-input-process.types";
+import type { ProductInputProcessProps } from "./product-input-process.types";
 
 /**
  * Entity
@@ -38,12 +38,12 @@ import type { ProductInputProps } from "./product-input-process.types";
  *   para responder a solicitudes externas.
  */
 
-export class ProductInputEntity {
-    private readonly props: ProductInputProps;
-    constructor(props: ProductInputProps) {
+export class ProductInputProcessEntity {
+    private readonly props: ProductInputProcessProps;
+    constructor(props: ProductInputProcessProps) {
         this.props = props;
     }
-    get values(): ProductInputProps {
+    get values(): ProductInputProcessProps {
         return this.props;
     }
 };

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductInputUpdateSchema = exports.ProductInputReponseSchema = exports.ProductInputCreateSchema = void 0;
+exports.productInputProcessUpdateSchema = exports.productInputProcessReponseSchema = exports.productInputProcessCreateSchema = void 0;
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -43,27 +43,28 @@ const zod_1 = require("zod");
  * Define los campos requeridos para crear un registro mediante POST.
  * Aqui todos los atributos son obligatorios y se validan según su tipo.
  */
-const ProductInputCreateSchema = zod_1.z.object({
+const productInputProcessCreateSchema = zod_1.z.object({
     product_id: zod_1.z.number().int(),
-    input_id: zod_1.z.number().int(),
-    equivalence: zod_1.z.number().int()
+    product_input_id: zod_1.z.number().int(),
+    product_process_id: zod_1.z.number().int(),
+    qty: zod_1.z.number()
 });
-exports.ProductInputCreateSchema = ProductInputCreateSchema;
+exports.productInputProcessCreateSchema = productInputProcessCreateSchema;
 /**
  * UpdateSchema
  * ------------------------------------------------------------------
  * Define los campos que pueden actualizarse mediante PATCH.
  * Aqui todos los atributos son opcionales para permitir modificaciones parciales.
  */
-const ProductInputUpdateSchema = ProductInputCreateSchema.partial();
-exports.ProductInputUpdateSchema = ProductInputUpdateSchema;
+const productInputProcessUpdateSchema = productInputProcessCreateSchema.partial();
+exports.productInputProcessUpdateSchema = productInputProcessUpdateSchema;
 /**
  * ResponseSchema
  * ------------------------------------------------------------------
  * Representa el objeto completo que devuelve la API en las respuestas.
  * Incluye los campos de creación más los metadatos generados por el sistema.
  */
-const ProductInputReponseSchema = ProductInputCreateSchema.extend({
+const productInputProcessReponseSchema = productInputProcessCreateSchema.extend({
     id: zod_1.z.number().int(),
 });
-exports.ProductInputReponseSchema = ProductInputReponseSchema;
+exports.productInputProcessReponseSchema = productInputProcessReponseSchema;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteProductInputUseCase = void 0;
+exports.DeleteProductInputProcessUseCase = void 0;
 const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
 /**
  * UseCase
@@ -45,17 +45,17 @@ const http_error_1 = __importDefault(require("../../../../../../../shared/errors
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
-class DeleteProductInputUseCase {
+class DeleteProductInputProcessUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(id) {
-        const exists = await this.repo.findById(id);
+        const exists = await this.repo.findById(Number(id));
         if (!exists)
-            throw new http_error_1.default(404, "No se encontro la asignación del insumo al producto que se pretende eliminar.");
+            throw new http_error_1.default(404, "No se encontro la asignación de la cantidad de insumos consumidos para este proceso del producto que se pretende eliminar.");
         await this.repo.delete(id);
         return;
     }
 }
-exports.DeleteProductInputUseCase = DeleteProductInputUseCase;
+exports.DeleteProductInputProcessUseCase = DeleteProductInputProcessUseCase;

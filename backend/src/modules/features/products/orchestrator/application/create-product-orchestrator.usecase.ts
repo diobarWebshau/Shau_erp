@@ -9,16 +9,22 @@ import { ProductInputCreateProps, ProductInputProps } from "../../assigments/pro
 import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
 import {
     ProductOrchestratorCreate, ProductOrchestratorResponse,
-    ProductProcessOrchestratorForAsign, ProductProcessOrchestratorForCreate
+    ProductProcessAssignExisting, ProductProcessCreateNew,
+    ProductProcessCreateOrchestrated,
+    ProductProcessOrchestratorBase
 } from "../domain/product-orchestrator.types";
 import { CreateProductUseCase } from "@modules/core/product/application/use-cases/create-product.usecase";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { IProductQueryRepository } from "../../query/domain/product-query.repository";
 import { ProductProps } from "@modules/core/product/domain/product.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
 import { CreateProcessUseCase } from "@modules/core/process/application/use-cases/create-process.usecase";
-import { ProcessCreateProps, ProcessProps } from "@modules/core/process/domain/process.types";
+import { ProcessProps } from "@modules/core/process/domain/process.types";
+import { ProductInputProcessCreateProps, ProductInputProcessProps } from "../../assigments/product-input-process/domain/product-input-process.types";
+import { CreateProductInputProcessUseCase } from "../../assigments/product-input-process/application/use-cases/create-product-input-process.usecase";
+import { IProductInputProcessRepository } from "../../assigments/product-input-process/domain/product-input-process.repository.interface";
+import { GetProductInputByIdProductInputUseCase } from "../../assigments/product-input/application/use-cases/get-product-input-by-id-product-input.usecase";
+import HttpError from "@shared/errors/http/http-error";
 
 interface CreateProductOrchestratorUseCaseProps {
     productRepo: IProductRepository,
@@ -26,24 +32,30 @@ interface CreateProductOrchestratorUseCaseProps {
     productProcessRepo: IProductProcessRepository,
     productInputRepo: IProductInputRepository,
     discountRangeRepo: IProductDiscountRangeRepository,
-    productQueryRepo: IProductQueryRepository,
-    processRepo: IProcessRepository
+    processRepo: IProcessRepository,
+    productInputProcessRepo: IProductInputProcessRepository
 }
 
 export class CreateProductOrchestratorUseCase {
 
     private createProductUseCase: CreateProductUseCase;
+
     private createProductInputUseCase: CreateProductInputUseCase;
+    private getProductInputByIdProductInput: GetProductInputByIdProductInputUseCase;
+
     private createProductProcessUseCase: CreateProductProcessUseCase;
     private createProductDiscountRangeUseCase: CreateProductDiscountRangeUseCase;
+    private createProductInputProcessUseCase: CreateProductInputProcessUseCase;
     private createProcess: CreateProcessUseCase;
 
-    constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo }: CreateProductOrchestratorUseCaseProps) {
+    constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo, productInputProcessRepo }: CreateProductOrchestratorUseCaseProps) {
         this.createProductUseCase = new CreateProductUseCase(productRepo);
         this.createProductInputUseCase = new CreateProductInputUseCase(productInputRepo, productRepo, inputRepo);
         this.createProductProcessUseCase = new CreateProductProcessUseCase(productProcessRepo, productRepo, processRepo);
+        this.getProductInputByIdProductInput = new GetProductInputByIdProductInputUseCase(productInputRepo);
         this.createProductDiscountRangeUseCase = new CreateProductDiscountRangeUseCase(discountRangeRepo, productRepo);
         this.createProcess = new CreateProcessUseCase(processRepo);
+        this.createProductInputProcessUseCase = new CreateProductInputProcessUseCase(productInputProcessRepo, productRepo, productInputRepo, productProcessRepo);
     };
 
     async execute(data: ProductOrchestratorCreate): Promise<ProductOrchestratorResponse> {
@@ -55,10 +67,11 @@ export class CreateProductOrchestratorUseCase {
         // *************** ProductInputs ***************
 
         const productInputCreates: ProductInputCreateProps[] = products_inputs.map((pi) => ({
-            ...pi,
+            input_id: pi.input_id,
+            equivalence: pi.equivalence,
             product_id: productCreateResponse.id,
-            product: productCreateResponse
         }));
+
         const productInputResponses: ProductInputProps[] = [];
         for (const productInput of productInputCreates) {
             const productInputResponse: ProductInputProps = await this.createProductInputUseCase.execute(productInput);
@@ -67,39 +80,84 @@ export class CreateProductOrchestratorUseCase {
 
         // *************** ProductProcess ***************
 
-        const productProcessForAssign: ProductProcessOrchestratorForAsign[] = product_processes.filter(pp => pp.process_id !== undefined);
-        const productProcessForCreate: ProductProcessOrchestratorForCreate[] = product_processes.filter(pp => pp.process_id === undefined);
-        const productProcessForAssignAux: ProductProcessOrchestratorForAsign[] = productProcessForAssign.map((pp) => ({
-            ...pp,
-            product_id: productCreateResponse.id
-        }));
-        const productProcessForCreateAux: ProductProcessOrchestratorForCreate[] = productProcessForCreate.map((pp) => ({
-            ...pp,
-            product_id: productCreateResponse.id
-        }));
+        const isAssignExisting = (pp: ProductProcessCreateOrchestrated): pp is ProductProcessAssignExisting =>
+            "process_id" in pp && typeof pp.process_id === "number";
 
-        const productProcessResponses: ProductProcessProps[] = [];
-        for (const productProcess of productProcessForAssignAux) {
-            const productProcessResponse: ProductProcessProps =
-                await this.createProductProcessUseCase.execute(productProcess);
-            productProcessResponses.push(productProcessResponse);
-        };
+        const isCreateNew = (pp: ProductProcessCreateOrchestrated): pp is ProductProcessCreateNew =>
+            !("process_id" in pp) && "process" in pp;
 
-        for (const productProcess of productProcessForCreateAux) {
-            const createProcess: ProcessCreateProps = {
-                name: productProcess.product?.name ?? "",
-                description: productProcess.process?.name,
+        const productProcessForAssign: ProductProcessAssignExisting[] = product_processes.filter(isAssignExisting);
+        const productProcessForCreate: ProductProcessCreateNew[] = product_processes.filter(isCreateNew);
+        const productProcessResponses: ProductProcessOrchestratorBase[] = [];
+        for (const productProcess of productProcessForAssign) {
+            const { product_input_process, process, product, ...ppFlat } = productProcess;
+
+            const createProductProcess: ProductProcessCreateProps = {
+                ...ppFlat,
+                product_id: productCreateResponse.id,
             };
+            const productProcessResponse: ProductProcessProps =
+                await this.createProductProcessUseCase.execute(createProductProcess);
+
+            const productInputProcessArray: ProductInputProcessProps[] = [];
+            if (product_input_process && product_input_process.length) {
+                for (const pip of productProcess.product_input_process) {
+                    const getProductInput =
+                        await this.getProductInputByIdProductInput.execute(productCreateResponse.id, pip.product_input.input_id);
+                    if (!getProductInput) {
+                        throw new HttpError(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productCreateResponse.id}.`);
+                    };
+                    const createPip: ProductInputProcessCreateProps = {
+                        qty: pip.qty,
+                        product_input_id: getProductInput.id,
+                        product_process_id: productProcessResponse.id,
+                        product_id: productCreateResponse.id,
+                    };
+                    const productInputProcessResponse: ProductInputProcessProps = await this.createProductInputProcessUseCase.execute(createPip);
+                    productInputProcessArray.push(productInputProcessResponse);
+                };
+            }
+            const productProcessWithRelationship: ProductProcessOrchestratorBase = {
+                ...productProcessResponse,
+                product_input_process: productInputProcessArray
+            };
+            productProcessResponses.push(productProcessWithRelationship);
+        }
+
+        for (const productProcess of productProcessForCreate) {
+            const { product_input_process, process, sort_order } = productProcess;
             const processCreateResponse: ProcessProps =
-                await this.createProcess.execute(createProcess);
+                await this.createProcess.execute(process);
             const createProductProcess: ProductProcessCreateProps = {
                 process_id: processCreateResponse.id,
-                product_id: productProcess.product_id,
-                sort_order: productProcess.sort_order
-            }
+                product_id: productCreateResponse.id,
+                sort_order: sort_order
+            };
             const productProcessCreateResponse: ProductProcessProps =
                 await this.createProductProcessUseCase.execute(createProductProcess);
-            productProcessResponses.push(productProcessCreateResponse);
+            const productInputProcessArray: ProductInputProcessProps[] = [];
+            if (product_input_process && product_input_process?.length) {
+                for (const pip of productProcess.product_input_process) {
+                    const getProductInput =
+                        await this.getProductInputByIdProductInput.execute(productCreateResponse.id, pip.product_input.input_id);
+                    if (!getProductInput) {
+                        throw new HttpError(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productCreateResponse.id}.`);
+                    };
+                    const createPip: ProductInputProcessCreateProps = {
+                        qty: pip.qty,
+                        product_input_id: getProductInput.id,
+                        product_process_id: productProcessCreateResponse.id,
+                        product_id: productCreateResponse.id,
+                    };
+                    const productInputProcessResponse: ProductInputProcessProps = await this.createProductInputProcessUseCase.execute(createPip);
+                    productInputProcessArray.push(productInputProcessResponse);
+                };
+            }
+            const productProcessWithRelationship: ProductProcessOrchestratorBase = {
+                ...productProcessCreateResponse,
+                product_input_process: productInputProcessArray
+            };
+            productProcessResponses.push(productProcessWithRelationship);
         };
 
         // *************** ProductDiscountRange ***************
@@ -110,6 +168,7 @@ export class CreateProductOrchestratorUseCase {
                 product_id: productCreateResponse.id
             })
         );
+
         const productDiscountRangeResponses: ProductDiscountRangeProps[] = [];
         for (const productDiscount of productDiscountRangeCreates) {
             const productDiscountResponse: ProductDiscountRangeProps = await this.createProductDiscountRangeUseCase.execute(productDiscount);
@@ -132,6 +191,7 @@ export class CreateProductOrchestratorUseCase {
                 updated_at: pdr.updated_at.toISOString()
             }))
         }
+
         return productResponse;
     }
 };

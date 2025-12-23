@@ -1,4 +1,5 @@
-import type { ProductInputProps, ProductInputCreateProps, ProductInputUpdateProps } from "./product-input-process.types";
+import type { ProductInputProcessProps, ProductInputProcessCreateProps, ProductInputProcessUpdateProps } from "./product-input-process.types";
+import { Transaction } from "sequelize";
 /**
  * IRepository
  * ------------------------------------------------------------------
@@ -40,10 +41,11 @@ import type { ProductInputProps, ProductInputCreateProps, ProductInputUpdateProp
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-export interface IProductInputRepository {
-    findAll(): Promise<ProductInputProps[]>;
-    findById(id: string): Promise<ProductInputProps | null>;
-    create(data: ProductInputCreateProps): Promise<ProductInputProps>;
-    update(id: string, data: ProductInputUpdateProps): Promise<ProductInputProps>;
-    delete(id: string): Promise<void>;
+export interface IProductInputProcessRepository {
+    findAll(): Promise<ProductInputProcessProps[]>;
+    findById(id: number): Promise<ProductInputProcessProps | null>;
+    findByProductInputProcess(product_id: number, product_input_id: number, product_process_id: number): Promise<ProductInputProcessProps | null>;
+    create(data: ProductInputProcessCreateProps, tx?: Transaction): Promise<ProductInputProcessProps>;
+    update(id: number, data: ProductInputProcessUpdateProps, tx?: Transaction): Promise<ProductInputProcessProps>;
+    delete(id: number, tx?: Transaction): Promise<void>;
 }

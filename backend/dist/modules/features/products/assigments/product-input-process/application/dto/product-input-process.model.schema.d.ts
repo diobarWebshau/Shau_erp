@@ -40,10 +40,11 @@ import { z } from "zod";
  * Define los campos requeridos para crear un registro mediante POST.
  * Aqui todos los atributos son obligatorios y se validan según su tipo.
  */
-declare const ProductInputCreateSchema: z.ZodObject<{
+declare const productInputProcessCreateSchema: z.ZodObject<{
     product_id: z.ZodNumber;
-    input_id: z.ZodNumber;
-    equivalence: z.ZodNumber;
+    product_input_id: z.ZodNumber;
+    product_process_id: z.ZodNumber;
+    qty: z.ZodNumber;
 }, z.core.$strip>;
 /**
  * UpdateSchema
@@ -51,10 +52,11 @@ declare const ProductInputCreateSchema: z.ZodObject<{
  * Define los campos que pueden actualizarse mediante PATCH.
  * Aqui todos los atributos son opcionales para permitir modificaciones parciales.
  */
-declare const ProductInputUpdateSchema: z.ZodObject<{
+declare const productInputProcessUpdateSchema: z.ZodObject<{
     product_id: z.ZodOptional<z.ZodNumber>;
-    input_id: z.ZodOptional<z.ZodNumber>;
-    equivalence: z.ZodOptional<z.ZodNumber>;
+    product_input_id: z.ZodOptional<z.ZodNumber>;
+    product_process_id: z.ZodOptional<z.ZodNumber>;
+    qty: z.ZodOptional<z.ZodNumber>;
 }, z.core.$strip>;
 /**
  * ResponseSchema
@@ -62,10 +64,11 @@ declare const ProductInputUpdateSchema: z.ZodObject<{
  * Representa el objeto completo que devuelve la API en las respuestas.
  * Incluye los campos de creación más los metadatos generados por el sistema.
  */
-declare const ProductInputReponseSchema: z.ZodObject<{
+declare const productInputProcessReponseSchema: z.ZodObject<{
     product_id: z.ZodNumber;
-    input_id: z.ZodNumber;
-    equivalence: z.ZodNumber;
+    product_input_id: z.ZodNumber;
+    product_process_id: z.ZodNumber;
+    qty: z.ZodNumber;
     id: z.ZodNumber;
 }, z.core.$strip>;
 /**
@@ -108,8 +111,8 @@ declare const ProductInputReponseSchema: z.ZodObject<{
  * - Orchestrators: consumen estos DTOs para exponer datos tipados y consistentes
  *   hacia el exterior (ej. controladores, endpoints).
  */
-type ProductInputCreateDto = z.infer<typeof ProductInputCreateSchema>;
-type ProductInputResponseDto = z.infer<typeof ProductInputReponseSchema>;
-type ProductInputUpdateDto = z.infer<typeof ProductInputUpdateSchema>;
-export { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdateSchema };
-export type { ProductInputResponseDto, ProductInputCreateDto, ProductInputUpdateDto };
+type ProductInputProcessCreateDto = z.infer<typeof productInputProcessCreateSchema>;
+type ProductInputProcessResponseDto = z.infer<typeof productInputProcessReponseSchema>;
+type ProductInputProcessUpdateDto = z.infer<typeof productInputProcessUpdateSchema>;
+export { productInputProcessCreateSchema, productInputProcessReponseSchema, productInputProcessUpdateSchema };
+export type { ProductInputProcessResponseDto, ProductInputProcessCreateDto, ProductInputProcessUpdateDto };

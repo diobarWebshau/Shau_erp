@@ -1,4 +1,4 @@
-import type { ProductInputProps } from "./product-input-process.types";
+import type { ProductInputProcessProps } from "./product-input-process.types";
 /**
  * Entity
  * ------------------------------------------------------------------
@@ -36,8 +36,8 @@ import type { ProductInputProps } from "./product-input-process.types";
  * - Orchestrators: exponen endpoints que utilizan entidades y casos de uso
  *   para responder a solicitudes externas.
  */
-export declare class ProductInputEntity {
+export declare class ProductInputProcessEntity {
     private readonly props;
-    constructor(props: ProductInputProps);
-    get values(): ProductInputProps;
+    constructor(props: ProductInputProcessProps);
+    get values(): ProductInputProcessProps;
 }

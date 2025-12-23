@@ -2,62 +2,105 @@ import type { Response, NextFunction } from "express";
 import type { StorageRequest } from "./with-storage-context.middleware";
 import path from "path";
 
-/**
- * HTTP Middleware – Normalize Upload
- * ------------------------------------------------------------------
- * Normaliza req.files → req.body.
- *
- * Función técnica:
- * - Adaptar la salida de Multer a estructuras de dominio/API.
- *
- * Qué hace:
- * - Convierte paths absolutos en relativos.
- * - Prepara datos para persistencia.
- *
- * Qué no hace:
- * - No guarda archivos.
- * - No valida reglas.
- */
-
 type MulterFilesMap = Record<string, Express.Multer.File[]>;
 
-export const normalizeUploadedFiles = (options: {
-    single?: readonly string[];
-    multiple?: readonly string[];
-    baseDir?: string;
-}) => (req: StorageRequest, _res: Response, next: NextFunction): void => {
+type SingleItem = string | { field: string; to: string };
+type MultipleItem = string | { field: string; to: string };
 
-    if (!req.files) return next();
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+    return !!value && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype;
+}
 
-    const files: MulterFilesMap = req.files as MulterFilesMap;
+function normalizeItem(item: SingleItem | MultipleItem): { field: string; to: string } {
+    return typeof item === "string" ? { field: item, to: item } : item;
+}
 
-    const baseDir: string = options.baseDir
-        ? path.resolve(options.baseDir)
-        : path.resolve(process.cwd(), process.env.FILES_PATH!);
+function ensureObject(body: Record<string, unknown>, key: string): void {
+    const cur = body[key];
 
-    // -------------------------
-    // SINGLE FILE FIELDS
-    // -------------------------
-    options.single?.forEach((field) => {
-        const file: Express.Multer.File = files[field]?.[0];
-        if (!file) return;
+    if (cur === undefined) {
+        body[key] = {};
+        return;
+    }
 
-        req.body[field] = path
-            .relative(baseDir, file.path)
-            .replace(/\\/g, "/");
-    });
+    if (typeof cur === "string") {
+        try {
+            const parsed: unknown = JSON.parse(cur);
+            body[key] = isPlainObject(parsed) ? parsed : {};
+        } catch {
+            body[key] = {};
+        }
+        return;
+    }
 
-    // -------------------------
-    // MULTIPLE FILE FIELDS
-    // -------------------------
-    options.multiple?.forEach((field) => {
-        const fieldFiles: Express.Multer.File[] = files[field];
-        if (!fieldFiles) return;
-        req.body[field] = fieldFiles.map(file => ({
-            path: path.relative(baseDir, file.path).replace(/\\/g, "/"),
-            originalname: file.originalname,
-        }));
-    });
+    if (!isPlainObject(cur)) body[key] = {};
+}
 
-    next();
-};
+function setDeep(body: Record<string, unknown>, dottedPath: string, value: unknown): void {
+    const keys = dottedPath.split(".").filter(Boolean);
+    let cur: Record<string, unknown> = body;
+
+    for (let i = 0; i < keys.length; i++) {
+        const k = keys[i]!;
+        const last = i === keys.length - 1;
+
+        if (last) {
+            cur[k] = value;
+            return;
+        }
+
+        const next = cur[k];
+        if (!isPlainObject(next)) cur[k] = {};
+        cur = cur[k] as Record<string, unknown>;
+    }
+}
+
+export const normalizeUploadedFiles =
+    (options: {
+        single?: readonly SingleItem[];
+        multiple?: readonly MultipleItem[];
+        baseDir?: string;
+    }) =>
+        (req: StorageRequest, _res: Response, next: NextFunction): void => {
+            if (!req.files) return next();
+
+            const files: MulterFilesMap = req.files as MulterFilesMap;
+
+            const baseDir: string = options.baseDir
+                ? path.resolve(options.baseDir)
+                : path.resolve(process.cwd(), process.env.FILES_PATH!);
+
+            // 👇 ya NO hay any: body es Record<string, unknown> por el tipo
+            const body = req.body;
+
+            options.single?.forEach((item) => {
+                const { field, to } = normalizeItem(item);
+                const file = files[field]?.[0];
+                if (!file) return;
+
+                const rel = path.relative(baseDir, file.path).replace(/\\/g, "/");
+
+                const rootKey = to.split(".")[0];
+                if (rootKey) ensureObject(body, rootKey);
+
+                setDeep(body, to, rel);
+            });
+
+            options.multiple?.forEach((item) => {
+                const { field, to } = normalizeItem(item);
+                const fieldFiles = files[field];
+                if (!fieldFiles?.length) return;
+
+                const mapped = fieldFiles.map((f) => ({
+                    path: path.relative(baseDir, f.path).replace(/\\/g, "/"),
+                    originalname: f.originalname,
+                }));
+
+                const rootKey = to.split(".")[0];
+                if (rootKey) ensureObject(body, rootKey);
+
+                setDeep(body, to, mapped);
+            });
+
+            next();
+        };

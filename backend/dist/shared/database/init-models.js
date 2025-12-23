@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initModels = initModels;
+const product_input_process_orm_1 = require("../../modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm");
 const location_production_line_orm_1 = require("../../modules/features/location/assigments/location-production-line/infrastructure/orm/location-production-line.orm");
 const product_discount_range_orm_1 = require("../../modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm");
 const product_discount_client_orm_1 = require("../../modules/features/client/assigments/product-discount-client/infrastructure/orm/product-discount-client.orm");
@@ -87,6 +88,7 @@ function initModels() {
         ProductDiscountRangeModel: product_discount_range_orm_1.ProductDiscountRangeModel,
         LocationLocationTypeModel: location_location_type_orm_1.LocationLocationTypeModel,
         ProductDiscountClientModel: product_discount_client_orm_1.ProductDiscountClientModel,
+        ProductInputProcessModel: product_input_process_orm_1.ProductInputProcessModel,
         ProductProcessModel: product_process_orm_1.ProductProcessModel,
         ProductInputModel: product_inputs_orm_1.ProductInputModel,
         ClientAddressModel: client_address_orm_1.ClientAddressModel,
@@ -97,7 +99,7 @@ function initModels() {
         ProcessModel: process_orm_1.ProcessModel,
         ProductModel: product_orm_1.ProductModel,
         ClientModel: clients_orm_1.ClientModel,
-        InputModel: input_orm_1.InputModel
+        InputModel: input_orm_1.InputModel,
     };
 }
 ;

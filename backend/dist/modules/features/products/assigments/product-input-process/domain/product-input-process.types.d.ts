@@ -45,12 +45,13 @@
  * - Orchestrators: exponen endpoints que terminan trabajando con DTOs y schemas
  *   derivados de estos tipos.
  */
-interface ProductInputProps {
+interface ProductInputProcessProps {
     id: number;
     product_id: number;
-    input_id: number;
-    equivalence: number;
+    product_input_id: number;
+    product_process_id: number;
+    qty: number;
 }
-type ProductInputCreateProps = Partial<Omit<ProductInputProps, "id">>;
-type ProductInputUpdateProps = ProductInputCreateProps;
-export type { ProductInputProps, ProductInputCreateProps, ProductInputUpdateProps };
+type ProductInputProcessCreateProps = Omit<ProductInputProcessProps, "id">;
+type ProductInputProcessUpdateProps = Partial<ProductInputProcessCreateProps>;
+export type { ProductInputProcessProps, ProductInputProcessCreateProps, ProductInputProcessUpdateProps };

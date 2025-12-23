@@ -5,6 +5,7 @@ import { locationLocationTypeRouter } from "@modules/features/location/assigment
 import { ProductInputProcessRouter } from "@modules/features/products/assigments/product-input-process/infrastructure/http/product-input-process.router";
 import { ProductProcessRouter } from "./modules/features/products/assigments/product-process/infrastructure/http/product-process.router";
 import { ProductInputRouter } from "@modules/features/products/assigments/product-input/infrastructure/http/product-input.router";
+import { ProductOrchestratorRouter } from "./modules/features/products/orchestrator/infrastructure/product-orchestrator.router";
 import { ClientAddressRouter } from "@modules/features/client/assigments/client-addresses/infrastructure/http/client.router";
 import { productionLineRouter } from "@modules/core/production-line/infrastructure/http/production-line.router";
 import { LocationTypeRouter } from "@modules/core/location-type/infrastructure/http/location-type.router";
@@ -21,7 +22,6 @@ import express, { Express } from "express";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import path from "node:path";
-
 
 const createApp = async (): Promise<Express> => {
 
@@ -59,6 +59,7 @@ const createApp = async (): Promise<Express> => {
     app.use("/product-discount-range", ProductDiscountRangeRouter());
     app.use("/product-input-process", ProductInputProcessRouter());
     app.use("/query", ProductQuery());
+    app.use("/product/orchestrator", ProductOrchestratorRouter());
 
     // ******* ERROR ******* 
     app.use(errorMiddleware);

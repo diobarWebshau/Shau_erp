@@ -1,9 +1,10 @@
+import { ProductInputProcessModel } from "@modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm";
 import { LocationProductionLineModel } from "@modules/features/location/assigments/location-production-line/infrastructure/orm/location-production-line.orm";
-import { ProductDiscountRangeModel } from "@src/modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
+import { ProductDiscountRangeModel } from "@modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
 import { ProductDiscountClientModel } from "@modules/features/client/assigments/product-discount-client/infrastructure/orm/product-discount-client.orm";
 import { LocationLocationTypeModel } from "@modules/features/location/assigments/location-location-type/infrastructure/orm/location-location-type.orm";
-import { ProductProcessModel } from "@src/modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
-import { ProductInputModel } from "@src/modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
+import { ProductProcessModel } from "@modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
+import { ProductInputModel } from "@modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
 import { ClientAddressModel } from "@modules/features/client/assigments/client-addresses/infrastructure/orm/client-address.orm";
 import { ProductionLineModel } from "@modules/core/production-line/infrastructure/orm/production-lines.orm";
 import { LocationTypeModel } from "@modules/core/location-type/infrastructure/orm/location-type.orm";
@@ -86,6 +87,7 @@ export function initModels() {
         ProductDiscountRangeModel,
         LocationLocationTypeModel,
         ProductDiscountClientModel,
+        ProductInputProcessModel,
         ProductProcessModel,
         ProductInputModel,
         ClientAddressModel,
@@ -96,6 +98,6 @@ export function initModels() {
         ProcessModel,
         ProductModel,
         ClientModel,
-        InputModel
+        InputModel,
     };
 };

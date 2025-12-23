@@ -26,9 +26,19 @@ import type { StorageContext } from "../domain/storage-context";
 
 export interface StorageRequest extends Request {
     storageContext?: StorageContext;
+
+    // 👇 clave: body indexable y estricto
+    body: Record<string, unknown>;
 }
 
-export const withStorageContext = (context: StorageContext) => (req: StorageRequest, _res: Response, next: NextFunction): void => {
-    req.storageContext = context;
-    next();
-};
+export const withStorageContext =
+    (context: StorageContext) => (req: StorageRequest, _res: Response, next: NextFunction): void => {
+        req.storageContext = context;
+
+        // 👇 aseguramos que body exista como objeto indexable
+        if (!req.body || typeof req.body !== "object") {
+            req.body = {};
+        }
+
+        next();
+    };

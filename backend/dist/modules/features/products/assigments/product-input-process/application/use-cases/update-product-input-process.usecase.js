@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateProductInputUseCase = void 0;
+exports.UpdateProductInputProcessUseCase = void 0;
 const decimal_normalization_and_cleaning_utils_1 = require("../../../../../../../helpers/decimal-normalization-and-cleaning.utils");
 const validation_diff_engine_backend_1 = require("../../../../../../../helpers/validation-diff-engine-backend");
 const pickEditableFields_1 = require("../../../../../../../helpers/pickEditableFields");
@@ -48,7 +48,7 @@ const http_error_1 = __importDefault(require("../../../../../../../shared/errors
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
-class UpdateProductInputUseCase {
+class UpdateProductInputProcessUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
@@ -56,21 +56,21 @@ class UpdateProductInputUseCase {
     async execute(id, data) {
         const existing = await this.repo.findById(id);
         if (!existing)
-            throw new http_error_1.default(404, "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla.");
+            throw new http_error_1.default(404, "La asignación de la cantidad de insumos consumidos para este proceso del producto que se desea actualizar no fue posible encontrarla.");
         const editableFields = [
-            "input_id", "product_id", "equivalence"
+            "product_input_id", "product_id", "product_process_id", "qty"
         ];
         const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
         const merged = { ...existing, ...filteredBody };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["equivalence"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["equivalence"]);
+        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["qty"]);
+        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["qty"]);
         const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length)
             return existing;
         const updated = await this.repo.update(id, updateValues);
         if (!updated)
-            throw new http_error_1.default(500, "No fue posible actualizar la asignacion del insumo al producto.");
+            throw new http_error_1.default(500, "No fue posible actualizar la asignación de la cantidad de insumos consumidos para este proceso del producto.");
         return updated;
     }
 }
-exports.UpdateProductInputUseCase = UpdateProductInputUseCase;
+exports.UpdateProductInputProcessUseCase = UpdateProductInputProcessUseCase;

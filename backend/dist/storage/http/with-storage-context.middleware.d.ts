@@ -24,5 +24,6 @@ import type { StorageContext } from "../domain/storage-context";
  */
 export interface StorageRequest extends Request {
     storageContext?: StorageContext;
+    body: Record<string, unknown>;
 }
 export declare const withStorageContext: (context: StorageContext) => (req: StorageRequest, _res: Response, next: NextFunction) => void;

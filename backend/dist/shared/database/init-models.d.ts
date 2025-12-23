@@ -1,3 +1,4 @@
+import { ProductInputProcessModel } from "../../modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm";
 import { LocationProductionLineModel } from "../../modules/features/location/assigments/location-production-line/infrastructure/orm/location-production-line.orm";
 import { ProductDiscountRangeModel } from "../../modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
 import { ProductDiscountClientModel } from "../../modules/features/client/assigments/product-discount-client/infrastructure/orm/product-discount-client.orm";
@@ -83,6 +84,7 @@ export declare function initModels(): {
     ProductDiscountRangeModel: typeof ProductDiscountRangeModel;
     LocationLocationTypeModel: typeof LocationLocationTypeModel;
     ProductDiscountClientModel: typeof ProductDiscountClientModel;
+    ProductInputProcessModel: typeof ProductInputProcessModel;
     ProductProcessModel: typeof ProductProcessModel;
     ProductInputModel: typeof ProductInputModel;
     ClientAddressModel: typeof ClientAddressModel;

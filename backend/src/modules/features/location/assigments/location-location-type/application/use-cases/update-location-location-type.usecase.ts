@@ -49,7 +49,7 @@ import { Transaction } from "sequelize";
 export class UpdateLocationLocationTypeUseCase {
     constructor(private readonly repo: ILocationLocationTypeRepository) { }
     async execute(id: number, data: LocationLocationTypeUpdateProps, tx?: Transaction): Promise<LocationLocationTypeProps> {
-        const existing: LocationLocationTypeProps | null = await this.repo.findById(id);
+        const existing: LocationLocationTypeProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del tipo de locacíon a la locación que se desea actualizar no fue posible encontrarla."
         );

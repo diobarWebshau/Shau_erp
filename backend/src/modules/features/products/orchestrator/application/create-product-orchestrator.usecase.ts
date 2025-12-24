@@ -1,30 +1,29 @@
 import { CreateProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/create-product-discount-range.usecase";
-import { ProductDiscountRangeCreateProps, ProductDiscountRangeProps } from "../../assigments/product-discounts-ranges/domain/product-discount-range.types";
 import { CreateProductProcessUseCase } from "@modules/features/products/assigments/product-process/application/use-cases/create-product-process.usecase";
+import { CreateProductInputProcessUseCase } from "../../assigments/product-input-process/application/use-cases/create-product-input-process.usecase";
 import { CreateProductInputUseCase } from "@modules/features/products/assigments/product-input/application/use-cases/create-product-input.usecase";
 import { IProductDiscountRangeRepository } from "../../assigments/product-discounts-ranges/domain/product-discount-range.repository.interface";
-import { ProductProcessCreateProps, ProductProcessProps } from "../../assigments/product-process/domain/product-process.types";
+import { IProductInputProcessRepository } from "../../assigments/product-input-process/domain/product-input-process.repository.interface";
+import { ProductDiscountRangeProps } from "../../assigments/product-discounts-ranges/domain/product-discount-range.types";
 import { IProductProcessRepository } from "../../assigments/product-process/domain/product-process.repository.interface";
-import { ProductInputCreateProps, ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
+import { ProductInputProcessProps } from "../../assigments/product-input-process/domain/product-input-process.types";
 import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
-import {
-    ProductOrchestratorCreate, ProductOrchestratorResponse,
-    ProductProcessAssignExisting, ProductProcessCreateNew,
-    ProductProcessCreateOrchestrated,
-    ProductProcessOrchestratorBase
-} from "../domain/product-orchestrator.types";
 import { CreateProductUseCase } from "@modules/core/product/application/use-cases/create-product.usecase";
+import { CreateProcessUseCase } from "@modules/core/process/application/use-cases/create-process.usecase";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { ProductProps } from "@modules/core/product/domain/product.types";
+import { ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
-import { CreateProcessUseCase } from "@modules/core/process/application/use-cases/create-process.usecase";
-import { ProcessProps } from "@modules/core/process/domain/process.types";
-import { ProductInputProcessCreateProps, ProductInputProcessProps } from "../../assigments/product-input-process/domain/product-input-process.types";
-import { CreateProductInputProcessUseCase } from "../../assigments/product-input-process/application/use-cases/create-product-input-process.usecase";
-import { IProductInputProcessRepository } from "../../assigments/product-input-process/domain/product-input-process.repository.interface";
-import { GetProductInputByIdProductInputUseCase } from "../../assigments/product-input/application/use-cases/get-product-input-by-id-product-input.usecase";
+import { ProductProps } from "@src/modules/core/product/domain/product.types";
+import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
+import { sequelize } from "@src/config/mysql/sequelize";
 import HttpError from "@shared/errors/http/http-error";
+import {
+    ProductProcessCreateOrchestrator, ProductProcessOrchestratorBase,
+    ProductOrchestratorCreate, ProductOrchestratorResponse,
+    ProductProcessAssignExisting, ProductProcessCreateNew,
+} from "../domain/product-orchestrator.types";
+import { Transaction } from "sequelize";
 
 interface CreateProductOrchestratorUseCaseProps {
     productRepo: IProductRepository,
@@ -33,165 +32,226 @@ interface CreateProductOrchestratorUseCaseProps {
     productInputRepo: IProductInputRepository,
     discountRangeRepo: IProductDiscountRangeRepository,
     processRepo: IProcessRepository,
-    productInputProcessRepo: IProductInputProcessRepository
+    productInputProcessRepo: IProductInputProcessRepository,
+    fileCleanup: IFileCleanupPort
 }
 
 export class CreateProductOrchestratorUseCase {
 
-    private createProductUseCase: CreateProductUseCase;
+    private readonly createProductUseCase: CreateProductUseCase;
+    private readonly createProductInputUseCase: CreateProductInputUseCase;
+    private readonly fileCleanup: IFileCleanupPort;
+    private readonly createProductProcessUseCase: CreateProductProcessUseCase;
+    private readonly createProductDiscountRangeUseCase: CreateProductDiscountRangeUseCase;
+    private readonly createProductInputProcessUseCase: CreateProductInputProcessUseCase;
+    private readonly createProcess: CreateProcessUseCase;
 
-    private createProductInputUseCase: CreateProductInputUseCase;
-    private getProductInputByIdProductInput: GetProductInputByIdProductInputUseCase;
-
-    private createProductProcessUseCase: CreateProductProcessUseCase;
-    private createProductDiscountRangeUseCase: CreateProductDiscountRangeUseCase;
-    private createProductInputProcessUseCase: CreateProductInputProcessUseCase;
-    private createProcess: CreateProcessUseCase;
-
-    constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo, productInputProcessRepo }: CreateProductOrchestratorUseCaseProps) {
+    constructor({
+        productRepo, discountRangeRepo, productInputRepo, productProcessRepo,
+        inputRepo, processRepo, productInputProcessRepo, fileCleanup
+    }: CreateProductOrchestratorUseCaseProps) {
         this.createProductUseCase = new CreateProductUseCase(productRepo);
         this.createProductInputUseCase = new CreateProductInputUseCase(productInputRepo, productRepo, inputRepo);
         this.createProductProcessUseCase = new CreateProductProcessUseCase(productProcessRepo, productRepo, processRepo);
-        this.getProductInputByIdProductInput = new GetProductInputByIdProductInputUseCase(productInputRepo);
         this.createProductDiscountRangeUseCase = new CreateProductDiscountRangeUseCase(discountRangeRepo, productRepo);
         this.createProcess = new CreateProcessUseCase(processRepo);
-        this.createProductInputProcessUseCase = new CreateProductInputProcessUseCase(productInputProcessRepo, productRepo, productInputRepo, productProcessRepo);
+        this.createProductInputProcessUseCase = new CreateProductInputProcessUseCase(
+            productInputProcessRepo, productRepo,
+            productInputRepo, productProcessRepo
+
+        );
+        this.fileCleanup = fileCleanup;
     };
 
     async execute(data: ProductOrchestratorCreate): Promise<ProductOrchestratorResponse> {
-        // ? CREATE PRODUCT-PROCESS 
+        const transaction = await sequelize.transaction({
+            isolationLevel: Transaction.ISOLATION_LEVELS.REPEATABLE_READ,
+        });
+
         const { product, product_discount_ranges, product_processes, products_inputs } = data;
-        const productCreateResponse: ProductProps = await this.createProductUseCase.execute(product);
 
+        // ✅ estado mínimo para compensación (filesystem cleanup)
+        let createdProductId: number | null = null;
 
-        // *************** ProductInputs ***************
+        try {
+            // ------------------------------------------------------------------
+            // 1) Producto (const dentro del try → TS strict feliz)
+            // ------------------------------------------------------------------
+            const createdProduct: ProductProps = await this.createProductUseCase.execute(product, transaction);
+            createdProductId = createdProduct.id;
 
-        const productInputCreates: ProductInputCreateProps[] = products_inputs.map((pi) => ({
-            input_id: pi.input_id,
-            equivalence: pi.equivalence,
-            product_id: productCreateResponse.id,
-        }));
-
-        const productInputResponses: ProductInputProps[] = [];
-        for (const productInput of productInputCreates) {
-            const productInputResponse: ProductInputProps = await this.createProductInputUseCase.execute(productInput);
-            productInputResponses.push(productInputResponse);
-        };
-
-        // *************** ProductProcess ***************
-
-        const isAssignExisting = (pp: ProductProcessCreateOrchestrated): pp is ProductProcessAssignExisting =>
-            "process_id" in pp && typeof pp.process_id === "number";
-
-        const isCreateNew = (pp: ProductProcessCreateOrchestrated): pp is ProductProcessCreateNew =>
-            !("process_id" in pp) && "process" in pp;
-
-        const productProcessForAssign: ProductProcessAssignExisting[] = product_processes.filter(isAssignExisting);
-        const productProcessForCreate: ProductProcessCreateNew[] = product_processes.filter(isCreateNew);
-        const productProcessResponses: ProductProcessOrchestratorBase[] = [];
-        for (const productProcess of productProcessForAssign) {
-            const { product_input_process, process, product, ...ppFlat } = productProcess;
-
-            const createProductProcess: ProductProcessCreateProps = {
-                ...ppFlat,
-                product_id: productCreateResponse.id,
-            };
-            const productProcessResponse: ProductProcessProps =
-                await this.createProductProcessUseCase.execute(createProductProcess);
-
-            const productInputProcessArray: ProductInputProcessProps[] = [];
-            if (product_input_process && product_input_process.length) {
-                for (const pip of productProcess.product_input_process) {
-                    const getProductInput =
-                        await this.getProductInputByIdProductInput.execute(productCreateResponse.id, pip.product_input.input_id);
-                    if (!getProductInput) {
-                        throw new HttpError(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productCreateResponse.id}.`);
-                    };
-                    const createPip: ProductInputProcessCreateProps = {
-                        qty: pip.qty,
-                        product_input_id: getProductInput.id,
-                        product_process_id: productProcessResponse.id,
-                        product_id: productCreateResponse.id,
-                    };
-                    const productInputProcessResponse: ProductInputProcessProps = await this.createProductInputProcessUseCase.execute(createPip);
-                    productInputProcessArray.push(productInputProcessResponse);
-                };
+            // ------------------------------------------------------------------
+            // 2) ProductInputs
+            // ------------------------------------------------------------------
+            const productInputResponses: ProductInputProps[] = [];
+            for (const pi of products_inputs) {
+                const createdPi = await this.createProductInputUseCase.execute(
+                    {
+                        input_id: pi.input_id,
+                        equivalence: pi.equivalence,
+                        product_id: createdProduct.id,
+                    },
+                    transaction
+                );
+                productInputResponses.push(createdPi);
             }
-            const productProcessWithRelationship: ProductProcessOrchestratorBase = {
-                ...productProcessResponse,
-                product_input_process: productInputProcessArray
-            };
-            productProcessResponses.push(productProcessWithRelationship);
-        }
 
-        for (const productProcess of productProcessForCreate) {
-            const { product_input_process, process, sort_order } = productProcess;
-            const processCreateResponse: ProcessProps =
-                await this.createProcess.execute(process);
-            const createProductProcess: ProductProcessCreateProps = {
-                process_id: processCreateResponse.id,
-                product_id: productCreateResponse.id,
-                sort_order: sort_order
-            };
-            const productProcessCreateResponse: ProductProcessProps =
-                await this.createProductProcessUseCase.execute(createProductProcess);
-            const productInputProcessArray: ProductInputProcessProps[] = [];
-            if (product_input_process && product_input_process?.length) {
-                for (const pip of productProcess.product_input_process) {
-                    const getProductInput =
-                        await this.getProductInputByIdProductInput.execute(productCreateResponse.id, pip.product_input.input_id);
-                    if (!getProductInput) {
-                        throw new HttpError(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productCreateResponse.id}.`);
-                    };
-                    const createPip: ProductInputProcessCreateProps = {
-                        qty: pip.qty,
-                        product_input_id: getProductInput.id,
-                        product_process_id: productProcessCreateResponse.id,
-                        product_id: productCreateResponse.id,
-                    };
-                    const productInputProcessResponse: ProductInputProcessProps = await this.createProductInputProcessUseCase.execute(createPip);
-                    productInputProcessArray.push(productInputProcessResponse);
-                };
+            // ✅ Map en memoria: input_id → product_input_id (evita el 404 por lectura sin tx)
+            const productInputIdByInputId = new Map<number, number>();
+            for (const pi of productInputResponses) {
+                productInputIdByInputId.set(pi.input_id, pi.id);
             }
-            const productProcessWithRelationship: ProductProcessOrchestratorBase = {
-                ...productProcessCreateResponse,
-                product_input_process: productInputProcessArray
+
+            // ------------------------------------------------------------------
+            // 3) ProductProcesses + ProductInputProcess
+            // ------------------------------------------------------------------
+            const isAssignExisting = (pp: ProductProcessCreateOrchestrator): pp is ProductProcessAssignExisting =>
+                "process_id" in pp && typeof pp.process_id === "number";
+
+            const isCreateNew = (pp: ProductProcessCreateOrchestrator): pp is ProductProcessCreateNew =>
+                !("process_id" in pp) && "process" in pp;
+
+            const productProcessForAssign = product_processes.filter(isAssignExisting);
+            const productProcessForCreate = product_processes.filter(isCreateNew);
+
+            const productProcessResponses: ProductProcessOrchestratorBase[] = [];
+
+            // --- A) Asignar process existente ---
+            for (const pp of productProcessForAssign) {
+                const { product_input_process, process, product: _p, ...ppFlat } = pp;
+
+                const createdPP = await this.createProductProcessUseCase.execute(
+                    {
+                        ...ppFlat,
+                        product_id: createdProduct.id,
+                    },
+                    transaction
+                );
+
+                const pipResponses: ProductInputProcessProps[] = [];
+
+                if (product_input_process?.length) {
+                    for (const pip of product_input_process) {
+                        const productInputId = productInputIdByInputId.get(pip.product_input.input_id);
+
+                        if (!productInputId) {
+                            throw new HttpError(
+                                404,
+                                `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${createdProduct.id}.`
+                            );
+                        }
+
+                        const createdPip = await this.createProductInputProcessUseCase.execute(
+                            {
+                                qty: pip.qty,
+                                product_input_id: productInputId,
+                                product_process_id: createdPP.id,
+                                product_id: createdProduct.id,
+                            },
+                            transaction
+                        );
+
+                        pipResponses.push(createdPip);
+                    }
+                }
+
+                productProcessResponses.push({
+                    ...createdPP,
+                    product_input_process: pipResponses,
+                });
+            }
+
+            // --- B) Crear process nuevo ---
+            for (const pp of productProcessForCreate) {
+                const { product_input_process, process, sort_order } = pp;
+
+                const createdProcess = await this.createProcess.execute(process, transaction);
+
+                const createdPP = await this.createProductProcessUseCase.execute(
+                    {
+                        process_id: createdProcess.id,
+                        product_id: createdProduct.id,
+                        sort_order,
+                    },
+                    transaction
+                );
+
+                const pipResponses: ProductInputProcessProps[] = [];
+
+                if (product_input_process?.length) {
+                    for (const pip of product_input_process) {
+                        const productInputId = productInputIdByInputId.get(pip.product_input.input_id);
+
+                        if (!productInputId) throw new HttpError(
+                            404,
+                            `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${createdProduct.id}.`
+                        );
+
+                        const createdPip = await this.createProductInputProcessUseCase.execute(
+                            {
+                                qty: pip.qty,
+                                product_input_id: productInputId,
+                                product_process_id: createdPP.id,
+                                product_id: createdProduct.id,
+                            },
+                            transaction
+                        );
+
+                        pipResponses.push(createdPip);
+                    }
+                }
+
+                productProcessResponses.push({
+                    ...createdPP,
+                    product_input_process: pipResponses,
+                });
+            }
+
+            // ------------------------------------------------------------------
+            // 4) DiscountRanges
+            // ------------------------------------------------------------------
+            const productDiscountRangeResponses: ProductDiscountRangeProps[] = [];
+            for (const pdr of product_discount_ranges) {
+                const createdPdr = await this.createProductDiscountRangeUseCase.execute(
+                    {
+                        ...pdr,
+                        product_id: createdProduct.id,
+                    },
+                    transaction
+                );
+                productDiscountRangeResponses.push(createdPdr);
+            }
+
+            // ------------------------------------------------------------------
+            // 5) Commit + Response
+            // ------------------------------------------------------------------
+            await transaction.commit();
+
+            return {
+                product: {
+                    ...createdProduct,
+                    created_at: createdProduct.created_at.toISOString(),
+                    updated_at: createdProduct.updated_at.toISOString(),
+                },
+                products_inputs: productInputResponses,
+                product_processes: productProcessResponses,
+                product_discount_ranges: productDiscountRangeResponses.map((x) => ({
+                    ...x,
+                    created_at: x.created_at.toISOString(),
+                    updated_at: x.updated_at.toISOString(),
+                })),
             };
-            productProcessResponses.push(productProcessWithRelationship);
-        };
+        } catch (error) {
+            await transaction.rollback();
+            try {
+                if (createdProductId !== null) {
+                    this.fileCleanup.scheduleCleanup(`products/${createdProductId}`);
+                }
+            } catch (cleanupErr) {
+                console.error("Cleanup scheduling failed:", cleanupErr);
+            }
 
-        // *************** ProductDiscountRange ***************
-
-        const productDiscountRangeCreates: ProductDiscountRangeCreateProps[] = product_discount_ranges.map(
-            (pdr): ProductDiscountRangeCreateProps => ({
-                ...pdr,
-                product_id: productCreateResponse.id
-            })
-        );
-
-        const productDiscountRangeResponses: ProductDiscountRangeProps[] = [];
-        for (const productDiscount of productDiscountRangeCreates) {
-            const productDiscountResponse: ProductDiscountRangeProps = await this.createProductDiscountRangeUseCase.execute(productDiscount);
-            productDiscountRangeResponses.push(productDiscountResponse);
-        };
-
-        // *************** Response ***************
-
-        const productResponse: ProductOrchestratorResponse = {
-            product: {
-                ...productCreateResponse,
-                created_at: productCreateResponse.created_at.toISOString(),
-                updated_at: productCreateResponse.updated_at.toISOString()
-            },
-            products_inputs: productInputResponses,
-            product_processes: productProcessResponses,
-            product_discount_ranges: productDiscountRangeResponses.map((pdr) => ({
-                ...pdr,
-                created_at: pdr.created_at.toISOString(),
-                updated_at: pdr.updated_at.toISOString()
-            }))
+            throw error;
         }
-
-        return productResponse;
     }
 };

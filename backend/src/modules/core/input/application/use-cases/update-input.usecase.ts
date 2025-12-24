@@ -55,7 +55,7 @@ export class UpdateInputUseCase {
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
         // ------------------------------------------------------------------
-        const existing: InputProps | null = await this.repo.findById(id);
+        const existing: InputProps | null = await this.repo.findById(id, tx);
 
         if (!existing) {
             throw new HttpError(
@@ -108,7 +108,7 @@ export class UpdateInputUseCase {
         // (data), no en los cambios efectivos (updateValues), para evitar
         // inconsistencias y falsos negativos.
         if (data.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -118,7 +118,7 @@ export class UpdateInputUseCase {
         }
 
         if (data.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku);
+            const existsBySku = await this.repo.findBySku(data.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -128,7 +128,7 @@ export class UpdateInputUseCase {
         }
 
         if (data.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -138,7 +138,7 @@ export class UpdateInputUseCase {
         }
 
         if (data.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString());
+            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new HttpError(
                     409,

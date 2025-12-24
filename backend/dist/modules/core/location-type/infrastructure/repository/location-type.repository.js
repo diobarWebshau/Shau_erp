@@ -66,21 +66,24 @@ class LocationTypeRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    async findAll() {
+    async findAll(tx) {
         const rows = await location_type_orm_1.LocationTypeModel.findAll({
-            attributes: location_type_orm_1.LocationTypeModel.getAllFields()
+            attributes: location_type_orm_1.LocationTypeModel.getAllFields(),
+            transaction: tx,
         });
         return rows.map(mapModelToDomain);
     }
-    async findById(id) {
+    async findById(id, tx) {
         const row = await location_type_orm_1.LocationTypeModel.findByPk(id, {
-            attributes: location_type_orm_1.LocationTypeModel.getAllFields()
+            attributes: location_type_orm_1.LocationTypeModel.getAllFields(),
+            transaction: tx
         });
         return row ? mapModelToDomain(row) : null;
     }
-    async findByName(name) {
+    async findByName(name, tx) {
         const row = await location_type_orm_1.LocationTypeModel.findOne({
             where: { name },
+            transaction: tx,
             attributes: location_type_orm_1.LocationTypeModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
@@ -98,7 +101,9 @@ class LocationTypeRepository {
     // UPDATE
     // ================================================================
     async update(id, data, tx) {
-        const existing = await location_type_orm_1.LocationTypeModel.findByPk(id);
+        const existing = await location_type_orm_1.LocationTypeModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "El tipo de locación que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -110,6 +115,7 @@ class LocationTypeRepository {
             throw new http_error_1.default(500, "No fue posible actualizar el tipo de locación.");
         // 3. Obtener la locación actualizada
         const updated = await location_type_orm_1.LocationTypeModel.findByPk(id, {
+            transaction: tx,
             attributes: location_type_orm_1.LocationTypeModel.getAllFields(),
         });
         if (!updated)

@@ -66,25 +66,31 @@ class InputTypeRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    async findAll() {
+    async findAll(tx) {
         const rows = await input_type_orm_1.InputTypeModel.findAll({
-            attributes: input_type_orm_1.InputTypeModel.getAllFields()
+            attributes: input_type_orm_1.InputTypeModel.getAllFields(),
+            transaction: tx
         });
         return rows.map(mapModelToDomain);
     }
-    async findById(id) {
+    ;
+    async findById(id, tx) {
         const row = await input_type_orm_1.InputTypeModel.findByPk(id, {
-            attributes: input_type_orm_1.InputTypeModel.getAllFields()
+            attributes: input_type_orm_1.InputTypeModel.getAllFields(),
+            transaction: tx
         });
         return row ? mapModelToDomain(row) : null;
     }
-    async findByName(name) {
+    ;
+    async findByName(name, tx) {
         const row = await input_type_orm_1.InputTypeModel.findOne({
             where: { name },
-            attributes: input_type_orm_1.InputTypeModel.getAllFields()
+            attributes: input_type_orm_1.InputTypeModel.getAllFields(),
+            transaction: tx
         });
         return row ? mapModelToDomain(row) : null;
     }
+    ;
     // ================================================================
     // CREATE
     // ================================================================
@@ -99,7 +105,9 @@ class InputTypeRepository {
     // ================================================================
     async update(id, data, tx) {
         // 1. Verificar existencia
-        const existing = await input_type_orm_1.InputTypeModel.findByPk(id);
+        const existing = await input_type_orm_1.InputTypeModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "El tipo de insumo que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -112,6 +120,7 @@ class InputTypeRepository {
         // 3. Obtener la insumo actualizada
         const updated = await input_type_orm_1.InputTypeModel.findByPk(id, {
             attributes: input_type_orm_1.InputTypeModel.getAllFields(),
+            transaction: tx
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el tipo de insumo.");
@@ -121,7 +130,9 @@ class InputTypeRepository {
     // DELETE
     // ================================================================
     async delete(id, tx) {
-        const existing = await input_type_orm_1.InputTypeModel.findByPk(id);
+        const existing = await input_type_orm_1.InputTypeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro el tipo de insumo que se pretende eliminar.");
         const deleted = await input_type_orm_1.InputTypeModel.destroy({
@@ -134,4 +145,5 @@ class InputTypeRepository {
     }
 }
 exports.InputTypeRepository = InputTypeRepository;
+;
 exports.default = InputTypeRepository;

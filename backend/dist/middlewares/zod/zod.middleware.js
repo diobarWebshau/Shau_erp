@@ -136,6 +136,7 @@ const validateRequest = (schema) => (req, _res, next) => {
      *
      * No necesita chequear nada más.
      */
+    console.log('salgo del zod');
     return next();
 };
 exports.validateRequest = validateRequest;

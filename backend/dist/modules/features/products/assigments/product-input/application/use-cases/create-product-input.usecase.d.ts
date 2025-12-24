@@ -2,6 +2,7 @@ import { IInputRepository } from "../../../../../../../modules/core/input/domain
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
 import type { ProductInputProps, ProductInputCreateProps } from "../../domain/product-input.types";
 import { IProductRepository } from "../../../../../../../modules/core/product/domain/product.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -47,5 +48,5 @@ export declare class CreateProductInputUseCase {
     private readonly repoProduct;
     private readonly repoInput;
     constructor(repo: IProductInputRepository, repoProduct: IProductRepository, repoInput: IInputRepository);
-    execute(data: ProductInputCreateProps): Promise<ProductInputProps>;
+    execute(data: ProductInputCreateProps, tx?: Transaction): Promise<ProductInputProps>;
 }

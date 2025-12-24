@@ -48,7 +48,7 @@ import { Transaction } from "sequelize";
 export class UpdateInputTypeUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
     execute = async (id: number, data: InputTypeUpdateProps, tx?: Transaction) => {
-        const existing = await this.repo.findById(Number(id));
+        const existing = await this.repo.findById(Number(id), tx);
         if (!existing) throw new HttpError(404,
             "El tipo de locación que se desea actualizar no fue posible encontrarlo."
         );

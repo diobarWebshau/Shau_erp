@@ -26,21 +26,24 @@ class ClientAddressRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await client_address_orm_1.ClientAddressModel.findAll({
+            transaction: tx,
             attributes: client_address_orm_1.ClientAddressModel.getAllFields()
         });
         const rowsMap = rows.map((pl) => mapModelToDomain(pl));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await client_address_orm_1.ClientAddressModel.findByPk(id, {
+            transaction: tx,
             attributes: client_address_orm_1.ClientAddressModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByClientId = async (client_id) => {
+    findByClientId = async (client_id, tx) => {
         const row = await client_address_orm_1.ClientAddressModel.findOne({
+            transaction: tx,
             where: { client_id },
             attributes: client_address_orm_1.ClientAddressModel.getAllFields()
         });
@@ -60,7 +63,9 @@ class ClientAddressRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await client_address_orm_1.ClientAddressModel.findByPk(id);
+        const existing = await client_address_orm_1.ClientAddressModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "La dirección del cliente que se desea actualizar no fue posible encontrarlo.");
         // 2. Aplicar UPDATE
@@ -72,6 +77,7 @@ class ClientAddressRepository {
             throw new http_error_1.default(500, "No fue posible actualizar la dirección del cliente.");
         // 3. Obtener la locación actualizada
         const updated = await client_address_orm_1.ClientAddressModel.findByPk(id, {
+            transaction: tx,
             attributes: client_address_orm_1.ClientAddressModel.getAllFields(),
         });
         if (!updated)
@@ -82,7 +88,9 @@ class ClientAddressRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await client_address_orm_1.ClientAddressModel.findByPk(id);
+        const existing = await client_address_orm_1.ClientAddressModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la dirección del cliente que se pretende eliminar.");
         const deleted = await client_address_orm_1.ClientAddressModel.destroy({

@@ -1,5 +1,6 @@
 // src/modules/location/application/use-cases/delete-location.usecase.ts
 
+import { Transaction } from "sequelize";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import { LocationProductionLineProps } from "../../domain/location-production-line.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -47,12 +48,12 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteLocationProductionLineUseCase {
     constructor(private readonly repo: ILocationProductionLineRepository) { }
-    async execute(id: number): Promise<void> {
-        const exists: LocationProductionLineProps | null = await this.repo.findById(id);
+    async execute(id: number, tx?: Transaction): Promise<void> {
+        const exists: LocationProductionLineProps | null = await this.repo.findById(id, tx);
         if (!exists) throw new HttpError(404,
             "No se encontro la asignación de la línea de producción a la ubicacíon que se pretende eliminar."
         );
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

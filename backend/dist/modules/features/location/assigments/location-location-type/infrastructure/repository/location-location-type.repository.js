@@ -65,21 +65,24 @@ class LocationLocationTypeRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await location_location_type_orm_1.LocationLocationTypeModel.findAll({
+            transaction: tx,
             attributes: location_location_type_orm_1.LocationLocationTypeModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await location_location_type_orm_1.LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
             attributes: location_location_type_orm_1.LocationLocationTypeModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByLocationLocationType = async (location_id, location_type_id) => {
+    findByLocationLocationType = async (location_id, location_type_id, tx) => {
         const row = await location_location_type_orm_1.LocationLocationTypeModel.findOne({
+            transaction: tx,
             where: {
                 location_id: location_id,
                 location_type_id: location_type_id
@@ -102,7 +105,9 @@ class LocationLocationTypeRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await location_location_type_orm_1.LocationLocationTypeModel.findByPk(id);
+        const existing = await location_location_type_orm_1.LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del tipo de locación a la locación que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -114,6 +119,7 @@ class LocationLocationTypeRepository {
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del tipo de locación a la locación.");
         // 3. Obtener la locación actualizada
         const updated = await location_location_type_orm_1.LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
             attributes: location_location_type_orm_1.LocationLocationTypeModel.getAllFields(),
         });
         if (!updated)
@@ -124,7 +130,9 @@ class LocationLocationTypeRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await location_location_type_orm_1.LocationLocationTypeModel.findByPk(id);
+        const existing = await location_location_type_orm_1.LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la asignación del tipo de locación a la locaciónque se pretende eliminar.");
         const deleted = await location_location_type_orm_1.LocationLocationTypeModel.destroy({

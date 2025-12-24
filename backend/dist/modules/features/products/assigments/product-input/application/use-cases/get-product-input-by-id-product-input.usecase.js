@@ -46,7 +46,7 @@ class GetProductInputByIdProductInputUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (product_id, input_id) => this.repo.findByIdProductInput(product_id, input_id);
+    execute = async (product_id, input_id, tx) => this.repo.findByIdProductInput(product_id, input_id, tx);
 }
 exports.GetProductInputByIdProductInputUseCase = GetProductInputByIdProductInputUseCase;
 ;

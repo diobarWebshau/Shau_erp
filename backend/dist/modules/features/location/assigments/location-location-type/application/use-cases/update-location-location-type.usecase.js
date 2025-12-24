@@ -53,7 +53,7 @@ class UpdateLocationLocationTypeUseCase {
         this.repo = repo;
     }
     async execute(id, data, tx) {
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación del tipo de locacíon a la locación que se desea actualizar no fue posible encontrarla.");
         const editableFields = [

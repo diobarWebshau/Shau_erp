@@ -50,7 +50,7 @@ import { Transaction } from "sequelize";
 export class UpdateClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
     async execute(id: number, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps> {
-        const existing: ClientProps | null = await this.repo.findById(id);
+        const existing: ClientProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "El cliente que se desea actualizar no fue posible encontrarlo."
         );
@@ -69,19 +69,19 @@ export class UpdateClientUseCase {
         const updateValues: ClientUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
         if (updateValues?.company_name) {
-            const check: ClientProps | null = await this.repo.findByCompanyName(updateValues.company_name);
+            const check: ClientProps | null = await this.repo.findByCompanyName(updateValues.company_name, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El nombre ingresado para el cliente, ya esta utilizado por otro cliente."
             );
         }
         if (updateValues?.cfdi) {
-            const existsByName: ClientProps | null = await this.repo.findByCfdi(updateValues.cfdi);
+            const existsByName: ClientProps | null = await this.repo.findByCfdi(updateValues.cfdi, tx);
             if (existsByName) throw new HttpError(409,
                 "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );
         }
         if (updateValues?.tax_id) {
-            const existsByName: ClientProps | null = await this.repo.findByTaxId(updateValues.tax_id);
+            const existsByName: ClientProps | null = await this.repo.findByTaxId(updateValues.tax_id, tx);
             if (existsByName) throw new HttpError(409,
                 "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );

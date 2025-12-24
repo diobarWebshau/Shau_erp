@@ -1,5 +1,6 @@
 import type { ProductInputUpdateProps, ProductInputProps } from "../../domain/product-input.types";
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -43,5 +44,5 @@ import type { IProductInputRepository } from "../../domain/product-input.reposit
 export declare class UpdateProductInputUseCase {
     private readonly repo;
     constructor(repo: IProductInputRepository);
-    execute(id: number, data: ProductInputUpdateProps): Promise<ProductInputProps>;
+    execute(id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps>;
 }

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import type { InputProps } from "../../domain/input.types";
 
@@ -44,6 +45,6 @@ import type { InputProps } from "../../domain/input.types";
 
 export class GetInputByCustomIdUseCase {
     constructor(private readonly repo: IInputRepository) { }
-    execute = async (custom_id: string): Promise<InputProps | null> =>
-        this.repo.findByCustomId(custom_id);
+    execute = async (custom_id: string, tx?: Transaction): Promise<InputProps | null> =>
+        this.repo.findByCustomId(custom_id, tx);
 };

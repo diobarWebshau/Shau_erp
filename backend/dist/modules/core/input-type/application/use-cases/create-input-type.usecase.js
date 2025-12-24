@@ -52,7 +52,7 @@ class CreateInputTypeUseCase {
     }
     execute = async (data, tx) => {
         if (data.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El nombre ingresado para el nuevo tipo de insumo, ya esta utilizado por otro tipo de insumo.");
         }

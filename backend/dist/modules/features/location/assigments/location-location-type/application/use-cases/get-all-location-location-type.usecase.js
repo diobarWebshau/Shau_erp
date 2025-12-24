@@ -46,8 +46,8 @@ class GetAllLocationLocationTypeUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute() {
-        return await this.repo.findAll();
+    async execute(tx) {
+        return await this.repo.findAll(tx);
     }
 }
 exports.GetAllLocationLocationTypeUseCase = GetAllLocationLocationTypeUseCase;

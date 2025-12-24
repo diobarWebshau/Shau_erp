@@ -53,7 +53,7 @@ class UpdateProductionLineUseCase {
         this.repo = repo;
     }
     async execute(id, data, tx) {
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La línea de producción que se desea actualizar no fue posible encontrarla.");
         const editableFields = [
@@ -65,12 +65,12 @@ class UpdateProductionLineUseCase {
         if (!Object.keys(updateValues).length)
             return existing;
         if (updateValues.name) {
-            const check = await this.repo.findByName(updateValues.name);
+            const check = await this.repo.findByName(updateValues.name, tx);
             if (check && String(check.id) !== String(id))
                 throw new http_error_1.default(409, "El nombre ingresado para la línea de producción, ya esta utilizado por otra línea de producción.");
         }
         if (updateValues.custom_id) {
-            const check = await this.repo.findByCustomId(updateValues.custom_id);
+            const check = await this.repo.findByCustomId(updateValues.custom_id, tx);
             if (check && String(check.id) !== String(id))
                 throw new http_error_1.default(409, "El id unico ingresado para la línea de producción, ya esta utilizado por otra línea de producción.");
         }

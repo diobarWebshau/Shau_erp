@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
 import type { InputTypeProps } from "../../domain/input-type.types";
 
@@ -44,8 +45,8 @@ import type { InputTypeProps } from "../../domain/input-type.types";
 
 export class GetAllInputTypesUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
-    async execute(): Promise<InputTypeProps[]> {
-        const result: InputTypeProps[] = await this.repo.findAll();
+    async execute(tx?: Transaction): Promise<InputTypeProps[]> {
+        const result: InputTypeProps[] = await this.repo.findAll(tx);
         return result;
     }
 }

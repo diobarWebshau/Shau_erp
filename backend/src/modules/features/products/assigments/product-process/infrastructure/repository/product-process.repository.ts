@@ -66,21 +66,24 @@ export class ProductProcessRepository implements IProductProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductProcessProps[]> => {
+    findAll = async (tx?: Transaction): Promise<ProductProcessProps[]> => {
         const rows: ProductProcessModel[] = await ProductProcessModel.findAll({
+            transaction: tx,
             attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
         });
         const rowsMap: ProductProcessProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ProductProcessProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ProductProcessProps | null> => {
         const row: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByIdProductInput = async (product_id: number, process_id: number): Promise<ProductProcessProps | null> => {
+    findByIdProductInput = async (product_id: number, process_id: number, tx?: Transaction): Promise<ProductProcessProps | null> => {
         const row: ProductProcessModel | null = await ProductProcessModel.findOne({
+            transaction: tx,
             where: {
                 product_id: product_id,
                 process_id: process_id
@@ -102,7 +105,9 @@ export class ProductProcessRepository implements IProductProcessRepository {
     // ================================================================
     update = async (id: number, data: ProductProcessUpdateProps, tx?: Transaction): Promise<ProductProcessProps> => {
         // 1. Verificar existencia
-        const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
+        const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."
         );
@@ -115,6 +120,7 @@ export class ProductProcessRepository implements IProductProcessRepository {
             throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
         // 3. Obtener la producto actualizada
         const updated: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
@@ -124,7 +130,9 @@ export class ProductProcessRepository implements IProductProcessRepository {
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id);
+        const existing: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la asignación del proceso al producto que se pretende eliminar."
         );

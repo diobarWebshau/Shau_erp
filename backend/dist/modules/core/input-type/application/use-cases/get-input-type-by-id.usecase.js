@@ -46,8 +46,8 @@ class GetInputTypeByIdUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(id) {
-        return await this.repo.findById(id);
+    async execute(id, tx) {
+        return await this.repo.findById(id, tx);
     }
 }
 exports.GetInputTypeByIdUseCase = GetInputTypeByIdUseCase;

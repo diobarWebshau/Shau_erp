@@ -50,11 +50,11 @@ class DeleteProductInputProcessUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(id) {
-        const exists = await this.repo.findById(Number(id));
+    async execute(id, tx) {
+        const exists = await this.repo.findById(Number(id), tx);
         if (!exists)
             throw new http_error_1.default(404, "No se encontro la asignación de la cantidad de insumos consumidos para este proceso del producto que se pretende eliminar.");
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

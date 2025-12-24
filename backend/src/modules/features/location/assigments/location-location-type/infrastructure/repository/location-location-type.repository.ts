@@ -65,21 +65,24 @@ export class LocationLocationTypeRepository implements ILocationLocationTypeRepo
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<LocationLocationTypeProps[]> => {
+    findAll = async (tx?: Transaction): Promise<LocationLocationTypeProps[]> => {
         const rows: LocationLocationTypeModel[] = await LocationLocationTypeModel.findAll({
+            transaction: tx,
             attributes: LocationLocationTypeModel.getAllFields() as ((keyof LocationLocationTypeProps)[])
         });
         const rowsMap: LocationLocationTypeProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<LocationLocationTypeProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<LocationLocationTypeProps | null> => {
         const row: LocationLocationTypeModel | null = await LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
             attributes: LocationLocationTypeModel.getAllFields() as ((keyof LocationLocationTypeProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByLocationLocationType = async (location_id: number, location_type_id: number): Promise<LocationLocationTypeProps | null> => {
+    findByLocationLocationType = async (location_id: number, location_type_id: number, tx?: Transaction): Promise<LocationLocationTypeProps | null> => {
         const row: LocationLocationTypeModel | null = await LocationLocationTypeModel.findOne({
+            transaction: tx,
             where: {
                 location_id: location_id,
                 location_type_id: location_type_id
@@ -101,7 +104,9 @@ export class LocationLocationTypeRepository implements ILocationLocationTypeRepo
     // ================================================================
     update = async (id: number, data: LocationLocationTypeUpdateProps, tx?: Transaction): Promise<LocationLocationTypeProps> => {
         // 1. Verificar existencia
-        const existing: LocationLocationTypeModel | null = await LocationLocationTypeModel.findByPk(id);
+        const existing: LocationLocationTypeModel | null = await LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "La asignación del tipo de locación a la locación que se desea actualizar no fue posible encontrarla."
         );
@@ -114,6 +119,7 @@ export class LocationLocationTypeRepository implements ILocationLocationTypeRepo
             throw new HttpError(500, "No fue posible actualizar la asignación del tipo de locación a la locación.");
         // 3. Obtener la locación actualizada
         const updated: LocationLocationTypeModel | null = await LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
             attributes: LocationLocationTypeModel.getAllFields() as ((keyof LocationLocationTypeProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del tipo de locación a la locación.");
@@ -123,7 +129,9 @@ export class LocationLocationTypeRepository implements ILocationLocationTypeRepo
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: LocationLocationTypeModel | null = await LocationLocationTypeModel.findByPk(id);
+        const existing: LocationLocationTypeModel | null = await LocationLocationTypeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la asignación del tipo de locación a la locaciónque se pretende eliminar."
         );

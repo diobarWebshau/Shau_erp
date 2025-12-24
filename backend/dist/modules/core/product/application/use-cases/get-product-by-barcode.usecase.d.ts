@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps } from "../../domain/product.types";
 /**
@@ -43,5 +44,5 @@ B*/
 export declare class GetProductByBarcodeUseCase {
     private readonly repo;
     constructor(repo: IProductRepository);
-    execute: (barcode: number) => Promise<ProductProps | null>;
+    execute: (barcode: number, tx?: Transaction) => Promise<ProductProps | null>;
 }

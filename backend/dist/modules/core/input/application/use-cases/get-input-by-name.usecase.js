@@ -46,7 +46,7 @@ class GetInputByNameCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (name) => this.repo.findByName(name);
+    execute = async (name, tx) => this.repo.findByName(name, tx);
 }
 exports.GetInputByNameCase = GetInputByNameCase;
 ;

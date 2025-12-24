@@ -46,8 +46,8 @@ class GetAllProcessesUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(query) {
-        const result = await this.repo.findAll(query);
+    async execute(query, tx) {
+        const result = await this.repo.findAll(query, tx);
         return result;
     }
 }

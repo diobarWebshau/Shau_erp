@@ -48,12 +48,10 @@ export class CreateInputTypeUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
     execute = async (data: InputTypeCreateProps, tx?: Transaction) => {
         if (data.name) {
-            const existsByName = await this.repo.findByName(data.name);
-            if (existsByName)
-                throw new HttpError(
-                    409,
-                    "El nombre ingresado para el nuevo tipo de insumo, ya esta utilizado por otro tipo de insumo."
-                );
+            const existsByName = await this.repo.findByName(data.name, tx);
+            if (existsByName) throw new HttpError(409,
+                "El nombre ingresado para el nuevo tipo de insumo, ya esta utilizado por otro tipo de insumo."
+            );
         }
         const created: InputTypeProps = await this.repo.create(data, tx);
         if (!created)

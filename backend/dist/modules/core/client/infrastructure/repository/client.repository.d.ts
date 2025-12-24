@@ -2,12 +2,12 @@ import type { ClientCreateProps, ClientProps, ClientUpdateProps, ClientSearchCri
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import { Transaction } from "sequelize";
 export declare class ClientRepository implements IClientRepository {
-    findAll: (query: ClientSearchCriteria) => Promise<ClientProps[]>;
-    findById: (id: number) => Promise<ClientProps | null>;
-    findByCompanyName: (company_name: string) => Promise<ClientProps | null>;
-    findByCfdi: (cfdi: string) => Promise<ClientProps | null>;
-    findByTaxId: (tax_id: string) => Promise<ClientProps | null>;
-    create: (data: ClientCreateProps, tx: Transaction) => Promise<ClientProps>;
-    update: (id: number, data: ClientUpdateProps, tx: Transaction) => Promise<ClientProps>;
+    findAll: (query: ClientSearchCriteria, tx?: Transaction) => Promise<ClientProps[]>;
+    findById: (id: number, tx?: Transaction) => Promise<ClientProps | null>;
+    findByCompanyName: (company_name: string, tx?: Transaction) => Promise<ClientProps | null>;
+    findByCfdi: (cfdi: string, tx?: Transaction) => Promise<ClientProps | null>;
+    findByTaxId: (tax_id: string, tx?: Transaction) => Promise<ClientProps | null>;
+    create: (data: ClientCreateProps, tx?: Transaction) => Promise<ClientProps>;
+    update: (id: number, data: ClientUpdateProps, tx?: Transaction) => Promise<ClientProps>;
     delete: (id: number, tx?: Transaction) => Promise<void>;
 }

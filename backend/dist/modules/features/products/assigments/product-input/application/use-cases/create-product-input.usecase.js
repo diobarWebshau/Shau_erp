@@ -54,17 +54,17 @@ class CreateProductInputUseCase {
         this.repoProduct = repoProduct;
         this.repoInput = repoInput;
     }
-    async execute(data) {
-        const validateProduct = await this.repoProduct.findById(data.product_id);
+    async execute(data, tx) {
+        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct)
             throw new http_error_1.default(404, "El producto seleccionado al que se desea asignar un insumono existe.");
-        const validateInput = await this.repoInput.findById(data.input_id);
+        const validateInput = await this.repoInput.findById(data.input_id, tx);
         if (!validateInput)
             throw new http_error_1.default(404, "El insumo que se desea asignar al producto no existe.");
-        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.input_id);
+        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.input_id, tx);
         if (validateDuplicate)
             throw new http_error_1.default(409, "El producto ya tiene asignado el mismo seleccionado.");
-        const created = await this.repo.create(data);
+        const created = await this.repo.create(data, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del insumo al producto.");
         return created;

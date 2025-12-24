@@ -56,25 +56,25 @@ class CreateInputUseCase {
         // 🔎 VALIDACIONES DE NEGOCIO
         // ------------------------------------------------------------------
         if (data?.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName) {
                 throw new http_error_1.default(409, "El nombre ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
         }
         if (data?.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku);
+            const existsBySku = await this.repo.findBySku(data.sku, tx);
             if (existsBySku) {
                 throw new http_error_1.default(409, "El sku ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
         }
         if (data?.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId) {
                 throw new http_error_1.default(409, "El id único ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
         }
         if (data?.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString());
+            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
             if (existsByBarcode) {
                 throw new http_error_1.default(409, "El codigo de barras ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
@@ -95,7 +95,7 @@ class CreateInputUseCase {
                 // Actualizar únicamente el campo photo
                 await this.repo.update(created.id, {
                     photo: newRelativePath,
-                });
+                }, tx);
                 // Reflejar el cambio en el objeto de retorno
                 created.photo = newRelativePath;
             }

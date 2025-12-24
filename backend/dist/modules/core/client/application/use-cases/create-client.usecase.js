@@ -52,17 +52,17 @@ class CreateClientUseCase {
     }
     async execute(data, tx) {
         if (data?.cfdi) {
-            const existsByName = await this.repo.findByCfdi(data.cfdi);
+            const existsByName = await this.repo.findByCfdi(data.cfdi, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }
         if (data?.tax_id) {
-            const existsByName = await this.repo.findByTaxId(data.tax_id);
+            const existsByName = await this.repo.findByTaxId(data.tax_id, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }
         if (data?.company_name) {
-            const existsByName = await this.repo.findByCompanyName(data.company_name);
+            const existsByName = await this.repo.findByCompanyName(data.company_name, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El nombre ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }

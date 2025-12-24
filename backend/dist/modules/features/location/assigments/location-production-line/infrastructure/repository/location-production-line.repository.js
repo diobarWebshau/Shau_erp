@@ -65,21 +65,24 @@ class LocationProductionLineRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await location_production_line_orm_1.LocationProductionLineModel.findAll({
+            transaction: tx,
             attributes: location_production_line_orm_1.LocationProductionLineModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await location_production_line_orm_1.LocationProductionLineModel.findByPk(id, {
+            transaction: tx,
             attributes: location_production_line_orm_1.LocationProductionLineModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByIdLocationProductionLine = async (location_id, production_line_id) => {
+    findByIdLocationProductionLine = async (location_id, production_line_id, tx) => {
         const row = await location_production_line_orm_1.LocationProductionLineModel.findOne({
+            transaction: tx,
             where: {
                 location_id: location_id,
                 production_line_id: production_line_id
@@ -102,7 +105,9 @@ class LocationProductionLineRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await location_production_line_orm_1.LocationProductionLineModel.findByPk(id);
+        const existing = await location_production_line_orm_1.LocationProductionLineModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -114,6 +119,7 @@ class LocationProductionLineRepository {
             throw new http_error_1.default(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
         // 3. Obtener la locación actualizada
         const updated = await location_production_line_orm_1.LocationProductionLineModel.findByPk(id, {
+            transaction: tx,
             attributes: location_production_line_orm_1.LocationProductionLineModel.getAllFields(),
         });
         if (!updated)
@@ -124,7 +130,9 @@ class LocationProductionLineRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await location_production_line_orm_1.LocationProductionLineModel.findByPk(id);
+        const existing = await location_production_line_orm_1.LocationProductionLineModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la asignación de la línea de producción a la locacíon que se pretende eliminar.");
         const deleted = await location_production_line_orm_1.LocationProductionLineModel.destroy({

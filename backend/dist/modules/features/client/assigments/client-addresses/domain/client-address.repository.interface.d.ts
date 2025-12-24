@@ -42,9 +42,9 @@ import { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateProps 
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 export interface IClientAddressRepository {
-    findAll(): Promise<ClientAddressProps[]>;
-    findById(id: number): Promise<ClientAddressProps | null>;
-    findByClientId(company_name: string): Promise<ClientAddressProps | null>;
+    findAll(tx?: Transaction): Promise<ClientAddressProps[]>;
+    findById(id: number, tx?: Transaction): Promise<ClientAddressProps | null>;
+    findByClientId(company_name: string, tx?: Transaction): Promise<ClientAddressProps | null>;
     create(data: ClientAddressCreateProps, tx?: Transaction): Promise<ClientAddressProps>;
     update(id: number, data: ClientAddressUpdateProps, tx?: Transaction): Promise<ClientAddressProps>;
     delete(id: number, tx?: Transaction): Promise<void>;

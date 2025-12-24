@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
 import type { ProcessProps, ProcessSearchCriteria } from "../../domain/process.types";
 
@@ -45,8 +46,8 @@ import type { ProcessProps, ProcessSearchCriteria } from "../../domain/process.t
 
 export class GetAllProcessesUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    async execute(query: ProcessSearchCriteria): Promise<ProcessProps[]> {
-        const result: ProcessProps[] = await this.repo.findAll(query);
+    async execute(query: ProcessSearchCriteria, tx?: Transaction): Promise<ProcessProps[]> {
+        const result: ProcessProps[] = await this.repo.findAll(query, tx);
         return result;
     }
 }

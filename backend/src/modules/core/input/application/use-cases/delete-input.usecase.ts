@@ -52,18 +52,12 @@ export class DeleteInputUseCase {
     ) { }
 
     async execute(id: number, tx?: Transaction): Promise<void> {
-        const exists = await this.repo.findById(id);
-
-        if (!exists) {
-            throw new HttpError(
-                404,
-                "No se encontró el insumo que se pretende eliminar."
-            );
-        }
-
+        const exists = await this.repo.findById(id, tx);
+        if (!exists) throw new HttpError(404,
+            "No se encontró el insumo que se pretende eliminar."
+        );
         // 1️⃣ Eliminar en BD (operación crítica)
         await this.repo.delete(id, tx);
-
         // 2️⃣ Programar limpieza de archivos (NO crítica)
         this.fileCleanup.scheduleCleanup(`inputs/${id}`);
     }

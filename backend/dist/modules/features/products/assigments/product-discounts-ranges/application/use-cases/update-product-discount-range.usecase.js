@@ -55,7 +55,7 @@ class UpdateProductDiscountRangeUseCase {
         this.repo = repo;
     }
     async execute(id, data, tx) {
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla.");
         const editableFields = [
@@ -68,7 +68,7 @@ class UpdateProductDiscountRangeUseCase {
         const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length)
             return existing;
-        const getAll = await this.repo.findByProductId(merged.product_id);
+        const getAll = await this.repo.findByProductId(merged.product_id, tx);
         const getAllExcludeIdUpdate = getAll.filter(g => g.id !== Number(id));
         const getAllExcludeIdRanges = getAllExcludeIdUpdate.map(r => ({
             min_qty: r.min_qty,

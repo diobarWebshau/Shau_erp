@@ -53,8 +53,8 @@ class UpdateProductInputProcessUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(id, data) {
-        const existing = await this.repo.findById(id);
+    async execute(id, data, tx) {
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación de la cantidad de insumos consumidos para este proceso del producto que se desea actualizar no fue posible encontrarla.");
         const editableFields = [
@@ -67,7 +67,7 @@ class UpdateProductInputProcessUseCase {
         const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues);
+        const updated = await this.repo.update(id, updateValues, tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación de la cantidad de insumos consumidos para este proceso del producto.");
         return updated;

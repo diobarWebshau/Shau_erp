@@ -44,10 +44,10 @@ import type { ProductDiscountClientProps, ProductDiscountClientCreateProps, Prod
  */
 
 export interface IProductDiscountClientRepository {
-    findAll(): Promise<ProductDiscountClientProps[]>;
-    findById(id: number): Promise<ProductDiscountClientProps | null>;
-    findByClientId(client_id: number): Promise<ProductDiscountClientProps[]>;
-    findByProductClientId(product_id: number, client_id: number): Promise<ProductDiscountClientProps | null>;
+    findAll(tx?: Transaction): Promise<ProductDiscountClientProps[]>;
+    findById(id: number, tx?: Transaction): Promise<ProductDiscountClientProps | null>;
+    findByClientId(client_id: number, tx?: Transaction): Promise<ProductDiscountClientProps[]>;
+    findByProductClientId(product_id: number, client_id: number, tx?: Transaction): Promise<ProductDiscountClientProps | null>;
     create(data: ProductDiscountClientCreateProps, tx?: Transaction): Promise<ProductDiscountClientProps>;
     update(id: number, data: ProductDiscountClientUpdateProps, tx?: Transaction): Promise<ProductDiscountClientProps>;
     delete(id: number, tx?: Transaction): Promise<void>;

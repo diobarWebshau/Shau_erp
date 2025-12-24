@@ -79,7 +79,7 @@ export class ProductRepository implements IProductRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (query: ProductSearchCriteria): Promise<ProductProps[]> => {
+    findAll = async (query: ProductSearchCriteria, tx?: Transaction): Promise<ProductProps[]> => {
         const { filter, exclude_ids, active, ...rest } = query;
         const where: WhereOptions<ProductProps> = {
             ...(exclude_ids?.length
@@ -107,39 +107,45 @@ export class ProductRepository implements IProductRepository {
         };
         const rows: ProductModel[] = await ProductModel.findAll({
             where,
+            transaction: tx,
             attributes: ProductModel.getAllFields() as (keyof ProductProps)[],
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id: number): Promise<ProductProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByName = async (name: string): Promise<ProductProps | null> => {
+    findByName = async (name: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
+            transaction: tx,
             where: { name },
             attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByCustomId = async (custom_id: string): Promise<ProductProps | null> => {
+    findByCustomId = async (custom_id: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
+            transaction: tx,
             where: { custom_id: custom_id },
             attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findBySku = async (sku: string): Promise<ProductProps | null> => {
+    findBySku = async (sku: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
+            transaction: tx,
             where: { sku: sku },
             attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByBarcode = async (barcode: string): Promise<ProductProps | null> => {
+    findByBarcode = async (barcode: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
+            transaction: tx,
             where: { barcode: barcode },
             attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
         });
@@ -157,7 +163,9 @@ export class ProductRepository implements IProductRepository {
     // UPDATE
     // ================================================================
     update = async (id: number, data: ProductUpdateProps, tx?: Transaction): Promise<ProductProps> => {
-        const existing: ProductModel | null = await ProductModel.findByPk(id);
+        const existing: ProductModel | null = await ProductModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "El producto que se desea actualizar no fue posible encontrarlo."
         );
@@ -170,6 +178,7 @@ export class ProductRepository implements IProductRepository {
             throw new HttpError(500, "No fue posible actualizar el producto.");
         // 3. Obtener la locación actualizada
         const updated: ProductModel | null = await ProductModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductModel.getAllFields() as ((keyof ProductProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el producto.");
@@ -179,7 +188,9 @@ export class ProductRepository implements IProductRepository {
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ProductModel | null = await ProductModel.findByPk(id);
+        const existing: ProductModel | null = await ProductModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro el producto que se pretende eliminar."
         );

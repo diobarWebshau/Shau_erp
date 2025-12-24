@@ -48,13 +48,13 @@ export class CreateProductionLineUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
     async execute(data: ProductionLineCreateProps, tx?: Transaction): Promise<ProductionLineProps> {
         if (data?.name) {
-            const existsByName: ProductionLineProps | null = await this.repo.findByName(data.name);
+            const existsByName: ProductionLineProps | null = await this.repo.findByName(data.name, tx);
             if (existsByName) throw new HttpError(409,
                 "El nombre ingresado para la nueva línea de producción, ya esta utilizado por otra línea de producción."
             );
         }
         if (data?.custom_id) {
-            const existsByCustomId: ProductionLineProps | null = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId: ProductionLineProps | null = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId) throw new HttpError(409,
                 "El id único ingresado para la línea de producción, ya esta utilizado por otra línea de producción."
             );

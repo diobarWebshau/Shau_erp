@@ -54,7 +54,7 @@ class UpdateClientUseCase {
         this.repo = repo;
     }
     async execute(id, data, tx) {
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "El cliente que se desea actualizar no fue posible encontrarlo.");
         const editableFields = [
@@ -73,17 +73,17 @@ class UpdateClientUseCase {
         if (!Object.keys(updateValues).length)
             return existing;
         if (updateValues?.company_name) {
-            const check = await this.repo.findByCompanyName(updateValues.company_name);
+            const check = await this.repo.findByCompanyName(updateValues.company_name, tx);
             if (check && String(check.id) !== String(id))
                 throw new http_error_1.default(409, "El nombre ingresado para el cliente, ya esta utilizado por otro cliente.");
         }
         if (updateValues?.cfdi) {
-            const existsByName = await this.repo.findByCfdi(updateValues.cfdi);
+            const existsByName = await this.repo.findByCfdi(updateValues.cfdi, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }
         if (updateValues?.tax_id) {
-            const existsByName = await this.repo.findByTaxId(updateValues.tax_id);
+            const existsByName = await this.repo.findByTaxId(updateValues.tax_id, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }

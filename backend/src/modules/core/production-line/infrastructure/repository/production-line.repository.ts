@@ -68,29 +68,33 @@ export class ProductionLineRepository implements IProductionLineRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductionLineProps[]> => {
+    findAll = async (tx?: Transaction): Promise<ProductionLineProps[]> => {
         const rows: ProductionLineModel[] = await ProductionLineModel.findAll({
+            transaction: tx,
             attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
         const rowsMap: ProductionLineProps[] = rows.map((pl) => mapModelToDomain(pl));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ProductionLineProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ProductionLineProps | null> => {
         const row: ProductionLineModel | null = await ProductionLineModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByName = async (name: string): Promise<ProductionLineProps | null> => {
+    findByName = async (name: string, tx?: Transaction): Promise<ProductionLineProps | null> => {
         const row: ProductionLineModel | null = await ProductionLineModel.findOne({
             where: { name },
+            transaction: tx,
             attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByCustomId = async (custom_id: string): Promise<ProductionLineProps | null> => {
+    findByCustomId = async (custom_id: string, tx?: Transaction): Promise<ProductionLineProps | null> => {
         const row: ProductionLineModel | null = await ProductionLineModel.findOne({
             where: { custom_id },
+            transaction: tx,
             attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
         return row ? mapModelToDomain(row) : null;
@@ -108,14 +112,16 @@ export class ProductionLineRepository implements IProductionLineRepository {
     // ================================================================
     update = async (id: number, data: ProductionLineUpdateProps, tx?: Transaction): Promise<ProductionLineProps> => {
         // 1. Verificar existencia
-        const existing: ProductionLineModel | null = await ProductionLineModel.findByPk(id);
+        const existing: ProductionLineModel | null = await ProductionLineModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "La línea de producción que se desea actualizar no fue posible encontrarla."
         );
         // 2. Aplicar UPDATE
         const [affectedCount]: [affectedCount: number] = await ProductionLineModel.update(data, {
             where: { id },
-            transaction: tx,
+            transaction: tx
         });
         if (!affectedCount)
             throw new HttpError(500, "No fue posible actualizar la línea de producción.");
@@ -131,7 +137,9 @@ export class ProductionLineRepository implements IProductionLineRepository {
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ProductionLineModel | null = await ProductionLineModel.findByPk(id);
+        const existing: ProductionLineModel | null = await ProductionLineModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la línea de producción que se pretende eliminar."
         );

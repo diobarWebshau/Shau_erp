@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import type { ClientProps } from "../../domain/client.types";
 
@@ -44,5 +45,5 @@ import type { ClientProps } from "../../domain/client.types";
 
 export class GetClientByCfdiUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    execute = async (cfdi: string): Promise<ClientProps | null> => this.repo.findByCfdi(cfdi);
+    execute = async (cfdi: string, tx?: Transaction): Promise<ClientProps | null> => this.repo.findByCfdi(cfdi, tx);
 };

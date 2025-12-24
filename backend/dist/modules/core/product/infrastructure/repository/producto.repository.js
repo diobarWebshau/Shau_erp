@@ -80,7 +80,7 @@ class ProductRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (query) => {
+    findAll = async (query, tx) => {
         const { filter, exclude_ids, active, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
@@ -106,39 +106,45 @@ class ProductRepository {
         };
         const rows = await product_orm_1.ProductModel.findAll({
             where,
+            transaction: tx,
             attributes: product_orm_1.ProductModel.getAllFields(),
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await product_orm_1.ProductModel.findByPk(id, {
+            transaction: tx,
             attributes: product_orm_1.ProductModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByName = async (name) => {
+    findByName = async (name, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
+            transaction: tx,
             where: { name },
             attributes: product_orm_1.ProductModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByCustomId = async (custom_id) => {
+    findByCustomId = async (custom_id, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
+            transaction: tx,
             where: { custom_id: custom_id },
             attributes: product_orm_1.ProductModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findBySku = async (sku) => {
+    findBySku = async (sku, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
+            transaction: tx,
             where: { sku: sku },
             attributes: product_orm_1.ProductModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByBarcode = async (barcode) => {
+    findByBarcode = async (barcode, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
+            transaction: tx,
             where: { barcode: barcode },
             attributes: product_orm_1.ProductModel.getAllFields()
         });
@@ -157,7 +163,9 @@ class ProductRepository {
     // UPDATE
     // ================================================================
     update = async (id, data, tx) => {
-        const existing = await product_orm_1.ProductModel.findByPk(id);
+        const existing = await product_orm_1.ProductModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "El producto que se desea actualizar no fue posible encontrarlo.");
         // 2. Aplicar UPDATE
@@ -169,6 +177,7 @@ class ProductRepository {
             throw new http_error_1.default(500, "No fue posible actualizar el producto.");
         // 3. Obtener la locación actualizada
         const updated = await product_orm_1.ProductModel.findByPk(id, {
+            transaction: tx,
             attributes: product_orm_1.ProductModel.getAllFields(),
         });
         if (!updated)
@@ -179,7 +188,9 @@ class ProductRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await product_orm_1.ProductModel.findByPk(id);
+        const existing = await product_orm_1.ProductModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro el producto que se pretende eliminar.");
         const deleted = await product_orm_1.ProductModel.destroy({

@@ -25,21 +25,24 @@ export class ClientAddressRepository implements IClientAddressRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ClientAddressProps[]> => {
+    findAll = async (tx?: Transaction): Promise<ClientAddressProps[]> => {
         const rows: ClientAddressModel[] = await ClientAddressModel.findAll({
+            transaction: tx,
             attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[])
         });
         const rowsMap: ClientAddressProps[] = rows.map((pl) => mapModelToDomain(pl));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ClientAddressProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ClientAddressProps | null> => {
         const row: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
+            transaction: tx,
             attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByClientId = async (client_id: string): Promise<ClientAddressProps | null> => {
+    findByClientId = async (client_id: string, tx?: Transaction): Promise<ClientAddressProps | null> => {
         const row: ClientAddressModel | null = await ClientAddressModel.findOne({
+            transaction: tx,
             where: { client_id },
             attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[])
         });
@@ -58,7 +61,9 @@ export class ClientAddressRepository implements IClientAddressRepository {
     // ================================================================
     update = async (id: number, data: ClientAddressUpdateProps, tx?: Transaction): Promise<ClientAddressProps> => {
         // 1. Verificar existencia
-        const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id);
+        const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "La dirección del cliente que se desea actualizar no fue posible encontrarlo."
         );
@@ -71,6 +76,7 @@ export class ClientAddressRepository implements IClientAddressRepository {
             throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
         // 3. Obtener la locación actualizada
         const updated: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
+            transaction: tx,
             attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
@@ -80,7 +86,9 @@ export class ClientAddressRepository implements IClientAddressRepository {
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id);
+        const existing: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la dirección del cliente que se pretende eliminar."
         );

@@ -56,7 +56,7 @@ export class CreateInputUseCase {
         // 🔎 VALIDACIONES DE NEGOCIO
         // ------------------------------------------------------------------
         if (data?.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName) {
                 throw new HttpError(
                     409,
@@ -66,7 +66,7 @@ export class CreateInputUseCase {
         }
 
         if (data?.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku);
+            const existsBySku = await this.repo.findBySku(data.sku, tx);
             if (existsBySku) {
                 throw new HttpError(
                     409,
@@ -76,7 +76,7 @@ export class CreateInputUseCase {
         }
 
         if (data?.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId) {
                 throw new HttpError(
                     409,
@@ -86,7 +86,7 @@ export class CreateInputUseCase {
         }
 
         if (data?.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString());
+            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
             if (existsByBarcode) {
                 throw new HttpError(
                     409,
@@ -119,7 +119,7 @@ export class CreateInputUseCase {
                 // Actualizar únicamente el campo photo
                 await this.repo.update(created.id, {
                     photo: newRelativePath,
-                });
+                }, tx);
 
                 // Reflejar el cambio en el objeto de retorno
                 created.photo = newRelativePath;

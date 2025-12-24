@@ -69,31 +69,36 @@ export class InputTypeRepository implements IInputTypeRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    async findAll(): Promise<InputTypeProps[]> {
+
+    async findAll(tx?: Transaction): Promise<InputTypeProps[]> {
         const rows: InputTypeModel[] = await InputTypeModel.findAll({
-            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[])
+            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
+            transaction: tx
         });
         return rows.map(mapModelToDomain);
-    }
+    };
 
-    async findById(id: number): Promise<InputTypeProps | null> {
+    async findById(id: number, tx?: Transaction): Promise<InputTypeProps | null> {
         const row: InputTypeModel | null = await InputTypeModel.findByPk(id, {
-            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[])
+            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
+            transaction: tx
         });
         return row ? mapModelToDomain(row) : null;
-    }
+    };
 
-    async findByName(name: string): Promise<InputTypeProps | null> {
+    async findByName(name: string, tx?: Transaction): Promise<InputTypeProps | null> {
         const row: InputTypeModel | null = await InputTypeModel.findOne({
             where: { name },
-            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[])
+            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
+            transaction: tx
         });
         return row ? mapModelToDomain(row) : null;
-    }
+    };
 
     // ================================================================
     // CREATE
     // ================================================================
+
     async create(data: InputTypeCreateProps, tx?: Transaction): Promise<InputTypeProps> {
         const created: InputTypeModel | null = await InputTypeModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el tipo de insumo.");
@@ -105,7 +110,9 @@ export class InputTypeRepository implements IInputTypeRepository {
     // ================================================================
     async update(id: number, data: InputTypeUpdateProps, tx?: Transaction): Promise<InputTypeProps> {
         // 1. Verificar existencia
-        const existing: InputTypeProps | null = await InputTypeModel.findByPk(id);
+        const existing: InputTypeProps | null = await InputTypeModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(
             404,
             "El tipo de insumo que se desea actualizar no fue posible encontrarla."
@@ -119,6 +126,7 @@ export class InputTypeRepository implements IInputTypeRepository {
         // 3. Obtener la insumo actualizada
         const updated: InputTypeModel | null = await InputTypeModel.findByPk(id, {
             attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
+            transaction: tx
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el tipo de insumo.");
         return mapModelToDomain(updated);
@@ -128,7 +136,9 @@ export class InputTypeRepository implements IInputTypeRepository {
     // DELETE
     // ================================================================
     async delete(id: number, tx?: Transaction): Promise<void> {
-        const existing: InputTypeModel | null = await InputTypeModel.findByPk(id);
+        const existing: InputTypeModel | null = await InputTypeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(
             404,
             "No se encontro el tipo de insumo que se pretende eliminar."
@@ -140,6 +150,6 @@ export class InputTypeRepository implements IInputTypeRepository {
         if (!deleted) throw new HttpError(500, "No fue posible eliminar el tipo de insumo.");
         return;
     }
-}
+};
 
 export default InputTypeRepository;

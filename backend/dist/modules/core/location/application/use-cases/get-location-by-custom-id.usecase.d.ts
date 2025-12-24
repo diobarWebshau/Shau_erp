@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import type { LocationProps } from "../../domain/location.types";
 /**
@@ -43,5 +44,5 @@ import type { LocationProps } from "../../domain/location.types";
 export declare class GetLocationByCustomIdUseCase {
     private readonly repo;
     constructor(repo: ILocationRepository);
-    execute: (custom_id: string) => Promise<LocationProps | null>;
+    execute: (custom_id: string, tx?: Transaction) => Promise<LocationProps | null>;
 }

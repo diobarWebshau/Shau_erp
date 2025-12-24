@@ -53,10 +53,9 @@ class DeleteInputUseCase {
         this.fileCleanup = fileCleanup;
     }
     async execute(id, tx) {
-        const exists = await this.repo.findById(id);
-        if (!exists) {
+        const exists = await this.repo.findById(id, tx);
+        if (!exists)
             throw new http_error_1.default(404, "No se encontró el insumo que se pretende eliminar.");
-        }
         // 1️⃣ Eliminar en BD (operación crítica)
         await this.repo.delete(id, tx);
         // 2️⃣ Programar limpieza de archivos (NO crítica)

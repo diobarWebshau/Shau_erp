@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps, ProductSearchCriteria } from "../../domain/product.types";
 
@@ -44,7 +45,7 @@ import type { ProductProps, ProductSearchCriteria } from "../../domain/product.t
 
 export class GetAllProductsUseCase {
     constructor(private readonly repo: IProductRepository) { }
-    async execute(query: ProductSearchCriteria): Promise<ProductProps[]> {
-        return await this.repo.findAll(query);
+    async execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductProps[]> {
+        return await this.repo.findAll(query, tx);
     }
 };

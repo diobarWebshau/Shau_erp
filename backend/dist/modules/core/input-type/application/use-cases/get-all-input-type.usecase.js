@@ -46,8 +46,8 @@ class GetAllInputTypesUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute() {
-        const result = await this.repo.findAll();
+    async execute(tx) {
+        const result = await this.repo.findAll(tx);
         return result;
     }
 }

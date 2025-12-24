@@ -47,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 export class DeleteClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
     async execute(id: number, tx?: Transaction): Promise<void> {
-        const exists: ClientProps | null = await this.repo.findById(id);
+        const exists: ClientProps | null = await this.repo.findById(id, tx);
         if (!exists) throw new HttpError(404,
             "No se encontro el cliente que se pretende eliminar."
         );

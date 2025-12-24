@@ -47,7 +47,7 @@ class GetLocationByNameUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (name) => await this.repo.findByName(name);
+    execute = async (name, tx) => await this.repo.findByName(name, tx);
 }
 exports.GetLocationByNameUseCase = GetLocationByNameUseCase;
 ;

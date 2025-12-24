@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
 import type { ProductProcessProps } from "../../domain/product-process.types";
 /**
@@ -43,5 +44,5 @@ import type { ProductProcessProps } from "../../domain/product-process.types";
 export declare class GetAllProductProcessUseCase {
     private readonly repo;
     constructor(repo: IProductProcessRepository);
-    execute(): Promise<ProductProcessProps[]>;
+    execute(tx?: Transaction): Promise<ProductProcessProps[]>;
 }

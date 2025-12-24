@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationRepository = void 0;
+const sequelize_1 = require("sequelize");
 const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
 const location_orm_1 = require("../orm/location.orm");
-const sequelize_1 = require("sequelize");
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -80,7 +80,7 @@ class LocationRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (query) => {
+    findAll = async (query, tx) => {
         const { filter, exclude_ids, is_active, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
@@ -106,27 +106,31 @@ class LocationRepository {
         };
         const rows = await location_orm_1.LocationModel.findAll({
             where,
+            transaction: tx,
             attributes: location_orm_1.LocationModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await location_orm_1.LocationModel.findByPk(id, {
-            attributes: location_orm_1.LocationModel.getAllFields()
+            attributes: location_orm_1.LocationModel.getAllFields(),
+            transaction: tx
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByName = async (name) => {
+    findByName = async (name, tx) => {
         const row = await location_orm_1.LocationModel.findOne({
             where: { name },
-            attributes: location_orm_1.LocationModel.getAllFields()
+            attributes: location_orm_1.LocationModel.getAllFields(),
+            transaction: tx
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByCustomId = async (custom_id) => {
+    findByCustomId = async (custom_id, tx) => {
         const row = await location_orm_1.LocationModel.findOne({
             where: { custom_id },
+            transaction: tx,
             attributes: location_orm_1.LocationModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
@@ -145,7 +149,9 @@ class LocationRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await location_orm_1.LocationModel.findByPk(id);
+        const existing = await location_orm_1.LocationModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "La locación que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -158,6 +164,7 @@ class LocationRepository {
         // 3. Obtener la locación actualizada
         const updated = await location_orm_1.LocationModel.findByPk(id, {
             attributes: location_orm_1.LocationModel.getAllFields(),
+            transaction: tx
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la locación actualizada.");
@@ -167,7 +174,9 @@ class LocationRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await location_orm_1.LocationModel.findByPk(id);
+        const existing = await location_orm_1.LocationModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la locación que se pretende eliminar.");
         const deleted = await location_orm_1.LocationModel.destroy({

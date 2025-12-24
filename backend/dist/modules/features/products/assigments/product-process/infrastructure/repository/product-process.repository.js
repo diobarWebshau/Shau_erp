@@ -66,21 +66,24 @@ class ProductProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await product_process_orm_1.ProductProcessModel.findAll({
+            transaction: tx,
             attributes: product_process_orm_1.ProductProcessModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await product_process_orm_1.ProductProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: product_process_orm_1.ProductProcessModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByIdProductInput = async (product_id, process_id) => {
+    findByIdProductInput = async (product_id, process_id, tx) => {
         const row = await product_process_orm_1.ProductProcessModel.findOne({
+            transaction: tx,
             where: {
                 product_id: product_id,
                 process_id: process_id
@@ -103,7 +106,9 @@ class ProductProcessRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await product_process_orm_1.ProductProcessModel.findByPk(id);
+        const existing = await product_process_orm_1.ProductProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -115,6 +120,7 @@ class ProductProcessRepository {
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del proceso al producto.");
         // 3. Obtener la producto actualizada
         const updated = await product_process_orm_1.ProductProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: product_process_orm_1.ProductProcessModel.getAllFields(),
         });
         if (!updated)
@@ -125,7 +131,9 @@ class ProductProcessRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await product_process_orm_1.ProductProcessModel.findByPk(id);
+        const existing = await product_process_orm_1.ProductProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la asignación del proceso al producto que se pretende eliminar.");
         const deleted = await product_process_orm_1.ProductProcessModel.destroy({

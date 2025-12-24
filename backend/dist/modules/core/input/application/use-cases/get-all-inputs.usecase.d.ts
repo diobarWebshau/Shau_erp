@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import type { InputProps, InputSearchCriteria } from "../../domain/input.types";
 /**
@@ -43,5 +44,5 @@ import type { InputProps, InputSearchCriteria } from "../../domain/input.types";
 export declare class GetAllInputsUseCase {
     private readonly repo;
     constructor(repo: IInputRepository);
-    execute(query: InputSearchCriteria): Promise<InputProps[]>;
+    execute(query: InputSearchCriteria, tx?: Transaction): Promise<InputProps[]>;
 }

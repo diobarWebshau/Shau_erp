@@ -53,7 +53,7 @@ class DeleteProductUseCase {
         this.fileCleanup = fileCleanup;
     }
     async execute(id, tx) {
-        const exists = await this.repo.findById(id);
+        const exists = await this.repo.findById(id, tx);
         if (!exists) {
             throw new http_error_1.default(404, "No se encontró el producto que se pretende eliminar.");
         }

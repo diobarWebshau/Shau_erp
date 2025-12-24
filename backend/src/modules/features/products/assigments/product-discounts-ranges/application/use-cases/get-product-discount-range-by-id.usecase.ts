@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
 import type { ProductDiscountRangeProps } from "../../domain/product-discount-range.types";
 
@@ -44,5 +45,5 @@ import type { ProductDiscountRangeProps } from "../../domain/product-discount-ra
 
 export class GetProductDiscountRangeByIdUseCase {
     constructor(private readonly repo: IProductDiscountRangeRepository) { }
-    execute = async (id: number): Promise<ProductDiscountRangeProps | null> => this.repo.findById(id);
+    execute = async (id: number, tx?: Transaction): Promise<ProductDiscountRangeProps | null> => this.repo.findById(id, tx);
 };

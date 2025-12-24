@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productQuerySchema = exports.productOrchestratorResponseSchema = exports.productOrchestratorUpdateSchema = exports.productOrchestratorCreateSchema = void 0;
+exports.productOrchestratorPayloadSchema = exports.productQuerySchema = exports.productOrchestratorResponseSchema = exports.productOrchestratorUpdateSchema = exports.productOrchestratorCreateSchema = void 0;
 const product_discount_range_model_schema_1 = require("../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema");
+const product_input_process_model_schema_1 = require("../../assigments/product-input-process/application/dto/product-input-process.model.schema");
 const product_process_model_schema_1 = require("../../assigments/product-process/application/dto/product-process.model.schema");
-const product_input_model_schema_1 = require("../../assigments/product-input/application/dto/product-input.model.schema");
 const product_model_schema_1 = require("../../../../core/product/application/dto/product.model.schema");
 Object.defineProperty(exports, "productQuerySchema", { enumerable: true, get: function () { return product_model_schema_1.productQuerySchema; } });
+const product_input_model_schema_1 = require("../../assigments/product-input/application/dto/product-input.model.schema");
 const process_model_schema_1 = require("../../../../core/process/application/dto/process.model.schema");
-const product_input_process_model_schema_1 = require("../../assigments/product-input-process/application/dto/product-input-process.model.schema");
 const zod_1 = require("zod");
 // ============================================================================
 // ✅ CREATE
@@ -86,6 +86,11 @@ const productOrchestratorCreateSchema = zod_1.z.object({
     product_discount_ranges: zod_1.z.array(productDiscountRangeOrchestratorCreateSchema),
 });
 exports.productOrchestratorCreateSchema = productOrchestratorCreateSchema;
+const productOrchestratorPayloadSchema = zod_1.z.object({
+    payload: zod_1.z.string().transform((val) => JSON.parse(val)).pipe(productOrchestratorCreateSchema),
+    photo: zod_1.z.string().optional(),
+});
+exports.productOrchestratorPayloadSchema = productOrchestratorPayloadSchema;
 // ============================================================================
 // ✅ UPDATE
 // ============================================================================

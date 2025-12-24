@@ -46,7 +46,7 @@ class GetInputByBarcodeUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (barcode) => this.repo.findByBarcode(barcode.toString());
+    execute = async (barcode, tx) => this.repo.findByBarcode(barcode.toString(), tx);
 }
 exports.GetInputByBarcodeUseCase = GetInputByBarcodeUseCase;
 ;

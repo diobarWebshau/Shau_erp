@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import type { InputProps } from "../../domain/input.types";
 
@@ -44,5 +45,5 @@ B*/
 
 export class GetInputByBarcodeUseCase {
     constructor(private readonly repo: IInputRepository) { }
-    execute = async (barcode: number): Promise<InputProps | null> => this.repo.findByBarcode(barcode.toString());
+    execute = async (barcode: number, tx?: Transaction): Promise<InputProps | null> => this.repo.findByBarcode(barcode.toString(), tx);
 };

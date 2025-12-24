@@ -1,5 +1,6 @@
 import type { ProductProcessUpdateProps, ProductProcessProps } from "../../domain/product-process.types";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -43,5 +44,5 @@ import type { IProductProcessRepository } from "../../domain/product-process.rep
 export declare class UpdateProductProcessUseCase {
     private readonly repo;
     constructor(repo: IProductProcessRepository);
-    execute(id: number, data: ProductProcessUpdateProps): Promise<ProductProcessProps>;
+    execute(id: number, data: ProductProcessUpdateProps, tx?: Transaction): Promise<ProductProcessProps>;
 }

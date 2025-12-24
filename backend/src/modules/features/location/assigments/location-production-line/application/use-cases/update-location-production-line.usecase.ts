@@ -3,6 +3,7 @@ import type { ILocationProductionLineRepository } from "../../domain/location-pr
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -47,8 +48,8 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateLocationProductionLineUseCase {
     constructor(private readonly repo: ILocationProductionLineRepository) { }
-    async execute(id: number, data: LocationProductionLineUpdateProps): Promise<LocationProductionLineProps> {
-        const existing: LocationProductionLineProps | null = await this.repo.findById(id);
+    async execute(id: number, data: LocationProductionLineUpdateProps, tx?: Transaction): Promise<LocationProductionLineProps> {
+        const existing: LocationProductionLineProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."
         );
@@ -59,7 +60,7 @@ export class UpdateLocationProductionLineUseCase {
         const merged: LocationProductionLineProps = { ...existing, ...filteredBody };
         const updateValues: LocationProductionLineUpdateProps = await diffObjects(existing, merged);
         if (!Object.keys(updateValues).length) return existing;
-        const updated: LocationProductionLineProps = await this.repo.update(id, updateValues);
+        const updated: LocationProductionLineProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion de la línea de producción a la ubicación."
         );

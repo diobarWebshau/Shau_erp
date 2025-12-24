@@ -80,7 +80,7 @@ class InputRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (query) => {
+    findAll = async (query, tx) => {
         const { filter, exclude_ids, status, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
@@ -106,40 +106,46 @@ class InputRepository {
         };
         const rows = await input_orm_1.InputModel.findAll({
             where,
+            transaction: tx,
             attributes: input_orm_1.InputModel.getAllFields(),
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await input_orm_1.InputModel.findByPk(id, {
+            transaction: tx,
             attributes: input_orm_1.InputModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByName = async (name) => {
+    findByName = async (name, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { name },
+            transaction: tx,
             attributes: input_orm_1.InputModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByCustomId = async (custom_id) => {
+    findByCustomId = async (custom_id, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { custom_id: custom_id },
+            transaction: tx,
             attributes: input_orm_1.InputModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findBySku = async (sku) => {
+    findBySku = async (sku, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { sku: sku },
+            transaction: tx,
             attributes: input_orm_1.InputModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByBarcode = async (barcode) => {
+    findByBarcode = async (barcode, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { barcode: barcode },
+            transaction: tx,
             attributes: input_orm_1.InputModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
@@ -158,7 +164,9 @@ class InputRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await input_orm_1.InputModel.findByPk(id);
+        const existing = await input_orm_1.InputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "El insumo que se desea actualizar no fue posible encontrarlo.");
         // 2. Aplicar UPDATE
@@ -181,7 +189,9 @@ class InputRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await input_orm_1.InputModel.findByPk(id);
+        const existing = await input_orm_1.InputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro el insumo que se pretende eliminar.");
         const deleted = await input_orm_1.InputModel.destroy({

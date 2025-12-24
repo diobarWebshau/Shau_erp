@@ -3,6 +3,7 @@ import { IProductProcessRepository } from "../../../product-process/domain/produ
 import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
 import { IProductInputRepository } from "../../../product-input/domain/product-input.repository.interface";
 import { IProductRepository } from "../../../../../../core/product/domain/product.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -49,5 +50,5 @@ export declare class CreateProductInputProcessUseCase {
     private readonly repoProductInput;
     private readonly repoProductProcess;
     constructor(repo: IProductInputProcessRepository, repoProduct: IProductRepository, repoProductInput: IProductInputRepository, repoProductProcess: IProductProcessRepository);
-    execute(data: ProductInputProcessCreateProps): Promise<ProductInputProcessProps>;
+    execute(data: ProductInputProcessCreateProps, tx?: Transaction): Promise<ProductInputProcessProps>;
 }

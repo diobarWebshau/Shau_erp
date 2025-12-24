@@ -48,7 +48,7 @@ export class CreateProcessUseCase {
     constructor(private readonly repo: IProcessRepository) { }
     execute = async (data: ProcessCreateProps, tx?: Transaction) => {
         if (data.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName)
                 throw new HttpError(
                     409,

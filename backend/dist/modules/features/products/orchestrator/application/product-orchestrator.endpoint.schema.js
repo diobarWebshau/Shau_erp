@@ -9,7 +9,7 @@ const zod_1 = __importDefault(require("zod"));
 const createProductOrchestratorSchema = zod_1.default.object({
     params: zod_1.default.object({}).strict(),
     query: zod_1.default.object({}).strict(),
-    body: product_orchestrator_model_schema_1.productOrchestratorCreateSchema,
+    body: product_orchestrator_model_schema_1.productOrchestratorPayloadSchema,
     response: product_orchestrator_model_schema_1.productOrchestratorResponseSchema,
 });
 exports.createProductOrchestratorSchema = createProductOrchestratorSchema;

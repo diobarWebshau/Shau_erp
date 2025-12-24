@@ -1,36 +1,9 @@
-import {
-    ProductDiscountRangeCreateSchema,
-    ProductDiscountRangeReponseSchema,
-    ProductDiscountRangeUpdateSchema,
-} from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
-
-import {
-    ProductProcessCreateSchema,
-    ProductProcessReponseSchema,
-    ProductProcessUpdateSchema,
-} from "../../assigments/product-process/application/dto/product-process.model.schema";
-
-import {
-    ProductInputCreateSchema,
-    ProductInputReponseSchema,
-    ProductInputUpdateSchema,
-} from "../../assigments/product-input/application/dto/product-input.model.schema";
-
-import {
-    productCreateSchema,
-    productResponseSchema,
-    productUpdateSchema,
-    productQuerySchema,
-} from "@modules/core/product/application/dto/product.model.schema";
-
+import { ProductDiscountRangeCreateSchema, ProductDiscountRangeReponseSchema, ProductDiscountRangeUpdateSchema } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
+import { productInputProcessCreateSchema, productInputProcessReponseSchema, productInputProcessUpdateSchema } from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
+import { ProductProcessCreateSchema, ProductProcessReponseSchema, ProductProcessUpdateSchema } from "../../assigments/product-process/application/dto/product-process.model.schema";
+import { productCreateSchema, productResponseSchema, productUpdateSchema, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema";
+import { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdateSchema } from "../../assigments/product-input/application/dto/product-input.model.schema";
 import { processCreateSchema } from "@modules/core/process/application/dto/process.model.schema";
-
-import {
-    productInputProcessCreateSchema,
-    productInputProcessReponseSchema,
-    productInputProcessUpdateSchema,
-} from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
-
 import { z } from "zod";
 
 // ============================================================================
@@ -120,6 +93,11 @@ const productOrchestratorCreateSchema = z.object({
     products_inputs: z.array(productInputOrchestratorCreateSchema),
     product_processes: z.array(productProcessOrchestratorCreateSchema),
     product_discount_ranges: z.array(productDiscountRangeOrchestratorCreateSchema),
+});
+
+const productOrchestratorPayloadSchema = z.object({
+    payload: z.string().transform((val) => JSON.parse(val)).pipe(productOrchestratorCreateSchema),
+    photo: z.string().optional(),
 });
 
 // ============================================================================
@@ -212,11 +190,13 @@ const productOrchestratorResponseSchema = z.object({
 type ProductOrchestratorUpdateDTP = z.infer<typeof productOrchestratorUpdateSchema>;
 type ProductOrchestratorCreateDTO = z.infer<typeof productOrchestratorCreateSchema>;
 type ProductOrchestratorReponseDTO = z.infer<typeof productOrchestratorResponseSchema>;
+type ProductOrchestratorPayloadDTO = z.infer<typeof productOrchestratorPayloadSchema>;
 
 export type {
     ProductOrchestratorCreateDTO,
     ProductOrchestratorUpdateDTP,
     ProductOrchestratorReponseDTO,
+    ProductOrchestratorPayloadDTO
 };
 
 export {
@@ -224,4 +204,5 @@ export {
     productOrchestratorUpdateSchema,
     productOrchestratorResponseSchema,
     productQuerySchema,
+    productOrchestratorPayloadSchema,
 };

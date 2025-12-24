@@ -47,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 export class DeleteClientAddressUseCase {
     constructor(private readonly repo: IClientAddressRepository) { }
     async execute(id: number, tx?: Transaction): Promise<void> {
-        const exists: ClientAddressProps | null = await this.repo.findById(id);
+        const exists: ClientAddressProps | null = await this.repo.findById(id, tx);
         if (!exists) throw new HttpError(404,
             "No se encontro la dirección del cliente que se pretende eliminar."
         );

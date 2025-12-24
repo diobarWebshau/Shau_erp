@@ -67,22 +67,25 @@ export class ProductInputProcessRepository implements IProductInputProcessReposi
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductInputProcessProps[]> => {
+    findAll = async (tx?: Transaction): Promise<ProductInputProcessProps[]> => {
         const rows: ProductInputProcessModel[] = await ProductInputProcessModel.findAll({
+            transaction: tx,
             attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
         });
         const rowsMap: ProductInputProcessProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ProductInputProcessProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ProductInputProcessProps | null> => {
         const row: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
 
-    findByProductInputProcess = async (product_id: number, product_input_id: number, product_process_id: number): Promise<ProductInputProcessProps | null> => {
+    findByProductInputProcess = async (product_id: number, product_input_id: number, product_process_id: number, tx?: Transaction): Promise<ProductInputProcessProps | null> => {
         const row: ProductInputProcessModel | null = await ProductInputProcessModel.findOne({
+            transaction: tx,
             where: {
                 product_id: product_id,
                 product_input_id: product_input_id,
@@ -105,7 +108,9 @@ export class ProductInputProcessRepository implements IProductInputProcessReposi
     // ================================================================
     update = async (id: number, data: ProductInputProcessUpdateProps, tx?: Transaction): Promise<ProductInputProcessProps> => {
         // 1. Verificar existencia
-        const existing: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id);
+        const existing: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "La asignación de la cantidad de insumos consumidos en un proceso del producto, no fue posible encontrarla."
         );
@@ -118,6 +123,7 @@ export class ProductInputProcessRepository implements IProductInputProcessReposi
             throw new HttpError(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
         // 3. Obtener la producto actualizada
         const updated: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
@@ -127,7 +133,9 @@ export class ProductInputProcessRepository implements IProductInputProcessReposi
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id);
+        const existing: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la asignación de la cantidad de insumos consumidos para este proceso del producto que se pretende eliminar."
         );

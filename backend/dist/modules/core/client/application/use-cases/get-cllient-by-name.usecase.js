@@ -46,7 +46,7 @@ class GetClientByNameUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (company_name) => await this.repo.findByCompanyName(company_name);
+    execute = async (company_name, tx) => await this.repo.findByCompanyName(company_name, tx);
 }
 exports.GetClientByNameUseCase = GetClientByNameUseCase;
 ;

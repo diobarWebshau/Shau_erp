@@ -42,11 +42,11 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 export interface IClientRepository {
-    findAll(query: ClientSearchCriteria): Promise<ClientProps[]>;
-    findById(id: number): Promise<ClientProps | null>;
-    findByCfdi(cfdi: string): Promise<ClientProps | null>;
-    findByTaxId(tax_id: string): Promise<ClientProps | null>;
-    findByCompanyName(company_name: string): Promise<ClientProps | null>;
+    findAll(query: ClientSearchCriteria, tx?: Transaction): Promise<ClientProps[]>;
+    findById(id: number, tx?: Transaction): Promise<ClientProps | null>;
+    findByCfdi(cfdi: string, tx?: Transaction): Promise<ClientProps | null>;
+    findByTaxId(tax_id: string, tx?: Transaction): Promise<ClientProps | null>;
+    findByCompanyName(company_name: string, tx?: Transaction): Promise<ClientProps | null>;
     create(data: ClientCreateProps, tx?: Transaction): Promise<ClientProps>;
     update(id: number, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps>;
     delete(id: number, tx?: Transaction): Promise<void>;

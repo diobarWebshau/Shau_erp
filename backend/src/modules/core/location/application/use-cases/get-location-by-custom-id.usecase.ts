@@ -1,5 +1,6 @@
 // src/modules/location/application/use-cases/get-location-by-custom-id.usecase.ts
 
+import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import type { LocationProps } from "../../domain/location.types";
 
@@ -47,5 +48,6 @@ import type { LocationProps } from "../../domain/location.types";
 
 export class GetLocationByCustomIdUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    execute = async (custom_id: string): Promise<LocationProps | null> => await this.repo.findByCustomId(custom_id);
+    execute = async (custom_id: string, tx?: Transaction): Promise<LocationProps | null> =>
+        await this.repo.findByCustomId(custom_id, tx);
 };

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
 import type { ClientAddressProps } from "../../domain/client-address.types";
 /**
@@ -43,5 +44,5 @@ import type { ClientAddressProps } from "../../domain/client-address.types";
 export declare class GetClientAddressByIdUseCase {
     private readonly repo;
     constructor(repo: IClientAddressRepository);
-    execute: (id: number) => Promise<ClientAddressProps | null>;
+    execute: (id: number, tx?: Transaction) => Promise<ClientAddressProps | null>;
 }

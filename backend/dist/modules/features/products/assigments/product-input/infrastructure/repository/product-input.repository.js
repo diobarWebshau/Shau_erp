@@ -66,25 +66,28 @@ class ProductInputRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await product_inputs_orm_1.ProductInputModel.findAll({
+            transaction: tx,
             attributes: product_inputs_orm_1.ProductInputModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await product_inputs_orm_1.ProductInputModel.findByPk(id, {
+            transaction: tx,
             attributes: product_inputs_orm_1.ProductInputModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByIdProductInput = async (product_id, input_id) => {
+    findByIdProductInput = async (product_id, input_id, tx) => {
         const row = await product_inputs_orm_1.ProductInputModel.findOne({
             where: {
                 product_id: product_id,
                 input_id: input_id
             },
+            transaction: tx,
             attributes: product_inputs_orm_1.ProductInputModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
@@ -103,7 +106,9 @@ class ProductInputRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await product_inputs_orm_1.ProductInputModel.findByPk(id);
+        const existing = await product_inputs_orm_1.ProductInputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -116,6 +121,7 @@ class ProductInputRepository {
         // 3. Obtener la producto actualizada
         const updated = await product_inputs_orm_1.ProductInputModel.findByPk(id, {
             attributes: product_inputs_orm_1.ProductInputModel.getAllFields(),
+            transaction: tx,
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del insumo al producto.");
@@ -125,7 +131,9 @@ class ProductInputRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await product_inputs_orm_1.ProductInputModel.findByPk(id);
+        const existing = await product_inputs_orm_1.ProductInputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la asignación del insumo al producto que se pretende eliminar.");
         const deleted = await product_inputs_orm_1.ProductInputModel.destroy({

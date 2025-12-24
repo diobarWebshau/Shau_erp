@@ -1,5 +1,5 @@
-import { Transaction } from "sequelize";
 import type { LocationProps, LocationCreateProps, LocationUpdateProps, LocationtSearchCriteria } from "./location.types";
+import { Transaction } from "sequelize";
 
 /**
  * IRepository
@@ -44,10 +44,10 @@ import type { LocationProps, LocationCreateProps, LocationUpdateProps, Locationt
  */
 
 export interface ILocationRepository {
-    findAll(query: LocationtSearchCriteria): Promise<LocationProps[]>;
-    findById(id: number): Promise<LocationProps | null>;
-    findByName(name: string): Promise<LocationProps | null>;
-    findByCustomId(custom_id: string): Promise<LocationProps | null>;
+    findAll(query: LocationtSearchCriteria, tx?: Transaction): Promise<LocationProps[]>;
+    findById(id: number, tx?: Transaction): Promise<LocationProps | null>;
+    findByName(name: string, tx?: Transaction): Promise<LocationProps | null>;
+    findByCustomId(custom_id: string, tx?: Transaction): Promise<LocationProps | null>;
     create(data: LocationCreateProps, tx?: Transaction): Promise<LocationProps>;
     update(id: number, data: LocationUpdateProps, tx?: Transaction): Promise<LocationProps>;
     delete(id: number, tx?: Transaction): Promise<void>;

@@ -46,7 +46,7 @@ class GetClienAddressByClientIdUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (client_id) => await this.repo.findByClientId(client_id);
+    execute = async (client_id, tx) => await this.repo.findByClientId(client_id, tx);
 }
 exports.GetClienAddressByClientIdUseCase = GetClienAddressByClientIdUseCase;
 ;

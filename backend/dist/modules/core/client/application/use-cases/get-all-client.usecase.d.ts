@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import type { ClientProps, ClientSearchCriteria } from "../../domain/client.types";
 /**
@@ -43,5 +44,5 @@ import type { ClientProps, ClientSearchCriteria } from "../../domain/client.type
 export declare class GetAllClientsUseCase {
     private readonly repo;
     constructor(repo: IClientRepository);
-    execute(query: ClientSearchCriteria): Promise<ClientProps[]>;
+    execute(query: ClientSearchCriteria, tx?: Transaction): Promise<ClientProps[]>;
 }

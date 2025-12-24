@@ -69,22 +69,25 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductDiscountRangeProps[]> => {
+    findAll = async (tx?: Transaction): Promise<ProductDiscountRangeProps[]> => {
         const rows: ProductDiscountRangeModel[] = await ProductDiscountRangeModel.findAll({
+            transaction: tx,
             attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[])
         });
         const rowsMap: ProductDiscountRangeProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ProductDiscountRangeProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ProductDiscountRangeProps | null> => {
         const row: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
 
-    findByProductId = async (product_id: number): Promise<ProductDiscountRangeProps[]> => {
+    findByProductId = async (product_id: number, tx?: Transaction): Promise<ProductDiscountRangeProps[]> => {
         const rows: ProductDiscountRangeModel[] = await ProductDiscountRangeModel.findAll({
+            transaction: tx,
             where: { product_id: product_id },
             attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[])
         });
@@ -105,7 +108,9 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
     // ================================================================
     update = async (id: number, data: ProductDiscountRangeUpdateProps, tx?: Transaction): Promise<ProductDiscountRangeProps> => {
         // 1. Verificar existencia
-        const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id);
+        const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
         );
@@ -118,6 +123,7 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
             throw new HttpError(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
         // 3. Obtener la producto actualizada
         const updated: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductDiscountRangeModel.getAllFields() as ((keyof ProductDiscountRangeProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
@@ -127,7 +133,9 @@ export class ProductDiscountRangeRepository implements IProductDiscountRangeRepo
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id);
+        const existing: ProductDiscountRangeModel | null = await ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la asignación del descuento por rango al producto que se pretende eliminar."
         );

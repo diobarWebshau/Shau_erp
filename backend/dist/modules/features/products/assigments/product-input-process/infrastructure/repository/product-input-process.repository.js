@@ -67,21 +67,24 @@ class ProductInputProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await product_input_process_orm_1.ProductInputProcessModel.findAll({
+            transaction: tx,
             attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByProductInputProcess = async (product_id, product_input_id, product_process_id) => {
+    findByProductInputProcess = async (product_id, product_input_id, product_process_id, tx) => {
         const row = await product_input_process_orm_1.ProductInputProcessModel.findOne({
+            transaction: tx,
             where: {
                 product_id: product_id,
                 product_input_id: product_input_id,
@@ -105,7 +108,9 @@ class ProductInputProcessRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id);
+        const existing = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "La asignación de la cantidad de insumos consumidos en un proceso del producto, no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -117,6 +122,7 @@ class ProductInputProcessRepository {
             throw new http_error_1.default(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
         // 3. Obtener la producto actualizada
         const updated = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields(),
         });
         if (!updated)
@@ -127,7 +133,9 @@ class ProductInputProcessRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id);
+        const existing = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la asignación de la cantidad de insumos consumidos para este proceso del producto que se pretende eliminar.");
         const deleted = await product_input_process_orm_1.ProductInputProcessModel.destroy({

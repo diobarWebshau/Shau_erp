@@ -52,11 +52,11 @@ export class CreateProductDiscountRangeUseCase {
         private readonly repoProduct: IProductRepository
     ) { }
     async execute(data: ProductDiscountRangeCreateProps, tx?: Transaction): Promise<ProductDiscountRangeProps> {
-        const validateProduct = await this.repoProduct.findById(data.product_id);
+        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct) throw new HttpError(404,
             "El producto seleccionado no existe."
         );
-        const getAll: ProductDiscountRangeProps[] = await this.repo.findByProductId(data.product_id);
+        const getAll: ProductDiscountRangeProps[] = await this.repo.findByProductId(data.product_id, tx);
         const getAllWithNew: Pick<ProductDiscountRangeCreateProps, "min_qty" | "max_qty">[] = [...getAll, ...[data]];
         const conflictRanges: RangeConflict = checkRangeConflicts(getAllWithNew, "min_qty", "max_qty");
         if (conflictRanges === "invalid_range") {

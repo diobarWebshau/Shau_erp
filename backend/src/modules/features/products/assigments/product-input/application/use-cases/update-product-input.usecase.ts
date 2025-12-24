@@ -4,6 +4,7 @@ import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleani
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -48,8 +49,8 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateProductInputUseCase {
     constructor(private readonly repo: IProductInputRepository) { }
-    async execute(id: number, data: ProductInputUpdateProps): Promise<ProductInputProps> {
-        const existing: ProductInputProps | null = await this.repo.findById(id);
+    async execute(id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps> {
+        const existing: ProductInputProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
         );
@@ -62,7 +63,7 @@ export class UpdateProductInputUseCase {
         const normalizedMerged: ProductInputUpdateProps = deepNormalizeDecimals<ProductInputUpdateProps>(merged, ["equivalence"]);
         const updateValues: ProductInputUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
-        const updated: ProductInputProps = await this.repo.update(id, updateValues);
+        const updated: ProductInputProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion del insumo al producto."
         );

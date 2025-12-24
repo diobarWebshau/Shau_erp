@@ -68,32 +68,36 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductDiscountClientProps[]> => {
+    findAll = async (tx?: Transaction): Promise<ProductDiscountClientProps[]> => {
         const rows: ProductDiscountClientModel[] = await ProductDiscountClientModel.findAll({
+            transaction: tx,
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
         const rowsMap: ProductDiscountClientProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ProductDiscountClientProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ProductDiscountClientProps | null> => {
         const row: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
         console.log("diobar");
         return row ? mapModelToDomain(row) : null;
     }
 
-    findByClientId = async (client_id: number): Promise<ProductDiscountClientProps[]> => {
+    findByClientId = async (client_id: number, tx?: Transaction): Promise<ProductDiscountClientProps[]> => {
         const rows: ProductDiscountClientModel[] = await ProductDiscountClientModel.findAll({
             where: { client_id: client_id },
+            transaction: tx,
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
         const rowsMap: ProductDiscountClientProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
 
-    findByProductClientId = async (product_id: number, client_id: number): Promise<ProductDiscountClientProps | null> => {
+    findByProductClientId = async (product_id: number, client_id: number, tx?: Transaction): Promise<ProductDiscountClientProps | null> => {
         const row: ProductDiscountClientModel | null = await ProductDiscountClientModel.findOne({
+            transaction: tx,
             where: { client_id: client_id, product_id: product_id },
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
@@ -114,7 +118,9 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
     // ================================================================
     update = async (id: number, data: ProductDiscountClientUpdateProps, tx?: Transaction): Promise<ProductDiscountClientProps> => {
         // 1. Verificar existencia
-        const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id);
+        const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
         );
@@ -127,6 +133,7 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
             throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
         // 3. Obtener la producto actualizada
         const updated: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
@@ -136,7 +143,9 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id);
+        const existing: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la asignación del descuento del producto para el cliente que se pretende eliminar."
         );

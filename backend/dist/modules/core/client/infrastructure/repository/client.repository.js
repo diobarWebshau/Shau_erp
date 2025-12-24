@@ -83,7 +83,7 @@ class ClientRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (query) => {
+    findAll = async (query, tx) => {
         const { filter, exclude_ids, is_active, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
@@ -110,32 +110,37 @@ class ClientRepository {
         const rows = await clients_orm_1.ClientModel.findAll({
             where,
             attributes: clients_orm_1.ClientModel.getAllFields(),
+            transaction: tx,
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await clients_orm_1.ClientModel.findByPk(id, {
-            attributes: clients_orm_1.ClientModel.getAllFields()
+            attributes: clients_orm_1.ClientModel.getAllFields(),
+            transaction: tx,
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByCompanyName = async (company_name) => {
+    findByCompanyName = async (company_name, tx) => {
         const row = await clients_orm_1.ClientModel.findOne({
             where: { company_name },
+            transaction: tx,
             attributes: clients_orm_1.ClientModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByCfdi = async (cfdi) => {
+    findByCfdi = async (cfdi, tx) => {
         const row = await clients_orm_1.ClientModel.findOne({
             where: { cfdi: cfdi },
+            transaction: tx,
             attributes: clients_orm_1.ClientModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByTaxId = async (tax_id) => {
+    findByTaxId = async (tax_id, tx) => {
         const row = await clients_orm_1.ClientModel.findOne({
             where: { tax_id: tax_id },
+            transaction: tx,
             attributes: clients_orm_1.ClientModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;

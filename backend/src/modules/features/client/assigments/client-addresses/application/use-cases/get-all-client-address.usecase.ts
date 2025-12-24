@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
 import type { ClientAddressProps } from "../../domain/client-address.types";
 
@@ -44,7 +45,7 @@ import type { ClientAddressProps } from "../../domain/client-address.types";
 
 export class GetAllClientAddressesUseCase {
     constructor(private readonly repo: IClientAddressRepository) { }
-    async execute(): Promise<ClientAddressProps[]> {
-        return await this.repo.findAll();
+    async execute(tx?: Transaction): Promise<ClientAddressProps[]> {
+        return await this.repo.findAll(tx);
     }
 }

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
 import type { LocationLocationTypeProps } from "../../domain/location-location-type.types";
 
@@ -44,5 +45,5 @@ import type { LocationLocationTypeProps } from "../../domain/location-location-t
 
 export class GetLocationLocationTypeByIdUseCase {
     constructor(private readonly repo: ILocationLocationTypeRepository) { }
-    execute = async (id: number): Promise<LocationLocationTypeProps | null> => this.repo.findById(id);
+    execute = async (id: number, tx?: Transaction): Promise<LocationLocationTypeProps | null> => this.repo.findById(id, tx);
 };

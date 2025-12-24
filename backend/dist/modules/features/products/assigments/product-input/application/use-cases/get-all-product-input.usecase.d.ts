@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
 import type { ProductInputProps } from "../../domain/product-input.types";
 /**
@@ -43,5 +44,5 @@ import type { ProductInputProps } from "../../domain/product-input.types";
 export declare class GetAllProductInputUseCase {
     private readonly repo;
     constructor(repo: IProductInputRepository);
-    execute(): Promise<ProductInputProps[]>;
+    execute(tx?: Transaction): Promise<ProductInputProps[]>;
 }

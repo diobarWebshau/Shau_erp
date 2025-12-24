@@ -54,17 +54,17 @@ class CreateLocationProductionLineUseCase {
         this.repoLocation = repoLocation;
         this.repoProductionLine = repoProductionLine;
     }
-    async execute(data) {
-        const validateLocation = await this.repoLocation.findById(data.location_id);
+    async execute(data, tx) {
+        const validateLocation = await this.repoLocation.findById(data.location_id, tx);
         if (!validateLocation)
             throw new http_error_1.default(404, "La locación seleccionada no existe.");
-        const validateProductionLine = await this.repoProductionLine.findById(data.production_line_id);
+        const validateProductionLine = await this.repoProductionLine.findById(data.production_line_id, tx);
         if (!validateProductionLine)
             throw new http_error_1.default(404, "La línea de producción seleccionada no existe.");
-        const validateDuplicate = await this.repo.findByIdLocationProductionLine(data.location_id, data.production_line_id);
+        const validateDuplicate = await this.repo.findByIdLocationProductionLine(data.location_id, data.production_line_id, tx);
         if (validateDuplicate)
             throw new http_error_1.default(409, "La locación ya tiene actualmente asignada la línea de producción.");
-        const created = await this.repo.create(data);
+        const created = await this.repo.create(data, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación de la línea de producción a la locación.");
         return created;

@@ -65,21 +65,24 @@ export class LocationProductionLineRepository implements ILocationProductionLine
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<LocationProductionLineProps[]> => {
+    findAll = async (tx?: Transaction): Promise<LocationProductionLineProps[]> => {
         const rows: LocationProductionLineModel[] = await LocationProductionLineModel.findAll({
+            transaction: tx,
             attributes: LocationProductionLineModel.getAllFields() as ((keyof LocationProductionLineProps)[])
         });
         const rowsMap: LocationProductionLineProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<LocationProductionLineProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<LocationProductionLineProps | null> => {
         const row: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
+            transaction: tx,
             attributes: LocationProductionLineModel.getAllFields() as ((keyof LocationProductionLineProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByIdLocationProductionLine = async (location_id: number, production_line_id: number): Promise<LocationProductionLineProps | null> => {
+    findByIdLocationProductionLine = async (location_id: number, production_line_id: number, tx?: Transaction): Promise<LocationProductionLineProps | null> => {
         const row: LocationProductionLineModel | null = await LocationProductionLineModel.findOne({
+            transaction: tx,
             where: {
                 location_id: location_id,
                 production_line_id: production_line_id
@@ -101,7 +104,9 @@ export class LocationProductionLineRepository implements ILocationProductionLine
     // ================================================================
     update = async (id: number, data: LocationProductionLineUpdateProps, tx?: Transaction): Promise<LocationProductionLineProps> => {
         // 1. Verificar existencia
-        const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id);
+        const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."
         );
@@ -114,6 +119,7 @@ export class LocationProductionLineRepository implements ILocationProductionLine
             throw new HttpError(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
         // 3. Obtener la locación actualizada
         const updated: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
+            transaction: tx,
             attributes: LocationProductionLineModel.getAllFields() as ((keyof LocationProductionLineProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
@@ -123,7 +129,9 @@ export class LocationProductionLineRepository implements ILocationProductionLine
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id);
+        const existing: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la asignación de la línea de producción a la locacíon que se pretende eliminar."
         );

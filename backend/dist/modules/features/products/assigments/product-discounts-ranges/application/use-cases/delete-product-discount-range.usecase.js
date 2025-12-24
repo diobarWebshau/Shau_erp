@@ -51,7 +51,7 @@ class DeleteProductDiscountRangeUseCase {
         this.repo = repo;
     }
     async execute(id, tx) {
-        const exists = await this.repo.findById(id);
+        const exists = await this.repo.findById(id, tx);
         if (!exists)
             throw new http_error_1.default(404, "No se encontro la asignación del descuento por rango al producto que se pretende eliminar.");
         await this.repo.delete(id, tx);

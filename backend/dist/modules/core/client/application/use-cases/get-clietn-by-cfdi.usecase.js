@@ -46,7 +46,7 @@ class GetClientByCfdiUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (cfdi) => this.repo.findByCfdi(cfdi);
+    execute = async (cfdi, tx) => this.repo.findByCfdi(cfdi, tx);
 }
 exports.GetClientByCfdiUseCase = GetClientByCfdiUseCase;
 ;

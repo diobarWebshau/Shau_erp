@@ -53,7 +53,7 @@ class UpdateProcessUseCase {
         this.repo = repo;
     }
     execute = async (id, data, tx) => {
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "El tipo de proceso que se desea actualizar no fue posible encontrarlo.");
         const editableFields = ["name"];
@@ -63,7 +63,7 @@ class UpdateProcessUseCase {
         if (!Object.keys(updateValues).length)
             return existing;
         if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name);
+            const existsByName = await this.repo.findByName(updateValues.name, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El nombre ingresado para el proceso, ya esta utilizado por otro proceso.");
         }

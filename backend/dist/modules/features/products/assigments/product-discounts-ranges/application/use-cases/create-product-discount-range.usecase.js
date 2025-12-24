@@ -54,10 +54,10 @@ class CreateProductDiscountRangeUseCase {
         this.repoProduct = repoProduct;
     }
     async execute(data, tx) {
-        const validateProduct = await this.repoProduct.findById(data.product_id);
+        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct)
             throw new http_error_1.default(404, "El producto seleccionado no existe.");
-        const getAll = await this.repo.findByProductId(data.product_id);
+        const getAll = await this.repo.findByProductId(data.product_id, tx);
         const getAllWithNew = [...getAll, ...[data]];
         const conflictRanges = (0, check_range_conflicts_1.checkRangeConflicts)(getAllWithNew, "min_qty", "max_qty");
         if (conflictRanges === "invalid_range") {

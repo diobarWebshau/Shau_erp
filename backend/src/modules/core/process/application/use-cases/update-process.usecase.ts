@@ -48,7 +48,7 @@ import { Transaction } from "sequelize";
 export class UpdateProcessUseCase {
     constructor(private readonly repo: IProcessRepository) { }
     execute = async (id: number, data: ProcessUpdateProps, tx?: Transaction) => {
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "El tipo de proceso que se desea actualizar no fue posible encontrarlo."
         );
@@ -58,7 +58,7 @@ export class UpdateProcessUseCase {
         const updateValues: ProcessUpdateProps = await diffObjects(existing, merged);
         if (!Object.keys(updateValues).length) return existing;
         if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name);
+            const existsByName = await this.repo.findByName(updateValues.name, tx);
             if (existsByName)
                 throw new HttpError(
                     409,

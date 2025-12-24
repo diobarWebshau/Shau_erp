@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
 import type { ProductInputProcessProps } from "../../domain/product-input-process.types";
 
@@ -45,7 +46,7 @@ import type { ProductInputProcessProps } from "../../domain/product-input-proces
 
 export class GetAllProductInputProcessUseCase {
     constructor(private readonly repo: IProductInputProcessRepository) { }
-    async execute(): Promise<ProductInputProcessProps[]> {
-        return await this.repo.findAll();
+    async execute(tx?: Transaction): Promise<ProductInputProcessProps[]> {
+        return await this.repo.findAll(tx);
     }
 }

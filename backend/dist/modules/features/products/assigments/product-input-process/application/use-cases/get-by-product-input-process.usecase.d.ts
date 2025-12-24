@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
 import type { ProductInputProcessProps } from "../../domain/product-input-process.types";
 /**
@@ -43,5 +44,5 @@ import type { ProductInputProcessProps } from "../../domain/product-input-proces
 export declare class GetProductInputProcessByIdUseCase {
     private readonly repo;
     constructor(repo: IProductInputProcessRepository);
-    execute: (product_id: number, product_input_id: number, product_process_id: number) => Promise<ProductInputProcessProps | null>;
+    execute: (product_id: number, product_input_id: number, product_process_id: number, tx?: Transaction) => Promise<ProductInputProcessProps | null>;
 }

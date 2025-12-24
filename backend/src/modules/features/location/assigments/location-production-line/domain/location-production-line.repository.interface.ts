@@ -47,9 +47,9 @@ import type {
  */
 
 export interface ILocationProductionLineRepository {
-    findAll(): Promise<LocationProductionLineProps[]>;
-    findById(id: number): Promise<LocationProductionLineProps | null>;
-    findByIdLocationProductionLine(location_id: number, production_line_id: number): Promise<LocationProductionLineProps | null>;
+    findAll(tx?: Transaction): Promise<LocationProductionLineProps[]>;
+    findById(id: number, tx?: Transaction): Promise<LocationProductionLineProps | null>;
+    findByIdLocationProductionLine(location_id: number, production_line_id: number, tx?: Transaction): Promise<LocationProductionLineProps | null>;
     create(data: LocationProductionLineCreateProps, tx?: Transaction): Promise<LocationProductionLineProps>;
     update(id: number, data: LocationProductionLineUpdateProps, tx?: Transaction): Promise<LocationProductionLineProps>;
     delete(id: number, tx?: Transaction): Promise<void>;

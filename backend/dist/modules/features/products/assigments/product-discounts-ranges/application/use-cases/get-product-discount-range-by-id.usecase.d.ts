@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
 import type { ProductDiscountRangeProps } from "../../domain/product-discount-range.types";
 /**
@@ -43,5 +44,5 @@ import type { ProductDiscountRangeProps } from "../../domain/product-discount-ra
 export declare class GetProductDiscountRangeByIdUseCase {
     private readonly repo;
     constructor(repo: IProductDiscountRangeRepository);
-    execute: (id: number) => Promise<ProductDiscountRangeProps | null>;
+    execute: (id: number, tx?: Transaction) => Promise<ProductDiscountRangeProps | null>;
 }

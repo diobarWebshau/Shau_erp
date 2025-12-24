@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import type { ClientProps } from "../../domain/client.types";
 
@@ -44,8 +45,8 @@ import type { ClientProps } from "../../domain/client.types";
 
 export class GetClientByNameUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    execute = async (tax_id: string): Promise<ClientProps | null> =>
-        await this.repo.findByTaxId(tax_id);
+    execute = async (tax_id: string, tx?: Transaction): Promise<ClientProps | null> =>
+        await this.repo.findByTaxId(tax_id, tx);
 };
 
 

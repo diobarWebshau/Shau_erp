@@ -2,7 +2,7 @@
 GET http://localhost:3003/query/product HTTP/1.1
 
 ### GET PRODUCTS WITH ALL RELATIOSHIPS
-GET http://localhost:3003/query/product/1 HTTP/1.1
+GET http://localhost:3003/query/product/34 HTTP/1.1
 
 ### GET PRODUCTS WITH ALL RELACTIONS 
 GET http://localhost:3003/query/product?exclude_ids=1 HTTP/1.1

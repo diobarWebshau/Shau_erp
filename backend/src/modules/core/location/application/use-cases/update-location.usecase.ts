@@ -51,7 +51,7 @@ import { Transaction } from "sequelize";
 export class UpdateLocationUseCase {
     constructor(private readonly repo: ILocationRepository) { }
     async execute(id: number, data: LocationUpdateProps, tx?: Transaction): Promise<LocationProps> {
-        const existing: LocationProps | null = await this.repo.findById(id);
+        const existing: LocationProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La locación que se desea actualizar no fue posible encontrarla."
         );
@@ -69,13 +69,13 @@ export class UpdateLocationUseCase {
         const updateValues: LocationUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
         if (updateValues.name) {
-            const check: LocationProps | null = await this.repo.findByName(updateValues.name);
+            const check: LocationProps | null = await this.repo.findByName(updateValues.name, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El nombre ingresado para la locación, ya esta utilizado por otra locación."
             );
         }
         if (updateValues?.custom_id) {
-            const check = await this.repo.findByCustomId(updateValues.custom_id);
+            const check = await this.repo.findByCustomId(updateValues.custom_id, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El id unico ingresado para la locación, ya esta utilizado por otra locación."
             );

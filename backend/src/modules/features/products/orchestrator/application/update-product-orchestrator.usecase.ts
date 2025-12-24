@@ -2,9 +2,9 @@
 // import { DeleteProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/delete-product-discount-range.usecase";
 // import { UpdateProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/update-product-discount-range.usecase";
 // import {
-//     ProductDiscountRangeOrchestratorCreate, ProductDiscountRangeOrchestratorUpdate,
-//     ProductInputOrchestratorCreate, ProductInputOrchestratorUpdate, ProductOrchestratorUpdate,
-//     ProductProcessOrchestratorCreate, ProductProcessOrchestratorUpdate
+//     ProductOrchestratorUpdate, ProductInputProcessManager,
+//     ProductProcessManager, ProductInputManager,
+//     ProductInputCreateOrchestrated, ProductDiscountRangeCreateOrchestrated
 // } from "../domain/product-orchestrator.types";
 // import { CreateProductProcessUseCase } from "@modules/features/products/assigments/product-process/application/use-cases/create-product-process.usecase";
 // import { UpdateProductProcessUseCase } from "@modules/features/products/assigments/product-process/application/use-cases/update-product-process.usecase";
@@ -74,7 +74,7 @@
 //             product_processes_manager.deleted?.length > 0;
 
 //         if (isChangeProductDiscountRange) {
-//             const adds: ProductDiscountRangeOrchestratorCreate[] = product_discount_ranges_manager.added ?? [];
+//             const adds: ProductDiscountRangeCreateOrchestrated[] = product_discount_ranges_manager.added ?? [];
 //             const deletes: ProductDiscountRangeProps[] = product_discount_ranges_manager.deleted ?? [];
 //             const uptates: ProductDiscountRangeOrchestratorUpdate[] = product_discount_ranges_manager.updated ?? [];
 

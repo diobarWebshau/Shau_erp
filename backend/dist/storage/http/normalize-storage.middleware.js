@@ -80,6 +80,7 @@ const normalizeUploadedFiles = (options) => (req, _res, next) => {
             ensureObject(body, rootKey);
         setDeep(body, to, mapped);
     });
+    console.log('salgo del normalize');
     next();
 };
 exports.normalizeUploadedFiles = normalizeUploadedFiles;

@@ -46,8 +46,8 @@ class GetProductInputProcessByIdUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (product_id, product_input_id, product_process_id) => {
-        const productInputProcess = this.repo.findByProductInputProcess(product_id, product_input_id, product_process_id);
+    execute = async (product_id, product_input_id, product_process_id, tx) => {
+        const productInputProcess = this.repo.findByProductInputProcess(product_id, product_input_id, product_process_id, tx);
         return productInputProcess;
     };
 }

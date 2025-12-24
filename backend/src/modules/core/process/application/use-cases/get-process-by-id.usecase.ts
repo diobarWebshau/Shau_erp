@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
 import type { ProcessProps } from "../../domain/process.types";
 
@@ -44,7 +45,7 @@ import type { ProcessProps } from "../../domain/process.types";
 
 export class GetProcessByIdUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    async execute(id: number): Promise<ProcessProps | null> {
-        return await this.repo.findById(id);
+    async execute(id: number, tx?: Transaction): Promise<ProcessProps | null> {
+        return await this.repo.findById(id, tx);
     }
 }

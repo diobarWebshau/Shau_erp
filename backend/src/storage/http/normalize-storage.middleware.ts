@@ -101,6 +101,6 @@ export const normalizeUploadedFiles =
 
                 setDeep(body, to, mapped);
             });
-
+            console.log('salgo del normalize');
             next();
         };

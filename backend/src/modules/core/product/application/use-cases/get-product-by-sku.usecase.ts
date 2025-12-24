@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps } from "../../domain/product.types";
 
@@ -44,8 +45,8 @@ import type { ProductProps } from "../../domain/product.types";
 
 export class GetProductBySkuIdUseCase {
     constructor(private readonly repo: IProductRepository) { }
-    execute = async (sku: string): Promise<ProductProps | null> =>
-        await this.repo.findBySku(sku);
+    execute = async (sku: string, tx?: Transaction): Promise<ProductProps | null> =>
+        await this.repo.findBySku(sku, tx);
 };
 
 

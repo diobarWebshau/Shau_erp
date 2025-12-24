@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 /**
  * UseCase
@@ -42,5 +43,5 @@ import type { ILocationProductionLineRepository } from "../../domain/location-pr
 export declare class DeleteLocationProductionLineUseCase {
     private readonly repo;
     constructor(repo: ILocationProductionLineRepository);
-    execute(id: number): Promise<void>;
+    execute(id: number, tx?: Transaction): Promise<void>;
 }

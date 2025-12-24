@@ -48,19 +48,19 @@ export class CreateClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
     async execute(data: ClientCreateProps, tx?: Transaction): Promise<ClientProps> {
         if (data?.cfdi) {
-            const existsByName: ClientProps | null = await this.repo.findByCfdi(data.cfdi);
+            const existsByName: ClientProps | null = await this.repo.findByCfdi(data.cfdi, tx);
             if (existsByName) throw new HttpError(409,
                 "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );
         }
         if (data?.tax_id) {
-            const existsByName: ClientProps | null = await this.repo.findByTaxId(data.tax_id);
+            const existsByName: ClientProps | null = await this.repo.findByTaxId(data.tax_id, tx);
             if (existsByName) throw new HttpError(409,
                 "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );
         }
         if (data?.company_name) {
-            const existsByName: ClientProps | null = await this.repo.findByCompanyName(data.company_name);
+            const existsByName: ClientProps | null = await this.repo.findByCompanyName(data.company_name, tx);
             if (existsByName) throw new HttpError(409,
                 "El nombre ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );

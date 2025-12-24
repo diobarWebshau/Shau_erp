@@ -51,11 +51,11 @@ class DeleteLocationProductionLineUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(id) {
-        const exists = await this.repo.findById(id);
+    async execute(id, tx) {
+        const exists = await this.repo.findById(id, tx);
         if (!exists)
             throw new http_error_1.default(404, "No se encontro la asignación de la línea de producción a la ubicacíon que se pretende eliminar.");
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

@@ -44,12 +44,12 @@ import { InputCreateProps, InputProps, InputUpdateProps, InputSearchCriteria } f
  */
 
 export interface IInputRepository {
-    findAll(query: InputSearchCriteria): Promise<InputProps[]>,
-    findById(id: number): Promise<InputProps | null>,
-    findByCustomId(custom_id: string): Promise<InputProps | null>,
-    findBySku(sku: string): Promise<InputProps | null>,
-    findByBarcode(barcode: string): Promise<InputProps | null>,
-    findByName(name: string): Promise<InputProps | null>,
+    findAll(query: InputSearchCriteria, tx?: Transaction): Promise<InputProps[]>,
+    findById(id: number, tx?: Transaction): Promise<InputProps | null>,
+    findByCustomId(custom_id: string, tx?: Transaction): Promise<InputProps | null>,
+    findBySku(sku: string, tx?: Transaction): Promise<InputProps | null>,
+    findByBarcode(barcode: string, tx?: Transaction): Promise<InputProps | null>,
+    findByName(name: string, tx?: Transaction): Promise<InputProps | null>,
     create(data: InputCreateProps, tx?: Transaction): Promise<InputProps>,
     update(id: number, data: InputUpdateProps, tx?: Transaction): Promise<InputProps>,
     delete(id: number, tx?: Transaction): Promise<void>

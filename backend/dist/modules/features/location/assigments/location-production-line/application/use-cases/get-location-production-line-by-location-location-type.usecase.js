@@ -46,7 +46,7 @@ class GetLocationProductionLineByIdLocationProductionLineUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (location_id, production_line_id) => this.repo.findByIdLocationProductionLine(location_id, production_line_id);
+    execute = async (location_id, production_line_id, tx) => this.repo.findByIdLocationProductionLine(location_id, production_line_id, tx);
 }
 exports.GetLocationProductionLineByIdLocationProductionLineUseCase = GetLocationProductionLineByIdLocationProductionLineUseCase;
 ;

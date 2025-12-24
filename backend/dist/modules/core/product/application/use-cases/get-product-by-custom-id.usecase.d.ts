@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps } from "../../domain/product.types";
 /**
@@ -43,5 +44,5 @@ import type { ProductProps } from "../../domain/product.types";
 export declare class GetProductByCustomIdUseCase {
     private readonly repo;
     constructor(repo: IProductRepository);
-    execute: (custom_id: string) => Promise<ProductProps | null>;
+    execute: (custom_id: string, tx?: Transaction) => Promise<ProductProps | null>;
 }

@@ -58,7 +58,7 @@ class UpdateInputUseCase {
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
         // ------------------------------------------------------------------
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing) {
             throw new http_error_1.default(404, "El insumo que se desea actualizar no fue posible encontrarlo.");
         }
@@ -99,25 +99,25 @@ class UpdateInputUseCase {
         // (data), no en los cambios efectivos (updateValues), para evitar
         // inconsistencias y falsos negativos.
         if (data.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new http_error_1.default(409, "El nombre ingresado para el insumo ya está en uso.");
             }
         }
         if (data.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku);
+            const existsBySku = await this.repo.findBySku(data.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new http_error_1.default(409, "El sku ingresado para el insumo ya está en uso.");
             }
         }
         if (data.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new http_error_1.default(409, "El id único ingresado para el insumo ya está en uso.");
             }
         }
         if (data.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString());
+            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new http_error_1.default(409, "El código de barras ingresado para el insumo ya está en uso.");
             }

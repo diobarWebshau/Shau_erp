@@ -69,21 +69,24 @@ class ProductDiscountRangeRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await product_discount_range_orm_1.ProductDiscountRangeModel.findAll({
+            transaction: tx,
             attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx,
             attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByProductId = async (product_id) => {
+    findByProductId = async (product_id, tx) => {
         const rows = await product_discount_range_orm_1.ProductDiscountRangeModel.findAll({
+            transaction: tx,
             where: { product_id: product_id },
             attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields()
         });
@@ -104,7 +107,9 @@ class ProductDiscountRangeRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id);
+        const existing = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -116,6 +121,7 @@ class ProductDiscountRangeRepository {
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
         // 3. Obtener la producto actualizada
         const updated = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx,
             attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields(),
         });
         if (!updated)
@@ -126,7 +132,9 @@ class ProductDiscountRangeRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id);
+        const existing = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la asignación del descuento por rango al producto que se pretende eliminar.");
         const deleted = await product_discount_range_orm_1.ProductDiscountRangeModel.destroy({

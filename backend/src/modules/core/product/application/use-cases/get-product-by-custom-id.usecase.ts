@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps } from "../../domain/product.types";
 
@@ -44,5 +45,5 @@ import type { ProductProps } from "../../domain/product.types";
 
 export class GetProductByCustomIdUseCase {
     constructor(private readonly repo: IProductRepository) { }
-    execute = async (custom_id: string): Promise<ProductProps | null> => this.repo.findByCustomId(custom_id);
+    execute = async (custom_id: string, tx?: Transaction): Promise<ProductProps | null> => this.repo.findByCustomId(custom_id, tx);
 };

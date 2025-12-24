@@ -53,7 +53,7 @@ class UpdateInputTypeUseCase {
         this.repo = repo;
     }
     execute = async (id, data, tx) => {
-        const existing = await this.repo.findById(Number(id));
+        const existing = await this.repo.findById(Number(id), tx);
         if (!existing)
             throw new http_error_1.default(404, "El tipo de locación que se desea actualizar no fue posible encontrarlo.");
         const editableFields = ["name"];

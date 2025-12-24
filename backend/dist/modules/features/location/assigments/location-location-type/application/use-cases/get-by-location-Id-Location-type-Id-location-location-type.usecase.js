@@ -46,6 +46,6 @@ class GetByLocationIdLocationTypeIdLocationLocationTypeUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (location_id, location_type_id) => await this.repo.findByLocationLocationType(location_id, location_type_id);
+    execute = async (location_id, location_type_id, tx) => await this.repo.findByLocationLocationType(location_id, location_type_id, tx);
 }
 exports.GetByLocationIdLocationTypeIdLocationLocationTypeUseCase = GetByLocationIdLocationTypeIdLocationLocationTypeUseCase;

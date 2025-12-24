@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import type { LocationProductionLineProps } from "../../domain/location-production-line.types";
 /**
@@ -43,5 +44,5 @@ import type { LocationProductionLineProps } from "../../domain/location-producti
 export declare class GetLocationProductionLineByIdUseCase {
     private readonly repo;
     constructor(repo: ILocationProductionLineRepository);
-    execute: (id: number) => Promise<LocationProductionLineProps | null>;
+    execute: (id: number, tx?: Transaction) => Promise<LocationProductionLineProps | null>;
 }

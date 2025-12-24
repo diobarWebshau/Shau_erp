@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
 import type { LocationLocationTypeProps } from "../../domain/location-location-type.types";
 /**
@@ -43,5 +44,5 @@ import type { LocationLocationTypeProps } from "../../domain/location-location-t
 export declare class GetAllLocationLocationTypeUseCase {
     private readonly repo;
     constructor(repo: ILocationLocationTypeRepository);
-    execute(): Promise<LocationLocationTypeProps[]>;
+    execute(tx?: Transaction): Promise<LocationLocationTypeProps[]>;
 }

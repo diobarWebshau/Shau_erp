@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import type { LocationProductionLineProps } from "../../domain/location-production-line.types";
 
@@ -44,7 +45,7 @@ import type { LocationProductionLineProps } from "../../domain/location-producti
 
 export class GetAllLocationProductionLineUseCase {
     constructor(private readonly repo: ILocationProductionLineRepository) { }
-    async execute(): Promise<LocationProductionLineProps[]> {
-        return await this.repo.findAll();
+    async execute(tx?: Transaction): Promise<LocationProductionLineProps[]> {
+        return await this.repo.findAll(tx);
     }
 }

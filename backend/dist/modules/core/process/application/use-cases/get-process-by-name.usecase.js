@@ -46,8 +46,8 @@ class GetProcessByNameUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(name) {
-        return await this.repo.findByName(name);
+    async execute(name, tx) {
+        return await this.repo.findByName(name, tx);
     }
 }
 exports.GetProcessByNameUseCase = GetProcessByNameUseCase;

@@ -3,6 +3,7 @@ import type { IProductProcessRepository } from "../../domain/product-process.rep
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -47,8 +48,8 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateProductProcessUseCase {
     constructor(private readonly repo: IProductProcessRepository) { }
-    async execute(id: number, data: ProductProcessUpdateProps): Promise<ProductProcessProps> {
-        const existing: ProductProcessProps | null = await this.repo.findById(id);
+    async execute(id: number, data: ProductProcessUpdateProps, tx?: Transaction): Promise<ProductProcessProps> {
+        const existing: ProductProcessProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."
         );
@@ -59,7 +60,7 @@ export class UpdateProductProcessUseCase {
         const merged: ProductProcessProps = { ...existing, ...filteredBody };
         const updateValues: ProductProcessUpdateProps = await diffObjects(existing, merged);
         if (!Object.keys(updateValues).length) return existing;
-        const updated: ProductProcessProps = await this.repo.update(id, updateValues);
+        const updated: ProductProcessProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion del proceso al producto."
         );

@@ -54,17 +54,17 @@ class CreateProductProcessUseCase {
         this.repoProduct = repoProduct;
         this.repoProcess = repoProcess;
     }
-    async execute(data) {
-        const validateProduct = await this.repoProduct.findById(data.product_id);
+    async execute(data, tx) {
+        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct)
             throw new http_error_1.default(500, "El producto que se pretende asignarle un proceso, no existe.");
-        const validateProcess = await this.repoProcess.findById(data.process_id);
+        const validateProcess = await this.repoProcess.findById(data.process_id, tx);
         if (!validateProcess)
             throw new http_error_1.default(500, "El proceso que se desea asignar al producto, no existe.");
-        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.process_id);
+        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.process_id, tx);
         if (validateDuplicate)
             throw new http_error_1.default(500, "El producto ya tiene asignado el proceso.");
-        const created = await this.repo.create(data);
+        const created = await this.repo.create(data, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del proceso al producto.");
         return created;

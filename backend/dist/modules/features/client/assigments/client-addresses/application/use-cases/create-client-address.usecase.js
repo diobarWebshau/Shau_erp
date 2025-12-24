@@ -53,7 +53,7 @@ class CreateClientAddressUseCase {
         this.repoClient = repoClient;
     }
     async execute(data, tx) {
-        const validClient = await this.repoClient.findById(data.client_id);
+        const validClient = await this.repoClient.findById(data.client_id, tx);
         if (!validClient)
             throw new http_error_1.default(404, "Al cliente que se le intenta crear una dirección, no existe.");
         const created = await this.repo.create(data, tx);

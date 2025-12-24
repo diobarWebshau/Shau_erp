@@ -79,7 +79,7 @@ export class InputRepository implements IInputRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (query: InputSearchCriteria): Promise<InputProps[]> => {
+    findAll = async (query: InputSearchCriteria, tx?: Transaction): Promise<InputProps[]> => {
         const { filter, exclude_ids, status, ...rest } = query;
         const where: WhereOptions<InputProps> = {
             ...(exclude_ids?.length
@@ -107,40 +107,46 @@ export class InputRepository implements IInputRepository {
         };
         const rows: InputModel[] = await InputModel.findAll({
             where,
+            transaction: tx,
             attributes: InputModel.getAllFields() as (keyof InputProps)[],
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id: number): Promise<InputProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findByPk(id, {
+            transaction: tx,
             attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByName = async (name: string): Promise<InputProps | null> => {
+    findByName = async (name: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { name },
+            transaction: tx,
             attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByCustomId = async (custom_id: string): Promise<InputProps | null> => {
+    findByCustomId = async (custom_id: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { custom_id: custom_id },
+            transaction: tx,
             attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findBySku = async (sku: string): Promise<InputProps | null> => {
+    findBySku = async (sku: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { sku: sku },
+            transaction: tx,
             attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByBarcode = async (barcode: string): Promise<InputProps | null> => {
+    findByBarcode = async (barcode: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { barcode: barcode },
+            transaction: tx,
             attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
@@ -158,7 +164,9 @@ export class InputRepository implements IInputRepository {
     // ================================================================
     update = async (id: number, data: InputUpdateProps, tx?: Transaction): Promise<InputProps> => {
         // 1. Verificar existencia
-        const existing: InputModel | null = await InputModel.findByPk(id);
+        const existing: InputModel | null = await InputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "El insumo que se desea actualizar no fue posible encontrarlo."
         );
@@ -181,7 +189,9 @@ export class InputRepository implements IInputRepository {
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: InputModel | null = await InputModel.findByPk(id);
+        const existing: InputModel | null = await InputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro el insumo que se pretende eliminar."
         );

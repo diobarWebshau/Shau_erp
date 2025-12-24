@@ -49,7 +49,7 @@ import { Transaction } from "sequelize";
 export class UpdateProductionLineUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
     async execute(id: number, data: ProductionLineUpdateProps, tx?: Transaction): Promise<ProductionLineProps> {
-        const existing: ProductionLineProps | null = await this.repo.findById(id);
+        const existing: ProductionLineProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La línea de producción que se desea actualizar no fue posible encontrarla."
         );
@@ -61,13 +61,13 @@ export class UpdateProductionLineUseCase {
         const updateValues: ProductionLineUpdateProps = await diffObjects(existing, merged);
         if (!Object.keys(updateValues).length) return existing;
         if (updateValues.name) {
-            const check: ProductionLineProps | null = await this.repo.findByName(updateValues.name);
+            const check: ProductionLineProps | null = await this.repo.findByName(updateValues.name, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El nombre ingresado para la línea de producción, ya esta utilizado por otra línea de producción."
             );
         }
         if (updateValues.custom_id) {
-            const check: ProductionLineProps | null = await this.repo.findByCustomId(updateValues.custom_id);
+            const check: ProductionLineProps | null = await this.repo.findByCustomId(updateValues.custom_id, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El id unico ingresado para la línea de producción, ya esta utilizado por otra línea de producción."
             );

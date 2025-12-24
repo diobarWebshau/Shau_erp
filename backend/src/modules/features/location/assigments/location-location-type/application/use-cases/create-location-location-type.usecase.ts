@@ -53,15 +53,15 @@ export class CreateLocationLocationTypeUseCase {
         private readonly repoLocationType: ILocationTypeRepository
     ) { }
     async execute(data: LocationLocationTypeCreateProps, tx?: Transaction): Promise<LocationLocationTypeProps> {
-        const validLocation = await this.repoLocation.findById(data.location_id);
+        const validLocation = await this.repoLocation.findById(data.location_id, tx);
         if (!validLocation) throw new HttpError(404,
             "La locación seleccionada no existe."
         );
-        const validLocationType = await this.repoLocationType.findById(data.location_type_id);
+        const validLocationType = await this.repoLocationType.findById(data.location_type_id, tx);
         if (!validLocationType) throw new HttpError(404,
             "El tipo de locación seleccionado no existe."
         );
-        const validDuplicate = await this.repo.findByLocationLocationType(data.location_id, data.location_type_id);
+        const validDuplicate = await this.repo.findByLocationLocationType(data.location_id, data.location_type_id, tx);
         if (validDuplicate) throw new HttpError(409,
             "La locación ya tiene asignado ese tipo de locación."
         );

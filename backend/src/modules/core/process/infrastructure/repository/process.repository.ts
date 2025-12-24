@@ -70,7 +70,7 @@ export class ProcessRepository implements IProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    async findAll(query: ProcessSearchCriteria): Promise<ProcessProps[]> {
+    async findAll(query: ProcessSearchCriteria, tx?: Transaction): Promise<ProcessProps[]> {
         const { filter, exclude_ids, ...rest } = query;
         const where: WhereOptions<ProcessProps> = {
             ...(exclude_ids?.length
@@ -98,21 +98,24 @@ export class ProcessRepository implements IProcessRepository {
         };
         const rows: ProcessModel[] = await ProcessModel.findAll({
             where,
+            transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[])
         });
         return rows.map(mapModelToDomain);
     }
 
-    async findById(id: number): Promise<ProcessProps | null> {
+    async findById(id: number, tx?: Transaction): Promise<ProcessProps | null> {
         const row: ProcessModel | null = await ProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
 
-    async findByName(name: string): Promise<ProcessProps | null> {
+    async findByName(name: string, tx?: Transaction): Promise<ProcessProps | null> {
         const row: ProcessModel | null = await ProcessModel.findOne({
             where: { name },
+            transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[])
         });
         return row ? mapModelToDomain(row) : null;
@@ -132,7 +135,9 @@ export class ProcessRepository implements IProcessRepository {
     // ================================================================
     async update(id: number, data: ProcessUpdateProps, tx?: Transaction): Promise<ProcessProps> {
         // 1. Verificar existencia
-        const existing: ProcessProps | null = await ProcessModel.findByPk(id);
+        const existing: ProcessProps | null = await ProcessModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(
             404,
             "El proceso que se desea actualizar no fue posible encontrarla."
@@ -145,6 +150,7 @@ export class ProcessRepository implements IProcessRepository {
         if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el proceso.");
         // 3. Obtener la proceso actualizada
         const updated: ProcessModel | null = await ProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el proceso.");
@@ -155,14 +161,16 @@ export class ProcessRepository implements IProcessRepository {
     // DELETE
     // ================================================================
     async delete(id: number, tx?: Transaction): Promise<void> {
-        const existing: ProcessModel | null = await ProcessModel.findByPk(id);
+        const existing: ProcessModel | null = await ProcessModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(
             404,
             "No se encontro el proceso que se pretende eliminar."
         );
         const deleted: number = await ProcessModel.destroy({
             where: { id },
-            transaction: tx,
+            transaction: tx
         });
         if (!deleted) throw new HttpError(500, "No fue posible eliminar el proceso.");
         return;

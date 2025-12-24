@@ -47,8 +47,8 @@ class GetAllLocationsUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(query) {
-        return await this.repo.findAll(query);
+    async execute(query, tx) {
+        return await this.repo.findAll(query, tx);
     }
 }
 exports.GetAllLocationsUseCase = GetAllLocationsUseCase;

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
 /**
  * UseCase
@@ -42,5 +43,5 @@ import type { IProductInputProcessRepository } from "../../domain/product-input-
 export declare class DeleteProductInputProcessUseCase {
     private readonly repo;
     constructor(repo: IProductInputProcessRepository);
-    execute(id: number): Promise<void>;
+    execute(id: number, tx?: Transaction): Promise<void>;
 }

@@ -47,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 export class DeleteProductionLineUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
     async execute(id: number, tx?: Transaction): Promise<void> {
-        const exists: ProductionLineProps | null = await this.repo.findById(id);
+        const exists: ProductionLineProps | null = await this.repo.findById(id, tx);
         if (!exists) throw new HttpError(404,
             "No se encontro la línea de producción que se pretende eliminar."
         );

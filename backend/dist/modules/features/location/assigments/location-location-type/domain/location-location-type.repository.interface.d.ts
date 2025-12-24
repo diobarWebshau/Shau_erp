@@ -42,9 +42,9 @@ import type { LocationLocationTypeProps, LocationLocationTypeCreateProps, Locati
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 export interface ILocationLocationTypeRepository {
-    findAll(): Promise<LocationLocationTypeProps[]>;
-    findById(id: number): Promise<LocationLocationTypeProps | null>;
-    findByLocationLocationType(location_id: number, location_type_id: number): Promise<LocationLocationTypeProps | null>;
+    findAll(tx?: Transaction): Promise<LocationLocationTypeProps[]>;
+    findById(id: number, tx?: Transaction): Promise<LocationLocationTypeProps | null>;
+    findByLocationLocationType(location_id: number, location_type_id: number, tx?: Transaction): Promise<LocationLocationTypeProps | null>;
     create(data: LocationLocationTypeCreateProps, tx?: Transaction): Promise<LocationLocationTypeProps>;
     update(id: number, data: LocationLocationTypeUpdateProps, tx?: Transaction): Promise<LocationLocationTypeProps>;
     delete(id: number, tx?: Transaction): Promise<void>;

@@ -55,7 +55,7 @@ export class UpdateProductUseCase {
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
         // ------------------------------------------------------------------
-        const existing: ProductProps | null = await this.repo.findById(id);
+        const existing: ProductProps | null = await this.repo.findById(id, tx);
 
         if (!existing) {
             throw new HttpError(
@@ -99,7 +99,7 @@ export class UpdateProductUseCase {
         // (data), no en los cambios efectivos (updateValues), para evitar
         // inconsistencias y falsos negativos.
         if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name);
+            const existsByName = await this.repo.findByName(updateValues.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -109,7 +109,7 @@ export class UpdateProductUseCase {
         }
 
         if (updateValues.sku) {
-            const existsBySku = await this.repo.findBySku(updateValues.sku);
+            const existsBySku = await this.repo.findBySku(updateValues.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -119,7 +119,7 @@ export class UpdateProductUseCase {
         }
 
         if (updateValues.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(updateValues.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(updateValues.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -129,7 +129,7 @@ export class UpdateProductUseCase {
         }
 
         if (updateValues.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(updateValues.barcode.toString());
+            const existsByBarcode = await this.repo.findByBarcode(updateValues.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new HttpError(
                     409,

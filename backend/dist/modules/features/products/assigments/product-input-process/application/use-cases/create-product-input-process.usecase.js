@@ -56,17 +56,17 @@ class CreateProductInputProcessUseCase {
         this.repoProductInput = repoProductInput;
         this.repoProductProcess = repoProductProcess;
     }
-    async execute(data) {
-        const validateProduct = await this.repoProduct.findById(data.product_id);
+    async execute(data, tx) {
+        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (validateProduct)
             throw new http_error_1.default(404, "El producto que se desea asignar un consumo de insumos para un proceso, no existe");
-        const validateProductInput = await this.repoProductInput.findById(data.product_input_id);
+        const validateProductInput = await this.repoProductInput.findById(data.product_input_id, tx);
         if (validateProductInput)
             throw new http_error_1.default(404, "La asignación del insumo al producto que se desea asignar a un proceso, no existe");
-        const validateProductProcess = await this.repoProductProcess.findById(data.product_process_id);
+        const validateProductProcess = await this.repoProductProcess.findById(data.product_process_id, tx);
         if (validateProductProcess)
             throw new http_error_1.default(404, "La asignacion del proceso al producto que se le desea asignar el consumo de un insumo, no existe");
-        const created = await this.repo.create(data);
+        const created = await this.repo.create(data, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación de la cantidad de insumos consumidos para este proceso del producto.");
         return created;

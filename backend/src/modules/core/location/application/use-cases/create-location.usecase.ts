@@ -48,13 +48,13 @@ export class CreateLocationUseCase {
     constructor(private readonly repo: ILocationRepository) { }
     async execute(data: LocationCreateProps, tx?: Transaction): Promise<LocationProps> {
         if (data.name) {
-            const existsByName: LocationProps | null = await this.repo.findByName(data.name);
+            const existsByName: LocationProps | null = await this.repo.findByName(data.name, tx);
             if (existsByName) throw new HttpError(409,
                 "El nombre ingresado para la nueva locación, ya esta utilizado por otra locación."
             );
         }
         if (data.custom_id) {
-            const existsByCustomId: LocationProps | null = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId: LocationProps | null = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId) throw new HttpError(409,
                 "El id unico ingresado para la locación, ya esta utilizado por otra locación."
             );

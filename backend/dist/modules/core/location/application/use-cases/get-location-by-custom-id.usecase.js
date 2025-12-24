@@ -47,7 +47,7 @@ class GetLocationByCustomIdUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (custom_id) => await this.repo.findByCustomId(custom_id);
+    execute = async (custom_id, tx) => await this.repo.findByCustomId(custom_id, tx);
 }
 exports.GetLocationByCustomIdUseCase = GetLocationByCustomIdUseCase;
 ;

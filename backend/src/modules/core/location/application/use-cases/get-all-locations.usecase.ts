@@ -1,5 +1,6 @@
 // src/modules/location/application/use-cases/get-all-locations.usecase.ts
 
+import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import type { LocationProps, LocationtSearchCriteria } from "../../domain/location.types";
 
@@ -47,7 +48,7 @@ import type { LocationProps, LocationtSearchCriteria } from "../../domain/locati
 
 export class GetAllLocationsUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    async execute(query: LocationtSearchCriteria): Promise<LocationProps[]> {
-        return await this.repo.findAll(query);
+    async execute(query: LocationtSearchCriteria, tx?: Transaction): Promise<LocationProps[]> {
+        return await this.repo.findAll(query, tx);
     }
 };

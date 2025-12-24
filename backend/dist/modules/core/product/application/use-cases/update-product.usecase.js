@@ -58,7 +58,7 @@ class UpdateProductUseCase {
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
         // ------------------------------------------------------------------
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing) {
             throw new http_error_1.default(404, "El Producte que se desea actualizar no fue posible encontrarlo.");
         }
@@ -92,25 +92,25 @@ class UpdateProductUseCase {
         // (data), no en los cambios efectivos (updateValues), para evitar
         // inconsistencias y falsos negativos.
         if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name);
+            const existsByName = await this.repo.findByName(updateValues.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new http_error_1.default(409, "El nombre ingresado para el producte ya está en uso.");
             }
         }
         if (updateValues.sku) {
-            const existsBySku = await this.repo.findBySku(updateValues.sku);
+            const existsBySku = await this.repo.findBySku(updateValues.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new http_error_1.default(409, "El sku ingresado para el producte ya está en uso.");
             }
         }
         if (updateValues.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(updateValues.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(updateValues.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new http_error_1.default(409, "El id único ingresado para el producte ya está en uso.");
             }
         }
         if (updateValues.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(updateValues.barcode.toString());
+            const existsByBarcode = await this.repo.findByBarcode(updateValues.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new http_error_1.default(409, "El código de barras ingresado para el producte ya está en uso.");
             }

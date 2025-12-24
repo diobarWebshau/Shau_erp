@@ -13,14 +13,14 @@ const process_repository_1 = __importDefault(require("../../../../../modules/cor
 const input_repository_1 = require("../../../../../modules/core/input/infrastructure/repository/input.repository");
 const create_product_orchestrator_usecase_1 = require("../application/create-product-orchestrator.usecase");
 class ProductOrchestratorController {
-    repo;
-    processRepo;
-    inputRepo;
+    createProductOrchestrator;
+    productInputProcessRepo;
+    productDiscountRepo;
     productProcessRepo;
     productInputRepo;
-    productDiscountRepo;
-    productInputProcessRepo;
-    createProductOrchestrator;
+    processRepo;
+    inputRepo;
+    repo;
     constructor() {
         this.repo = new producto_repository_1.ProductRepository();
         this.inputRepo = new input_repository_1.InputRepository();
@@ -41,8 +41,18 @@ class ProductOrchestratorController {
     }
     ;
     create = async (req, res) => {
-        const body = req.body;
-        const result = await this.createProductOrchestrator.execute(body);
+        const { payload, photo } = req.body;
+        const updatePayload = {
+            ...payload,
+            product: {
+                ...payload.product,
+                ...(photo ? {
+                    photo: photo ?? null
+                } : {})
+            },
+        };
+        console.log('payload', updatePayload);
+        const result = await this.createProductOrchestrator.execute(updatePayload);
         return res.status(201).send(result);
     };
 }

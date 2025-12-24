@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps } from "../../domain/product.types";
 
@@ -44,5 +45,5 @@ import type { ProductProps } from "../../domain/product.types";
 
 export class GetProductByNameCase {
     constructor(private readonly repo: IProductRepository) { }
-    execute = async (name: string): Promise<ProductProps | null> => this.repo.findByName(name);
+    execute = async (name: string, tx?: Transaction): Promise<ProductProps | null> => this.repo.findByName(name, tx);
 };

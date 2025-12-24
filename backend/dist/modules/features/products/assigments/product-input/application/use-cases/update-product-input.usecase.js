@@ -53,8 +53,8 @@ class UpdateProductInputUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(id, data) {
-        const existing = await this.repo.findById(id);
+    async execute(id, data, tx) {
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla.");
         const editableFields = [
@@ -67,7 +67,7 @@ class UpdateProductInputUseCase {
         const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues);
+        const updated = await this.repo.update(id, updateValues, tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignacion del insumo al producto.");
         return updated;

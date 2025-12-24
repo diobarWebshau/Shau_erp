@@ -46,7 +46,7 @@ class GetProductProcessByIdProductProcessUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (product_id, process_id) => this.repo.findByIdProductInput(product_id, process_id);
+    execute = async (product_id, process_id, tx) => this.repo.findByIdProductInput(product_id, process_id, tx);
 }
 exports.GetProductProcessByIdProductProcessUseCase = GetProductProcessByIdProductProcessUseCase;
 ;

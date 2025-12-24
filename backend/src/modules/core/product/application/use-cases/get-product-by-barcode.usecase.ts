@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps } from "../../domain/product.types";
 
@@ -44,5 +45,5 @@ B*/
 
 export class GetProductByBarcodeUseCase {
     constructor(private readonly repo: IProductRepository) { }
-    execute = async (barcode: number): Promise<ProductProps | null> => this.repo.findByBarcode(barcode.toString());
+    execute = async (barcode: number, tx?: Transaction): Promise<ProductProps | null> => this.repo.findByBarcode(barcode.toString(), tx);
 };

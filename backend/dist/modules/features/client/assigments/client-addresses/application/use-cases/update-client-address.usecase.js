@@ -54,7 +54,7 @@ class UpdateClientAddressUseCase {
         this.repo = repo;
     }
     async execute(id, data, tx) {
-        const existing = await this.repo.findById(id);
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "El cliente que se desea actualizar no fue posible encontrarlo.");
         const editableFields = [

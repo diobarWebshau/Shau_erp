@@ -82,7 +82,7 @@ export class ClientRepository implements IClientRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (query: ClientSearchCriteria): Promise<ClientProps[]> => {
+    findAll = async (query: ClientSearchCriteria, tx?: Transaction): Promise<ClientProps[]> => {
         const { filter, exclude_ids, is_active, ...rest } = query;
         const where: WhereOptions<ClientProps> = {
             ...(exclude_ids?.length
@@ -111,32 +111,37 @@ export class ClientRepository implements IClientRepository {
         const rows: ClientModel[] = await ClientModel.findAll({
             where,
             attributes: ClientModel.getAllFields() as (keyof ClientProps)[],
+            transaction: tx,
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
-    findById = async (id: number): Promise<ClientProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findByPk(id, {
-            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
+            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[]),
+            transaction: tx,
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByCompanyName = async (company_name: string): Promise<ClientProps | null> => {
+    findByCompanyName = async (company_name: string, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findOne({
             where: { company_name },
+            transaction: tx,
             attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByCfdi = async (cfdi: string): Promise<ClientProps | null> => {
+    findByCfdi = async (cfdi: string, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findOne({
             where: { cfdi: cfdi },
+            transaction: tx,
             attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByTaxId = async (tax_id: string): Promise<ClientProps | null> => {
+    findByTaxId = async (tax_id: string, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findOne({
             where: { tax_id: tax_id },
+            transaction: tx,
             attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
         });
         return row ? mapModelToDomain(row) : null;
@@ -144,7 +149,7 @@ export class ClientRepository implements IClientRepository {
     // ================================================================
     // CREATE
     // ================================================================
-    create = async (data: ClientCreateProps, tx: Transaction): Promise<ClientProps> => {
+    create = async (data: ClientCreateProps, tx?: Transaction): Promise<ClientProps> => {
         const created: ClientModel = await ClientModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el nuevo cliente.");
         return mapModelToDomain(created);
@@ -152,7 +157,7 @@ export class ClientRepository implements IClientRepository {
     // ================================================================
     // UPDATE
     // ================================================================
-    update = async (id: number, data: ClientUpdateProps, tx: Transaction): Promise<ClientProps> => {
+    update = async (id: number, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps> => {
         // 1. Verificar existencia
         const existing: ClientModel | null = await ClientModel.findByPk(id);
         if (!existing) throw new HttpError(404,

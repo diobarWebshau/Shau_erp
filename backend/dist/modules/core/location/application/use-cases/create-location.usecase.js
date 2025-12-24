@@ -52,12 +52,12 @@ class CreateLocationUseCase {
     }
     async execute(data, tx) {
         if (data.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El nombre ingresado para la nueva locación, ya esta utilizado por otra locación.");
         }
         if (data.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId)
                 throw new http_error_1.default(409, "El id unico ingresado para la locación, ya esta utilizado por otra locación.");
         }

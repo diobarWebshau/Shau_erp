@@ -196,6 +196,7 @@ const validateRequest = <S extends EndpointZodSchema>(schema: S) =>
          *
          * No necesita chequear nada más.
          */
+        console.log('salgo del zod');
         return next();
     };
 

@@ -49,7 +49,7 @@ import { ClientProps } from "@src/modules/core/client/domain/client.types";
 export class CreateClientAddressUseCase {
     constructor(private readonly repo: IClientAddressRepository, private readonly repoClient: IClientRepository) { }
     async execute(data: ClientAddressCreateProps, tx?: Transaction): Promise<ClientAddressProps> {
-        const validClient: ClientProps | null = await this.repoClient.findById(data.client_id);
+        const validClient: ClientProps | null = await this.repoClient.findById(data.client_id, tx);
         if (!validClient) throw new HttpError(404,
             "Al cliente que se le intenta crear una dirección, no existe."
         );

@@ -68,7 +68,7 @@ class ProcessRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    async findAll(query) {
+    async findAll(query, tx) {
         const { filter, exclude_ids, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
@@ -93,19 +93,22 @@ class ProcessRepository {
         };
         const rows = await process_orm_1.ProcessModel.findAll({
             where,
+            transaction: tx,
             attributes: process_orm_1.ProcessModel.getAllFields()
         });
         return rows.map(mapModelToDomain);
     }
-    async findById(id) {
+    async findById(id, tx) {
         const row = await process_orm_1.ProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: process_orm_1.ProcessModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     }
-    async findByName(name) {
+    async findByName(name, tx) {
         const row = await process_orm_1.ProcessModel.findOne({
             where: { name },
+            transaction: tx,
             attributes: process_orm_1.ProcessModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
@@ -124,7 +127,9 @@ class ProcessRepository {
     // ================================================================
     async update(id, data, tx) {
         // 1. Verificar existencia
-        const existing = await process_orm_1.ProcessModel.findByPk(id);
+        const existing = await process_orm_1.ProcessModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "El proceso que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -136,6 +141,7 @@ class ProcessRepository {
             throw new http_error_1.default(500, "No fue posible actualizar el proceso.");
         // 3. Obtener la proceso actualizada
         const updated = await process_orm_1.ProcessModel.findByPk(id, {
+            transaction: tx,
             attributes: process_orm_1.ProcessModel.getAllFields(),
         });
         if (!updated)
@@ -146,12 +152,14 @@ class ProcessRepository {
     // DELETE
     // ================================================================
     async delete(id, tx) {
-        const existing = await process_orm_1.ProcessModel.findByPk(id);
+        const existing = await process_orm_1.ProcessModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro el proceso que se pretende eliminar.");
         const deleted = await process_orm_1.ProcessModel.destroy({
             where: { id },
-            transaction: tx,
+            transaction: tx
         });
         if (!deleted)
             throw new http_error_1.default(500, "No fue posible eliminar el proceso.");

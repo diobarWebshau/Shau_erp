@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import type { LocationProductionLineProps } from "../../domain/location-production-line.types";
 
@@ -46,5 +47,5 @@ export class GetLocationProductionLineByIdLocationProductionLineUseCase {
     constructor(
         private readonly repo: ILocationProductionLineRepository
     ) { }
-    execute = async (location_id: number, production_line_id: number): Promise<LocationProductionLineProps | null> => this.repo.findByIdLocationProductionLine(location_id, production_line_id);
+    execute = async (location_id: number, production_line_id: number, tx?: Transaction): Promise<LocationProductionLineProps | null> => this.repo.findByIdLocationProductionLine(location_id, production_line_id, tx);
 };

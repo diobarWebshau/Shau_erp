@@ -46,7 +46,7 @@ class GetInputBySkuIdUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (sku) => await this.repo.findBySku(sku);
+    execute = async (sku, tx) => await this.repo.findBySku(sku, tx);
 }
 exports.GetInputBySkuIdUseCase = GetInputBySkuIdUseCase;
 ;

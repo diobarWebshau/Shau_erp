@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
 import type { ProductionLineProps } from "../../domain/production-line.types";
 /**
@@ -43,5 +44,5 @@ import type { ProductionLineProps } from "../../domain/production-line.types";
 export declare class GetProductionLineByCustomIdUseCase {
     private readonly repo;
     constructor(repo: IProductionLineRepository);
-    execute: (custom_id: string) => Promise<ProductionLineProps | null>;
+    execute: (custom_id: string, tx?: Transaction) => Promise<ProductionLineProps | null>;
 }

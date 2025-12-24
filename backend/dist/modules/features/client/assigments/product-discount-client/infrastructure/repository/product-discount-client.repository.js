@@ -68,30 +68,34 @@ class ProductDiscountClientRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await product_discount_client_orm_1.ProductDiscountClientModel.findAll({
+            transaction: tx,
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await product_discount_client_orm_1.ProductDiscountClientModel.findByPk(id, {
+            transaction: tx,
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
         console.log("diobar");
         return row ? mapModelToDomain(row) : null;
     };
-    findByClientId = async (client_id) => {
+    findByClientId = async (client_id, tx) => {
         const rows = await product_discount_client_orm_1.ProductDiscountClientModel.findAll({
             where: { client_id: client_id },
+            transaction: tx,
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
         const rowsMap = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     };
-    findByProductClientId = async (product_id, client_id) => {
+    findByProductClientId = async (product_id, client_id, tx) => {
         const row = await product_discount_client_orm_1.ProductDiscountClientModel.findOne({
+            transaction: tx,
             where: { client_id: client_id, product_id: product_id },
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
@@ -112,7 +116,9 @@ class ProductDiscountClientRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await product_discount_client_orm_1.ProductDiscountClientModel.findByPk(id);
+        const existing = await product_discount_client_orm_1.ProductDiscountClientModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
@@ -124,6 +130,7 @@ class ProductDiscountClientRepository {
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
         // 3. Obtener la producto actualizada
         const updated = await product_discount_client_orm_1.ProductDiscountClientModel.findByPk(id, {
+            transaction: tx,
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields(),
         });
         if (!updated)
@@ -134,7 +141,9 @@ class ProductDiscountClientRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await product_discount_client_orm_1.ProductDiscountClientModel.findByPk(id);
+        const existing = await product_discount_client_orm_1.ProductDiscountClientModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la asignación del descuento del producto para el cliente que se pretende eliminar.");
         const deleted = await product_discount_client_orm_1.ProductDiscountClientModel.destroy({

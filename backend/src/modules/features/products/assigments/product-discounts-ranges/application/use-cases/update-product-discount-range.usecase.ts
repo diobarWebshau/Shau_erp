@@ -51,7 +51,7 @@ import { Transaction } from "sequelize";
 export class UpdateProductDiscountRangeUseCase {
     constructor(private readonly repo: IProductDiscountRangeRepository) { }
     async execute(id: number, data: ProductDiscountRangeUpdateProps, tx?: Transaction): Promise<ProductDiscountRangeProps> {
-        const existing: ProductDiscountRangeProps | null = await this.repo.findById(id);
+        const existing: ProductDiscountRangeProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
         );
@@ -64,7 +64,7 @@ export class UpdateProductDiscountRangeUseCase {
         const normalizedMerged: ProductDiscountRangeUpdateProps = deepNormalizeDecimals<ProductDiscountRangeUpdateProps>(merged, ["unit_price", "max_qty", "min_qty"]);
         const updateValues: ProductDiscountRangeUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
-        const getAll: ProductDiscountRangeProps[] = await this.repo.findByProductId(merged.product_id);
+        const getAll: ProductDiscountRangeProps[] = await this.repo.findByProductId(merged.product_id, tx);
         const getAllExcludeIdUpdate: ProductDiscountRangeProps[] = getAll.filter(g => g.id !== Number(id));
         const getAllExcludeIdRanges: Pick<ProductDiscountRangeProps, "min_qty" | "max_qty">[] = getAllExcludeIdUpdate.map(r => ({
             min_qty: r.min_qty,

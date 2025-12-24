@@ -42,9 +42,9 @@ import type { ProductInputProps, ProductInputCreateProps, ProductInputUpdateProp
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 export interface IProductInputRepository {
-    findAll(): Promise<ProductInputProps[]>;
-    findById(id: number): Promise<ProductInputProps | null>;
-    findByIdProductInput(product_id: number, input_id: number): Promise<ProductInputProps | null>;
+    findAll(tx?: Transaction): Promise<ProductInputProps[]>;
+    findById(id: number, tx?: Transaction): Promise<ProductInputProps | null>;
+    findByIdProductInput(product_id: number, input_id: number, tx?: Transaction): Promise<ProductInputProps | null>;
     create(data: ProductInputCreateProps, tx?: Transaction): Promise<ProductInputProps>;
     update(id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps>;
     delete(id: number, tx?: Transaction): Promise<void>;

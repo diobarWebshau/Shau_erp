@@ -66,25 +66,28 @@ export class ProductInputRepository implements IProductInputRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (): Promise<ProductInputProps[]> => {
+    findAll = async (tx?: Transaction): Promise<ProductInputProps[]> => {
         const rows: ProductInputModel[] = await ProductInputModel.findAll({
+            transaction: tx,
             attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
         const rowsMap: ProductInputProps[] = rows.map((r) => mapModelToDomain(r));
         return rowsMap;
     }
-    findById = async (id: number): Promise<ProductInputProps | null> => {
+    findById = async (id: number, tx?: Transaction): Promise<ProductInputProps | null> => {
         const row: ProductInputModel | null = await ProductInputModel.findByPk(id, {
+            transaction: tx,
             attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
-    findByIdProductInput = async (product_id: number, input_id: number): Promise<ProductInputProps | null> => {
+    findByIdProductInput = async (product_id: number, input_id: number, tx?: Transaction): Promise<ProductInputProps | null> => {
         const row: ProductInputModel | null = await ProductInputModel.findOne({
             where: {
                 product_id: product_id,
                 input_id: input_id
             },
+            transaction: tx,
             attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
         return row ? mapModelToDomain(row) : null;
@@ -102,7 +105,9 @@ export class ProductInputRepository implements IProductInputRepository {
     // ================================================================
     update = async (id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps> => {
         // 1. Verificar existencia
-        const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
+        const existing: ProductInputModel | null = await ProductInputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
         );
@@ -116,6 +121,7 @@ export class ProductInputRepository implements IProductInputRepository {
         // 3. Obtener la producto actualizada
         const updated: ProductInputModel | null = await ProductInputModel.findByPk(id, {
             attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[]),
+            transaction: tx,
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
         return mapModelToDomain(updated);
@@ -124,7 +130,9 @@ export class ProductInputRepository implements IProductInputRepository {
     // DELETE
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ProductInputModel | null = await ProductInputModel.findByPk(id);
+        const existing: ProductInputModel | null = await ProductInputModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
             "No se encontro la asignación del insumo al producto que se pretende eliminar."
         );

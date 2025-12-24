@@ -52,12 +52,12 @@ class CreateProductionLineUseCase {
     }
     async execute(data, tx) {
         if (data?.name) {
-            const existsByName = await this.repo.findByName(data.name);
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El nombre ingresado para la nueva línea de producción, ya esta utilizado por otra línea de producción.");
         }
         if (data?.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id);
+            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
             if (existsByCustomId)
                 throw new http_error_1.default(409, "El id único ingresado para la línea de producción, ya esta utilizado por otra línea de producción.");
         }

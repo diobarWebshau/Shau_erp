@@ -46,8 +46,8 @@ class GetProductDiscountRangeByProductUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(product_id) {
-        return await this.repo.findByProductId(product_id);
+    async execute(product_id, tx) {
+        return await this.repo.findByProductId(product_id, tx);
     }
 }
 exports.GetProductDiscountRangeByProductUseCase = GetProductDiscountRangeByProductUseCase;

@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
 import { ProductProcessProps } from "../../domain/product-process.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,8 +46,8 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteProductProcessUseCase {
     constructor(private readonly repo: IProductProcessRepository) { }
-    async execute(id: number): Promise<void> {
-        const exists: ProductProcessProps | null = await this.repo.findById(id);
+    async execute(id: number, tx?: Transaction): Promise<void> {
+        const exists: ProductProcessProps | null = await this.repo.findById(id, tx);
         if (!exists) throw new HttpError(404,
             "No se encontro la asignación del proceso al producto que se pretende eliminar."
         );

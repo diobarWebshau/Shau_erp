@@ -68,29 +68,33 @@ class ProductionLineRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async () => {
+    findAll = async (tx) => {
         const rows = await production_lines_orm_1.ProductionLineModel.findAll({
+            transaction: tx,
             attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
         const rowsMap = rows.map((pl) => mapModelToDomain(pl));
         return rowsMap;
     };
-    findById = async (id) => {
+    findById = async (id, tx) => {
         const row = await production_lines_orm_1.ProductionLineModel.findByPk(id, {
+            transaction: tx,
             attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByName = async (name) => {
+    findByName = async (name, tx) => {
         const row = await production_lines_orm_1.ProductionLineModel.findOne({
             where: { name },
+            transaction: tx,
             attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
     };
-    findByCustomId = async (custom_id) => {
+    findByCustomId = async (custom_id, tx) => {
         const row = await production_lines_orm_1.ProductionLineModel.findOne({
             where: { custom_id },
+            transaction: tx,
             attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
         return row ? mapModelToDomain(row) : null;
@@ -109,13 +113,15 @@ class ProductionLineRepository {
     // ================================================================
     update = async (id, data, tx) => {
         // 1. Verificar existencia
-        const existing = await production_lines_orm_1.ProductionLineModel.findByPk(id);
+        const existing = await production_lines_orm_1.ProductionLineModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "La línea de producción que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
         const [affectedCount] = await production_lines_orm_1.ProductionLineModel.update(data, {
             where: { id },
-            transaction: tx,
+            transaction: tx
         });
         if (!affectedCount)
             throw new http_error_1.default(500, "No fue posible actualizar la línea de producción.");
@@ -132,7 +138,9 @@ class ProductionLineRepository {
     // DELETE
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await production_lines_orm_1.ProductionLineModel.findByPk(id);
+        const existing = await production_lines_orm_1.ProductionLineModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
             throw new http_error_1.default(404, "No se encontro la línea de producción que se pretende eliminar.");
         const deleted = await production_lines_orm_1.ProductionLineModel.destroy({

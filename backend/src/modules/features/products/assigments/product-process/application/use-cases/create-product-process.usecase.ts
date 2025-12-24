@@ -3,6 +3,7 @@ import type { IProductProcessRepository } from "../../domain/product-process.rep
 import type { ProductProcessProps, ProductProcessCreateProps } from "../../domain/product-process.types";
 import HttpError from "@shared/errors/http/http-error";
 import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -51,20 +52,20 @@ export class CreateProductProcessUseCase {
         private readonly repoProduct: IProductRepository,
         private readonly repoProcess: IProcessRepository
     ) { }
-    async execute(data: ProductProcessCreateProps): Promise<ProductProcessProps> {
-        const validateProduct = await this.repoProduct.findById(data.product_id);
+    async execute(data: ProductProcessCreateProps, tx?: Transaction): Promise<ProductProcessProps> {
+        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct) throw new HttpError(500,
             "El producto que se pretende asignarle un proceso, no existe."
         );
-        const validateProcess = await this.repoProcess.findById(data.process_id);
+        const validateProcess = await this.repoProcess.findById(data.process_id, tx);
         if (!validateProcess) throw new HttpError(500,
             "El proceso que se desea asignar al producto, no existe."
         );
-        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.process_id);
+        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.process_id, tx);
         if (validateDuplicate) throw new HttpError(500,
             "El producto ya tiene asignado el proceso."
         );
-        const created: ProductProcessProps = await this.repo.create(data);
+        const created: ProductProcessProps = await this.repo.create(data, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del proceso al producto."
         );

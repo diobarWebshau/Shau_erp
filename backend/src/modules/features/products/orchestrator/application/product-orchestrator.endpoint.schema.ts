@@ -1,11 +1,11 @@
-import { productOrchestratorResponseSchema, productOrchestratorCreateSchema } from "./product-orchestrator.model.schema";
+import { productOrchestratorResponseSchema, productOrchestratorPayloadSchema } from "./product-orchestrator.model.schema";
 import { EndpointSchema } from "@src/shared/typed-request-endpoint/endpoint.interface";
 import z from "zod";
 
 const createProductOrchestratorSchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
-    body: productOrchestratorCreateSchema,
+    body: productOrchestratorPayloadSchema,
     response: productOrchestratorResponseSchema,
 })
 

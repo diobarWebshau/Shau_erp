@@ -1,5 +1,6 @@
 // src/modules/location/application/use-cases/get-location-by-name.usecase.ts
 
+import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import type { LocationProps } from "../../domain/location.types";
 
@@ -47,5 +48,6 @@ import type { LocationProps } from "../../domain/location.types";
 
 export class GetLocationByNameUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    execute = async (name: string): Promise<LocationProps | null> => await this.repo.findByName(name);
+    execute = async (name: string, tx?: Transaction): Promise<LocationProps | null> =>
+        await this.repo.findByName(name, tx);
 };

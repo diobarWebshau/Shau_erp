@@ -52,7 +52,7 @@ export class DeleteProductUseCase {
     ) { }
 
     async execute(id: number, tx?: Transaction): Promise<void> {
-        const exists = await this.repo.findById(id);
+        const exists = await this.repo.findById(id, tx);
 
         if (!exists) {
             throw new HttpError(

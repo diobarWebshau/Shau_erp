@@ -1,93 +1,93 @@
 import { ProductDiscountRangeCreateSchema, ProductDiscountRangeReponseSchema, ProductDiscountRangeUpdateSchema } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 import { productInputProcessCreateSchema, productInputProcessReponseSchema, productInputProcessUpdateSchema } from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
 import { ProductProcessCreateSchema, ProductProcessReponseSchema, ProductProcessUpdateSchema } from "../../assigments/product-process/application/dto/product-process.model.schema";
-import { productCreateSchema, productResponseSchema, productUpdateSchema, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema";
 import { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdateSchema } from "../../assigments/product-input/application/dto/product-input.model.schema";
+import { productCreateSchema, productResponseSchema, productUpdateSchema, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema";
 import { processCreateSchema } from "@modules/core/process/application/dto/process.model.schema";
 import { z } from "zod";
 
-// ============================================================================
-// ✅ CREATE
-// ============================================================================
+// =========================================================================================
+// |                     ORCHESTRATOR — CREATE (REQUEST)                                   |
+// =========================================================================================
 
-// =========================
-// PRODUCT-INPUT (CREATE)
-// - NO product_id en payload orquestado
-// =========================
+// ! No debe tener identificadores aun no existentes, o identificadores que apenas se crearan en la request
+// ! No debe contener product_id, porque aun no existe el producto
+// ! Tampoco debe contener ninguna relacion identificada(creada en bd)
+
+// --------------------------------------------------
+// 🔹 PRODUCT-INPUT                                 |
+// --------------------------------------------------
+
+// * Product-Input en creación del producto
 const productInputOrchestratorCreateSchema = ProductInputCreateSchema
     .omit({ product_id: true })
     .extend({
-        product_id: z.undefined().optional(),
-        input: z.undefined().optional(),   // ✅ prohibido en request
-        product: z.undefined().optional(), // ✅ prohibido en request
-    })
-    .strict();
+        product_id: z.undefined().optional()
+    }).strict();
 
-// =========================
-// PRODUCT-INPUT-PROCESS (CREATE)
-// - qty requerido
-// - product_input anidado (solo input_id + equivalence; sin product_id)
-// =========================
+// --------------------------------------------------
+// 🔹 PRODUCT-INPUT-PROCESS                         |
+// --------------------------------------------------
+
+// * Product-Input-Process en creacion del Producto.
+// * Es necesario obtener una relacion no identificada para poder tener contexto de
+// * cual input esta relacionado con el product-process
 const productInputProcessOrchestratorCreateSchema = productInputProcessCreateSchema
     .omit({
         product_id: true,
         product_input_id: true,
         product_process_id: true,
-    })
-    .extend({
-        qty: z.number(),
-        product_input: productInputOrchestratorCreateSchema,
-    });
+    }).extend({ qty: z.number(), product_input: productInputOrchestratorCreateSchema });
 
-// =========================
-// PRODUCT-PROCESS (CREATE)
-// - NO product_id en payload orquestado
-// - product_input_process es ARRAY
-// =========================
+// --------------------------------------------------
+// 🔹 PRODUCT-PROCESS                               |
+// --------------------------------------------------    
 
-
-
+// * Product-Process en creación del Producto
 const ProductProcessBaseCreate = ProductProcessCreateSchema.omit({
     product_id: true,
     process_id: true,
 });
 
-// A) PROCESO EXISTENTE
+// * Product-Process en el caso de ser un proceso ya existente
+// * Es necesario obtener una relacion no identificada para poder tener contexto de
+// * la relacion de proceso del producto con la cantidad de insumos consumidas
 const productProcessUsingExistingSchema = ProductProcessBaseCreate.extend({
     process_id: z.number().int(),
-    process: z.undefined().optional(),  // ✅ prohibido
-    product: z.undefined().optional(),  // ✅ prohibido
     product_input_process: z.array(productInputProcessOrchestratorCreateSchema).default([]),
 });
 
-
-// B) PROCESO NUEVO
+// * ProductProcess en el caso de ser un nuevo proceso
+// * Es necesario obtener una relacion no identificada para poder tener contexto de
+// * la relacion de proceso del producto con la cantidad de insumos consumidas 
 const productProcessUsingNewSchema = ProductProcessBaseCreate.extend({
     process: processCreateSchema,
     process_id: z.undefined().optional(),
-    product: z.undefined().optional(),  // ✅ prohibido
     product_input_process: z.array(productInputProcessOrchestratorCreateSchema).default([]),
 });
 
-// UNION FINAL
+// * Unificación del tipado de los casos de Product-Process 
 const productProcessOrchestratorCreateSchema = z.union([
     productProcessUsingExistingSchema,
     productProcessUsingNewSchema,
 ]);
 
-// =========================
-// PRODUCT-DISCOUNT-RANGES (CREATE)
-// - NO product_id en payload orquestado
-// =========================
+// --------------------------------------------------
+// 🔹 PRODUCT-DISCOUNT-RANGE                        |
+// --------------------------------------------------
+
+// * Product-Discount-Range en creación del Producto
 const productDiscountRangeOrchestratorCreateSchema = ProductDiscountRangeCreateSchema
     .omit({ product_id: true })
     .extend({
         product_id: z.undefined().optional(),
     });
 
-// =========================
-// ROOT CREATE
-// =========================
+// --------------------------------------------------
+// 🔹 OBJECT PRODUCT ORCHESTRATOR CREATE            |
+// --------------------------------------------------
+
+// * Esquema del payload para crear el producto
 const productOrchestratorCreateSchema = z.object({
     product: productCreateSchema,
     products_inputs: z.array(productInputOrchestratorCreateSchema),
@@ -95,73 +95,86 @@ const productOrchestratorCreateSchema = z.object({
     product_discount_ranges: z.array(productDiscountRangeOrchestratorCreateSchema),
 });
 
-const productOrchestratorPayloadSchema = z.object({
+// * Esquema de la request para el REQUEST HTTP en CREATE
+const productOrchestratorCreateRequestSchema = z.object({
     payload: z.string().transform((val) => JSON.parse(val)).pipe(productOrchestratorCreateSchema),
     photo: z.string().optional(),
 });
 
-// ============================================================================
-// ✅ UPDATE
-// ============================================================================
+// =========================================================================================
+// |                     ORCHESTRATOR — UPDATE (REQUEST)                                   |
+// =========================================================================================
 
-// -------------------------
-// ProductInputProcess manager (nested)
-// deleted = objetos completos
-// -------------------------
+// --------------------------------------------------
+// 🔹 PRODUCT-INPUT-PROCESS                         |
+// --------------------------------------------------
+
+// * Product-Input-Process en actualización del producto
 const productInputProcessOrchestratorUpdateSchema = productInputProcessUpdateSchema.extend({
     id: z.number().int(),
 });
 
+// * Product-Input-Process MANAGER
 const productInputProcessManagerSchema = z.object({
     added: z.array(productInputProcessOrchestratorCreateSchema),
     updated: z.array(productInputProcessOrchestratorUpdateSchema),
     deleted: z.array(productInputProcessReponseSchema),
 });
 
-// -------------------------
-// ProductProcess update (puede traer nested manager)
-// -------------------------
+// --------------------------------------------------
+// 🔹 PRODUCT-PROCESS                               |
+// --------------------------------------------------
+
+// * Product-Process en actualización del producto
 const productProcessOrchestratorUpdateSchema = ProductProcessUpdateSchema.extend({
     id: z.number().int(),
     product_input_process_updated: productInputProcessManagerSchema.optional(),
 });
 
-// -------------------------
-// ProductInput update
-// -------------------------
-const productInputOrchestratorUpdateSchema = ProductInputUpdateSchema.extend({
-    id: z.number().int(),
-});
-
-// -------------------------
-// DiscountRange update
-// -------------------------
-const productDiscountRangeOrchestratorUpdateSchema = ProductDiscountRangeUpdateSchema.extend({
-    id: z.number().int(),
-});
-
-// -------------------------
-// MANAGERS (deleted = objetos completos)
-// -------------------------
+// * Product-Process MANAGER
 const productProcessManagerSchema = z.object({
     added: z.array(productProcessOrchestratorCreateSchema),
     updated: z.array(productProcessOrchestratorUpdateSchema),
     deleted: z.array(ProductProcessReponseSchema),
 });
 
+// --------------------------------------------------
+// 🔹 PRODUCT-INPUT                                 |
+// --------------------------------------------------
+
+// * Product-Input en actualización del producto
+const productInputOrchestratorUpdateSchema = ProductInputUpdateSchema.extend({
+    id: z.number().int(),
+});
+
+// * Product-Input MANAGER
 const productInputManagerSchema = z.object({
     added: z.array(productInputOrchestratorCreateSchema),
     updated: z.array(productInputOrchestratorUpdateSchema),
     deleted: z.array(ProductInputReponseSchema),
 });
 
+// --------------------------------------------------
+// 🔹 PRODUCT-DISCOUNT-RANGE                        |
+// --------------------------------------------------
+
+// * Product-Discount-Range en actualización del producto
+const productDiscountRangeOrchestratorUpdateSchema = ProductDiscountRangeUpdateSchema.extend({
+    id: z.number().int(),
+});
+
+// * Product-Discount-Range MANAGER
 const productDiscountRangeManagerSchema = z.object({
     added: z.array(productDiscountRangeOrchestratorCreateSchema),
     updated: z.array(productDiscountRangeOrchestratorUpdateSchema),
     deleted: z.array(ProductDiscountRangeReponseSchema),
 });
 
-// ROOT UPDATE
+// --------------------------------------------------
+// 🔹 OBJECT PRODUCT ORCHESTRATOR UPDATE            |
+// --------------------------------------------------
+
+// * Esquema del payload para actualizar el producto
 const productOrchestratorUpdateSchema = z.object({
     product: productUpdateSchema,
     products_inputs_manager: productInputManagerSchema,
@@ -169,17 +182,21 @@ const productOrchestratorUpdateSchema = z.object({
     product_discount_ranges_manager: productDiscountRangeManagerSchema,
 });
 
-// ============================================================================
-// ✅ RESPONSE
-// ============================================================================
-// OJO: aquí depende de si tus response schemas incluyen relaciones.
-// - Tu usecase devuelve product_processes con `product_input_process`
-// - Entonces ProductProcessReponseSchema debe permitirlo, o aquí lo extendemos.
+const productOrchestratorUpdateRequestSchema = z.object({
+    payload: z.string().transform((val) => JSON.parse(val)).pipe(productOrchestratorUpdateSchema),
+    photo: z.string().optional(),
+});
 
+// =========================================================================================
+// |                        ORCHESTRATOR — RESPONSE                                        |
+// =========================================================================================
+
+// * Esquema de respuesta para Product-Process
 const productProcessResponseOrchestratorSchema = ProductProcessReponseSchema.extend({
     product_input_process: z.array(productInputProcessReponseSchema).optional(),
 });
 
+// * Esquema de respuesta para Product
 const productOrchestratorResponseSchema = z.object({
     product: productResponseSchema,
     products_inputs: z.array(ProductInputReponseSchema),
@@ -187,14 +204,18 @@ const productOrchestratorResponseSchema = z.object({
     product_discount_ranges: z.array(ProductDiscountRangeReponseSchema),
 });
 
-type ProductOrchestratorUpdateDTP = z.infer<typeof productOrchestratorUpdateSchema>;
+// =========================================================================================
+// |                        ORCHESTRATOR — DTO                                             |
+// =========================================================================================
+
+type ProductOrchestratorUpdateDTO = z.infer<typeof productOrchestratorUpdateSchema>;
 type ProductOrchestratorCreateDTO = z.infer<typeof productOrchestratorCreateSchema>;
 type ProductOrchestratorReponseDTO = z.infer<typeof productOrchestratorResponseSchema>;
-type ProductOrchestratorPayloadDTO = z.infer<typeof productOrchestratorPayloadSchema>;
+type ProductOrchestratorPayloadDTO = z.infer<typeof productOrchestratorCreateRequestSchema>;
 
 export type {
     ProductOrchestratorCreateDTO,
-    ProductOrchestratorUpdateDTP,
+    ProductOrchestratorUpdateDTO,
     ProductOrchestratorReponseDTO,
     ProductOrchestratorPayloadDTO
 };
@@ -204,5 +225,8 @@ export {
     productOrchestratorUpdateSchema,
     productOrchestratorResponseSchema,
     productQuerySchema,
-    productOrchestratorPayloadSchema,
+
+    // REQUEST HTTP
+    productOrchestratorCreateRequestSchema,
+    productOrchestratorUpdateRequestSchema
 };

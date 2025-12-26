@@ -170,12 +170,13 @@ export class ProductRepository implements IProductRepository {
             "El producto que se desea actualizar no fue posible encontrarlo."
         );
         // 2. Aplicar UPDATE
-        const [affectedCount]: [affectedCount: number] = await ProductModel.update(data, {
+        // const [affectedCount]: [affectedCount: number] = 
+        await ProductModel.update(data, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar el producto.");
+        // if (!affectedCount)
+        //     throw new HttpError(500, "No fue posible actualizar el producto.");
         // 3. Obtener la locación actualizada
         const updated: ProductModel | null = await ProductModel.findByPk(id, {
             transaction: tx,

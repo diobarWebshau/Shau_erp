@@ -8,7 +8,7 @@ const product_orm_1 = require("../../../../core/product/infrastructure/orm/produ
 const sequelize_1 = require("sequelize");
 class ProductQueryRepository {
     // ********** SEQUELIZE **********
-    getAllProductFullQueryResult = async (query) => {
+    getAllProductFullQueryResult = async (query, tx) => {
         const { filter, exclude_ids, active, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
@@ -34,6 +34,7 @@ class ProductQueryRepository {
         };
         const results = await product_orm_1.ProductModel.findAll({
             where,
+            transaction: tx,
             include: [
                 { model: product_inputs_orm_1.ProductInputModel, as: "products_inputs" },
                 { model: product_process_orm_1.ProductProcessModel, as: "product_processes" },
@@ -45,8 +46,9 @@ class ProductQueryRepository {
         const products = results.map(p => p.toJSON());
         return products;
     };
-    getByIdProductFullQueryResult = async (id) => {
+    getByIdProductFullQueryResult = async (id, tx) => {
         const result = await product_orm_1.ProductModel.findByPk(id, {
+            transaction: tx,
             include: [
                 { model: product_inputs_orm_1.ProductInputModel, as: "products_inputs" },
                 { model: product_process_orm_1.ProductProcessModel, as: "product_processes" },
@@ -59,7 +61,7 @@ class ProductQueryRepository {
         return product;
     };
     // ********** ORCHESTRATOR **********
-    getAllProductOrchestratorResult = async (query) => {
+    getAllProductOrchestratorResult = async (query, tx) => {
         const { filter, exclude_ids, active, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
@@ -85,6 +87,7 @@ class ProductQueryRepository {
         };
         const results = await product_orm_1.ProductModel.findAll({
             where,
+            transaction: tx,
             include: [
                 { model: product_inputs_orm_1.ProductInputModel, as: "products_inputs" },
                 { model: product_process_orm_1.ProductProcessModel, as: "product_processes" },
@@ -107,8 +110,9 @@ class ProductQueryRepository {
         }
         return productsResultOrchestrator;
     };
-    getByIdProductOrchestratorResult = async (id) => {
+    getByIdProductOrchestratorResult = async (id, tx) => {
         const result = await product_orm_1.ProductModel.findByPk(id, {
+            transaction: tx,
             include: [
                 { model: product_inputs_orm_1.ProductInputModel, as: "products_inputs" },
                 { model: product_process_orm_1.ProductProcessModel, as: "product_processes" },

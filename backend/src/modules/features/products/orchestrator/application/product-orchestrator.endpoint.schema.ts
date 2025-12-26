@@ -1,11 +1,11 @@
-import { productOrchestratorResponseSchema, productOrchestratorPayloadSchema } from "./product-orchestrator.model.schema";
+import { productOrchestratorResponseSchema, productOrchestratorCreateRequestSchema, productOrchestratorUpdateRequestSchema } from "./product-orchestrator.model.schema";
 import { EndpointSchema } from "@src/shared/typed-request-endpoint/endpoint.interface";
 import z from "zod";
 
 const createProductOrchestratorSchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
-    body: productOrchestratorPayloadSchema,
+    body: productOrchestratorCreateRequestSchema,
     response: productOrchestratorResponseSchema,
 })
 
@@ -16,6 +16,26 @@ type CreateProductOrchestratorSchema = EndpointSchema<
     z.infer<typeof createProductOrchestratorSchema>["response"]
 >;
 
-export type { CreateProductOrchestratorSchema }
+const updateProductOrchestratorSchema = z.object({
+    params: z.object({ id: z.string() }).strict(),
+    query: z.object({}).strict(),
+    body: productOrchestratorUpdateRequestSchema,
+    response: productOrchestratorResponseSchema,
+})
 
-export { createProductOrchestratorSchema };
+type UpdateProductOrchestratorSchema = EndpointSchema<
+    z.infer<typeof updateProductOrchestratorSchema>["params"],
+    z.infer<typeof updateProductOrchestratorSchema>["body"],
+    z.infer<typeof updateProductOrchestratorSchema>["query"],
+    z.infer<typeof updateProductOrchestratorSchema>["response"]
+>;
+
+export type {
+    CreateProductOrchestratorSchema,
+    UpdateProductOrchestratorSchema
+}
+
+export {
+    createProductOrchestratorSchema,
+    updateProductOrchestratorSchema
+};

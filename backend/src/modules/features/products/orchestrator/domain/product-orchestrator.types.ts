@@ -10,25 +10,22 @@ import { ProductInputResponseDto } from "../../assigments/product-input/applicat
 import { ProductResponseDto } from "@src/modules/core/product/application/dto/product.model.schema";
 import type { InputProps } from "@modules/core/input/domain/input.types";
 
-// *****************************************************************************************
-// *                                 HELPERS TYPED                                         *
-// *****************************************************************************************
+// =========================================================================================
+// |                                 HELPERS TYPED                                         |
+// =========================================================================================
 
-// En CREATE/UPDATE orquestado, el product_id lo resuelve el backend
-// - CREATE: usa el id recién creado
-// - UPDATE: usa params.productId (si tu endpoint lo trae)
+// * Tipado que prohibe que un tipo contenga el identificador del producto
 type NoProductId = { product_id?: never };
 
-// Update por id (patch)
+// * Tipo generico que añade el atributo id al tipo enviado como parametro
 type UpdateById<TPatch> = { id: number } & TPatch;
 
+// =========================================================================================
+// |                         ORCHESTRATOR — BASE (CANÓNICO)                                |
+// =========================================================================================
 
-// *****************************************************************************************
-// *                         ORCHESTRATOR — BASE (CANÓNICO)                                *
-// *****************************************************************************************
-
-// Base = shape persistida + relaciones opcionales (para response/include)
-// Nota: aquí rompemos el ciclo de tipos con una versión Lean de ProductProcess.
+// * Base = shape persistida + relaciones opcionales (para response/include)
+// * Nota: aquí rompemos el ciclo de tipos con una versión Lean de ProductProcess.
 
 type ProductInputOrchestratorBase = ProductInputProps & {
     input?: InputProps;
@@ -43,7 +40,6 @@ type ProductProcessOrchestratorBaseLean = ProductProcessProps & {
 type ProductInputProcessOrchestratorBase = ProductInputProcessProps & {
     product?: ProductProps;
     product_input?: ProductInputOrchestratorBase;
-    // ✅ Lean para evitar ciclo infinito: process -> input_process[] -> process -> ...
     product_process?: ProductProcessOrchestratorBaseLean;
 };
 
@@ -55,12 +51,15 @@ type ProductDiscountRangeOrchestratorBase = ProductDiscountRangeProps & {
     product?: ProductProps;
 };
 
+// =========================================================================================
+// |                     ORCHESTRATOR — CREATE (REQUEST)                                   |
+// =========================================================================================
 
-// *****************************************************************************************
-// *                     ORCHESTRATOR — CREATE (REQUEST)                                   *
-// *****************************************************************************************
+// --------------------------------------------------
+// 🔹 PRODUCT-INPUT                                 |
+// --------------------------------------------------
 
-// 🔵 ProductInput — create orquestado SIN product_id (tabla puente)
+// * ProductInput SIN product_id
 type ProductInputCreateOrchestrator =
     NoProductId &
     Omit<ProductInputCreateProps, "product_id"> & {
@@ -69,24 +68,19 @@ type ProductInputCreateOrchestrator =
         product?: ProductProps;
     };
 
-// 🔵 ProductInputProcess — create orquestado
-// - qty requerido
-// - product_input: referencia a ProductInput create-orquestado
-// type ProductInputProcessCreateOrchestrator =
-//     Required<Pick<ProductInputProcessCreateProps, "qty">> &
-//     Partial<Omit<ProductInputProcessCreateProps, "qty">> & {
-//         product_input: ProductInputCreateOrchestrator;
-//     };
+// * ProductInputProcess 
 type ProductInputProcessCreateOrchestrator =
     Omit<ProductInputProcessCreateProps, "product_id" | "product_input_id" | "product_process_id"> & {
         qty: ProductInputProcessCreateProps["qty"];
         product_input: ProductInputCreateOrchestrator;
     };
 
+// --------------------------------------------------
+// 🔹 PRODUCT-PROCESS                               |
+// --------------------------------------------------
 
-// 🔵 ProductProcess — create orquestado (existing OR new process)
-// Caso A: asignar proceso existente
-type ProductProcessAssignExisting =
+// * Caso A: asignar proceso existente
+type ProductProcessOrchestratorAssignExisting =
     NoProductId &
     Omit<ProductProcessCreateProps, "product_id"> & {
         process_id: number;
@@ -95,8 +89,8 @@ type ProductProcessAssignExisting =
         product_input_process: ProductInputProcessCreateOrchestrator[];
     };
 
-// Caso B: crear proceso nuevo
-type ProductProcessCreateNew =
+// * Caso B: crear proceso nuevo
+type ProductProcessOrchestratorCreateNew =
     NoProductId &
     Omit<ProductProcessCreateProps, "product_id" | "process_id"> & {
         process: ProcessCreateProps;
@@ -105,15 +99,20 @@ type ProductProcessCreateNew =
         product_input_process: ProductInputProcessCreateOrchestrator[];
     };
 
+// * Unificación del tipado de los casos de Product-Process 
 type ProductProcessCreateOrchestrator =
-    | ProductProcessAssignExisting
-    | ProductProcessCreateNew;
+    | ProductProcessOrchestratorAssignExisting
+    | ProductProcessOrchestratorCreateNew;
 
-// 🔵 DiscountRange — create orquestado SIN product_id
+// --------------------------------------------------
+// 🔹 PRODUCT-DISCOUNT-RANGE                        |
+// --------------------------------------------------
+
+// * Product-Discount-Range en actualización del producto, SIN PRODUCT_ID
 type ProductDiscountRangeCreateOrchestrator =
     NoProductId & Omit<ProductDiscountRangeCreateProps, "product_id">;
 
-// 🔵 ORCHESTRATOR ROOT CREATE (REQUEST)
+// * Product-Discount-Range MANAGER
 interface ProductOrchestratorCreate {
     product: ProductCreateProps;
     products_inputs: ProductInputCreateOrchestrator[];
@@ -121,41 +120,56 @@ interface ProductOrchestratorCreate {
     product_discount_ranges: ProductDiscountRangeCreateOrchestrator[];
 }
 
-// *****************************************************************************************
-// *                     ORCHESTRATOR — UPDATE (REQUEST)                                   *
-// *****************************************************************************************
+// =========================================================================================
+// |                     ORCHESTRATOR — UPDATE (REQUEST)                                   |
+// =========================================================================================
 
-// 🔵 Nested manager de ProductInputProcess (dentro de ProductProcess update)
+// --------------------------------------------------
+// 🔹 PRODUCT-INPUT-PROCESS                         |
+// --------------------------------------------------
 
+// * Product-Input-Process en actualización con ID
 type ProductInputProcessUpdateOrchestrator = UpdateById<ProductInputProcessUpdateProps>;
+// * PRODUCT-INPUT-PROCESS (MANAGER)
 interface ProductInputProcessManager {
     added: ProductInputProcessCreateOrchestrator[];
     updated: Array<ProductInputProcessUpdateOrchestrator>;
     deleted: Array<ProductInputProcessProps>;
 }
 
-// 🔵 ProductProcess manager (added/updated/deleted)
+// --------------------------------------------------
+// 🔹 PRODUCT-PROCESS                               |
+// --------------------------------------------------
 
+// * Product-Process en actualizacion con ID, y el manager de ProductInputProcess
 type ProductProcessUpdateOrchestrator = UpdateById<ProductProcessUpdateProps> & {
     product_input_process_updated?: ProductInputProcessManager
 };
+// * PRODUCT-PROCESS (MANAGER)
 interface ProductProcessManager {
     added: Array<ProductProcessCreateOrchestrator>,
     updated: Array<ProductProcessUpdateOrchestrator>,
     deleted: Array<ProductProcessProps>
 }
 
-// 🔵 ProductInput manager (added/updated/deleted)
+// --------------------------------------------------
+// 🔹 PRODUCT-INPUT                                 |
+// --------------------------------------------------
 
+// * Product-Input en actualizacion con ID
 type ProductInputUpdateOrchestrator = UpdateById<ProductInputUpdateProps>;
+// * PRODUCT-INPUT (MANAGER)
 interface ProductInputManager {
     added: Array<ProductInputCreateOrchestrator>;
     updated: Array<ProductInputUpdateOrchestrator>;
     deleted: Array<ProductInputProps>;
 };
 
-// 🔵 DiscountRange manager (added/updated/deleted)
+// --------------------------------------------------
+// 🔹 PRODUCT-DISCOUNT-RANGE                        |
+// --------------------------------------------------
 
+// * Product-Discount-Range manager (added/updated/deleted)
 type ProductDiscountRangeUpdateOrchestrator = UpdateById<ProductDiscountRangeUpdateProps>;
 interface ProductDiscountRangeManager {
     added: ProductDiscountRangeCreateOrchestrator[];
@@ -163,8 +177,11 @@ interface ProductDiscountRangeManager {
     deleted: Array<ProductDiscountRangeProps>;
 };
 
-// 🔵 ORCHESTRATOR ROOT UPDATE (REQUEST)
+// --------------------------------------------------
+// 🔹 OBJECT PRODUCT ORCHESTRATOR UPDATE            |
+// --------------------------------------------------
 
+// * Esquema del objeto para actualizar un producto desde el orquestador
 interface ProductUpdateOrchestrator {
     product: ProductUpdateProps; // patch del producto
     products_inputs_manager: ProductInputManager;
@@ -172,9 +189,9 @@ interface ProductUpdateOrchestrator {
     product_discount_ranges_manager: ProductDiscountRangeManager;
 }
 
-// *****************************************************************************************
-// *                        ORCHESTRATOR — RESPONSE                                        *
-// *****************************************************************************************
+// =========================================================================================
+// |                        ORCHESTRATOR — RESPONSE                                        |
+// =========================================================================================
 
 // Dominio (props) — puede venir lean o con relaciones opcionales (Base)
 interface ProductOrchestrator {
@@ -184,7 +201,7 @@ interface ProductOrchestrator {
     product_discount_ranges: ProductDiscountRangeOrchestratorBase[];
 }
 
-// DTO (show) — mantiene tus DTOs, pero permite relaciones opcionales si el backend hace include
+// * pero permite relaciones opcionales si el backend hace include
 type ProductInputResponseOrchestrator = ProductInputResponseDto & {
     input?: InputProps;
     product?: ProductProps;
@@ -193,7 +210,7 @@ type ProductInputResponseOrchestrator = ProductInputResponseDto & {
 type ProductProcessResponseOrchestrator = ProductProcessResponseDto & {
     process?: ProcessProps;
     product?: ProductProps;
-    product_input_process?: ProductInputProcessProps[]; // o su DTO si existe
+    product_input_process?: ProductInputProcessProps[];
 };
 
 type ProductDiscountRangeResponseOrchestrator = ProductDiscountRangeResponseDto & {
@@ -207,31 +224,30 @@ interface ProductOrchestratorResponse {
     product_discount_ranges: ProductDiscountRangeResponseOrchestrator[];
 }
 
-
-// *****************************************************************************************
-// *                                    IMPORTS                                            *
-// *****************************************************************************************
+// =========================================================================================
+// |                                    IMPORTS                                            |
+// =========================================================================================
 
 export type {
-    // *  BASE (CANÓNICO)
+
+    // *******************  BASE (CANÓNICO) ******************
     ProductInputOrchestratorBase,
     ProductProcessOrchestratorBaseLean,
     ProductProcessOrchestratorBase,
     ProductDiscountRangeOrchestratorBase,
     ProductInputProcessOrchestratorBase,
 
-    // * CREATE (REQUEST)
+    // ******************* CREATE (REQUEST) ******************
     ProductInputCreateOrchestrator,
     ProductInputProcessCreateOrchestrator,
-    ProductProcessAssignExisting,
-    ProductProcessCreateNew,
+    ProductProcessOrchestratorAssignExisting,
+    ProductProcessOrchestratorCreateNew,
     ProductProcessCreateOrchestrator,
     ProductDiscountRangeCreateOrchestrator,
     ProductOrchestratorCreate,
     ProductProcessResponseOrchestrator,
 
-    // * UPDATE (REQUEST)
-    
+    // ******************* UPDATE (REQUEST) ******************
     // ? managers
     ProductInputProcessManager,
     ProductProcessManager,
@@ -252,10 +268,10 @@ export type {
     ProductDiscountRangeUpdateOrchestrator,
     ProductDiscountRangeProps,
 
-    // * SEARCH QUERY
+    // ******************* SEARCH QUERY ******************
     ProcessSearchCriteria,
 
-    // * RESPONSE
+    // ******************* RESPONSE ******************
     ProductOrchestrator,
     ProductOrchestratorResponse,
 };

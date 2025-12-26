@@ -9,186 +9,157 @@ const get_product_input_by_id_product_input_usecase_1 = require("../../assigment
 const create_product_process_usecase_1 = require("../../../../features/products/assigments/product-process/application/use-cases/create-product-process.usecase");
 const create_product_input_process_usecase_1 = require("../../assigments/product-input-process/application/use-cases/create-product-input-process.usecase");
 const create_product_input_usecase_1 = require("../../../../features/products/assigments/product-input/application/use-cases/create-product-input.usecase");
-const update_product_usecase_1 = require("../../../../../modules/core/product/application/use-cases/update-product.usecase");
+const get_by_id_product_query_orchestrator_usecase_1 = require("../../query/application/usecase/get-by-id-product-query-orchestrator.usecase");
 const create_product_usecase_1 = require("../../../../core/product/application/use-cases/create-product.usecase");
 const create_process_usecase_1 = require("../../../../core/process/application/use-cases/create-process.usecase");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
 const sequelize_1 = require("../../../../../config/mysql/sequelize");
-const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
+const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
 const sequelize_2 = require("sequelize");
 class CreateProductOrchestratorUseCase {
+    // * CASOS DE USO PARA PRODUCTO
     createProductUseCase;
-    updateProductUseCase;
+    getProductOrchestrator;
+    // * CASOS DE USO PARA PROCESS
+    createProcessUseCase;
+    // * CASOS DE USO PARA PRODUCTO-INPUT
+    getProductInputByProductInputUseCase;
     createProductInputUseCase;
-    getProductInputByIdProductInput;
+    // * CASOS DE USO PARA PRODUCT-PROCESS
     createProductProcessUseCase;
+    // * CASOS DE USO DE PRODUCT-DISCOUNT-RANGE
     createProductDiscountRangeUseCase;
+    // * CASOS DE USO PARA PRODUCTO-INPUT-PROCESS
     createProductInputProcessUseCase;
-    createProcess;
-    constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo, productInputProcessRepo }) {
+    // * MANEJO DE IMAGENES
+    fileCleanup;
+    constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo, productInputProcessRepo, fileCleanup, productQuery }) {
+        // * CASOS DE USO PARA PRODUCTO
         this.createProductUseCase = new create_product_usecase_1.CreateProductUseCase(productRepo);
-        this.updateProductUseCase = new update_product_usecase_1.UpdateProductUseCase(productRepo);
+        this.getProductOrchestrator = new get_by_id_product_query_orchestrator_usecase_1.GetByIdProductsQueryOrchestratorUseCase(productQuery);
+        // * CASOS DE USO PARA PROCESS
+        this.createProcessUseCase = new create_process_usecase_1.CreateProcessUseCase(processRepo);
+        // * CASOS DE USO PARA PRODUCTO-INPUT
+        this.getProductInputByProductInputUseCase = new get_product_input_by_id_product_input_usecase_1.GetProductInputByIdProductInputUseCase(productInputRepo);
         this.createProductInputUseCase = new create_product_input_usecase_1.CreateProductInputUseCase(productInputRepo, productRepo, inputRepo);
+        // * CASOS DE USO PARA PRODUCT-PROCESS
         this.createProductProcessUseCase = new create_product_process_usecase_1.CreateProductProcessUseCase(productProcessRepo, productRepo, processRepo);
-        this.getProductInputByIdProductInput = new get_product_input_by_id_product_input_usecase_1.GetProductInputByIdProductInputUseCase(productInputRepo);
+        // * CASOS DE USO DE PRODUCT-DISCOUNT-RANGE
         this.createProductDiscountRangeUseCase = new create_product_discount_range_usecase_1.CreateProductDiscountRangeUseCase(discountRangeRepo, productRepo);
-        this.createProcess = new create_process_usecase_1.CreateProcessUseCase(processRepo);
+        // * CASOS DE USO PARA PRODUCTO-INPUT-PROCESS
         this.createProductInputProcessUseCase = new create_product_input_process_usecase_1.CreateProductInputProcessUseCase(productInputProcessRepo, productRepo, productInputRepo, productProcessRepo);
+        // * MANEJO DE IMAGENES
+        this.fileCleanup = fileCleanup;
     }
     ;
     async execute(data) {
-        // ? CREATE PRODUCT-PROCESS
-        const transaction = await sequelize_1.sequelize.transaction({
-            isolationLevel: sequelize_2.Transaction.ISOLATION_LEVELS.REPEATABLE_READ
+        const tx = await sequelize_1.sequelize.transaction({
+            isolationLevel: sequelize_2.Transaction.ISOLATION_LEVELS.REPEATABLE_READ,
         });
-        const { product, product_discount_ranges, product_processes, products_inputs } = data;
+        let createdProductId = null;
         try {
-            const productCreateResponse = await this.createProductUseCase.execute(product, transaction);
-            // *************** ProductInputs ***************
-            const productInputCreates = products_inputs.map((pi) => ({
-                input_id: pi.input_id,
-                equivalence: pi.equivalence,
-                product_id: productCreateResponse.id,
-            }));
-            const productInputResponses = [];
-            for (const productInput of productInputCreates) {
-                const productInputResponse = await this.createProductInputUseCase.execute(productInput, transaction);
-                productInputResponses.push(productInputResponse);
+            // --------------------------------------------------
+            // |🔹 DESTRUCTATION                                |
+            // --------------------------------------------------
+            const { product, product_discount_ranges, product_processes, products_inputs } = data;
+            const safeProductsInputs = products_inputs ?? [];
+            const safeProductProcesses = product_processes ?? [];
+            const safeProductDiscountRanges = product_discount_ranges ?? [];
+            // --------------------------------------------------
+            // |🔹 PRODUCT                                      |
+            // --------------------------------------------------
+            const productCreateResponse = await this.createProductUseCase.execute(product, tx);
+            createdProductId = productCreateResponse.id;
+            // --------------------------------------------------
+            // |🔹 PRODUCT-INPUT                                |
+            // --------------------------------------------------
+            for (const pi of safeProductsInputs) {
+                await this.createProductInputUseCase.execute({
+                    input_id: pi.input_id,
+                    equivalence: pi.equivalence,
+                    product_id: productCreateResponse.id,
+                }, tx);
             }
             ;
-            console.log(`productInputResponses`, productInputResponses);
-            // *************** ProductProcess ***************
-            const isAssignExisting = (pp) => "process_id" in pp && typeof pp.process_id === "number";
-            const isCreateNew = (pp) => !("process_id" in pp) && "process" in pp;
-            const productProcessForAssign = product_processes.filter(isAssignExisting);
-            const productProcessForCreate = product_processes.filter(isCreateNew);
-            const productProcessResponses = [];
-            for (const productProcess of productProcessForAssign) {
-                const { product_input_process, process, product, ...ppFlat } = productProcess;
-                const createProductProcess = {
+            // --------------------------------------------------
+            // |🔹 PRODUCT-PROCESS                              |
+            // --------------------------------------------------
+            const productProcessForAssign = safeProductProcesses.filter((pp) => ("process_id" in pp) && typeof pp.process_id === "number");
+            const productProcessForCreate = safeProductProcesses.filter((pp) => !("process_id" in pp && typeof pp.process_id === "number") && ("process" in pp));
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // |🔸 ASIGNAR PROCESO EXISTENTE                    |
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            for (const pp of productProcessForAssign) {
+                const { product_input_process, process, product: _p, ...ppFlat } = pp;
+                const productProcessCreateResponse = await this.createProductProcessUseCase.execute({
                     ...ppFlat,
                     product_id: productCreateResponse.id,
-                };
-                const productProcessResponse = await this.createProductProcessUseCase.execute(createProductProcess, transaction);
-                const productInputProcessArray = [];
-                if (product_input_process && product_input_process.length) {
-                    for (const pip of productProcess.product_input_process) {
-                        const getProductInput = await this.getProductInputByIdProductInput.execute(productCreateResponse.id, pip.product_input.input_id);
-                        if (!getProductInput) {
+                }, tx);
+                if (product_input_process?.length) {
+                    for (const pip of product_input_process) {
+                        const productInputResponse = await this.getProductInputByProductInputUseCase.execute(productCreateResponse.id, pip.product_input.input_id, tx);
+                        if (!productInputResponse)
                             throw new http_error_1.default(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productCreateResponse.id}.`);
-                        }
-                        ;
-                        const createPip = {
+                        await this.createProductInputProcessUseCase.execute({
                             qty: pip.qty,
-                            product_input_id: getProductInput.id,
-                            product_process_id: productProcessResponse.id,
-                            product_id: productCreateResponse.id,
-                        };
-                        const productInputProcessResponse = await this.createProductInputProcessUseCase.execute(createPip, transaction);
-                        productInputProcessArray.push(productInputProcessResponse);
-                    }
-                    ;
-                }
-                const productProcessWithRelationship = {
-                    ...productProcessResponse,
-                    product_input_process: productInputProcessArray
-                };
-                productProcessResponses.push(productProcessWithRelationship);
-            }
-            for (const productProcess of productProcessForCreate) {
-                const { product_input_process, process, sort_order } = productProcess;
-                const processCreateResponse = await this.createProcess.execute(process, transaction);
-                const createProductProcess = {
-                    process_id: processCreateResponse.id,
-                    product_id: productCreateResponse.id,
-                    sort_order: sort_order
-                };
-                const productProcessCreateResponse = await this.createProductProcessUseCase.execute(createProductProcess, transaction);
-                const productInputProcessArray = [];
-                if (product_input_process && product_input_process?.length) {
-                    for (const pip of productProcess.product_input_process) {
-                        const getProductInput = await this.getProductInputByIdProductInput.execute(productCreateResponse.id, pip.product_input.input_id);
-                        if (!getProductInput) {
-                            throw new http_error_1.default(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productCreateResponse.id}.`);
-                        }
-                        ;
-                        const createPip = {
-                            qty: pip.qty,
-                            product_input_id: getProductInput.id,
+                            product_input_id: productInputResponse.id,
                             product_process_id: productProcessCreateResponse.id,
                             product_id: productCreateResponse.id,
-                        };
-                        const productInputProcessResponse = await this.createProductInputProcessUseCase.execute(createPip, transaction);
-                        productInputProcessArray.push(productInputProcessResponse);
+                        }, tx);
                     }
-                    ;
                 }
-                const productProcessWithRelationship = {
-                    ...productProcessCreateResponse,
-                    product_input_process: productInputProcessArray
-                };
-                productProcessResponses.push(productProcessWithRelationship);
             }
-            ;
-            // *************** ProductDiscountRange ***************
-            const productDiscountRangeCreates = product_discount_ranges.map((pdr) => ({
-                ...pdr,
-                product_id: productCreateResponse.id
-            }));
-            const productDiscountRangeResponses = [];
-            for (const productDiscount of productDiscountRangeCreates) {
-                const productDiscountResponse = await this.createProductDiscountRangeUseCase.execute(productDiscount, transaction);
-                productDiscountRangeResponses.push(productDiscountResponse);
-            }
-            ;
-            // ------------------------------------------------------------------
-            // 🖼️ ORGANIZACIÓN DE IMAGEN (POST-CREACIÓN)
-            // ------------------------------------------------------------------
-            if (product.photo) {
-                try {
-                    console.log("Moviendo imagen de producto...");
-                    const newRelativePath = await imageHandlerClass_1.default.moveImageToEntityDirectory(product.photo, "products", productCreateResponse.id.toString());
-                    product.photo = newRelativePath;
-                    productCreateResponse.photo = newRelativePath;
-                    // Actualizar únicamente el campo photo
-                    await this.updateProductUseCase.execute(productCreateResponse.id, {
-                        photo: newRelativePath,
-                    }, transaction);
-                    // Reflejar el cambio en el objeto de retorno
-                }
-                catch (error) {
-                    // Si algo falla durante el move, limpiar archivo temporal.
-                    try {
-                        await imageHandlerClass_1.default.removeImageIfExists(product.photo);
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // |🔸 CREAR UN NUEVO PROCESO                       |
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            for (const pp of productProcessForCreate) {
+                const { product_input_process, process, sort_order } = pp;
+                const processCreateResponse = await this.createProcessUseCase.execute(process, tx);
+                const productProcessCreateResponse = await this.createProductProcessUseCase.execute({
+                    process_id: processCreateResponse.id,
+                    product_id: productCreateResponse.id,
+                    sort_order,
+                }, tx);
+                if (product_input_process?.length) {
+                    for (const pip of product_input_process) {
+                        const productInputResponse = await this.getProductInputByProductInputUseCase.execute(productCreateResponse.id, pip.product_input.input_id, tx);
+                        if (!productInputResponse)
+                            throw new http_error_1.default(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productCreateResponse.id}.`);
+                        await this.createProductInputProcessUseCase.execute({
+                            qty: pip.qty,
+                            product_input_id: productInputResponse.id,
+                            product_process_id: productProcessCreateResponse.id,
+                            product_id: productCreateResponse.id,
+                        }, tx);
                     }
-                    catch { /**/ }
-                    // Propagar el error para que la capa superior decida cómo responder
-                    throw error;
                 }
             }
-            // *************** Response ***************
-            const productResponse = {
-                product: {
-                    ...productCreateResponse,
-                    created_at: productCreateResponse.created_at.toISOString(),
-                    updated_at: productCreateResponse.updated_at.toISOString()
-                },
-                products_inputs: productInputResponses,
-                product_processes: productProcessResponses,
-                product_discount_ranges: productDiscountRangeResponses.map((pdr) => ({
+            // --------------------------------------------------
+            // |🔹 PRODUCT-DISCOUNT-RANGE                       |
+            // --------------------------------------------------
+            for (const pdr of safeProductDiscountRanges) {
+                await this.createProductDiscountRangeUseCase.execute({
                     ...pdr,
-                    created_at: pdr.created_at.toISOString(),
-                    updated_at: pdr.updated_at.toISOString()
-                }))
-            };
-            await transaction.commit();
-            return productResponse;
+                    product_id: productCreateResponse.id,
+                }, tx);
+            }
+            // --------------------------------------------------
+            // |🔹 COMMIT + RESPONSE                            |
+            // --------------------------------------------------
+            const productOrchestrator = await this.getProductOrchestrator.execute(productCreateResponse.id, tx);
+            if (!productOrchestrator)
+                throw new http_error_1.default(500, "No se pudo acceder al producto despues de haber sido creado.");
+            await tx.commit();
+            return productOrchestrator;
         }
         catch (error) {
-            await transaction.rollback();
-            console.log("asdsda", product?.photo);
-            if (product?.photo) {
-                await imageHandlerClass_1.default.removeImageIfExists(product.photo);
+            await tx.rollback();
+            try {
+                if (createdProductId !== null) {
+                    this.fileCleanup.scheduleCleanup(`products/${createdProductId}`);
+                }
+            }
+            catch (cleanupErr) {
+                console.error("Cleanup scheduling failed:", cleanupErr);
             }
             throw error;
         }

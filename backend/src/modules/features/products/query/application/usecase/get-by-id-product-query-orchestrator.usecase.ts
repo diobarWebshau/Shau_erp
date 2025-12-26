@@ -1,5 +1,6 @@
 import type { ProductQueryRepository } from "../../infrastructure/product-query.repository";
-import type { ProductOrchestratorQuery} from "../../domain/product-query.type";
+import type { ProductOrchestratorQuery } from "../../domain/product-query.type";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -44,7 +45,7 @@ import type { ProductOrchestratorQuery} from "../../domain/product-query.type";
 
 export class GetByIdProductsQueryOrchestratorUseCase {
     constructor(private readonly repo: ProductQueryRepository) { }
-    async execute(id: number): Promise<ProductOrchestratorQuery | null> {
-        return await this.repo.getByIdProductOrchestratorResult(id);
+    async execute(id: number, tx?: Transaction): Promise<ProductOrchestratorQuery | null> {
+        return await this.repo.getByIdProductOrchestratorResult(id, tx);
     }
 };

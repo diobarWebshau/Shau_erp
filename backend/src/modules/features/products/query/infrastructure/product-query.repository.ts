@@ -5,13 +5,13 @@ import { ProductInputModel } from "../../assigments/product-input/infrastructure
 import { ProductFullQueryResult, ProductOrchestratorQuery, ProductSearchCriteria } from "../domain/product-query.type"
 import { ProductModel } from "@modules/core/product/infrastructure/orm/product.orm";
 import { IProductQueryRepository } from "../domain/product-query.repository";
-import { Op, WhereOptions } from "sequelize";
+import { Op, Transaction, WhereOptions } from "sequelize";
 import { ProductProps } from "@src/modules/core/product/domain/product.types";
 
 export class ProductQueryRepository implements IProductQueryRepository {
 
     // ********** SEQUELIZE **********
-    getAllProductFullQueryResult = async (query: ProductSearchCriteria): Promise<ProductFullQueryResult[]> => {
+    getAllProductFullQueryResult = async (query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResult[]> => {
         const { filter, exclude_ids, active, ...rest } = query;
         const where: WhereOptions<ProductProps> = {
             ...(
@@ -43,6 +43,7 @@ export class ProductQueryRepository implements IProductQueryRepository {
         };
         const results: ProductModel[] = await ProductModel.findAll({
             where,
+            transaction: tx,
             include: [
                 { model: ProductInputModel, as: "products_inputs" },
                 { model: ProductProcessModel, as: "product_processes" },
@@ -54,8 +55,9 @@ export class ProductQueryRepository implements IProductQueryRepository {
         return products;
     };
 
-    getByIdProductFullQueryResult = async (id: number): Promise<ProductFullQueryResult | null> => {
+    getByIdProductFullQueryResult = async (id: number, tx?: Transaction): Promise<ProductFullQueryResult | null> => {
         const result = await ProductModel.findByPk(id, {
+            transaction: tx,
             include: [
                 { model: ProductInputModel, as: "products_inputs" },
                 { model: ProductProcessModel, as: "product_processes" },
@@ -68,7 +70,7 @@ export class ProductQueryRepository implements IProductQueryRepository {
     };
 
     // ********** ORCHESTRATOR **********
-    getAllProductOrchestratorResult = async (query: ProductSearchCriteria): Promise<ProductOrchestratorQuery[]> => {
+    getAllProductOrchestratorResult = async (query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestratorQuery[]> => {
         const { filter, exclude_ids, active, ...rest } = query;
         const where: WhereOptions<ProductProps> = {
             ...(
@@ -100,6 +102,7 @@ export class ProductQueryRepository implements IProductQueryRepository {
         };
         const results = await ProductModel.findAll({
             where,
+            transaction: tx,
             include: [
                 { model: ProductInputModel, as: "products_inputs" },
                 { model: ProductProcessModel, as: "product_processes" },
@@ -121,8 +124,9 @@ export class ProductQueryRepository implements IProductQueryRepository {
         }
         return productsResultOrchestrator;
     };
-    getByIdProductOrchestratorResult = async (id: number): Promise<ProductOrchestratorQuery | null> => {
+    getByIdProductOrchestratorResult = async (id: number, tx?: Transaction): Promise<ProductOrchestratorQuery | null> => {
         const result = await ProductModel.findByPk(id, {
+            transaction: tx,
             include: [
                 { model: ProductInputModel, as: "products_inputs" },
                 { model: ProductProcessModel, as: "product_processes" },

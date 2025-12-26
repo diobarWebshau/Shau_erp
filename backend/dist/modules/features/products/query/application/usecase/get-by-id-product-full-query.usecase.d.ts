@@ -1,5 +1,6 @@
 import type { ProductQueryRepository } from "../../infrastructure/product-query.repository";
 import type { ProductFullQueryResult } from "../../domain/product-query.type";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -43,5 +44,5 @@ import type { ProductFullQueryResult } from "../../domain/product-query.type";
 export declare class GetByIdProductsFullQueryUseCase {
     private readonly repo;
     constructor(repo: ProductQueryRepository);
-    execute(id: number): Promise<ProductFullQueryResult | null>;
+    execute(id: number, tx?: Transaction): Promise<ProductFullQueryResult | null>;
 }

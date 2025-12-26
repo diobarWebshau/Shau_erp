@@ -78,7 +78,7 @@ class ProductInputProcessController {
         this.repoProductProcess = new product_process_repository_1.ProductProcessRepository();
         this.getAllUseCase = new get_all_product_input_process_usecase_1.GetAllProductInputProcessUseCase(this.repo);
         this.getByProductInputProcessId = new get_by_product_input_process_usecase_1.GetProductInputProcessByIdUseCase(this.repo);
-        this.getByIdUseCase = new get_by_id_product_input_process_usecase_1.GetByIdProductInputProcessByIdUseCase(this.repo);
+        this.getByIdUseCase = new get_by_id_product_input_process_usecase_1.GetByIdProductInputProcessUseCase(this.repo);
         this.createUseCase = new create_product_input_process_usecase_1.CreateProductInputProcessUseCase(this.repo, this.repoProduct, this.repoProductInput, this.repoProductProcess);
         this.updateUseCase = new update_product_input_process_usecase_1.UpdateProductInputProcessUseCase(this.repo);
         this.deleteUseCase = new delete_product_input_process_usecase_1.DeleteProductInputProcessUseCase(this.repo);

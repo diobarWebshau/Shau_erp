@@ -43,7 +43,7 @@ import type { ProductInputProcessProps } from "../../domain/product-input-proces
  *   para responder a las solicitudes externas.
  */
 
-export class GetByIdProductInputProcessByIdUseCase {
+export class GetByIdProductInputProcessUseCase {
     constructor(private readonly repo: IProductInputProcessRepository) { }
     execute = async (id: number, tx?: Transaction): Promise<ProductInputProcessProps | null> => this.repo.findById(id, tx);
 };

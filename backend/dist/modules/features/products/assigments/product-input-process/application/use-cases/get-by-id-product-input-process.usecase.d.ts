@@ -41,7 +41,7 @@ import type { ProductInputProcessProps } from "../../domain/product-input-proces
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
-export declare class GetByIdProductInputProcessByIdUseCase {
+export declare class GetByIdProductInputProcessUseCase {
     private readonly repo;
     constructor(repo: IProductInputProcessRepository);
     execute: (id: number, tx?: Transaction) => Promise<ProductInputProcessProps | null>;

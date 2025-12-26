@@ -46,8 +46,8 @@ class GetAllProductsFullQueryUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(query) {
-        return await this.repo.getAllProductFullQueryResult(query);
+    async execute(query, tx) {
+        return await this.repo.getAllProductFullQueryResult(query, tx);
     }
 }
 exports.GetAllProductsFullQueryUseCase = GetAllProductsFullQueryUseCase;

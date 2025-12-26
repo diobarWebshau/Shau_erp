@@ -2,20 +2,19 @@ import type { ProductDiscountRangeCreateProps, ProductDiscountRangeUpdateProps, 
 import type { ProductInputProcessCreateProps, ProductInputProcessProps, ProductInputProcessUpdateProps } from "../../assigments/product-input-process/domain/product-input-process.types";
 import type { ProductProcessCreateProps, ProductProcessUpdateProps, ProductProcessProps } from "../../assigments/product-process/domain/product-process.types";
 import type { ProductInputCreateProps, ProductInputUpdateProps, ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
-import type { ProcessCreateProps, ProcessProps, ProcessSearchCriteria } from "../../../../core/process/domain/process.types";
-import type { ProductCreateProps, ProductUpdateProps, ProductProps } from "../../../../core/product/domain/product.types";
-import type { InputProps } from "../../../../core/input/domain/input.types";
 import { ProductDiscountRangeResponseDto } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 import { ProductProcessResponseDto } from "../../assigments/product-process/application/dto/product-process.model.schema";
+import type { ProcessCreateProps, ProcessProps, ProcessSearchCriteria } from "../../../../core/process/domain/process.types";
+import type { ProductCreateProps, ProductUpdateProps, ProductProps } from "../../../../core/product/domain/product.types";
 import { ProductInputResponseDto } from "../../assigments/product-input/application/dto/product-input.model.schema";
 import { ProductResponseDto } from "../../../../../modules/core/product/application/dto/product.model.schema";
+import type { InputProps } from "../../../../core/input/domain/input.types";
 type NoProductId = {
     product_id?: never;
 };
 type UpdateById<TPatch> = {
     id: number;
 } & TPatch;
-type DeleteObjects<T> = T[];
 type ProductInputOrchestratorBase = ProductInputProps & {
     input?: InputProps;
     product?: ProductProps;
@@ -35,57 +34,61 @@ type ProductProcessOrchestratorBase = ProductProcessOrchestratorBaseLean & {
 type ProductDiscountRangeOrchestratorBase = ProductDiscountRangeProps & {
     product?: ProductProps;
 };
-type ProductInputCreateOrchestrated = NoProductId & Omit<ProductInputCreateProps, "product_id"> & {
+type ProductInputCreateOrchestrator = NoProductId & Omit<ProductInputCreateProps, "product_id"> & {
     input?: InputProps;
     product?: ProductProps;
 };
-type ProductInputProcessCreateOrchestrated = Omit<ProductInputProcessCreateProps, "product_id" | "product_input_id" | "product_process_id"> & {
+type ProductInputProcessCreateOrchestrator = Omit<ProductInputProcessCreateProps, "product_id" | "product_input_id" | "product_process_id"> & {
     qty: ProductInputProcessCreateProps["qty"];
-    product_input: ProductInputCreateOrchestrated;
+    product_input: ProductInputCreateOrchestrator;
 };
-type ProductProcessAssignExisting = NoProductId & Omit<ProductProcessCreateProps, "product_id"> & {
+type ProductProcessOrchestratorAssignExisting = NoProductId & Omit<ProductProcessCreateProps, "product_id"> & {
     process_id: number;
     process?: ProcessProps;
     product?: ProductProps;
-    product_input_process: ProductInputProcessCreateOrchestrated[];
+    product_input_process: ProductInputProcessCreateOrchestrator[];
 };
-type ProductProcessCreateNew = NoProductId & Omit<ProductProcessCreateProps, "product_id" | "process_id"> & {
+type ProductProcessOrchestratorCreateNew = NoProductId & Omit<ProductProcessCreateProps, "product_id" | "process_id"> & {
     process: ProcessCreateProps;
     process_id?: never;
     product?: ProductProps;
-    product_input_process: ProductInputProcessCreateOrchestrated[];
+    product_input_process: ProductInputProcessCreateOrchestrator[];
 };
-type ProductProcessCreateOrchestrated = ProductProcessAssignExisting | ProductProcessCreateNew;
-type ProductDiscountRangeCreateOrchestrated = NoProductId & Omit<ProductDiscountRangeCreateProps, "product_id">;
+type ProductProcessCreateOrchestrator = ProductProcessOrchestratorAssignExisting | ProductProcessOrchestratorCreateNew;
+type ProductDiscountRangeCreateOrchestrator = NoProductId & Omit<ProductDiscountRangeCreateProps, "product_id">;
 interface ProductOrchestratorCreate {
     product: ProductCreateProps;
-    products_inputs: ProductInputCreateOrchestrated[];
-    product_processes: ProductProcessCreateOrchestrated[];
-    product_discount_ranges: ProductDiscountRangeCreateOrchestrated[];
+    products_inputs: ProductInputCreateOrchestrator[];
+    product_processes: ProductProcessCreateOrchestrator[];
+    product_discount_ranges: ProductDiscountRangeCreateOrchestrator[];
 }
+type ProductInputProcessUpdateOrchestrator = UpdateById<ProductInputProcessUpdateProps>;
 interface ProductInputProcessManager {
-    added: ProductInputProcessCreateOrchestrated[];
-    updated: Array<UpdateById<ProductInputProcessUpdateProps>>;
-    deleted: DeleteObjects<ProductInputProcessProps>;
+    added: ProductInputProcessCreateOrchestrator[];
+    updated: Array<ProductInputProcessUpdateOrchestrator>;
+    deleted: Array<ProductInputProcessProps>;
 }
+type ProductProcessUpdateOrchestrator = UpdateById<ProductProcessUpdateProps> & {
+    product_input_process_updated?: ProductInputProcessManager;
+};
 interface ProductProcessManager {
-    added: ProductProcessCreateOrchestrated[];
-    updated: Array<UpdateById<ProductProcessUpdateProps> & {
-        product_input_process_updated?: ProductInputProcessManager;
-    }>;
-    deleted: DeleteObjects<ProductProcessProps>;
+    added: Array<ProductProcessCreateOrchestrator>;
+    updated: Array<ProductProcessUpdateOrchestrator>;
+    deleted: Array<ProductProcessProps>;
 }
+type ProductInputUpdateOrchestrator = UpdateById<ProductInputUpdateProps>;
 interface ProductInputManager {
-    added: ProductInputCreateOrchestrated[];
-    updated: Array<UpdateById<ProductInputUpdateProps>>;
-    deleted: DeleteObjects<ProductInputProps>;
+    added: Array<ProductInputCreateOrchestrator>;
+    updated: Array<ProductInputUpdateOrchestrator>;
+    deleted: Array<ProductInputProps>;
 }
+type ProductDiscountRangeUpdateOrchestrator = UpdateById<ProductDiscountRangeUpdateProps>;
 interface ProductDiscountRangeManager {
-    added: ProductDiscountRangeCreateOrchestrated[];
-    updated: Array<UpdateById<ProductDiscountRangeUpdateProps>>;
-    deleted: DeleteObjects<ProductDiscountRangeProps>;
+    added: ProductDiscountRangeCreateOrchestrator[];
+    updated: Array<ProductDiscountRangeUpdateOrchestrator>;
+    deleted: Array<ProductDiscountRangeProps>;
 }
-interface ProductOrchestratorUpdate {
+interface ProductUpdateOrchestrator {
     product: ProductUpdateProps;
     products_inputs_manager: ProductInputManager;
     product_processes_manager: ProductProcessManager;
@@ -115,4 +118,4 @@ interface ProductOrchestratorResponse {
     product_processes: ProductProcessResponseOrchestrator[];
     product_discount_ranges: ProductDiscountRangeResponseOrchestrator[];
 }
-export type { ProductInputOrchestratorBase, ProductProcessOrchestratorBaseLean, ProductProcessOrchestratorBase, ProductDiscountRangeOrchestratorBase, ProductInputProcessOrchestratorBase, ProductInputCreateOrchestrated, ProductInputProcessCreateOrchestrated, ProductProcessAssignExisting, ProductProcessCreateNew, ProductProcessCreateOrchestrated, ProductDiscountRangeCreateOrchestrated, ProductOrchestratorCreate, ProductProcessResponseOrchestrator, ProductInputProcessManager, ProductProcessManager, ProductInputManager, ProductDiscountRangeManager, ProductOrchestratorUpdate, ProcessSearchCriteria, ProductOrchestrator, ProductOrchestratorResponse, };
+export type { ProductInputOrchestratorBase, ProductProcessOrchestratorBaseLean, ProductProcessOrchestratorBase, ProductDiscountRangeOrchestratorBase, ProductInputProcessOrchestratorBase, ProductInputCreateOrchestrator, ProductInputProcessCreateOrchestrator, ProductProcessOrchestratorAssignExisting, ProductProcessOrchestratorCreateNew, ProductProcessCreateOrchestrator, ProductDiscountRangeCreateOrchestrator, ProductOrchestratorCreate, ProductProcessResponseOrchestrator, ProductInputProcessManager, ProductProcessManager, ProductInputManager, ProductDiscountRangeManager, ProductUpdateOrchestrator, ProductInputProcessUpdateOrchestrator, ProductInputProcessProps, ProductProcessUpdateOrchestrator, ProductProcessProps, ProductInputUpdateOrchestrator, ProductInputProps, ProductDiscountRangeUpdateOrchestrator, ProductDiscountRangeProps, ProcessSearchCriteria, ProductOrchestrator, ProductOrchestratorResponse, };

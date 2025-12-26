@@ -1,5 +1,5 @@
 import type { ProductInputProcessCreateDto, ProductInputProcessResponseDto, ProductInputProcessUpdateDto } from "../../application/dto/product-input-process.model.schema";
-import { GetByIdProductInputProcessByIdUseCase } from "../../application/use-cases/get-by-id-product-input-process.usecase";
+import { GetByIdProductInputProcessUseCase } from "../../application/use-cases/get-by-id-product-input-process.usecase";
 import { ProductProcessRepository } from "../../../product-process/infrastructure/repository/product-process.repository";
 import { CreateProductInputProcessUseCase } from "../../application/use-cases/create-product-input-process.usecase";
 import { UpdateProductInputProcessUseCase } from "../../application/use-cases/update-product-input-process.usecase";
@@ -73,7 +73,7 @@ export class ProductInputProcessController {
     private readonly repoProductInput: ProductInputRepository;
     private readonly repoProductProcess: ProductProcessRepository;
     private readonly getAllUseCase: GetAllProductInputProcessUseCase;
-    private readonly getByIdUseCase: GetByIdProductInputProcessByIdUseCase;
+    private readonly getByIdUseCase: GetByIdProductInputProcessUseCase;
     private readonly getByProductInputProcessId: GetProductInputProcessByIdUseCase;
     private readonly createUseCase: CreateProductInputProcessUseCase;
     private readonly updateUseCase: UpdateProductInputProcessUseCase;
@@ -86,7 +86,7 @@ export class ProductInputProcessController {
         this.repoProductProcess = new ProductProcessRepository();
         this.getAllUseCase = new GetAllProductInputProcessUseCase(this.repo);
         this.getByProductInputProcessId = new GetProductInputProcessByIdUseCase(this.repo);
-        this.getByIdUseCase = new GetByIdProductInputProcessByIdUseCase(this.repo);
+        this.getByIdUseCase = new GetByIdProductInputProcessUseCase(this.repo);
         this.createUseCase = new CreateProductInputProcessUseCase(this.repo, this.repoProduct, this.repoProductInput, this.repoProductProcess);
         this.updateUseCase = new UpdateProductInputProcessUseCase(this.repo);
         this.deleteUseCase = new DeleteProductInputProcessUseCase(this.repo);

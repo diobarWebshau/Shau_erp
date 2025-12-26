@@ -1,7 +1,0 @@
-2025-12-23 15:00:59 [[31MERROR[39M]: uncaughtException: fileCleanup is not defined
-ReferenceError: fileCleanup is not defined
-    at new ProductOrchestratorController (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\orchestrator\infrastructure\product-orchestrator.controller.ts:37:13)
-    at ProductOrchestratorRouter (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\orchestrator\infrastructure\product-orchestrator.router.ts:10:24)
-    at createApp (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\app.ts:62:38)
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at async createServer (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\server.ts:7:26)

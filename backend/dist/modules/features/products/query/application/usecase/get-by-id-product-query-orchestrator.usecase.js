@@ -46,8 +46,8 @@ class GetByIdProductsQueryOrchestratorUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(id) {
-        return await this.repo.getByIdProductOrchestratorResult(id);
+    async execute(id, tx) {
+        return await this.repo.getByIdProductOrchestratorResult(id, tx);
     }
 }
 exports.GetByIdProductsQueryOrchestratorUseCase = GetByIdProductsQueryOrchestratorUseCase;

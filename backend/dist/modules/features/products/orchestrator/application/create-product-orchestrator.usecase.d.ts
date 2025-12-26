@@ -4,8 +4,10 @@ import { IProductProcessRepository } from "../../assigments/product-process/doma
 import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
 import { IProductRepository } from "../../../../core/product/domain/product.repository.interface";
 import { IInputRepository } from "../../../../core/input/domain/input.repository.interface";
+import { IProductQueryRepository } from "../../query/domain/product-query.repository";
 import { IProcessRepository } from "../../../../core/process/domain/process.repository";
-import { ProductOrchestratorCreate, ProductOrchestratorResponse } from "../domain/product-orchestrator.types";
+import { IFileCleanupPort } from "../../../../../shared/files/file-cleanup.port";
+import { ProductOrchestratorCreate, ProductOrchestrator } from "../domain/product-orchestrator.types";
 interface CreateProductOrchestratorUseCaseProps {
     productRepo: IProductRepository;
     inputRepo: IInputRepository;
@@ -14,17 +16,20 @@ interface CreateProductOrchestratorUseCaseProps {
     discountRangeRepo: IProductDiscountRangeRepository;
     processRepo: IProcessRepository;
     productInputProcessRepo: IProductInputProcessRepository;
+    fileCleanup: IFileCleanupPort;
+    productQuery: IProductQueryRepository;
 }
 export declare class CreateProductOrchestratorUseCase {
-    private createProductUseCase;
-    private updateProductUseCase;
-    private createProductInputUseCase;
-    private getProductInputByIdProductInput;
-    private createProductProcessUseCase;
-    private createProductDiscountRangeUseCase;
-    private createProductInputProcessUseCase;
-    private createProcess;
-    constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo, productInputProcessRepo }: CreateProductOrchestratorUseCaseProps);
-    execute(data: ProductOrchestratorCreate): Promise<ProductOrchestratorResponse>;
+    private readonly createProductUseCase;
+    private readonly getProductOrchestrator;
+    private readonly createProcessUseCase;
+    private readonly getProductInputByProductInputUseCase;
+    private readonly createProductInputUseCase;
+    private readonly createProductProcessUseCase;
+    private readonly createProductDiscountRangeUseCase;
+    private readonly createProductInputProcessUseCase;
+    private readonly fileCleanup;
+    constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo, productInputProcessRepo, fileCleanup, productQuery }: CreateProductOrchestratorUseCaseProps);
+    execute(data: ProductOrchestratorCreate): Promise<ProductOrchestrator>;
 }
 export {};

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetByIdProductInputProcessByIdUseCase = void 0;
+exports.GetByIdProductInputProcessUseCase = void 0;
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -41,12 +41,12 @@ exports.GetByIdProductInputProcessByIdUseCase = void 0;
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
-class GetByIdProductInputProcessByIdUseCase {
+class GetByIdProductInputProcessUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     execute = async (id, tx) => this.repo.findById(id, tx);
 }
-exports.GetByIdProductInputProcessByIdUseCase = GetByIdProductInputProcessByIdUseCase;
+exports.GetByIdProductInputProcessUseCase = GetByIdProductInputProcessUseCase;
 ;

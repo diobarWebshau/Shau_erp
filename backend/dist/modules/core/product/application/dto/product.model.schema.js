@@ -63,7 +63,7 @@ const productCreateSchema = zod_1.z.object({
     photo: zod_1.z.string().nullable().optional(),
     sale_price: zod_1.z.preprocess(form_data_normalizers_1.toNumberOrNull, zod_1.z.number({ message: "sale_price must be a number" })).nullable().optional(),
     production_cost: zod_1.z.preprocess(form_data_normalizers_1.toNumberOrNull, zod_1.z.number({ message: "production_cost must be a number" })).nullable().optional(),
-    active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "Active must be a boolean" })),
+    is_active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "Active must be a boolean" })),
     is_draft: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "Active must be a boolean" })),
 });
 exports.productCreateSchema = productCreateSchema;
@@ -120,11 +120,11 @@ const productQuerySchema = zod_1.z.object({
     name: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
     description: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
     sku: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    type: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
     presentation: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
     unit_of_measure: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
     barcode: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "is_active must be a boolean" })).optional(),
+    custom_id: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
+    is_active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "is_active must be a boolean" })).optional(),
     is_draft: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "is_draft must be a boolean" })).optional(),
 }).strict();
 exports.productQuerySchema = productQuerySchema;

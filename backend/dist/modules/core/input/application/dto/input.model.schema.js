@@ -63,7 +63,7 @@ const inputCreateSchema = zod_1.z.object({
     supplier: zod_1.z.string().nullable().optional(),
     input_types_id: zod_1.z.preprocess(form_data_normalizers_1.toNumberOrNull, zod_1.z.number({ message: "input_types_id must be a number" })).nullable().optional(),
     unit_cost: zod_1.z.preprocess(form_data_normalizers_1.toNumberOrNull, zod_1.z.number({ message: "sale_price must be a number" })).nullable().optional(),
-    status: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "status must be a boolean" })),
+    is_active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "status must be a boolean" })),
     is_draft: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "Active must be a boolean" })),
 });
 exports.inputCreateSchema = inputCreateSchema;
@@ -124,7 +124,7 @@ const inputQuerySchema = zod_1.z.object({
     unit_of_measure: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
     barcode: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
     custom_id: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    status: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "status must be a boolean" })).optional(),
+    is_active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "is_active must be a boolean" })).optional(),
     is_draft: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "is_draft must be a boolean" })).optional(),
 }).strict();
 exports.inputQuerySchema = inputQuerySchema;

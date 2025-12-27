@@ -231,7 +231,6 @@ export type {
     GetByCustomIdProductSchema,
     GetByNameProductSchema,
     GetBySkuProductSchema,
-
     UpdateProductSchema,
     CreateProductSchema,
     DeleteProductSchema,

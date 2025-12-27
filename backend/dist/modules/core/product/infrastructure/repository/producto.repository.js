@@ -71,7 +71,7 @@ const mapModelToDomain = (model) => {
         sale_price: json.sale_price,
         photo: json.photo,
         is_draft: json.is_draft,
-        active: json.active,
+        is_active: json.is_active,
         created_at: json.created_at,
         updated_at: json.updated_at,
     };
@@ -81,12 +81,12 @@ class ProductRepository {
     // SELECTS
     // ================================================================
     findAll = async (query, tx) => {
-        const { filter, exclude_ids, active, ...rest } = query;
+        const { filter, exclude_ids, is_active, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
                 ? { id: { [sequelize_1.Op.notIn]: exclude_ids } }
                 : {}),
-            ...(active !== undefined ? { active } : {}),
+            ...(is_active !== undefined ? { is_active } : {}),
             ...Object.fromEntries(Object.entries(rest)
                 .filter(([, v]) => v !== undefined)
                 .map(([k, v]) => [
@@ -169,12 +169,13 @@ class ProductRepository {
         if (!existing)
             throw new http_error_1.default(404, "El producto que se desea actualizar no fue posible encontrarlo.");
         // 2. Aplicar UPDATE
-        const [affectedCount] = await product_orm_1.ProductModel.update(data, {
+        // const [affectedCount]: [affectedCount: number] = 
+        await product_orm_1.ProductModel.update(data, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar el producto.");
+        // if (!affectedCount)
+        //     throw new HttpError(500, "No fue posible actualizar el producto.");
         // 3. Obtener la locación actualizada
         const updated = await product_orm_1.ProductModel.findByPk(id, {
             transaction: tx,

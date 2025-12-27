@@ -63,7 +63,7 @@ interface ProductAttributes {
     sale_price?: number | null;
     photo?: string | null;
     is_draft: boolean;
-    active: boolean;
+    is_active: boolean;
     created_at: Date;
     updated_at: Date;
 }

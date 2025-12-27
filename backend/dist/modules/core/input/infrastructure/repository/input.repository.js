@@ -71,7 +71,7 @@ const mapModelToDomain = (model) => {
         created_at: json.created_at,
         updated_at: json.updated_at,
         input_types_id: json.input_types_id,
-        status: json.status,
+        is_active: json.is_active,
         supplier: json.supplier,
         unit_cost: json.unit_cost
     };
@@ -81,12 +81,12 @@ class InputRepository {
     // SELECTS
     // ================================================================
     findAll = async (query, tx) => {
-        const { filter, exclude_ids, status, ...rest } = query;
+        const { filter, exclude_ids, is_active, ...rest } = query;
         const where = {
             ...(exclude_ids?.length
                 ? { id: { [sequelize_1.Op.notIn]: exclude_ids } }
                 : {}),
-            ...(status !== undefined ? { status } : {}),
+            ...(is_active !== undefined ? { is_active } : {}),
             ...Object.fromEntries(Object.entries(rest)
                 .filter(([, v]) => v !== undefined)
                 .map(([k, v]) => [

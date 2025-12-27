@@ -10,7 +10,7 @@ class InputModel extends sequelize_2.Model {
             "custom_id", "name", "description", "sku", "presentation",
             "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
             "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
-            "status"
+            "is_active"
         ];
     }
     static getAllFields() {
@@ -18,7 +18,7 @@ class InputModel extends sequelize_2.Model {
             "custom_id", "name", "description", "sku", "presentation",
             "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
             "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
-            "status", "id", "created_at", "updated_at"
+            "is_active", "id", "created_at", "updated_at"
         ];
     }
 }
@@ -78,7 +78,7 @@ InputModel.init({
         type: sequelize_2.DataTypes.DECIMAL(14, 4),
         allowNull: true,
     },
-    status: {
+    is_active: {
         type: sequelize_2.DataTypes.TINYINT,
         allowNull: true,
     },

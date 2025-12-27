@@ -69,7 +69,7 @@ const mapModelToDomain = (model: ProductModel): ProductProps => {
         sale_price: json.sale_price,
         photo: json.photo,
         is_draft: json.is_draft,
-        active: json.active,
+        is_active: json.is_active,
         created_at: json.created_at,
         updated_at: json.updated_at,
     };
@@ -80,12 +80,12 @@ export class ProductRepository implements IProductRepository {
     // SELECTS
     // ================================================================
     findAll = async (query: ProductSearchCriteria, tx?: Transaction): Promise<ProductProps[]> => {
-        const { filter, exclude_ids, active, ...rest } = query;
+        const { filter, exclude_ids, is_active, ...rest } = query;
         const where: WhereOptions<ProductProps> = {
             ...(exclude_ids?.length
                 ? { id: { [Op.notIn]: exclude_ids } }
                 : {}),
-            ...(active !== undefined ? { active } : {}),
+            ...(is_active !== undefined ? { is_active } : {}),
             ...Object.fromEntries(
                 Object.entries(rest)
                     .filter(([, v]) => v !== undefined)

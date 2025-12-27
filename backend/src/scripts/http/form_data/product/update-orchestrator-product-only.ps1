@@ -1,15 +1,22 @@
 param(
-  [int]$ProductId   = 64,
-  [string]$BaseUrl  = "http://localhost:3003",
-  [string]$Endpoint = "/product/orchestrator",
-  [string]$PhotoPath = ".\fixture\sal-gusano.png"
+  [int]$ProductId    = 34,
+  [string]$BaseUrl   = "http://localhost:3003",
+
+  # PATCH: orquestador
+  [string]$Endpoint  = "/product/orchestrator"
 )
 
 $ErrorActionPreference = "Stop"
-$Url = "$BaseUrl$Endpoint/$ProductId"
 
-if (-not (Test-Path $PhotoPath)) { throw "Photo file not found: $PhotoPath" }
+$UrlPatch = "$BaseUrl$Endpoint/$ProductId"
 
+# ---------------------------------------------
+# Payload: SOLO PRODUCT
+# - managers VACÍOS (obligatorio por tu schema)
+# - NO incluimos product.photo aquí
+#   * si pones photo = $null => pides borrar la foto
+#   * si pones photo = "products/tmp/..." => flujo tmp (normalmente lo inyecta middleware)
+# ---------------------------------------------
 $payload = @{
   product = @{
     name            = "Producto Actualizado (solo product)"
@@ -19,8 +26,8 @@ $payload = @{
     sale_price      = 210.50
     production_cost = 130.25
 
-    # ✅ NO pongas "photo" aquí si no quieres tocarla
-    # photo = null $   # <- esto BORRA la foto si tu usecase lo interpreta así
+    # ⛔ NO pongas "photo" si NO quieres tocarla
+    # photo = $null
   }
 
   products_inputs_manager = @{
@@ -42,23 +49,20 @@ $payload = @{
   }
 }
 
-$payloadJson = $payload | ConvertTo-Json -Depth 100 -Compress
+$payloadJson = $payload | ConvertTo-Json -Depth 50 -Compress
 
 # archivo temporal SIN BOM (UTF-8 no bom)
-$PayloadFile = Join-Path $env:TEMP ("product_orchestrator_update_{0}.json" -f ([guid]::NewGuid().ToString("N")))
+$PayloadFile = Join-Path $env:TEMP ("orq_update_only_product_{0}.json" -f ([guid]::NewGuid().ToString("N")))
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($PayloadFile, $payloadJson, $utf8NoBom)
 
-Write-Host "PATCH $Url"
-Write-Host "Photo:   $PhotoPath"   # ✅ NO pongas "photo" aquí si no quieres tocarla
+Write-Host "PATCH $UrlPatch"
 Write-Host "Payload: $payloadJson"
 
 try {
-  curl.exe -sS -X PATCH "$Url" `
+  curl.exe -sS -X PATCH "$UrlPatch" `
     -H "Accept: application/json" `
-    -F "payload=<$PayloadFile" `
-    -F "photo=@$PhotoPath"
-
+    -F "payload=<$PayloadFile"
 }
 finally {
   Remove-Item -Path $PayloadFile -Force -ErrorAction SilentlyContinue

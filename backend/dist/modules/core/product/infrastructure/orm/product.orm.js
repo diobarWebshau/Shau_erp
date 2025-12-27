@@ -9,7 +9,7 @@ class ProductModel extends sequelize_2.Model {
         return [
             "name", "storage_conditions", "description", "unit_of_measure", "presentation",
             "production_cost", "barcode", "type", "sku", "sale_price",
-            "active", "photo", "is_draft", "custom_id"
+            "is_active", "photo", "is_draft", "custom_id"
         ];
     }
     static getAllFields() {
@@ -17,7 +17,7 @@ class ProductModel extends sequelize_2.Model {
             "id", "updated_at", "created_at",
             "name", "storage_conditions", "description", "unit_of_measure", "presentation",
             "production_cost", "barcode", "type", "sku", "sale_price",
-            "active", "photo", "is_draft", "custom_id"
+            "is_active", "photo", "is_draft", "custom_id"
         ];
     }
 }
@@ -77,7 +77,7 @@ ProductModel.init({
         type: sequelize_2.DataTypes.DECIMAL(14, 4),
         allowNull: true,
     },
-    active: {
+    is_active: {
         type: sequelize_2.DataTypes.TINYINT,
         allowNull: true,
     },

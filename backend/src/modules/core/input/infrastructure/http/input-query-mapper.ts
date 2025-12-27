@@ -52,7 +52,7 @@ export const mapInputQueryToCriteria = (query: GetAllinputsSchema["query"]): Inp
     return {
         filter: query.filter,
         description: normalizeToArray(query.description),
-        status: normalizeToBoolean(query.status),
+        is_active: normalizeToBoolean(query.is_active),
         barcode: normalizeToArray(query.barcode),
         exclude_ids: normalizeToNumberArray(query.exclude_ids),
         is_draft: normalizeToBoolean(query.is_draft),

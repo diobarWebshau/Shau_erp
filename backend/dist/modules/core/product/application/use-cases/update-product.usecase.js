@@ -71,7 +71,7 @@ class UpdateProductUseCase {
         const editableFields = [
             "name", "storage_conditions", "description", "unit_of_measure",
             "presentation", "production_cost", "barcode", "type", "sku",
-            "sale_price", "active", "photo", "is_draft", "custom_id",
+            "sale_price", "is_active", "photo", "is_draft", "custom_id",
         ];
         const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
         const merged = { ...existing, ...filteredBody };

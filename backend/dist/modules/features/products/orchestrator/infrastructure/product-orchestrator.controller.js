@@ -13,7 +13,7 @@ const process_repository_1 = __importDefault(require("../../../../../modules/cor
 const update_product_orchestrator_usecase_1 = require("../application/update-product-orchestrator.usecase");
 const create_product_orchestrator_usecase_1 = require("../application/create-product-orchestrator.usecase");
 const input_repository_1 = require("../../../../../modules/core/input/infrastructure/repository/input.repository");
-const product_query_repository_1 = require("../../query/infrastructure/product-query.repository");
+const product_query_repository_1 = require("../../../../query/product/infrastructure/product-query.repository");
 const local_file_cleanup_service_1 = require("../../../../../shared/files/local-file-cleanup.service");
 const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
 class ProductOrchestratorController {

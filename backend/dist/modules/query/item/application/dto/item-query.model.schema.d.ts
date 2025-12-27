@@ -1,0 +1,75 @@
+import { z } from "zod";
+declare const itemQueryQuerySchema: z.ZodUnion<readonly [z.ZodObject<{
+    filter: z.ZodOptional<z.ZodString>;
+    exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    description: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    sku: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    presentation: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    unit_of_measure: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    barcode: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    custom_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>>;
+    is_draft: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>>;
+}, z.core.$strict>, z.ZodObject<{
+    filter: z.ZodOptional<z.ZodString>;
+    exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    description: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    sku: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    presentation: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    unit_of_measure: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    barcode: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    custom_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>>;
+    is_draft: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>>;
+}, z.core.$strict>]>;
+declare const itemQueryResponseSchema: z.ZodObject<{
+    id: z.ZodNumber;
+    item_id: z.ZodNumber;
+    item_type: z.ZodEnum<{
+        input: "input";
+        product: "product";
+    }>;
+    item: z.ZodNullable<z.ZodUnion<readonly [z.ZodObject<{
+        custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        name: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        description: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        input_types_id: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+        unit_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+        is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+        is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+        id: z.ZodNumber;
+        created_at: z.ZodString;
+        updated_at: z.ZodString;
+    }, z.core.$strip>, z.ZodObject<{
+        name: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        type: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        description: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+        production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+        is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+        is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+        id: z.ZodNumber;
+        created_at: z.ZodString;
+        updated_at: z.ZodString;
+    }, z.core.$strip>]>>;
+}, z.core.$strip>;
+type ItemQueryResponseDTO = z.infer<typeof itemQueryResponseSchema>;
+type ItemQueryQueryDTO = z.infer<typeof itemQueryQuerySchema>;
+export { itemQueryResponseSchema, itemQueryQuerySchema };
+export type { ItemQueryResponseDTO, ItemQueryQueryDTO };

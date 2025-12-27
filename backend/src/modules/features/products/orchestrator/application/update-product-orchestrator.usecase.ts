@@ -20,7 +20,7 @@ import { UpdateProductInputUseCase } from "@modules/features/products/assigments
 import { ProductDiscountRangeResponseDto } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 import { IProductDiscountRangeRepository } from "../../assigments/product-discounts-ranges/domain/product-discount-range.repository.interface";
 import { IProductInputProcessRepository } from "../../assigments/product-input-process/domain/product-input-process.repository.interface";
-import { GetByIdProductsQueryOrchestratorUseCase } from "../../query/application/usecase/get-by-id-product-query-orchestrator.usecase";
+import { GetByIdProductsQueryOrchestratorUseCase } from "@modules/query/product/application/usecase/get-by-id-product-query-orchestrator.usecase";
 import { IProductProcessRepository } from "../../assigments/product-process/domain/product-process.repository.interface";
 import { ProductInputCreateProps, ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
 import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
@@ -31,7 +31,7 @@ import { IProductRepository } from "@modules/core/product/domain/product.reposit
 import { ProductProps, ProductUpdateProps } from "@modules/core/product/domain/product.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
-import { IProductQueryRepository } from "../../query/domain/product-query.repository";
+import { IProductQueryRepository } from "@modules/query/product/domain/product-query.repository";
 import { ProductOrchestratorUpdateDTO } from "./product-orchestrator.model.schema";
 import { ProcessProps } from "@modules/core/process/domain/process.types";
 import { IFileCleanupPort } from "@shared/files/file-cleanup.port";

@@ -51,7 +51,7 @@ const mapInputQueryToCriteria = (query) => {
     return {
         filter: query.filter,
         description: (0, query_request_normalizer_1.normalizeToArray)(query.description),
-        status: (0, query_request_normalizer_1.normalizeToBoolean)(query.status),
+        is_active: (0, query_request_normalizer_1.normalizeToBoolean)(query.is_active),
         barcode: (0, query_request_normalizer_1.normalizeToArray)(query.barcode),
         exclude_ids: (0, query_request_normalizer_1.normalizeToNumberArray)(query.exclude_ids),
         is_draft: (0, query_request_normalizer_1.normalizeToBoolean)(query.is_draft),

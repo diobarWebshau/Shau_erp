@@ -66,7 +66,7 @@ interface InputAttributes {
     supplier?: string | null,
     photo?: string | null,
     is_draft: boolean,
-    status: boolean,
+    is_active: boolean,
     created_at: Date,
     updated_at: Date
 };
@@ -82,7 +82,7 @@ class InputModel extends Model<InputAttributes, InputCreateAttributes> {
             "custom_id", "name", "description", "sku", "presentation",
             "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
             "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
-            "status"
+            "is_active"
         ];
     }
     static getAllFields(): (keyof InputAttributes)[] {
@@ -90,7 +90,7 @@ class InputModel extends Model<InputAttributes, InputCreateAttributes> {
             "custom_id", "name", "description", "sku", "presentation",
             "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
             "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
-            "status", "id", "created_at", "updated_at"
+            "is_active", "id", "created_at", "updated_at"
         ];
     }
 }
@@ -151,7 +151,7 @@ InputModel.init(
             type: DataTypes.DECIMAL(14, 4),
             allowNull: true,
         },
-        status: {
+        is_active: {
             type: DataTypes.TINYINT,
             allowNull: true,
         },

@@ -61,7 +61,7 @@ interface ProductProps {
     sale_price?: number | null,
     photo?: string | null,
     is_draft: boolean,
-    active: boolean,
+    is_active: boolean,
     created_at: Date,
     updated_at: Date,
 };
@@ -76,13 +76,13 @@ interface ProductSearchCriteria {
     name?: string | string[] ,
     description?: string | string[],
     sku?: string | string[],
-    type?: string | string[],
     presentation?: string | string[],
     unit_of_measure?: string | string[],
     barcode?: string | string[],
+    custom_id?: string | string[],
     
     is_draft?: boolean,
-    active?: boolean
+    is_active?: boolean
 }
 
 export {

@@ -52,14 +52,13 @@ export const mapProductQueryToCriteria = (query: GetAllProductsSchema["query"]):
     return {
         filter: query.filter,
         description: normalizeToArray(query.description),
-        active: normalizeToBoolean(query.active),
+        is_active: normalizeToBoolean(query.is_active),
         barcode: normalizeToArray(query.barcode),
         exclude_ids: normalizeToNumberArray(query.exclude_ids),
         is_draft: normalizeToBoolean(query.is_draft),
         name: normalizeToArray(query.name),
         presentation: normalizeToArray(query.presentation),
         sku: normalizeToArray(query.sku),
-        type: normalizeToArray(query.type),
         unit_of_measure: normalizeToArray(query.unit_of_measure)
     };
 };

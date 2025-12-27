@@ -14,12 +14,14 @@ const product_orchestrator_router_1 = require("./modules/features/products/orche
 const client_router_1 = require("./modules/features/client/assigments/client-addresses/infrastructure/http/client.router");
 const production_line_router_1 = require("./modules/core/production-line/infrastructure/http/production-line.router");
 const location_type_router_1 = require("./modules/core/location-type/infrastructure/http/location-type.router");
-const product_query_router_1 = require("./modules/features/products/query/infrastructure/product-query.router");
 const input_type_router_1 = require("./modules/core/input-type/infrastructure/http/input-type.router");
+const product_query_router_1 = require("./modules/query/product/infrastructure/product-query.router");
+const item_query_router_1 = require("./modules/query/item/infrastructure/http/item-query.router");
 const location_router_1 = require("./modules/core/location/infrastructure/http/location.router");
 const process_router_1 = require("./modules/core/process/infrastructure/http/process.router");
 const product_router_1 = require("./modules/core/product/infrastructure/http/product.router");
 const client_router_2 = require("./modules/core/client/infrastructure/http/client.router");
+const item_router_1 = require("./modules/features/items/infrastructure/http/item.router");
 const input_router_1 = require("./modules/core/input/infrastructure/http/input.router");
 const error_middleware_1 = __importDefault(require("./middlewares/error/error.middleware"));
 const index_1 = require("./shared/database/index");
@@ -50,13 +52,16 @@ const createApp = async () => {
     app.use("/location-production-line", (0, location_production_line_router_1.locationProductionLineRouter)());
     app.use("/location-location-type", (0, location_location_type_router_1.locationLocationTypeRouter)());
     // ******* PRODUCT ******* 
+    app.use("/item", (0, item_router_1.ItemRouter)());
     app.use("/product", (0, product_router_1.ProductRouter)());
     app.use("/product-process", (0, product_process_router_1.ProductProcessRouter)());
     app.use("/product-input", (0, product_input_router_1.ProductInputRouter)());
     app.use("/product-discount-range", (0, product_discount_range_router_1.ProductDiscountRangeRouter)());
     app.use("/product-input-process", (0, product_input_process_router_1.ProductInputProcessRouter)());
-    app.use("/query", (0, product_query_router_1.ProductQuery)());
     app.use("/product/orchestrator", (0, product_orchestrator_router_1.ProductOrchestratorRouter)());
+    // ******* QUERIES ******* 
+    app.use("/query", (0, product_query_router_1.ProductQueryRouter)());
+    app.use("/query", (0, item_query_router_1.ItemQueryRouter)());
     // ******* ERROR ******* 
     app.use(error_middleware_1.default);
     return app;

@@ -10,7 +10,7 @@ import { UpdateProductOrchestratorUseCase } from "../application/update-product-
 import { CreateProductOrchestratorUseCase } from "../application/create-product-orchestrator.usecase";
 import { InputRepository } from "@src/modules/core/input/infrastructure/repository/input.repository";
 import { ApiRequest, ApiResponse } from "@src/shared/typed-request-endpoint/typed-request.interface";
-import { ProductQueryRepository } from "../../query/infrastructure/product-query.repository";
+import { ProductQueryRepository } from "../../../../query/product/infrastructure/product-query.repository";
 import { LocalFileCleanupService } from "@src/shared/files/local-file-cleanup.service";
 import ImageHandler from "@src/helpers/imageHandlerClass";
 

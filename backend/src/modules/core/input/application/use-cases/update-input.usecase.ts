@@ -74,7 +74,7 @@ export class UpdateInputUseCase {
             "custom_id", "name", "description", "sku", "presentation",
             "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
             "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
-            "status"
+            "is_active",
         ];
 
         const filteredBody: InputUpdateProps = pickEditableFields(data, editableFields);

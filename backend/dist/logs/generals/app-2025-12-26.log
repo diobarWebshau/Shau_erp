@@ -1,0 +1,151 @@
+2025-12-26 15:08:44 [[31MERROR[39M]: DATABASE ERROR Unknown column 'ProductModel.is_active' in 'field list'
+2025-12-26 16:04:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:04:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:04:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:04:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:04:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:04:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:04:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:04:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:04:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:04:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:05:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:05:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:05:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:05:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:05:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:05:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:05:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:05:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:05:02 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:05:02 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:03 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:03 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:03 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:03 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:03 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:03 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:03 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:03 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:03 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:03 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:16 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:16 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:16 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:16 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:16 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:16 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:16 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:16 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:07:16 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:07:16 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:11:12 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:11:12 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:11:12 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:11:12 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:11:12 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:11:12 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:11:12 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:11:12 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:11:12 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:11:12 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:16:33 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:16:33 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:16:33 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:16:33 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:16:33 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:16:33 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:16:33 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:16:33 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)
+2025-12-26 16:16:33 [[31MERROR[39M]: SERVER ERROR: El producto que se pretende asignarle un proceso, no existe.
+2025-12-26 16:16:33 [[31MERROR[39M]: Error: El producto que se pretende asignarle un proceso, no existe.
+    at CreateProductProcessUseCase.execute (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\application\use-cases\create-product-process.usecase.ts:57:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async create (C:\Users\DiobarBaez\Desktop\shau_erp\backend\src\modules\features\products\assigments\product-process\infrastructure\http\product-process.controller.ts:125:52)

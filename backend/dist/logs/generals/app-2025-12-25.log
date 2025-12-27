@@ -1,6 +1,0 @@
-2025-12-25 21:18:28 [[31MERROR[39M]: SERVER ERROR: No fue posible actualizar el producto.
-2025-12-25 21:18:28 [[31MERROR[39M]: Error: No fue posible actualizar el producto.
-    at ProductRepository.update (C:\Users\Dioba\Desktop\webshauProjects\Shau_erp-master\backend\src\modules\core\product\infrastructure\repository\producto.repository.ts:178:19)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async UpdateProductOrchestratorUseCase.execute (C:\Users\Dioba\Desktop\webshauProjects\Shau_erp-master\backend\src\modules\features\products\orchestrator\application\update-product-orchestrator.usecase.ts:389:17)
-    at async update (C:\Users\Dioba\Desktop\webshauProjects\Shau_erp-master\backend\src\modules\features\products\orchestrator\infrastructure\product-orchestrator.controller.ts:114:45)

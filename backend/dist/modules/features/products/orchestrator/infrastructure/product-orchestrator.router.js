@@ -15,7 +15,7 @@ const ProductOrchestratorRouter = () => {
         fileField: "photo",
         injectFileTo: "product.photo",
     }), (0, zod_middleware_1.validateRequest)(product_orchestrator_endpoint_schema_1.createProductOrchestratorSchema), controller.create);
-    router.patch("/", (0, storage_1.withStorageContext)("products"), (0, storage_1.storageFields)([{ name: "photo", maxCount: 1 }]), (0, storage_1.normalizeUploadedFiles)({ single: ["photo"] }), (0, parse_payload_middleware_1.parseOrchestratorPayload)({
+    router.patch("/:id", (0, storage_1.withStorageContext)("products"), (0, storage_1.storageFields)([{ name: "photo", maxCount: 1 }]), (0, storage_1.normalizeUploadedFiles)({ single: ["photo"] }), (0, parse_payload_middleware_1.parseOrchestratorPayload)({
         payloadField: "payload",
         fileField: "photo",
         injectFileTo: "product.photo",

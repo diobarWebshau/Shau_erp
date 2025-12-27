@@ -63,7 +63,7 @@ interface InputAttributes {
     supplier?: string | null;
     photo?: string | null;
     is_draft: boolean;
-    status: boolean;
+    is_active: boolean;
     created_at: Date;
     updated_at: Date;
 }

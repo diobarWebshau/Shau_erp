@@ -66,7 +66,7 @@ interface ProductAttributes {
     sale_price?: number | null,
     photo?: string | null,
     is_draft: boolean,
-    active: boolean,
+    is_active: boolean,
     created_at: Date,
     updated_at: Date,
 };
@@ -80,7 +80,7 @@ class ProductModel extends Model<ProductAttributes, ProductCreateAttributes> {
         return [
             "name", "storage_conditions", "description", "unit_of_measure", "presentation",
             "production_cost", "barcode", "type", "sku", "sale_price",
-            "active", "photo", "is_draft", "custom_id"
+            "is_active", "photo", "is_draft", "custom_id"
         ];
     }
     static getAllFields(): string[] {
@@ -88,7 +88,7 @@ class ProductModel extends Model<ProductAttributes, ProductCreateAttributes> {
             "id", "updated_at", "created_at",
             "name", "storage_conditions", "description", "unit_of_measure", "presentation",
             "production_cost", "barcode", "type", "sku", "sale_price",
-            "active", "photo", "is_draft", "custom_id"
+            "is_active", "photo", "is_draft", "custom_id"
         ];
     }
 }
@@ -149,7 +149,7 @@ ProductModel.init(
             type: DataTypes.DECIMAL(14, 4),
             allowNull: true,
         },
-        active: {
+        is_active: {
             type: DataTypes.TINYINT,
             allowNull: true,
         },

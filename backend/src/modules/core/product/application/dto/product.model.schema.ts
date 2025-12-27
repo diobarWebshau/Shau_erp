@@ -68,7 +68,7 @@ const productCreateSchema = z.object({
         toNumberOrNull,
         z.number({ message: "production_cost must be a number" })
     ).nullable().optional(),
-    active: z.preprocess(
+    is_active: z.preprocess(
         toBoolean, z.coerce.boolean({ message: "Active must be a boolean" })
     ),
     is_draft: z.preprocess(
@@ -126,14 +126,16 @@ const productQuerySchema = z.object({
         z.string(),
         z.array(z.string())
     ]).optional(),
+
     name: z.union([z.string(), z.array(z.string())]).optional(),
     description: z.union([z.string(), z.array(z.string())]).optional(),
     sku: z.union([z.string(), z.array(z.string())]).optional(),
-    type: z.union([z.string(), z.array(z.string())]).optional(),
     presentation: z.union([z.string(), z.array(z.string())]).optional(),
     unit_of_measure: z.union([z.string(), z.array(z.string())]).optional(),
     barcode: z.union([z.string(), z.array(z.string())]).optional(),
-    active: z.preprocess(
+    custom_id: z.union([z.string(), z.array(z.string())]).optional(),
+
+    is_active: z.preprocess(
         toBoolean, z.boolean({ message: "is_active must be a boolean" })
     ).optional(),
     is_draft: z.preprocess(

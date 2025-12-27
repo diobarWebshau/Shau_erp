@@ -6,7 +6,7 @@ import { IProductInputRepository } from "../../assigments/product-input/domain/p
 import { IProductRepository } from "../../../../core/product/domain/product.repository.interface";
 import { IInputRepository } from "../../../../core/input/domain/input.repository.interface";
 import { IProcessRepository } from "../../../../core/process/domain/process.repository";
-import { IProductQueryRepository } from "../../query/domain/product-query.repository";
+import { IProductQueryRepository } from "../../../../query/product/domain/product-query.repository";
 import { ProductOrchestratorUpdateDTO } from "./product-orchestrator.model.schema";
 import { IFileCleanupPort } from "../../../../../shared/files/file-cleanup.port";
 interface UpdateProductOrchestratorUseCaseProps {

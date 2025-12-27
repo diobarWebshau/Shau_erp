@@ -18,7 +18,7 @@ declare const createProductOrchestratorSchema: z.ZodObject<{
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+                is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             }, z.core.$strip>;
             products_inputs: z.ZodArray<z.ZodObject<{
@@ -76,7 +76,7 @@ declare const createProductOrchestratorSchema: z.ZodObject<{
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-            active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+            is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             id: z.ZodNumber;
             created_at: z.ZodString;
@@ -119,7 +119,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
     }, z.core.$strict>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{
-        payload: z.ZodObject<{
+        payload: z.ZodPipe<z.ZodPipe<z.ZodString, z.ZodTransform<any, string>>, z.ZodObject<{
             product: z.ZodObject<{
                 name: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
                 custom_id: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
@@ -133,7 +133,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
                 photo: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
                 sale_price: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>>;
                 production_cost: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>>;
-                active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
+                is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
                 is_draft: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
             }, z.core.$strip>;
             products_inputs_manager: z.ZodObject<{
@@ -244,7 +244,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
                     updated_at: z.ZodString;
                 }, z.core.$strip>>;
             }, z.core.$strip>;
-        }, z.core.$strip>;
+        }, z.core.$strip>>;
         photo: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>;
     response: z.ZodObject<{
@@ -261,7 +261,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-            active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+            is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             id: z.ZodNumber;
             created_at: z.ZodString;

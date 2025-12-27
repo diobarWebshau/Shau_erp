@@ -2,9 +2,9 @@ import { IProductDiscountRangeRepository } from "../../assigments/product-discou
 import { IProductInputProcessRepository } from "../../assigments/product-input-process/domain/product-input-process.repository.interface";
 import { IProductProcessRepository } from "../../assigments/product-process/domain/product-process.repository.interface";
 import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
+import { IProductQueryRepository } from "../../../../query/product/domain/product-query.repository";
 import { IProductRepository } from "../../../../core/product/domain/product.repository.interface";
 import { IInputRepository } from "../../../../core/input/domain/input.repository.interface";
-import { IProductQueryRepository } from "../../query/domain/product-query.repository";
 import { IProcessRepository } from "../../../../core/process/domain/process.repository";
 import { IFileCleanupPort } from "../../../../../shared/files/file-cleanup.port";
 import { ProductOrchestratorCreate, ProductOrchestrator } from "../domain/product-orchestrator.types";

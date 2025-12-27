@@ -51,14 +51,13 @@ const mapProductQueryToCriteria = (query) => {
     return {
         filter: query.filter,
         description: (0, query_request_normalizer_1.normalizeToArray)(query.description),
-        active: (0, query_request_normalizer_1.normalizeToBoolean)(query.active),
+        is_active: (0, query_request_normalizer_1.normalizeToBoolean)(query.is_active),
         barcode: (0, query_request_normalizer_1.normalizeToArray)(query.barcode),
         exclude_ids: (0, query_request_normalizer_1.normalizeToNumberArray)(query.exclude_ids),
         is_draft: (0, query_request_normalizer_1.normalizeToBoolean)(query.is_draft),
         name: (0, query_request_normalizer_1.normalizeToArray)(query.name),
         presentation: (0, query_request_normalizer_1.normalizeToArray)(query.presentation),
         sku: (0, query_request_normalizer_1.normalizeToArray)(query.sku),
-        type: (0, query_request_normalizer_1.normalizeToArray)(query.type),
         unit_of_measure: (0, query_request_normalizer_1.normalizeToArray)(query.unit_of_measure)
     };
 };

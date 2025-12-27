@@ -44,8 +44,8 @@ $payload = @{
     @{
       sort_order = 2
       process = @{
-        name        = "Proceso Nuevo Orq"
-        description = "Creado desde orchestrator"
+        name        = "Proceso Nuevo Orqasdssaad"
+        description = "Creado desde orchessdatrator"
       }
       product_input_process = @(
         @{ qty = 3; product_input = @{ input_id = 1; equivalence = 2 } }

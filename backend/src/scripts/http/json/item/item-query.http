@@ -1,0 +1,5 @@
+### GET ITEMS WITH ALL RELATIOSHIPS
+GET http://localhost:3003/query/item HTTP/1.1
+
+### GET ITEMS WITH ALL RELATIOSHIPS
+GET http://localhost:3003/query/item/34 HTTP/1.1

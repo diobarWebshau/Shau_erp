@@ -61,7 +61,7 @@ interface InputProps {
     supplier?: string | null,
     photo?: string | null,
     is_draft: boolean,
-    status: boolean,
+    is_active: boolean,
     created_at: Date,
     updated_at: Date
 };
@@ -82,7 +82,7 @@ interface InputSearchCriteria {
     custom_id?: string | string[],
 
     is_draft?: boolean,
-    status?: boolean
+    is_active?: boolean
 }
 
 export {

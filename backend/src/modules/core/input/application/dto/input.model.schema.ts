@@ -68,7 +68,7 @@ const inputCreateSchema = z.object({
         toNumberOrNull,
         z.number({ message: "sale_price must be a number" })
     ).nullable().optional(),
-    status: z.preprocess(
+    is_active: z.preprocess(
         toBoolean, z.coerce.boolean({ message: "status must be a boolean" })
     ),
     is_draft: z.preprocess(
@@ -126,6 +126,7 @@ const inputQuerySchema = z.object({
         z.string(),
         z.array(z.string())
     ]).optional(),
+
     name: z.union([z.string(), z.array(z.string())]).optional(),
     description: z.union([z.string(), z.array(z.string())]).optional(),
     sku: z.union([z.string(), z.array(z.string())]).optional(),
@@ -133,8 +134,9 @@ const inputQuerySchema = z.object({
     unit_of_measure: z.union([z.string(), z.array(z.string())]).optional(),
     barcode: z.union([z.string(), z.array(z.string())]).optional(),
     custom_id: z.union([z.string(), z.array(z.string())]).optional(),
-    status: z.preprocess(
-        toBoolean, z.boolean({ message: "status must be a boolean" })
+    
+    is_active: z.preprocess(
+        toBoolean, z.boolean({ message: "is_active must be a boolean" })
     ).optional(),
     is_draft: z.preprocess(
         toBoolean, z.boolean({ message: "is_draft must be a boolean" })

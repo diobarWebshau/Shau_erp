@@ -157,10 +157,9 @@ const productOrchestratorUpdateSchema = zod_1.z.object({
     product_discount_ranges_manager: productDiscountRangeManagerSchema,
 });
 exports.productOrchestratorUpdateSchema = productOrchestratorUpdateSchema;
-// * Esquema de la request para el REQUEST HTTP en UPDATE
 const productOrchestratorUpdateRequestSchema = zod_1.z.object({
-    payload: productOrchestratorUpdateSchema,
-    photo: zod_1.z.string().optional()
+    payload: zod_1.z.string().transform((val) => JSON.parse(val)).pipe(productOrchestratorUpdateSchema),
+    photo: zod_1.z.string().optional(),
 });
 exports.productOrchestratorUpdateRequestSchema = productOrchestratorUpdateRequestSchema;
 // =========================================================================================

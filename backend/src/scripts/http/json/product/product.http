@@ -48,4 +48,4 @@ Content-Type: application/json
 }
 
 ### DELETE
-DELETE http://localhost:3003/product/62 HTTP/1.1
+DELETE http://localhost:3003/product/34 HTTP/1.1

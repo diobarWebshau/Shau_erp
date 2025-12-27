@@ -9,12 +9,14 @@ import { ProductOrchestratorRouter } from "./modules/features/products/orchestra
 import { ClientAddressRouter } from "@modules/features/client/assigments/client-addresses/infrastructure/http/client.router";
 import { productionLineRouter } from "@modules/core/production-line/infrastructure/http/production-line.router";
 import { LocationTypeRouter } from "@modules/core/location-type/infrastructure/http/location-type.router";
-import { ProductQuery } from "@modules/features/products/query/infrastructure/product-query.router";
 import { InputTypeRouter } from "@modules/core/input-type/infrastructure/http/input-type.router";
+import { ProductQueryRouter } from "@modules/query/product/infrastructure/product-query.router";
+import { ItemQueryRouter } from "./modules/query/item/infrastructure/http/item-query.router";
 import { locationRouter } from "@modules/core/location/infrastructure/http/location.router";
 import { ProcessRouter } from "@modules/core/process/infrastructure/http/process.router";
 import { ProductRouter } from "@modules/core/product/infrastructure/http/product.router";
 import { ClientRouter } from "@modules/core/client/infrastructure/http/client.router";
+import { ItemRouter } from "./modules/features/items/infrastructure/http/item.router";
 import { InputRouter } from "@modules/core/input/infrastructure/http/input.router";
 import errorMiddleware from "@middlewares/error/error.middleware";
 import { initializeDatabase } from "@shared/database/index";
@@ -53,13 +55,18 @@ const createApp = async (): Promise<Express> => {
     app.use("/location-location-type", locationLocationTypeRouter());
 
     // ******* PRODUCT ******* 
+    app.use("/item", ItemRouter());
     app.use("/product", ProductRouter());
     app.use("/product-process", ProductProcessRouter());
     app.use("/product-input", ProductInputRouter());
     app.use("/product-discount-range", ProductDiscountRangeRouter());
     app.use("/product-input-process", ProductInputProcessRouter());
-    app.use("/query", ProductQuery());
     app.use("/product/orchestrator", ProductOrchestratorRouter());
+
+
+    // ******* QUERIES ******* 
+    app.use("/query", ProductQueryRouter());
+    app.use("/query", ItemQueryRouter());
 
     // ******* ERROR ******* 
     app.use(errorMiddleware);

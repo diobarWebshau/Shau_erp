@@ -1,5 +1,5 @@
-import { Transaction } from "sequelize";
 import { InputCreateProps, InputProps, InputUpdateProps, InputSearchCriteria } from "./input.types";
+import { Transaction } from "sequelize";
 
 /**
  * IRepository

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountClientRepository = void 0;
 const product_discount_client_orm_1 = require("../orm/product-discount-client.orm");
-const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -57,7 +57,7 @@ const mapModelToDomain = (model) => {
     const json = model.toJSON();
     return {
         id: json.id,
-        discount_percentage: json.discount_percentage,
+        discount_percentage: Number(json.discount_percentage),
         product_id: json.product_id,
         client_id: json.client_id,
         created_at: json.created_at,

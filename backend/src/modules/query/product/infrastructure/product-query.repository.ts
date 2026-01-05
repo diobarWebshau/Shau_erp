@@ -2,7 +2,7 @@
 import { ProductDiscountRangeModel } from "@modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
 import { ProductProcessModel } from "@modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
 import { ProductInputModel } from "@modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
-import { ProductFullQueryResult, ProductOrchestratorQuery, ProductSearchCriteria } from "../domain/product-query.type"
+import { ProductFullQueryResult, ProductSearchCriteria } from "../domain/product-query.type"
 import { ProductModel } from "@modules/core/product/infrastructure/orm/product.orm";
 import { IProductQueryRepository } from "../domain/product-query.repository";
 import { ProductProps } from "@modules/core/product/domain/product.types";
@@ -70,7 +70,7 @@ export class ProductQueryRepository implements IProductQueryRepository {
     };
 
     // ********** ORCHESTRATOR **********
-    getAllProductOrchestratorResult = async (query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestratorQuery[]> => {
+    getAllProductOrchestratorResult = async (query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResult[]> => {
         const { filter, exclude_ids, is_active, ...rest } = query;
         const where: WhereOptions<ProductProps> = {
             ...(
@@ -100,7 +100,7 @@ export class ProductQueryRepository implements IProductQueryRepository {
                     : {}
             ),
         };
-        const results = await ProductModel.findAll({
+        const results: ProductModel[] = await ProductModel.findAll({
             where,
             transaction: tx,
             include: [
@@ -111,20 +111,9 @@ export class ProductQueryRepository implements IProductQueryRepository {
         });
         if (!results.length) return [];
         const products: ProductFullQueryResult[] = results.map(p => p.toJSON());
-        const productsResultOrchestrator: ProductOrchestratorQuery[] = [];
-        for (const p of products) {
-            const { products_inputs, product_processes, product_discount_ranges, ...rest } = p;
-            const productResultOrch: ProductOrchestratorQuery = {
-                product: rest,
-                products_inputs: products_inputs ?? [],
-                product_discount_ranges: product_discount_ranges ?? [],
-                product_processes: product_processes ?? []
-            };
-            productsResultOrchestrator.push(productResultOrch);
-        }
-        return productsResultOrchestrator;
+        return products;
     };
-    getByIdProductOrchestratorResult = async (id: number, tx?: Transaction): Promise<ProductOrchestratorQuery | null> => {
+    getByIdProductOrchestratorResult = async (id: number, tx?: Transaction): Promise<ProductFullQueryResult | null> => {
         const result = await ProductModel.findByPk(id, {
             transaction: tx,
             include: [
@@ -135,13 +124,6 @@ export class ProductQueryRepository implements IProductQueryRepository {
         });
         if (!result) return null;
         const product: ProductFullQueryResult = result.toJSON();
-        const { products_inputs, product_processes, product_discount_ranges, ...rest } = product;
-        const productResultOrch: ProductOrchestratorQuery = {
-            product: rest,
-            products_inputs: products_inputs ?? [],
-            product_discount_ranges: product_discount_ranges ?? [],
-            product_processes: product_processes ?? []
-        };
-        return productResultOrch;
+        return product;
     };
 }

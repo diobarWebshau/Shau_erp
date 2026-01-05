@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProductDiscountClientUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("../../../../../../../helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("../../../../../../../helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("../../../../../../../helpers/pickEditableFields");
-const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
+const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
+const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
+const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -53,8 +53,8 @@ class UpdateProductDiscountClientUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(id, data) {
-        const existing = await this.repo.findById(id);
+    async execute(id, data, tx) {
+        const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación del descuento del producto para el cliente que se desea actualizar no fue posible encontrarla.");
         const editableFields = [
@@ -67,7 +67,7 @@ class UpdateProductDiscountClientUseCase {
         const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues);
+        const updated = await this.repo.update(id, updateValues, tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el descuento del producto para el cliente.");
         return updated;

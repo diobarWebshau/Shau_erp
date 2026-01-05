@@ -8,7 +8,7 @@ import { mapLocationQueryToCriteria } from "../../infrastructure/http/location-q
 import { CreateLocationUseCase } from "../../application/use-cases/create-location.usecase";
 import { UpdateLocationUseCase } from "../../application/use-cases/update-location.usecase";
 import { DeleteLocationUseCase } from "../../application/use-cases/delete-location.usecase";
-import { LocationProps, LocationtSearchCriteria } from "../../domain/location.types";
+import { LocationProps, LocationSearchCriteria } from "../../domain/location.types";
 import { LocationRepository } from "../repository/location.repository";
 import type {
     CreateLocationSchema, DeleteLocationSchema, GetAllLocationsSchema,
@@ -107,7 +107,7 @@ export class LocationController {
     // ============================================================
     getAll = async (req: ApiRequest<GetAllLocationsSchema>, res: ApiResponse<GetAllLocationsSchema>) => {
         const queryRequest: GetAllLocationsSchema["query"] = req.query;
-        const query: LocationtSearchCriteria =  mapLocationQueryToCriteria(queryRequest);
+        const query: LocationSearchCriteria =  mapLocationQueryToCriteria(queryRequest);
         const result: LocationProps[] = await this.getAllUseCase.execute(query);
         const formatted: LocationResponseDto[] = result.map(l => this.formatResponse(l));
         return res.status(200).send(formatted);

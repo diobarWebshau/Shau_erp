@@ -9,8 +9,8 @@ const create_product_discount_client_usecase_1 = require("../../application/use-
 const update_product_discount_client_usecase_1 = require("../../application/use-cases/update-product-discount-client.usecase");
 const delete_product_discount_client_usecase_1 = require("../../application/use-cases/delete-product-discount-client.usecase");
 const product_discount_client_repository_1 = require("../repository/product-discount-client.repository");
-const producto_repository_1 = require("../../../../../../../modules/core/product/infrastructure/repository/producto.repository");
-const client_repository_1 = require("../../../../../../../modules/core/client/infrastructure/repository/client.repository");
+const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
+const client_repository_1 = require("@src/modules/core/client/infrastructure/repository/client.repository");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------

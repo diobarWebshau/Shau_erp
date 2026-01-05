@@ -1,4 +1,4 @@
-import { EndpointSchema } from "../../../../../shared/typed-request-endpoint/endpoint.interface";
+import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 declare const getAllProductOrchestratorSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
@@ -25,7 +25,7 @@ declare const getAllProductOrchestratorSchema: z.ZodObject<{
             presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+            barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
@@ -72,7 +72,7 @@ declare const getByIdProductOrchestratorSchema: z.ZodObject<{
     }, z.core.$strict>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
-    response: z.ZodObject<{
+    response: z.ZodNullable<z.ZodObject<{
         product: z.ZodObject<{
             name: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -81,7 +81,7 @@ declare const getByIdProductOrchestratorSchema: z.ZodObject<{
             presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+            barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
@@ -120,7 +120,7 @@ declare const getByIdProductOrchestratorSchema: z.ZodObject<{
             created_at: z.ZodString;
             updated_at: z.ZodString;
         }, z.core.$strip>>;
-    }, z.core.$strip>;
+    }, z.core.$strip>>;
 }, z.core.$strip>;
 declare const getAllProductFullQuerySchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
@@ -146,7 +146,7 @@ declare const getAllProductFullQuerySchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
@@ -185,7 +185,7 @@ declare const getByIdProductFullQuerySchema: z.ZodObject<{
     }, z.core.$strict>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
-    response: z.ZodObject<{
+    response: z.ZodNullable<z.ZodObject<{
         name: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         type: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -193,7 +193,7 @@ declare const getByIdProductFullQuerySchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
@@ -224,7 +224,7 @@ declare const getByIdProductFullQuerySchema: z.ZodObject<{
             created_at: z.ZodString;
             updated_at: z.ZodString;
         }, z.core.$strip>>;
-    }, z.core.$strip>;
+    }, z.core.$strip>>;
 }, z.core.$strip>;
 type GetAllProductOrchestratorSchema = EndpointSchema<z.infer<typeof getAllProductOrchestratorSchema>["params"], z.infer<typeof getAllProductOrchestratorSchema>["body"], z.infer<typeof getAllProductOrchestratorSchema>["query"], z.infer<typeof getAllProductOrchestratorSchema>["response"]>;
 type GetByIdProductOrchestratorSchema = EndpointSchema<z.infer<typeof getByIdProductOrchestratorSchema>["params"], z.infer<typeof getByIdProductOrchestratorSchema>["body"], z.infer<typeof getByIdProductOrchestratorSchema>["query"], z.infer<typeof getByIdProductOrchestratorSchema>["response"]>;

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ItemModel = void 0;
-const sequelize_js_1 = require("../../../../../config/mysql/sequelize.js");
+const sequelize_js_1 = require("@config/mysql/sequelize.js");
 const sequelize_1 = require("sequelize");
 class ItemModel extends sequelize_1.Model {
     static getAllAttributes() {

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.locationLocationTypeRouter = void 0;
 // src/modules/location/infrastructure/http/location.router.ts
-const zod_middleware_1 = require("../../../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const location_location_type_endpoint_schema_1 = require("../../application/dto/location-location-type.endpoint.schema");
 const location_location_type_controller_1 = require("./location-location-type.controller");
 const express_1 = require("express");

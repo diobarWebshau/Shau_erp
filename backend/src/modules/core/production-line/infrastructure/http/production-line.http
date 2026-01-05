@@ -1,5 +1,5 @@
 ### GET ALL
-GET http://localhost:3003/production-line HTTP/1.1
+GET http://localhost:3003/production-line?exclude_ids=1&exclude_ids=2 HTTP/1.1
 
 ### GET BY ID
 GET http://localhost:3003/production-line/id/2 HTTP/1.1

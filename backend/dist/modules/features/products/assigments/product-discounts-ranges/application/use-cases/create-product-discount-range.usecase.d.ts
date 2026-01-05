@@ -1,6 +1,6 @@
 import type { ProductDiscountRangeProps, ProductDiscountRangeCreateProps } from "../../domain/product-discount-range.types";
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
-import { IProductRepository } from "../../../../../../core/product/domain/product.repository.interface";
+import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
 import { Transaction } from "sequelize";
 /**
  * UseCase

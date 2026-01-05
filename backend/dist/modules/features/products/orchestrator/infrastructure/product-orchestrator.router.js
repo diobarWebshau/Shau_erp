@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductOrchestratorRouter = void 0;
 const product_orchestrator_endpoint_schema_1 = require("../application/product-orchestrator.endpoint.schema");
 const product_orchestrator_controller_1 = require("../infrastructure/product-orchestrator.controller");
-const storage_1 = require("../../../../../storage");
-const parse_payload_middleware_1 = require("../../../../../storage/http/parse-payload.middleware");
-const zod_middleware_1 = require("../../../../../middlewares/zod/zod.middleware");
+const storage_1 = require("@src/storage");
+const parse_payload_middleware_1 = require("@src/storage/http/parse-payload.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const express_1 = require("express");
 const ProductOrchestratorRouter = () => {
     const router = (0, express_1.Router)();

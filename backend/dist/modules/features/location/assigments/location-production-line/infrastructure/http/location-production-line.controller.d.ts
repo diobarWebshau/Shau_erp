@@ -1,5 +1,5 @@
 import type { CreateLocationProductionLineSchema, DeleteLocationProductionLineSchema, GetAllLocationProductionLinesSchema, GetByIdLocationProductionLineSchema, GetByLocationProductionLineIdLocationProductionLineSchema, UpdateLocationProductionLineSchema } from "../../application/dto/location-production-line.endpoint.schema";
-import type { ApiRequest, ApiResponse } from "../../../../../../../shared/typed-request-endpoint/typed-request.interface";
+import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 /**
  * Router (Infrastructure / HTTP)
  * ------------------------------------------------------------------

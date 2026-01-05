@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateInputUseCase = void 0;
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
-const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
+const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * UseCase
  * ------------------------------------------------------------------

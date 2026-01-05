@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputTypeRouter = void 0;
 const input_type_endpoint_schema_1 = require("../../application/dto/input-type.endpoint.schema");
-const zod_middleware_1 = require("../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const input_type_controller_1 = require("./input-type.controller");
 const express_1 = require("express");
 /**

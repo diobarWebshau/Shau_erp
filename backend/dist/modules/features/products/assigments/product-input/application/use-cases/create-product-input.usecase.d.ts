@@ -1,7 +1,7 @@
-import { IInputRepository } from "../../../../../../../modules/core/input/domain/input.repository.interface";
+import { IInputRepository } from "@src/modules/core/input/domain/input.repository.interface";
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
 import type { ProductInputProps, ProductInputCreateProps } from "../../domain/product-input.types";
-import { IProductRepository } from "../../../../../../../modules/core/product/domain/product.repository.interface";
+import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 import { Transaction } from "sequelize";
 /**
  * UseCase

@@ -1,19 +1,24 @@
-import { ProductInputProcessModel } from "../../modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm";
-import { LocationProductionLineModel } from "../../modules/features/location/assigments/location-production-line/infrastructure/orm/location-production-line.orm";
-import { ProductDiscountRangeModel } from "../../modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
-import { ProductDiscountClientModel } from "../../modules/features/client/assigments/product-discount-client/infrastructure/orm/product-discount-client.orm";
-import { LocationLocationTypeModel } from "../../modules/features/location/assigments/location-location-type/infrastructure/orm/location-location-type.orm";
-import { ProductProcessModel } from "../../modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
-import { ProductInputModel } from "../../modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
-import { ClientAddressModel } from "../../modules/features/client/assigments/client-addresses/infrastructure/orm/client-address.orm";
-import { ProductionLineModel } from "../../modules/core/production-line/infrastructure/orm/production-lines.orm";
-import { LocationTypeModel } from "../../modules/core/location-type/infrastructure/orm/location-type.orm";
-import { InputTypeModel } from "../../modules/core/input-type/infrastructure/orm/input-type.orm";
-import { LocationModel } from "../../modules/core/location/infrastructure/orm/location.orm";
-import { ProcessModel } from "../../modules/core/process/infrastructure/orm/process.orm";
-import { ProductModel } from "../../modules/core/product/infrastructure/orm/product.orm";
-import { ClientModel } from "../../modules/core/client/infrastructure/orm/clients.orm";
-import { InputModel } from "../../modules/core/input/infrastructure/orm/input.orm";
+import { ClientAddressModel } from "@modules/features/client/assigments/client-addresses/infrastructure/orm/client-address.orm";
+import { ClientModel } from "@modules/core/client/infrastructure/orm/clients.orm";
+import { ProductDiscountClientModel } from "@modules/features/client/assigments/product-discount-client/infrastructure/orm/product-discount-client.orm";
+import { LocationModel } from "@modules/core/location/infrastructure/orm/location.orm";
+import { LocationTypeModel } from "@modules/core/location-type/infrastructure/orm/location-type.orm";
+import { LocationLocationTypeModel } from "@modules/features/location/assigments/location-location-type/infrastructure/orm/location-location-type.orm";
+import { LocationProductionLineModel } from "@modules/features/location/assigments/location-production-line/infrastructure/orm/location-production-line.orm";
+import { ProductionLineModel } from "@modules/core/production-line/infrastructure/orm/production-lines.orm";
+import { ProductionLineProductModel } from "@modules/features/production-line/assigments/production-line-product/infrastructure/orm/production-line-product.orm";
+import { InputTypeModel } from "@modules/core/input-type/infrastructure/orm/input-type.orm";
+import { InputModel } from "@modules/core/input/infrastructure/orm/input.orm";
+import { ProductDiscountRangeModel } from "@src/modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
+import { ProductInputProcessModel } from "@modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm";
+import { ProductProcessModel } from "@src/modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
+import { ProductInputModel } from "@src/modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
+import { ProcessModel } from "@modules/core/process/infrastructure/orm/process.orm";
+import { ProductModel } from "@modules/core/product/infrastructure/orm/product.orm";
+import { PurchasedOrderProductModel } from "./../../modules/features/purchased-order/assigments/purchased-order-product/infrastructure/orm/purchased-order-product.orm";
+import { AppliedProductDiscountClientModel } from "./../../modules/features/purchased-order/assigments/purchased-order-product/assigments/applied-product-discount-client/infrastructure/orm/applied-product-discount-client.orm";
+import { AppliedProductDiscountRangeModel } from "./../../modules/features/purchased-order/assigments/purchased-order-product/assigments/applied-product-discount-range/infrastructure/orm/applied-product-discount-range.orm";
+import { PurchasedOrderModel } from "./../../modules/features/purchased-order/infrastructure/orm/purchased-order.orm";
 /**
  * init-models.ts
  * ------------------------------------------------------------------
@@ -84,6 +89,7 @@ export declare function initModels(): {
     ProductDiscountRangeModel: typeof ProductDiscountRangeModel;
     LocationLocationTypeModel: typeof LocationLocationTypeModel;
     ProductDiscountClientModel: typeof ProductDiscountClientModel;
+    ProductionLineProductModel: typeof ProductionLineProductModel;
     ProductInputProcessModel: typeof ProductInputProcessModel;
     ProductProcessModel: typeof ProductProcessModel;
     ProductInputModel: typeof ProductInputModel;
@@ -96,4 +102,8 @@ export declare function initModels(): {
     ProductModel: typeof ProductModel;
     ClientModel: typeof ClientModel;
     InputModel: typeof InputModel;
+    PurchasedOrderProductModel: typeof PurchasedOrderProductModel;
+    AppliedProductDiscountClientModel: typeof AppliedProductDiscountClientModel;
+    AppliedProductDiscountRangeModel: typeof AppliedProductDiscountRangeModel;
+    PurchasedOrderModel: typeof PurchasedOrderModel;
 };

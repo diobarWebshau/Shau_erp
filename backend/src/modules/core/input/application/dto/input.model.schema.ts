@@ -56,7 +56,10 @@ const inputCreateSchema = z.object({
     presentation: z.string().nullable().optional(),
     unit_of_measure: z.string().nullable().optional(),
     storage_conditions: z.string().nullable().optional(),
-    barcode: z.number().nullable().optional(),
+    barcode: z.preprocess(
+        toNumberOrNull,
+        z.number({ message: "barcode must be a number" })
+    ).nullable().optional(),
     sku: z.string().nullable().optional(),
     photo: z.string().nullable().optional(),
     supplier: z.string().nullable().optional(),
@@ -134,7 +137,7 @@ const inputQuerySchema = z.object({
     unit_of_measure: z.union([z.string(), z.array(z.string())]).optional(),
     barcode: z.union([z.string(), z.array(z.string())]).optional(),
     custom_id: z.union([z.string(), z.array(z.string())]).optional(),
-    
+
     is_active: z.preprocess(
         toBoolean, z.boolean({ message: "is_active must be a boolean" })
     ).optional(),

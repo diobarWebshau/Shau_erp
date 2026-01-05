@@ -360,6 +360,7 @@ CREATE TABLE purchased_orders_products(
     recorded_price DECIMAL(14, 4) NOT NULL,
     original_price DECIMAL(14,4) NOT NULL,
     status VARCHAR(100) NOT NULL,
+    price_edit_source ENUM('manual', 'range') NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(purchase_order_id) REFERENCES purchased_orders(id) ON DELETE SET NULL,
     FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE SET NULL
@@ -415,7 +416,7 @@ CREATE TABLE inputs(
     supplier VARCHAR(100) NULL,
     photo VARCHAR(200) NULL,
     is_draft TINYINT DEFAULT 0,
-    status TINYINT NULL,
+    is_active TINYINT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY(id),

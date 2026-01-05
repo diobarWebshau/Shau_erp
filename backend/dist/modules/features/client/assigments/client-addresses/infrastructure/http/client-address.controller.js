@@ -8,7 +8,7 @@ const create_client_address_usecase_1 = require("../../application/use-cases/cre
 const delete_client_address_usecase_1 = require("../../application/use-cases/delete-client-address.usecase");
 const update_client_address_usecase_1 = require("../../application/use-cases/update-client-address.usecase");
 const client_address_repository_1 = require("../repository/client-address.repository");
-const client_repository_1 = require("../../../../../../core/client/infrastructure/repository/client.repository");
+const client_repository_1 = require("@modules/core/client/infrastructure/repository/client.repository");
 class ClientAddressController {
     repoClientAddress;
     repoClient;

@@ -1,0 +1,53 @@
+### GET ALL
+GET http://localhost:3003/location HTTP/1.1
+
+### GET ALL WITH EXCLUDE IDS
+GET http://localhost:3003/location?exclude_ids=3&exclude_ids=6 HTTP/1.1
+
+### GET ALL WITH EXCLUDE ATTRIBUTE VALUE
+GET http://localhost:3003/location?is_active=1 HTTP/1.1
+
+### GET ALL WITH EXCLUDE IDS AND ATTRIBUTE VALUES
+GET http://localhost:3003/location?exclude_ids=3&exclude_ids=6&is_active=1 HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/location/id/1 HTTP/1.1
+
+### GET BY NAME
+GET http://localhost:3003/location/name/Location%20B HTTP/1.1
+
+### GET BY CUSTOM_ID
+GET http://localhost:3003/location/custom_id/LOCA HTTP/1.1
+
+### CREATE
+POST http://localhost:3003/location HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Location Quantum ",
+  "description": "Centro de distribución y ensamble de componentes electrónicos.",
+  "production_capacity": 3250,
+  "location_manager": "Andrea Castillo",
+  "custom_id": "LOCQH-784622",
+  "phone": "+52 55 9812 4473",
+  "street": "Avenida Horizonte",
+  "street_number": 892,
+  "neighborhood": "Tecnoparque Industrial",
+  "city": "Querétaro",
+  "state": "Querétaro",
+  "country": "México",
+  "zip_code": 76240,
+  "is_active": 1
+}
+
+
+### UPDATE
+PATCH http://localhost:3003/location/18 HTTP/1.1
+Content-Type: application/json
+
+{
+  "city": "Querétaro"
+}
+
+### DELETE
+DELETE http://localhost:3003/location/17 HTTP/1.1

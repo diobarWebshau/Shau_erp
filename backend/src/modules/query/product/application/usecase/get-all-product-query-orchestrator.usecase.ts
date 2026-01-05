@@ -1,6 +1,9 @@
 import type { ProductQueryRepository } from "../../infrastructure/product-query.repository";
-import type { ProductOrchestratorQuery, ProductSearchCriteria } from "../../domain/product-query.type";
+import type { ProductFullQueryResult, ProductSearchCriteria } from "../../domain/product-query.type";
 import { Transaction } from "sequelize";
+import { ProductDiscountRangeProps, ProductOrchestratorResponse } from "@src/modules/features/products/orchestrator/domain/product-orchestrator.types";
+import ImageHandler from "@src/helpers/imageHandlerClass";
+import { ProductDiscountRangeResponseDto } from "@src/modules/features/products/assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 
 /**
  * UseCase
@@ -45,7 +48,30 @@ import { Transaction } from "sequelize";
 
 export class GetAllProductsQueryOrchestratorUseCase {
     constructor(private readonly repo: ProductQueryRepository) { }
-    async execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestratorQuery[]> {
-        return await this.repo.getAllProductOrchestratorResult(query, tx);
+    async execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestratorResponse[]> {
+        const productsResposne: ProductFullQueryResult[] = await this.repo.getAllProductOrchestratorResult(query, tx);
+        const productsResultOrchestrator: ProductOrchestratorResponse[] = [];
+        for (const p of productsResposne) {
+            const { products_inputs, product_processes, product_discount_ranges, ...rest } = p;
+            const productResultOrch: ProductOrchestratorResponse = {
+                product: {
+                    ...rest,
+                    photo: rest.photo ? await ImageHandler.convertToBase64(rest.photo) : null,
+                    created_at: rest?.created_at.toISOString(),
+                    updated_at: rest?.updated_at.toISOString(),
+                },
+                products_inputs: products_inputs ?? [],
+                product_discount_ranges: product_discount_ranges.map(
+                    (pdr: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => ({
+                        ...pdr,
+                        created_at: pdr?.created_at.toISOString(),
+                        updated_at: pdr?.updated_at.toISOString()
+                    })
+                ) ?? [],
+                product_processes: product_processes ?? []
+            };
+            productsResultOrchestrator.push(productResultOrch)
+        }
+        return productsResultOrchestrator;
     }
 };

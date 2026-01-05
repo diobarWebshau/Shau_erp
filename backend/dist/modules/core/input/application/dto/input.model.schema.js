@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.inputQuerySchema = exports.inputResponseSchema = exports.inputUpdateSchema = exports.inputCreateSchema = void 0;
-const form_data_normalizers_1 = require("../../../../../shared/http/input/normalizers/form-data.normalizers");
+const form_data_normalizers_1 = require("@shared/http/input/normalizers/form-data.normalizers");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -57,7 +57,7 @@ const inputCreateSchema = zod_1.z.object({
     presentation: zod_1.z.string().nullable().optional(),
     unit_of_measure: zod_1.z.string().nullable().optional(),
     storage_conditions: zod_1.z.string().nullable().optional(),
-    barcode: zod_1.z.number().nullable().optional(),
+    barcode: zod_1.z.preprocess(form_data_normalizers_1.toNumberOrNull, zod_1.z.number({ message: "barcode must be a number" })).nullable().optional(),
     sku: zod_1.z.string().nullable().optional(),
     photo: zod_1.z.string().nullable().optional(),
     supplier: zod_1.z.string().nullable().optional(),

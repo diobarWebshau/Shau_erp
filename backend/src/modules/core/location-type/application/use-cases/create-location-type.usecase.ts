@@ -52,7 +52,7 @@ export class CreateLocationTypeUseCase {
             if (existsByName)
                 throw new HttpError(
                     409,
-                    "El nombre ingresado para el  nueva tipo de locación, ya esta utilizado por otro tipo de locación."
+                    "El nombre ingresado para el nuevo tipo de locación, ya esta utilizado por otro tipo de locación."
                 );
         }
         const created: LocationTypeProps = await this.repo.create(data, tx);

@@ -1,4 +1,4 @@
-import { ProductionLineProps, ProductionLineCreateProps, ProductionLineUpdateProps } from "./production-line.types";
+import { ProductionLineProps, ProductionLineCreateProps, ProductionLineUpdateProps, ProductionLineSearchCriteria } from "./production-line.types";
 import { Transaction } from "sequelize";
 
 /**
@@ -44,7 +44,7 @@ import { Transaction } from "sequelize";
  */
 
 export interface IProductionLineRepository {
-    findAll(tx?: Transaction): Promise<ProductionLineProps[]>,
+    findAll(query: ProductionLineSearchCriteria, tx?: Transaction): Promise<ProductionLineProps[]>,
     findById(id: number, tx?: Transaction): Promise<ProductionLineProps | null>,
     findByName(name: string, tx?: Transaction): Promise<ProductionLineProps | null>,
     findByCustomId(custom_id: string, tx?: Transaction): Promise<ProductionLineProps | null>,

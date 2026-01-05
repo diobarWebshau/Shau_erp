@@ -56,7 +56,7 @@ const mapModelToDomain = (model: ProductDiscountClientModel): ProductDiscountCli
     const json: ProductDiscountClientProps = model.toJSON();
     return {
         id: json.id,
-        discount_percentage: json.discount_percentage,
+        discount_percentage: Number(json.discount_percentage),
         product_id: json.product_id,
         client_id: json.client_id,
         created_at: json.created_at,

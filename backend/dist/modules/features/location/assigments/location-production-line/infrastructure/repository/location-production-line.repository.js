@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationProductionLineRepository = void 0;
 const location_production_line_orm_1 = require("../orm/location-production-line.orm");
-const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------

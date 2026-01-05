@@ -13,10 +13,10 @@ const get_all_product_usecase_1 = require("../../application/use-cases/get-all-p
 const create_product_usecase_1 = require("../../application/use-cases/create-product.usecase");
 const delete_product_usecase_1 = require("../../application/use-cases/delete-product.usecase");
 const update_product_usecase_1 = require("../../application/use-cases/update-product.usecase");
-const local_file_cleanup_service_1 = require("../../../../../shared/files/local-file-cleanup.service");
+const local_file_cleanup_service_1 = require("@shared/files/local-file-cleanup.service");
 const producto_repository_1 = require("../repository/producto.repository");
 const product_query_mapper_1 = require("./product-query-mapper");
-const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
+const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productionLineRouter = void 0;
 const production_lines_endpoint_schema_1 = require("../../application/dto/production-lines.endpoint.schema");
-const zod_middleware_1 = require("../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const production_line_controller_1 = require("./production-line.controller");
 const express_1 = require("express");
 /**

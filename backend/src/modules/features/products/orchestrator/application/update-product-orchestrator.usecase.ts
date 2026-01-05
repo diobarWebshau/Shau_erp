@@ -2,7 +2,7 @@ import {
     ProductDiscountRangeCreateOrchestrator, ProductDiscountRangeUpdateOrchestrator, ProductInputCreateOrchestrator,
     ProductInputUpdateOrchestrator, ProductProcessCreateOrchestrator, ProductProcessUpdateOrchestrator, ProductProcessOrchestratorAssignExisting,
     ProductProcessOrchestratorCreateNew, ProductInputProcessProps, ProductInputProcessCreateOrchestrator, ProductInputProcessUpdateOrchestrator,
-    ProductOrchestrator
+    ProductOrchestratorResponse
 } from "../domain/product-orchestrator.types";
 import { CreateProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/create-product-discount-range.usecase";
 import { DeleteProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/delete-product-discount-range.usecase";
@@ -27,12 +27,12 @@ import { IProductInputRepository } from "../../assigments/product-input/domain/p
 import { CreateProcessUseCase } from "@modules/core/process/application/use-cases/create-process.usecase";
 import { UpdateProductUseCase } from "@modules/core/product/application/use-cases/update-product.usecase";
 import { ProductProcessProps } from "../../assigments/product-process/domain/product-process.types";
+import { IProductQueryRepository } from "@modules/query/product/domain/product-query.repository";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
 import { ProductProps, ProductUpdateProps } from "@modules/core/product/domain/product.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
-import { IProductQueryRepository } from "@modules/query/product/domain/product-query.repository";
-import { ProductOrchestratorUpdateDTO } from "./product-orchestrator.model.schema";
+import { ProductOrchestratorUpdateDto } from "./product-orchestrator.model.schema";
 import { ProcessProps } from "@modules/core/process/domain/process.types";
 import { IFileCleanupPort } from "@shared/files/file-cleanup.port";
 import HttpError from "@shared/errors/http/http-error";
@@ -120,7 +120,7 @@ export class UpdateProductOrchestratorUseCase {
 
     };
 
-    async execute(productId: number, data: ProductOrchestratorUpdateDTO): Promise<ProductOrchestrator> {
+    async execute(productId: number, data: ProductOrchestratorUpdateDto): Promise<ProductOrchestratorResponse> {
 
         const tx: Transaction = await sequelize.transaction({ isolationLevel: Transaction.ISOLATION_LEVELS.REPEATABLE_READ });
 
@@ -392,7 +392,7 @@ export class UpdateProductOrchestratorUseCase {
             // --------------------------------------------------
             // |🔹 COMMIT + RESPONSE                            |
             // --------------------------------------------------
-            const productOrchestrator: ProductOrchestrator | null = await this.getProductOrchestrator.execute(productUpdateResponse.id, tx);
+            const productOrchestrator: ProductOrchestratorResponse | null = await this.getProductOrchestrator.execute(productUpdateResponse.id, tx);
             if (!productOrchestrator)
                 throw new HttpError(500, "No se pudo acceder al producto despues de haber sido actualizado.");
 

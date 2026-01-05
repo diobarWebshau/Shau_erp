@@ -1,4 +1,4 @@
-import type { ApiRequest, ApiResponse } from "../../../../../shared/typed-request-endpoint/typed-request.interface";
+import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import type { CreateLocationSchema, DeleteLocationSchema, GetAllLocationsSchema, GetByCustomIdLocationSchema, GetByIdLocationSchema, GetByNameLocationSchema, UpdateLocationSchema } from "../../application/dto/location.endpoint.schema";
 /**
  * Controller (Infrastructure / HTTP)

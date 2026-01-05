@@ -1,5 +1,5 @@
 import { GetAllItemQuerySchema, GetByIdItemQuerySchema } from "../../application/dto/item-query.endpoint.schema";
-import { ApiRequest, ApiResponse } from "../../../../../shared/typed-request-endpoint/typed-request.interface";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------

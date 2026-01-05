@@ -1,8 +1,8 @@
-import type { ProductionLineCreateProps, ProductionLineProps, ProductionLineUpdateProps } from "../../domain/production-line.types";
+import type { ProductionLineCreateProps, ProductionLineProps, ProductionLineSearchCriteria, ProductionLineUpdateProps } from "../../domain/production-line.types";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
 import { ProductionLineModel } from "../orm/production-lines.orm";
+import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
-import { Transaction } from "sequelize";
 
 /**
  * Repository (Infrastructure)
@@ -68,13 +68,36 @@ export class ProductionLineRepository implements IProductionLineRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (tx?: Transaction): Promise<ProductionLineProps[]> => {
+    findAll = async (query: ProductionLineSearchCriteria, tx?: Transaction): Promise<ProductionLineProps[]> => {
+        const { filter, exclude_ids, is_active, ...rest } = query;
+        const where: WhereOptions<ProductionLineProps> = {
+            ...(exclude_ids?.length
+                ? { id: { [Op.notIn]: exclude_ids } }
+                : {}),
+            ...(is_active !== undefined ? { is_active } : {}),
+            ...Object.fromEntries(
+                Object.entries(rest)
+                    .filter(([, v]) => v !== undefined)
+                    .map(([k, v]) => [
+                        k,
+                        Array.isArray(v) ? { [Op.notIn]: v } : v,
+                    ])
+            ),
+            ...(filter
+                ? {
+                    [Op.or]: [
+                        { name: { [Op.like]: `%${filter}%` } },
+                        { custom_id: { [Op.like]: `%${filter}%` } },
+                    ],
+                }
+                : {}),
+        };
         const rows: ProductionLineModel[] = await ProductionLineModel.findAll({
+            where,
+            attributes: ProductionLineModel.getAllFields() as (keyof ProductionLineProps)[],
             transaction: tx,
-            attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
-        const rowsMap: ProductionLineProps[] = rows.map((pl) => mapModelToDomain(pl));
-        return rowsMap;
+        return rows.map(pl => mapModelToDomain(pl));
     }
     findById = async (id: number, tx?: Transaction): Promise<ProductionLineProps | null> => {
         const row: ProductionLineModel | null = await ProductionLineModel.findByPk(id, {
@@ -119,12 +142,10 @@ export class ProductionLineRepository implements IProductionLineRepository {
             "La línea de producción que se desea actualizar no fue posible encontrarla."
         );
         // 2. Aplicar UPDATE
-        const [affectedCount]: [affectedCount: number] = await ProductionLineModel.update(data, {
+        await ProductionLineModel.update(data, {
             where: { id },
             transaction: tx
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la línea de producción.");
         // 3. Obtener la locación actualizada
         const updated: ProductionLineModel | null = await ProductionLineModel.findByPk(id, {
             transaction: tx,

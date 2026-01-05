@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountClientModel = void 0;
 const sequelize_1 = require("sequelize");
-const sequelize_2 = require("../../../../../../../config/mysql/sequelize");
+const sequelize_2 = require("@config/mysql/sequelize");
 ;
 class ProductDiscountClientModel extends sequelize_1.Model {
     static getEditableFields = () => [

@@ -378,7 +378,7 @@ CREATE TABLE applied_product_discounts_client (
 );
 CREATE TABLE applied_product_discounts_ranges (
     id INT AUTO_INCREMENT,
-    product_discount_range_id INT,
+    product_discount_range_id INT UNIQUE,
     purchase_order_product_id INT,
     unit_discount DECIMAL(14, 4) NOT NULL,
     min_qty DECIMAL(14, 4) NOT NULL,

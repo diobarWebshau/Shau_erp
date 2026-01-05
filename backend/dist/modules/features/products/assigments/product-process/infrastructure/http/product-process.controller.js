@@ -10,8 +10,8 @@ const get_all_product_process_usecase_1 = require("../../application/use-cases/g
 const create_product_process_usecase_1 = require("../../application/use-cases/create-product-process.usecase");
 const update_product_process_usecase_1 = require("../../application/use-cases/update-product-process.usecase");
 const delete_product_process_usecase_1 = require("../../application/use-cases/delete-product-process.usecase");
-const producto_repository_1 = require("../../../../../../core/product/infrastructure/repository/producto.repository");
-const process_repository_1 = __importDefault(require("../../../../../../core/process/infrastructure/repository/process.repository"));
+const producto_repository_1 = require("@modules/core/product/infrastructure/repository/producto.repository");
+const process_repository_1 = __importDefault(require("@modules/core/process/infrastructure/repository/process.repository"));
 const product_process_repository_1 = require("../repository/product-process.repository");
 /**
  * Controller (Infrastructure / HTTP)

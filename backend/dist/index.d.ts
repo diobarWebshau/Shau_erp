@@ -1,1 +1,1 @@
-import "./config/env/env.loader";
+import "@config/env/env.loader";

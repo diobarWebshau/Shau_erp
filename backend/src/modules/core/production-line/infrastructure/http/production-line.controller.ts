@@ -1,3 +1,4 @@
+
 import { ProductionLineCreateDto, ProductionLineResponseDto, ProductionLineUpdateDto } from "../../application/dto/production-lines.model.schema";
 import { GetProductionLineByCustomIdUseCase } from "../../application/use-cases/get-production-line-by-custom-id.usecase";
 import { GetProductionLineByNameUseCase } from "../../application/use-cases/get-production-line-by-name.usecase";
@@ -6,14 +7,15 @@ import { GetAllProductionLinesUseCase } from "../../application/use-cases/get-al
 import { CreateProductionLineUseCase } from "../../application/use-cases/create-production-line.usecase";
 import { DeleteProductionLineUseCase } from "../../application/use-cases/delete-production-line.usecase";
 import { UpdateProductionLineUseCase } from "../../application/use-cases/update-production-line.usecase";
+import { ProductionLineProps, ProductionLineSearchCriteria } from "../../domain/production-line.types"
 import { GetByIdProductionLineSchema } from "../../application/dto/production-lines.endpoint.schema";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { ProductionLineRepository } from "../repository/production-line.repository";
-import { ProductionLineProps } from "../../domain/production-line.types"
 import {
     GetByNameProducionLineSchema, GetByCustomIdProducionLineSchema, GetAllProductionLinesSchema,
     CreateProducionLineSchema, UpdateProducionLineSchema, DeleteProducionLineSchema
 } from "../../application/dto/production-lines.endpoint.schema";
+import { mapProductionLineQueryToCriteria } from "./production-line-query-mapper";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -103,8 +105,10 @@ export class ProductionLineController {
     // ============================================================
     // GET ALL
     // ============================================================
-    getAll = async (_req: ApiRequest<GetAllProductionLinesSchema>, res: ApiResponse<GetAllProductionLinesSchema>) => {
-        const result: ProductionLineProps[] = await this.getAllUseCase.execute();
+    getAll = async (req: ApiRequest<GetAllProductionLinesSchema>, res: ApiResponse<GetAllProductionLinesSchema>) => {
+        const queryRequest: GetAllProductionLinesSchema["query"] = req.query;
+        const query: ProductionLineSearchCriteria = mapProductionLineQueryToCriteria(queryRequest);
+        const result: ProductionLineProps[] = await this.getAllUseCase.execute(query);
         const formatted: ProductionLineResponseDto[] = result.map(l => this.formatResponse(l));
         return res.status(200).send(formatted);
     };

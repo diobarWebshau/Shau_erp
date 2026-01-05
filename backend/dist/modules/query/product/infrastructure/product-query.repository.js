@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductQueryRepository = void 0;
-const product_discount_range_orm_1 = require("../../../features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm");
-const product_process_orm_1 = require("../../../features/products/assigments/product-process/infrastructure/orm/product-process.orm");
-const product_inputs_orm_1 = require("../../../features/products/assigments/product-input/infrastructure/orm/product-inputs.orm");
-const product_orm_1 = require("../../../core/product/infrastructure/orm/product.orm");
+const product_discount_range_orm_1 = require("@modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm");
+const product_process_orm_1 = require("@modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm");
+const product_inputs_orm_1 = require("@modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm");
+const product_orm_1 = require("@modules/core/product/infrastructure/orm/product.orm");
 const sequelize_1 = require("sequelize");
 class ProductQueryRepository {
     // ********** SEQUELIZE **********
@@ -97,18 +97,7 @@ class ProductQueryRepository {
         if (!results.length)
             return [];
         const products = results.map(p => p.toJSON());
-        const productsResultOrchestrator = [];
-        for (const p of products) {
-            const { products_inputs, product_processes, product_discount_ranges, ...rest } = p;
-            const productResultOrch = {
-                product: rest,
-                products_inputs: products_inputs ?? [],
-                product_discount_ranges: product_discount_ranges ?? [],
-                product_processes: product_processes ?? []
-            };
-            productsResultOrchestrator.push(productResultOrch);
-        }
-        return productsResultOrchestrator;
+        return products;
     };
     getByIdProductOrchestratorResult = async (id, tx) => {
         const result = await product_orm_1.ProductModel.findByPk(id, {
@@ -122,14 +111,7 @@ class ProductQueryRepository {
         if (!result)
             return null;
         const product = result.toJSON();
-        const { products_inputs, product_processes, product_discount_ranges, ...rest } = product;
-        const productResultOrch = {
-            product: rest,
-            products_inputs: products_inputs ?? [],
-            product_discount_ranges: product_discount_ranges ?? [],
-            product_processes: product_processes ?? []
-        };
-        return productResultOrch;
+        return product;
     };
 }
 exports.ProductQueryRepository = ProductQueryRepository;

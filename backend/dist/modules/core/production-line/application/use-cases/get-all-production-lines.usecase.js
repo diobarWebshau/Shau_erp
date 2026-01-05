@@ -46,8 +46,8 @@ class GetAllProductionLinesUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    async execute(tx) {
-        return await this.repo.findAll(tx);
+    async execute(query, tx) {
+        return await this.repo.findAll(query, tx);
     }
 }
 exports.GetAllProductionLinesUseCase = GetAllProductionLinesUseCase;

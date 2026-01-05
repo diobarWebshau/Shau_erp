@@ -1,7 +1,8 @@
-import { IProductRepository } from "../../../../../../../modules/core/product/domain/product.repository.interface";
+import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
 import type { ProductDiscountClientProps, ProductDiscountClientCreateProps } from "../../domain/product-discount-client.types";
-import { IClientRepository } from "../../../../../../../modules/core/client/domain/client.repository.interface";
+import { IClientRepository } from "@src/modules/core/client/domain/client.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -47,5 +48,5 @@ export declare class CreateProductDiscountClientUseCase {
     private readonly repoProduct;
     private readonly repoClient;
     constructor(repo: IProductDiscountClientRepository, repoProduct: IProductRepository, repoClient: IClientRepository);
-    execute(data: ProductDiscountClientCreateProps): Promise<ProductDiscountClientProps>;
+    execute(data: ProductDiscountClientCreateProps, tx?: Transaction): Promise<ProductDiscountClientProps>;
 }

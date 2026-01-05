@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
 import type { ProductDiscountClientProps } from "../../domain/product-discount-client.types";
 /**
@@ -43,5 +44,5 @@ import type { ProductDiscountClientProps } from "../../domain/product-discount-c
 export declare class GetProductDiscountClientByProductClientUseCase {
     private readonly repo;
     constructor(repo: IProductDiscountClientRepository);
-    execute: (product_id: number, client_id: number) => Promise<ProductDiscountClientProps | null>;
+    execute: (product_id: number, client_id: number, tx?: Transaction) => Promise<ProductDiscountClientProps | null>;
 }

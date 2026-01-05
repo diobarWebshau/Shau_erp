@@ -1,4 +1,4 @@
-import type { EndpointSchema } from "../../../../../shared/typed-request-endpoint/endpoint.interface";
+import type { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 /**
  * Schema
@@ -19,7 +19,13 @@ import { z } from "zod";
  */
 declare const getAllProductionLinesSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
-    query: z.ZodObject<{}, z.core.$strict>;
+    query: z.ZodObject<{
+        filter: z.ZodOptional<z.ZodString>;
+        exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+        name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+        custom_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+        is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
+    }, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
         name: z.ZodString;

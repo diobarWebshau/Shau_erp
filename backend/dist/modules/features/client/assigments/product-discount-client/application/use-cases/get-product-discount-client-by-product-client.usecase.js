@@ -46,7 +46,7 @@ class GetProductDiscountClientByProductClientUseCase {
     constructor(repo) {
         this.repo = repo;
     }
-    execute = async (product_id, client_id) => this.repo.findByProductClientId(product_id, client_id);
+    execute = async (product_id, client_id, tx) => this.repo.findByProductClientId(product_id, client_id, tx);
 }
 exports.GetProductDiscountClientByProductClientUseCase = GetProductDiscountClientByProductClientUseCase;
 ;

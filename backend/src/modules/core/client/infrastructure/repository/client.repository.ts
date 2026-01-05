@@ -61,7 +61,7 @@ const mapModelToDomain = (model: ClientModel): ClientProps => {
         company_name: json.company_name,
         country: json.country,
         created_at: json.created_at,
-        credit_limit: json.credit_limit,
+        credit_limit: Number(json.credit_limit),
         email: json.email,
         is_active: json.is_active,
         neighborhood: json.neighborhood,

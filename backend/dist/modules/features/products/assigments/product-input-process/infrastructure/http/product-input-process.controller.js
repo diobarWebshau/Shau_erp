@@ -9,7 +9,7 @@ const get_all_product_input_process_usecase_1 = require("../../application/use-c
 const get_by_product_input_process_usecase_1 = require("../../application/use-cases/get-by-product-input-process.usecase");
 const delete_product_input_process_usecase_1 = require("../../application/use-cases/delete-product-input-process.usecase");
 const product_input_process_repository_1 = require("../repository/product-input-process.repository");
-const producto_repository_1 = require("../../../../../../../modules/core/product/infrastructure/repository/producto.repository");
+const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
 const product_input_repository_1 = require("../../../product-input/infrastructure/repository/product-input.repository");
 /**
  * Controller (Infrastructure / HTTP)

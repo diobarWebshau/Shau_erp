@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputRouter = void 0;
-const zod_middleware_1 = require("../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const input_controller_1 = require("./input.controller");
 const input_endpoint_schema_1 = require("../../application/dto/input.endpoint.schema");
 const express_1 = require("express");
-const storage_1 = require("../../../../../storage");
-const storage_2 = require("../../../../../storage");
-const storage_3 = require("../../../../../storage");
+const storage_1 = require("@src/storage");
+const storage_2 = require("@src/storage");
+const storage_3 = require("@src/storage");
 /**
  * Router (Infrastructure / HTTP)
  * ------------------------------------------------------------------

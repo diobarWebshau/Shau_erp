@@ -1,5 +1,5 @@
 import { GetByIdProductionLineSchema } from "../../application/dto/production-lines.endpoint.schema";
-import { ApiRequest, ApiResponse } from "../../../../../shared/typed-request-endpoint/typed-request.interface";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { GetByNameProducionLineSchema, GetByCustomIdProducionLineSchema, GetAllProductionLinesSchema, CreateProducionLineSchema, UpdateProducionLineSchema, DeleteProducionLineSchema } from "../../application/dto/production-lines.endpoint.schema";
 /**
  * Controller (Infrastructure / HTTP)
@@ -62,7 +62,7 @@ export declare class ProductionLineController {
     constructor();
     /** Formatea un Location para convertir fechas a ISO */
     private formatResponse;
-    getAll: (_req: ApiRequest<GetAllProductionLinesSchema>, res: ApiResponse<GetAllProductionLinesSchema>) => Promise<ApiResponse<GetAllProductionLinesSchema>>;
+    getAll: (req: ApiRequest<GetAllProductionLinesSchema>, res: ApiResponse<GetAllProductionLinesSchema>) => Promise<ApiResponse<GetAllProductionLinesSchema>>;
     getById: (req: ApiRequest<GetByIdProductionLineSchema>, res: ApiResponse<GetByIdProductionLineSchema>) => Promise<ApiResponse<GetByIdProductionLineSchema>>;
     getByName: (req: ApiRequest<GetByNameProducionLineSchema>, res: ApiResponse<GetByNameProducionLineSchema>) => Promise<ApiResponse<GetByNameProducionLineSchema>>;
     getByCustomId: (req: ApiRequest<GetByCustomIdProducionLineSchema>, res: ApiResponse<GetByCustomIdProducionLineSchema>) => Promise<ApiResponse<GetByCustomIdProducionLineSchema>>;

@@ -1,5 +1,5 @@
 import { GetByCfdiClientSchema, GetByCompanyNameClientSchema, GetByIdClientSchema } from "../../application/dto/client.endpoint.schema";
-import { ApiRequest, ApiResponse } from "../../../../../shared/typed-request-endpoint/typed-request.interface";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { GetAllClientsSchema, CreateClientSchema, UpdateClientSchema, DeleteClientSchema } from "../../application/dto/client.endpoint.schema";
 /**
  * Controller (Infrastructure / HTTP)

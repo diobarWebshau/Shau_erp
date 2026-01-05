@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientAddressRouter = void 0;
 const client_address_endpoint_schema_1 = require("../../application/dto/client-address.endpoint.schema");
-const zod_middleware_1 = require("../../../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const client_address_controller_1 = require("./client-address.controller");
 const express_1 = require("express");
 /**

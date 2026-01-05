@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
 import { ProductDiscountClientProps } from "../../domain/product-discount-client.types";
 import HttpError from "@shared/errors/http/http-error";
@@ -45,12 +46,12 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class DeleteProductDiscountClientUseCase {
     constructor(private readonly repo: IProductDiscountClientRepository) { }
-    async execute(id: number): Promise<void> {
-        const exists: ProductDiscountClientProps | null = await this.repo.findById(id);
+    async execute(id: number, tx?:Transaction): Promise<void> {
+        const exists: ProductDiscountClientProps | null = await this.repo.findById(id, tx);
         if (!exists) throw new HttpError(404,
             "No se encontro la asignación del descuento del producto al cliente que se pretende eliminar."
         );
-        await this.repo.delete(id);
+        await this.repo.delete(id, tx);
         return;
     }
 }

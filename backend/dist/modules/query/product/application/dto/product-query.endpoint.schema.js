@@ -14,7 +14,7 @@ const getByIdProductOrchestratorSchema = zod_1.z.object({
     params: zod_1.z.object({ id: zod_1.z.string() }).strict(),
     query: zod_1.z.object({}).strict(),
     body: zod_1.z.object({}).strict(),
-    response: product_query_model_schema_1.productQueryOrchestratorSchema,
+    response: product_query_model_schema_1.productQueryOrchestratorSchema.nullable(),
 });
 exports.getByIdProductOrchestratorSchema = getByIdProductOrchestratorSchema;
 const getAllProductFullQuerySchema = zod_1.z.object({
@@ -28,6 +28,6 @@ const getByIdProductFullQuerySchema = zod_1.z.object({
     params: zod_1.z.object({ id: zod_1.z.string() }).strict(),
     query: zod_1.z.object({}).strict(),
     body: zod_1.z.object({}).strict(),
-    response: product_query_model_schema_1.productQueryFullResponseSchema,
+    response: product_query_model_schema_1.productQueryFullResponseSchema.nullable(),
 });
 exports.getByIdProductFullQuerySchema = getByIdProductFullQuerySchema;

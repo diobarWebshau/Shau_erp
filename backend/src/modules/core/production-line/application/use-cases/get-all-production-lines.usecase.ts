@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
-import type { ProductionLineProps } from "../../domain/production-line.types";
+import type { ProductionLineProps, ProductionLineSearchCriteria } from "../../domain/production-line.types";
 
 /**
  * UseCase
@@ -45,7 +45,7 @@ import type { ProductionLineProps } from "../../domain/production-line.types";
 
 export class GetAllProductionLinesUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
-    async execute(tx?: Transaction): Promise<ProductionLineProps[]> {
-        return await this.repo.findAll(tx);
+    async execute(query: ProductionLineSearchCriteria, tx?: Transaction): Promise<ProductionLineProps[]> {
+        return await this.repo.findAll(query, tx);
     }
 }

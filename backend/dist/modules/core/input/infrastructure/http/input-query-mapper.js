@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mapInputQueryToCriteria = void 0;
-const query_request_normalizer_1 = require("../../../../../shared/query-reqyest/query-request-normalizer");
+const query_request_normalizer_1 = require("@shared/query-reqyest/query-request-normalizer");
 /**
  * Query → Criteria Mapper
  * ------------------------------------------------------------------

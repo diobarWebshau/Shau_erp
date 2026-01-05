@@ -56,10 +56,10 @@ const mapModelToDomain = (model: ProductDiscountRangeModel): ProductDiscountRang
     const json: ProductDiscountRangeProps = model.toJSON();
     return {
         id: json.id,
-        unit_price: json.unit_price,
+        unit_price: Number(json.unit_price),
         product_id: json.product_id,
-        max_qty: json.max_qty,
-        min_qty: json.min_qty,
+        max_qty: Number(json.max_qty),
+        min_qty: Number(json.min_qty),
         created_at: json.created_at,
         updated_at: json.created_at
     };

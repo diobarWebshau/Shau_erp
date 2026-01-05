@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputRepository = void 0;
 const sequelize_1 = require("sequelize");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const input_orm_1 = require("../orm/input.orm");
 /**
  * Repository (Infrastructure)
@@ -73,7 +73,7 @@ const mapModelToDomain = (model) => {
         input_types_id: json.input_types_id,
         is_active: json.is_active,
         supplier: json.supplier,
-        unit_cost: json.unit_cost
+        unit_cost: Number(json.unit_cost)
     };
 };
 class InputRepository {
@@ -175,7 +175,7 @@ class InputRepository {
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar el insumo.");
+            return mapModelToDomain(existing);
         // 3. Obtener la locación actualizada
         const updated = await input_orm_1.InputModel.findByPk(id, {
             transaction: tx,

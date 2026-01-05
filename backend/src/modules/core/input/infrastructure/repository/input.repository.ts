@@ -71,7 +71,7 @@ const mapModelToDomain = (model: InputModel): InputProps => {
         input_types_id: json.input_types_id,
         is_active: json.is_active,
         supplier: json.supplier,
-        unit_cost: json.unit_cost
+        unit_cost: Number(json.unit_cost)
     };
 }
 
@@ -175,8 +175,8 @@ export class InputRepository implements IInputRepository {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar el insumo.");
+        if (!affectedCount) return mapModelToDomain(existing);
+
         // 3. Obtener la locación actualizada
         const updated: InputModel | null = await InputModel.findByPk(id, {
             transaction: tx,

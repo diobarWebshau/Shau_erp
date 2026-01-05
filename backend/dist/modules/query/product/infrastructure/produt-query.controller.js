@@ -1,16 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductQueryController = void 0;
 const get_by_id_product_query_orchestrator_usecase_1 = require("../application/usecase/get-by-id-product-query-orchestrator.usecase");
 const get_all_product_query_orchestrator_usecase_1 = require("../application/usecase/get-all-product-query-orchestrator.usecase");
 const get_by_id_product_full_query_usecase_1 = require("../application/usecase/get-by-id-product-full-query.usecase");
-const product_query_mapper_1 = require("../../../core/product/infrastructure/http/product-query-mapper");
+const product_query_mapper_1 = require("@modules/core/product/infrastructure/http/product-query-mapper");
 const get_all_product_full_query_usecase_1 = require("../application/usecase/get-all-product-full-query.usecase");
 const product_query_repository_1 = require("./product-query.repository");
-const imageHandlerClass_1 = __importDefault(require("../../../../helpers/imageHandlerClass"));
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -78,111 +74,23 @@ class ProductQueryController {
         const queryRequest = req.query;
         const query = (0, product_query_mapper_1.mapProductQueryToCriteria)(queryRequest);
         const products = await this.getAllProductOrchestatorUseCase.execute(query);
-        const productsResultOrchestrator = [];
-        for (const p of products) {
-            const { products_inputs, product_processes, product_discount_ranges, product } = p;
-            const dataProduct = {
-                ...product,
-                photo: product.photo ? await imageHandlerClass_1.default.convertToBase64(product.photo) : null,
-                created_at: product?.created_at.toISOString(),
-                updated_at: product?.updated_at.toISOString(),
-            };
-            const dataDiscounts = product_discount_ranges.map((pdr) => ({
-                ...pdr,
-                created_at: pdr?.created_at.toISOString(),
-                updated_at: pdr?.updated_at.toISOString()
-            })) ?? [];
-            const productResultOrch = {
-                product: dataProduct,
-                products_inputs: products_inputs ?? [],
-                product_discount_ranges: dataDiscounts ?? [],
-                product_processes: product_processes ?? []
-            };
-            productsResultOrchestrator.push(productResultOrch);
-        }
-        ;
-        return res.status(200).json(productsResultOrchestrator);
+        return res.status(200).json(products);
     };
     getByIdProductOrchestrator = async (req, res) => {
         const { id } = req.params;
         const productRecord = await this.getByIdProductOrchestratorUseCase.execute(Number(id));
-        if (!productRecord)
-            return null;
-        const { products_inputs, product_processes, product_discount_ranges, product } = productRecord;
-        const dataProduct = {
-            ...product,
-            photo: product.photo ? await imageHandlerClass_1.default.convertToBase64(product.photo) : null,
-            created_at: product?.created_at.toISOString(),
-            updated_at: product?.updated_at.toISOString()
-        };
-        const dataDiscounts = product_discount_ranges.map((pdr) => ({
-            ...pdr,
-            created_at: pdr?.created_at.toISOString(),
-            updated_at: pdr?.updated_at.toISOString()
-        })) ?? [];
-        const productResultOrch = {
-            product: dataProduct,
-            products_inputs: products_inputs ?? [],
-            product_discount_ranges: dataDiscounts ?? [],
-            product_processes: product_processes ?? []
-        };
-        return res.status(200).json(productResultOrch);
+        return res.status(200).json(productRecord);
     };
     getAllProductFullQuery = async (req, res) => {
         const queryRequest = req.query;
         const query = (0, product_query_mapper_1.mapProductQueryToCriteria)(queryRequest);
         const products = await this.getAllProductFullUseCase.execute(query);
-        if (!products)
-            return [];
-        const productsFullResultArray = [];
-        for (const p of products) {
-            const { products_inputs, product_processes, product_discount_ranges, ...rest } = p;
-            const dataProduct = {
-                ...rest,
-                photo: rest.photo ? await imageHandlerClass_1.default.convertToBase64(rest.photo) : null,
-                created_at: rest?.created_at.toISOString(),
-                updated_at: rest?.created_at.toISOString()
-            };
-            const dataDiscounts = product_discount_ranges.map((pdr) => ({
-                ...pdr,
-                created_at: pdr?.created_at.toISOString(),
-                updated_at: pdr?.created_at.toISOString()
-            })) ?? [];
-            const productFullResult = {
-                ...dataProduct,
-                products_inputs: products_inputs ?? [],
-                product_discount_ranges: dataDiscounts ?? [],
-                product_processes: product_processes ?? []
-            };
-            productsFullResultArray.push(productFullResult);
-        }
-        ;
-        return res.status(200).json(productsFullResultArray);
+        return res.status(200).json(products);
     };
     getByIdProductFullQuery = async (req, res) => {
         const { id } = req.params;
         const product = await this.GetByIdProductFullUseCase.execute(Number(id));
-        if (!product)
-            return null;
-        const { products_inputs, product_processes, product_discount_ranges, ...rest } = product;
-        const dataProduct = {
-            ...rest,
-            photo: product.photo ? await imageHandlerClass_1.default.convertToBase64(product.photo) : null,
-            created_at: rest?.created_at.toISOString(),
-            updated_at: rest?.created_at.toISOString()
-        };
-        const dataDiscounts = product_discount_ranges.map((pdr) => ({
-            ...pdr,
-            created_at: pdr?.created_at.toISOString(),
-            updated_at: pdr?.created_at.toISOString()
-        })) ?? [];
-        const productFullResult = {
-            ...dataProduct,
-            products_inputs: products_inputs ?? [],
-            product_discount_ranges: dataDiscounts ?? [],
-            product_processes: product_processes ?? []
-        };
-        return res.status(200).json(productFullResult);
+        return res.status(200).json(product);
     };
 }
 exports.ProductQueryController = ProductQueryController;

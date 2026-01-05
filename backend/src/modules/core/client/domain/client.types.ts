@@ -89,7 +89,7 @@ interface ClientSearchCriteria {
     payment_terms?: string | string[];
     cfdi?: string | string[];
     is_active?: boolean;
-}
+};
 
 export {
     ClientProps,

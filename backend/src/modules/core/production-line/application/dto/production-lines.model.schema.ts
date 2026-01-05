@@ -77,6 +77,41 @@ const productionLineResponseSchema = productionLineCreateSchema.extend({
 })
 
 /**
+ * QuerySchema
+ * ------------------------------------------------------------------
+ * Define los parámetros de consulta aceptados por endpoints GET.
+ *
+ * Comentario complementario:
+ * - Este schema modela exclusivamente datos provenientes del query string.
+ * - En HTTP todos los valores llegan como string o string[].
+ * - El uso de `z.union([string, string[]])` refleja el comportamiento real
+ *   de Express cuando un parámetro se repite en la URL.
+ * - La conversión de tipos (string → number/boolean) se realiza posteriormente
+ *   en el controller o en una capa de normalización.
+ */
+const ProductionLineQuerySchema = z.object({
+    filter: z.string().optional(),
+
+    exclude_ids: z.union([
+        z.string(),
+        z.array(z.string())
+    ]).optional(),
+
+    name: z.union([z.string(), z.array(z.string())]).optional(),
+    custom_id: z.union([z.string(), z.array(z.string())]).optional(),
+    is_active: z.preprocess(
+        (val) => {
+            if (typeof val === "boolean") return val;
+            if (val === "true" || val === "1" || val === 1) return true;
+            if (val === "false" || val === "0" || val === 0) return false;
+            return val;
+        },
+        z.boolean({ message: "Active must be a boolean" })
+    ).optional(),
+}).strict();
+
+
+/**
  * Data Transfer Objects (DTO)
  * ------------------------------------------------------------------
  * Representan tipos derivados directamente de los esquemas de validación.
@@ -120,15 +155,18 @@ const productionLineResponseSchema = productionLineCreateSchema.extend({
 type ProductionLineCreateDto = z.infer<typeof productionLineCreateSchema>;
 type ProductionLineUpdateDto = z.infer<typeof productionLineUpdateSchema>;
 type ProductionLineResponseDto = z.infer<typeof productionLineResponseSchema>;
+type ProductionLineQueryDto = z.infer<typeof productionLineResponseSchema>;
 
 export {
     productionLineCreateSchema,
     productionLineUpdateSchema,
     productionLineResponseSchema,
+    ProductionLineQuerySchema
 };
 
 export type {
     ProductionLineCreateDto,
     ProductionLineUpdateDto,
     ProductionLineResponseDto,
+    ProductionLineQueryDto
 };

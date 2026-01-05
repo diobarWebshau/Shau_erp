@@ -1,5 +1,5 @@
-import { productOrchestratorResponseSchema } from "../../../../features/products/orchestrator/application/product-orchestrator.model.schema";
-import { productQuerySchema } from "../../../../core/product/application/dto/product.model.schema";
+import { productOrchestratorResponseSchema } from "@modules/features/products/orchestrator/application/product-orchestrator.model.schema";
+import { productQuerySchema } from "@modules/core/product/application/dto/product.model.schema";
 import z from "zod";
 declare const productQueryOrchestratorSchema: z.ZodObject<{
     product: z.ZodObject<{
@@ -10,7 +10,7 @@ declare const productQueryOrchestratorSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
@@ -58,7 +58,7 @@ declare const productQueryFullResponseSchema: z.ZodObject<{
     presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-    barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
     sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;

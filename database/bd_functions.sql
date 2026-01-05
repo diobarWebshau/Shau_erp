@@ -2872,7 +2872,7 @@ BEGIN
 																					'supplier', inp_sub.supplier,
 																					'is_draft', inp_sub.is_draft,
 																					'photo', inp_sub.photo,
-																					'is_active', inp_sub.status,
+																					'is_active', inp_sub.is_active,
 																					'created_at', inp_sub.created_at,
 																					'updated_at', inp_sub.updated_at,
 																					'input_types', (
@@ -2929,7 +2929,7 @@ BEGIN
 												'supplier', inp2.supplier,
 												'is_draft', inp2.is_draft,
 												'photo', inp2.photo,
-												'is_active', inp2.status,
+												'is_active', inp2.is_active,
 												'created_at', inp2.created_at,
 												'updated_at', inp2.updated_at,
 												'input_types', (

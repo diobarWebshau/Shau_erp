@@ -3,11 +3,11 @@ import { IProductInputProcessRepository } from "../../assigments/product-input-p
 import { IProductProcessRepository } from "../../assigments/product-process/domain/product-process.repository.interface";
 import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
 import { IProductQueryRepository } from "../../../../query/product/domain/product-query.repository";
-import { IProductRepository } from "../../../../core/product/domain/product.repository.interface";
-import { IInputRepository } from "../../../../core/input/domain/input.repository.interface";
-import { IProcessRepository } from "../../../../core/process/domain/process.repository";
-import { IFileCleanupPort } from "../../../../../shared/files/file-cleanup.port";
-import { ProductOrchestratorCreate, ProductOrchestrator } from "../domain/product-orchestrator.types";
+import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
+import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
+import { IProcessRepository } from "@modules/core/process/domain/process.repository";
+import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
+import { ProductOrchestratorCreate, ProductOrchestratorResponse } from "../domain/product-orchestrator.types";
 interface CreateProductOrchestratorUseCaseProps {
     productRepo: IProductRepository;
     inputRepo: IInputRepository;
@@ -30,6 +30,6 @@ export declare class CreateProductOrchestratorUseCase {
     private readonly createProductInputProcessUseCase;
     private readonly fileCleanup;
     constructor({ productRepo, discountRangeRepo, productInputRepo, productProcessRepo, inputRepo, processRepo, productInputProcessRepo, fileCleanup, productQuery }: CreateProductOrchestratorUseCaseProps);
-    execute(data: ProductOrchestratorCreate): Promise<ProductOrchestrator>;
+    execute(data: ProductOrchestratorCreate): Promise<ProductOrchestratorResponse>;
 }
 export {};

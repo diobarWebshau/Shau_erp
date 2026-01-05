@@ -1,14 +1,14 @@
-import { ProductOrchestrator } from "../domain/product-orchestrator.types";
+import { ProductOrchestratorResponse } from "../domain/product-orchestrator.types";
 import { IProductDiscountRangeRepository } from "../../assigments/product-discounts-ranges/domain/product-discount-range.repository.interface";
 import { IProductInputProcessRepository } from "../../assigments/product-input-process/domain/product-input-process.repository.interface";
 import { IProductProcessRepository } from "../../assigments/product-process/domain/product-process.repository.interface";
 import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
-import { IProductRepository } from "../../../../core/product/domain/product.repository.interface";
-import { IInputRepository } from "../../../../core/input/domain/input.repository.interface";
-import { IProcessRepository } from "../../../../core/process/domain/process.repository";
-import { IProductQueryRepository } from "../../../../query/product/domain/product-query.repository";
-import { ProductOrchestratorUpdateDTO } from "./product-orchestrator.model.schema";
-import { IFileCleanupPort } from "../../../../../shared/files/file-cleanup.port";
+import { IProductQueryRepository } from "@modules/query/product/domain/product-query.repository";
+import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
+import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
+import { IProcessRepository } from "@modules/core/process/domain/process.repository";
+import { ProductOrchestratorUpdateDto } from "./product-orchestrator.model.schema";
+import { IFileCleanupPort } from "@shared/files/file-cleanup.port";
 interface UpdateProductOrchestratorUseCaseProps {
     productRepo: IProductRepository;
     processRepo: IProcessRepository;
@@ -40,6 +40,6 @@ export declare class UpdateProductOrchestratorUseCase {
     private readonly updateProductDiscountRangeUseCase;
     private readonly fileCleanup;
     constructor({ productInputRepo, discountRangeRepo, productProcessRepo, productRepo, processRepo, inputRepo, productInputProcessRepo, fileCleanup, productQuery }: UpdateProductOrchestratorUseCaseProps);
-    execute(productId: number, data: ProductOrchestratorUpdateDTO): Promise<ProductOrchestrator>;
+    execute(productId: number, data: ProductOrchestratorUpdateDto): Promise<ProductOrchestratorResponse>;
 }
 export {};

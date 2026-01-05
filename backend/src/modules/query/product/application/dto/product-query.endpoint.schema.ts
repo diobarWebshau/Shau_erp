@@ -13,7 +13,7 @@ const getByIdProductOrchestratorSchema = z.object({
     params: z.object({ id: z.string() }).strict(),
     query: z.object({}).strict(),
     body: z.object({}).strict(),
-    response: productQueryOrchestratorSchema,
+    response: productQueryOrchestratorSchema.nullable(),
 });
 
 const getAllProductFullQuerySchema = z.object({
@@ -27,7 +27,7 @@ const getByIdProductFullQuerySchema = z.object({
     params: z.object({ id: z.string() }).strict(),
     query: z.object({}).strict(),
     body: z.object({}).strict(),
-    response: productQueryFullResponseSchema,
+    response: productQueryFullResponseSchema.nullable(),
 });
 
 type GetAllProductOrchestratorSchema = EndpointSchema<

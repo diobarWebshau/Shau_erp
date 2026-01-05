@@ -1,6 +1,6 @@
 import type { LocationCreateProps, LocationProps, LocationUpdateProps } from "../../domain/location.types";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
-import { ClientSearchCriteria } from "../../../../core/client/domain/client.types";
+import { ClientSearchCriteria } from "@modules/core/client/domain/client.types";
 import { Transaction } from "sequelize";
 export declare class LocationRepository implements ILocationRepository {
     findAll: (query: ClientSearchCriteria, tx?: Transaction) => Promise<LocationProps[]>;

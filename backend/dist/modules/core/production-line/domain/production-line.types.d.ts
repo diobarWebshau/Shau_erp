@@ -61,18 +61,13 @@ interface ProductionLineProps {
     created_at: Date;
     updated_at: Date;
 }
-/**
- * ProductionLineCreateProps
- * ------------------------------------------------------------------
- * Representa los campos permitidos durante la creación.
- * No incluye id, timestamps, etc.
- */
 type ProductionLineCreateProps = Partial<Omit<ProductionLineProps, "id" | "created_at" | "updated_at">>;
-/**
- * ProductionLineUpdateProps
- * ------------------------------------------------------------------
- * Representa los campos que pueden ser actualizados.
- * Es equivalente a un DTO parcial de update.
- */
 type ProductionLineUpdateProps = Partial<ProductionLineCreateProps>;
-export { ProductionLineProps, ProductionLineCreateProps, ProductionLineUpdateProps };
+interface ProductionLineSearchCriteria {
+    filter?: string;
+    exclude_ids?: number[];
+    name?: string | string[];
+    custom_id?: string | string[];
+    is_active?: boolean;
+}
+export { ProductionLineProps, ProductionLineCreateProps, ProductionLineUpdateProps, ProductionLineSearchCriteria };

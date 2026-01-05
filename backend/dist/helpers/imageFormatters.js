@@ -7,7 +7,7 @@ exports.formatWithBase64 = formatWithBase64;
 exports.formatWith64Multiple = formatWith64Multiple;
 exports.formatImagesDeepRecursive = formatImagesDeepRecursive;
 exports.convertImagePropsRecursively = convertImagePropsRecursively;
-const imageHandlerClass_1 = __importDefault(require("./imageHandlerClass"));
+const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 const path_1 = __importDefault(require("path"));
 const mime_1 = __importDefault(require("mime"));
 /* --------------------------------------------------------------------------

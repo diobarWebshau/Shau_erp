@@ -1,4 +1,4 @@
-import type { EndpointSchema } from "../../../../../shared/typed-request-endpoint/endpoint.interface";
+import type { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 /**
  * Schema

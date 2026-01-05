@@ -1,7 +1,7 @@
-import { IProductionLineRepository } from "../../../../../../../modules/core/production-line/domain/production-line.repository.interface";
+import { IProductionLineRepository } from "@src/modules/core/production-line/domain/production-line.repository.interface";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import type { LocationProductionLineProps, LocationProductionLineCreateProps } from "../../domain/location-production-line.types";
-import { ILocationRepository } from "../../../../../../../modules/core/location/domain/location.repository.interface";
+import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
 import { Transaction } from "sequelize";
 /**
  * UseCase

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductRepository = void 0;
 const sequelize_1 = require("sequelize");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const product_orm_1 = require("../orm/product.orm");
 /**
  * Repository (Infrastructure)
@@ -64,11 +64,11 @@ const mapModelToDomain = (model) => {
         description: json.description,
         presentation: json.presentation,
         unit_of_measure: json.unit_of_measure,
-        production_cost: json.production_cost,
+        production_cost: Number(json.production_cost),
         storage_conditions: json.storage_conditions,
         barcode: json.barcode,
         sku: json.sku,
-        sale_price: json.sale_price,
+        sale_price: Number(json.sale_price),
         photo: json.photo,
         is_draft: json.is_draft,
         is_active: json.is_active,

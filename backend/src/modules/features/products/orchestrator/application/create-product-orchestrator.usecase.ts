@@ -22,7 +22,8 @@ import { sequelize } from "@src/config/mysql/sequelize";
 import HttpError from "@shared/errors/http/http-error";
 import {
     ProductProcessCreateOrchestrator, ProductOrchestratorCreate, ProductProcessOrchestratorAssignExisting,
-    ProductProcessOrchestratorCreateNew, ProductOrchestrator, ProductProcessProps,
+    ProductProcessOrchestratorCreateNew, ProductProcessProps,
+    ProductOrchestratorResponse,
 } from "../domain/product-orchestrator.types";
 import { Transaction } from "sequelize";
 
@@ -84,7 +85,7 @@ export class CreateProductOrchestratorUseCase {
         this.fileCleanup = fileCleanup;
     };
 
-    async execute(data: ProductOrchestratorCreate): Promise<ProductOrchestrator> {
+    async execute(data: ProductOrchestratorCreate): Promise<ProductOrchestratorResponse> {
 
         const tx: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.REPEATABLE_READ,
@@ -199,7 +200,7 @@ export class CreateProductOrchestratorUseCase {
             // --------------------------------------------------
             // |🔹 COMMIT + RESPONSE                            |
             // --------------------------------------------------
-            const productOrchestrator: ProductOrchestrator | null = await this.getProductOrchestrator.execute(productCreateResponse.id, tx);
+            const productOrchestrator: ProductOrchestratorResponse | null = await this.getProductOrchestrator.execute(productCreateResponse.id, tx);
             if (!productOrchestrator)
                 throw new HttpError(500, "No se pudo acceder al producto despues de haber sido creado.");
             await tx.commit();

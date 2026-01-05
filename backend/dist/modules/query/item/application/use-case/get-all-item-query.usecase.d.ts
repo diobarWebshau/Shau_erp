@@ -1,6 +1,6 @@
-import { IProductRepository } from "../../../../../modules/core/product/domain/product.repository.interface";
-import { IItemRepository } from "../../../../../modules/features/items/domain/item.repository.interface";
-import { IInputRepository } from "../../../../../modules/core/input/domain/input.repository.interface";
+import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
+import { IItemRepository } from "@src/modules/features/items/domain/item.repository.interface";
+import { IInputRepository } from "@src/modules/core/input/domain/input.repository.interface";
 import { ItemQueryProps, ItemSearchCriteria } from "../../domain/item-query.types";
 /**
  * UseCase

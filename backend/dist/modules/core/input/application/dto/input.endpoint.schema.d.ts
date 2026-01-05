@@ -1,4 +1,4 @@
-import type { EndpointSchema } from "../../../../../shared/typed-request-endpoint/endpoint.interface";
+import type { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 /**
  * Schema
@@ -40,7 +40,7 @@ declare const getAllinputsSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -70,7 +70,7 @@ declare const getByIdinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -100,7 +100,7 @@ declare const getByNameinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -130,7 +130,7 @@ declare const getByBarcodeinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -160,7 +160,7 @@ declare const getBySkuinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -190,7 +190,7 @@ declare const getByCustomIdinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -217,7 +217,7 @@ declare const createinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -233,7 +233,7 @@ declare const createinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -262,7 +262,7 @@ declare const updateinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
         unit_of_measure: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
         storage_conditions: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
-        barcode: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodNumber>>>;
+        barcode: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>>;
         sku: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
         photo: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
         supplier: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
@@ -278,7 +278,7 @@ declare const updateinputSchema: z.ZodObject<{
         presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;

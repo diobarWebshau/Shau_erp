@@ -5,6 +5,7 @@ import HttpError from "@shared/errors/http/http-error";
 import { IClientRepository } from "@src/modules/core/client/domain/client.repository.interface";
 import { ClientProps } from "@src/modules/core/client/domain/client.types";
 import { ProductProps } from "@src/modules/core/product/domain/product.types";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -53,21 +54,21 @@ export class CreateProductDiscountClientUseCase {
         private readonly repoProduct: IProductRepository,
         private readonly repoClient: IClientRepository
     ) { }
-    async execute(data: ProductDiscountClientCreateProps): Promise<ProductDiscountClientProps> {
-        const validClient: ClientProps | null = await this.repoClient.findById(data.client_id);
+    async execute(data: ProductDiscountClientCreateProps, tx?: Transaction): Promise<ProductDiscountClientProps> {
+        const validClient: ClientProps | null = await this.repoClient.findById(data.client_id, tx);
         if (!validClient) throw new HttpError(404,
             "El cliente seleccionado no existe."
         );
-        const validProduct: ProductProps | null = await this.repoProduct.findById(data.product_id);
+        const validProduct: ProductProps | null = await this.repoProduct.findById(data.product_id, tx);
         if (!validProduct) throw new HttpError(404,
             "El producto seleccionado no existe."
         );
         const validDuplicate: ProductDiscountClientProps | null =
-            await this.repo.findByProductClientId(data.product_id, data.product_id);
+            await this.repo.findByProductClientId(data.product_id, data.client_id, tx);
         if (validDuplicate) throw new HttpError(409,
             "El cliente ya tiene un descuento para el producto ingresado."
         );
-        const created: ProductDiscountClientProps = await this.repo.create(data);
+        const created: ProductDiscountClientProps = await this.repo.create(data, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del descueto del producto al cliente."
         );

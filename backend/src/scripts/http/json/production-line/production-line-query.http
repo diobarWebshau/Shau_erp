@@ -1,0 +1,11 @@
+### GET ALL
+GET http://localhost:3003/query/production-line/orchestrator HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/query/production-line/orchestrator/id/1 HTTP/1.1
+
+### GET ALL
+GET http://localhost:3003/query/production-line HTTP/1.1
+
+### GET BY ID
+GET http://localhost:3003/query/production-line/id/1 HTTP/1.1

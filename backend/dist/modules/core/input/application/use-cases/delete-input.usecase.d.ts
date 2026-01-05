@@ -1,5 +1,5 @@
 import type { IInputRepository } from "../../domain/input.repository.interface";
-import { IFileCleanupPort } from "../../../../../shared/files/file-cleanup.port";
+import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
 import { Transaction } from "sequelize";
 /**
  * UseCase

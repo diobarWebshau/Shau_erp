@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateClientAddressUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("../../../../../../../helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("../../../../../../../helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("../../../../../../../helpers/pickEditableFields");
-const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
+const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
+const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
+const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
  * ------------------------------------------------------------------

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateRequest = void 0;
-const validation_error_js_1 = require("../../shared/errors/validation-error/validation-error.js");
-const zod_validator_1 = require("../../shared/zod-validators/zod-validator");
+const validation_error_js_1 = require("@shared/errors/validation-error/validation-error.js");
+const zod_validator_1 = require("@shared/zod-validators/zod-validator");
 /**
  * ============================================================================================
  * 🟣 validateRequest(schema)

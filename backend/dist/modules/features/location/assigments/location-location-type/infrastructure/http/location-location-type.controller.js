@@ -10,8 +10,8 @@ const update_location_location_type_usecase_1 = require("../../application/use-c
 const get_all_location_location_type_usecase_1 = require("../../application/use-cases/get-all-location-location-type.usecase");
 const delete_location_location_type_usecase_1 = require("../../application/use-cases/delete-location-location-type.usecase");
 const location_location_type_repository_1 = require("../repository/location-location-type.repository");
-const location_repository_1 = require("../../../../../../../modules/core/location/infrastructure/repository/location.repository");
-const location_type_repository_1 = __importDefault(require("../../../../../../../modules/core/location-type/infrastructure/repository/location-type.repository"));
+const location_repository_1 = require("@src/modules/core/location/infrastructure/repository/location.repository");
+const location_type_repository_1 = __importDefault(require("@src/modules/core/location-type/infrastructure/repository/location-type.repository"));
 const get_by_location_Id_Location_type_Id_location_location_type_usecase_1 = require("../../application/use-cases/get-by-location-Id-Location-type-Id-location-location-type.usecase");
 /**
  * Controller (Infrastructure / HTTP)

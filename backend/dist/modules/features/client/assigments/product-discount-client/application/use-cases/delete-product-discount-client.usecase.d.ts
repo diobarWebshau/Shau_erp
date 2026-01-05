@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
 /**
  * UseCase
@@ -42,5 +43,5 @@ import type { IProductDiscountClientRepository } from "../../domain/product-disc
 export declare class DeleteProductDiscountClientUseCase {
     private readonly repo;
     constructor(repo: IProductDiscountClientRepository);
-    execute(id: number): Promise<void>;
+    execute(id: number, tx?: Transaction): Promise<void>;
 }

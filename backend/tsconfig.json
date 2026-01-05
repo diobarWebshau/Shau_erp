@@ -299,7 +299,7 @@
    },
    "include": [
       "src"
-, "src/storage/http/.ts", "src/storage/infrastructure/.ts"      /* Indica a TypeScript que solo debe analizar y compilar 
+      /* Indica a TypeScript que solo debe analizar y compilar 
      los archivos dentro de la carpeta "src". 
      Esto mantiene el proyecto limpio, ordenado y evita que el compilador 
      intente procesar archivos innecesarios fuera del código fuente real. */

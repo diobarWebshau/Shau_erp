@@ -1,17 +1,27 @@
 import createApp from "./app.js";
-import { Express } from "express";
-import { Server } from "http";
-import { AddressInfo } from "net";
+import type { Express } from "express";
+import type { Server } from "http";
 
 const createServer = async (): Promise<Server> => {
     const app: Express = await createApp();
-    const port: string = (process.env.SERVER_PORT) ?? ""
-    const server: Server = app.listen(port, () => {
-        const address: string | AddressInfo | null = server.address();
-        if (typeof address === "string") console.log(`Server listening on ${address}`);
-        else if (address && typeof address === "object") console.log(`Server listening on the port ${address.port}`)
-    })
-    return server;
-}
+
+    const port: number = Number(process.env.SERVER_PORT);
+    if (!Number.isInteger(port) || port <= 0) {
+        throw new Error("Missing/invalid SERVER_PORT");
+    }
+
+    return new Promise<Server>((resolve, reject) => {
+        const server: Server = app.listen(port);
+
+        server.once("listening", () => {
+            console.log(`Servidor corriendo en el puerto ${port}`);
+            resolve(server);
+        });
+
+        server.once("error", (err: Error) => {
+            reject(err);
+        });
+    });
+};
 
 export default createServer;

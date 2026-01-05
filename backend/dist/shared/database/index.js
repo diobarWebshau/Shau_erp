@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeDatabase = initializeDatabase;
 // src/shared/database/index.ts
-const sequelize_1 = require("../../config/mysql/sequelize");
+const sequelize_1 = require("@config/mysql/sequelize");
 const init_models_1 = require("./init-models");
 const init_associations_1 = require("./init-associations");
 async function initializeDatabase() {

@@ -8,7 +8,7 @@ const get_product_discount_range_by_id_usecase_1 = require("../../application/us
 const get_all_product_discount_range_usecase_1 = require("../../application/use-cases/get-all-product-discount-range.usecase");
 const delete_product_discount_range_usecase_1 = require("../../application/use-cases/delete-product-discount-range.usecase");
 const product_discount_range_repository_1 = require("../repository/product-discount-range.repository");
-const producto_repository_1 = require("../../../../../../../modules/core/product/infrastructure/repository/producto.repository");
+const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductProcessRepository = void 0;
 const product_process_orm_1 = require("../orm/product-process.orm");
-const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------

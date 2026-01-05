@@ -1,4 +1,5 @@
-import { ProductFullQueryResult, ProductOrchestratorQuery, ProductSearchCriteria } from "../domain/product-query.type"
+import { Transaction } from "sequelize";
+import { ProductFullQueryResult, ProductSearchCriteria } from "../domain/product-query.type"
 
 /**
  * IRepository
@@ -43,8 +44,8 @@ import { ProductFullQueryResult, ProductOrchestratorQuery, ProductSearchCriteria
  */
 
 export interface IProductQueryRepository {
-    getAllProductFullQueryResult(query: ProductSearchCriteria): Promise<ProductFullQueryResult[]>,
-    getByIdProductFullQueryResult(id: number): Promise<ProductFullQueryResult | null>,
-    getAllProductOrchestratorResult(query: ProductSearchCriteria): Promise<ProductOrchestratorQuery[]>,
-    getByIdProductOrchestratorResult(id: number): Promise<ProductOrchestratorQuery | null>,
+    getAllProductFullQueryResult(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResult[]>,
+    getByIdProductFullQueryResult(id: number, tx?: Transaction): Promise<ProductFullQueryResult | null>,
+    getAllProductOrchestratorResult(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResult[]>,
+    getByIdProductOrchestratorResult(id: number, tx?: Transaction): Promise<ProductFullQueryResult | null>,
 };

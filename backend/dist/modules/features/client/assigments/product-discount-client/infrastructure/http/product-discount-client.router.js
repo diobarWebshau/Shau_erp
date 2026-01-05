@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountClientRouter = void 0;
 // src/modules/location/infrastructure/http/location.router.ts
-const zod_middleware_1 = require("../../../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const product_discount_client_endpoint_schema_1 = require("../../application/dto/product_discount-client.endpoint.schema");
 const product_discount_client_controller_1 = require("./product-discount-client.controller");
 const express_1 = require("express");

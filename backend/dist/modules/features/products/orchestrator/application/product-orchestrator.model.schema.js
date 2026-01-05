@@ -5,9 +5,9 @@ const product_discount_range_model_schema_1 = require("../../assigments/product-
 const product_input_process_model_schema_1 = require("../../assigments/product-input-process/application/dto/product-input-process.model.schema");
 const product_process_model_schema_1 = require("../../assigments/product-process/application/dto/product-process.model.schema");
 const product_input_model_schema_1 = require("../../assigments/product-input/application/dto/product-input.model.schema");
-const product_model_schema_1 = require("../../../../core/product/application/dto/product.model.schema");
+const product_model_schema_1 = require("@modules/core/product/application/dto/product.model.schema");
 Object.defineProperty(exports, "productQuerySchema", { enumerable: true, get: function () { return product_model_schema_1.productQuerySchema; } });
-const process_model_schema_1 = require("../../../../core/process/application/dto/process.model.schema");
+const process_model_schema_1 = require("@modules/core/process/application/dto/process.model.schema");
 const zod_1 = require("zod");
 // =========================================================================================
 // |                     ORCHESTRATOR — CREATE (REQUEST)                                   |

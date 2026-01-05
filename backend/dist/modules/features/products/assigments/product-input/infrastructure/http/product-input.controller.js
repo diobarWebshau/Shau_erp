@@ -7,8 +7,8 @@ const update_product_input_usecase_1 = require("../../application/use-cases/upda
 const get_all_product_input_usecase_1 = require("../../application/use-cases/get-all-product-input.usecase");
 const delete_product_input_usecase_1 = require("../../application/use-cases/delete-product-input.usecase");
 const product_input_repository_1 = require("../repository/product-input.repository");
-const producto_repository_1 = require("../../../../../../../modules/core/product/infrastructure/repository/producto.repository");
-const input_repository_1 = require("../../../../../../../modules/core/input/infrastructure/repository/input.repository");
+const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
+const input_repository_1 = require("@src/modules/core/input/infrastructure/repository/input.repository");
 const get_product_input_by_id_product_input_usecase_1 = require("../../application/use-cases/get-product-input-by-id-product-input.usecase");
 /**
  * Controller (Infrastructure / HTTP)

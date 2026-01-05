@@ -4,16 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductOrchestratorUseCase = void 0;
-const create_product_discount_range_usecase_1 = require("../../../../features/products/assigments/product-discounts-ranges/application/use-cases/create-product-discount-range.usecase");
+const create_product_discount_range_usecase_1 = require("@modules/features/products/assigments/product-discounts-ranges/application/use-cases/create-product-discount-range.usecase");
 const get_product_input_by_id_product_input_usecase_1 = require("../../assigments/product-input/application/use-cases/get-product-input-by-id-product-input.usecase");
-const create_product_process_usecase_1 = require("../../../../features/products/assigments/product-process/application/use-cases/create-product-process.usecase");
+const create_product_process_usecase_1 = require("@modules/features/products/assigments/product-process/application/use-cases/create-product-process.usecase");
 const create_product_input_process_usecase_1 = require("../../assigments/product-input-process/application/use-cases/create-product-input-process.usecase");
 const get_by_id_product_query_orchestrator_usecase_1 = require("../../../../query/product/application/usecase/get-by-id-product-query-orchestrator.usecase");
-const create_product_input_usecase_1 = require("../../../../features/products/assigments/product-input/application/use-cases/create-product-input.usecase");
-const create_product_usecase_1 = require("../../../../core/product/application/use-cases/create-product.usecase");
-const create_process_usecase_1 = require("../../../../core/process/application/use-cases/create-process.usecase");
-const sequelize_1 = require("../../../../../config/mysql/sequelize");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const create_product_input_usecase_1 = require("@modules/features/products/assigments/product-input/application/use-cases/create-product-input.usecase");
+const create_product_usecase_1 = require("@modules/core/product/application/use-cases/create-product.usecase");
+const create_process_usecase_1 = require("@modules/core/process/application/use-cases/create-process.usecase");
+const sequelize_1 = require("@src/config/mysql/sequelize");
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const sequelize_2 = require("sequelize");
 class CreateProductOrchestratorUseCase {
     // * CASOS DE USO PARA PRODUCTO

@@ -1,0 +1,262 @@
+import { EndpointSchema } from "@src/shared/typed-request-endpoint/endpoint.interface";
+import { z } from "zod";
+declare const createLocationOrchestratorSchema: z.ZodObject<{
+    params: z.ZodObject<{}, z.core.$strict>;
+    query: z.ZodObject<{}, z.core.$strict>;
+    body: z.ZodObject<{
+        payload: z.ZodPipe<z.ZodPipe<z.ZodString, z.ZodTransform<any, string>>, z.ZodObject<{
+            location: z.ZodObject<{
+                name: z.ZodNullable<z.ZodString>;
+                description: z.ZodNullable<z.ZodString>;
+                street: z.ZodNullable<z.ZodString>;
+                custom_id: z.ZodNullable<z.ZodString>;
+                location_manager: z.ZodNullable<z.ZodString>;
+                street_number: z.ZodNullable<z.ZodNumber>;
+                neighborhood: z.ZodNullable<z.ZodString>;
+                city: z.ZodNullable<z.ZodString>;
+                state: z.ZodNullable<z.ZodString>;
+                country: z.ZodNullable<z.ZodString>;
+                zip_code: z.ZodNullable<z.ZodNumber>;
+                phone: z.ZodNullable<z.ZodString>;
+                production_capacity: z.ZodNullable<z.ZodNumber>;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+            }, z.core.$strip>;
+            location_location_types: z.ZodArray<z.ZodObject<{
+                location_type_id: z.ZodNumber;
+                location_id: z.ZodOptional<z.ZodUndefined>;
+            }, z.core.$strict>>;
+            location_production_lines: z.ZodArray<z.ZodObject<{
+                production_line_id: z.ZodNumber;
+                location_id: z.ZodOptional<z.ZodUndefined>;
+            }, z.core.$strict>>;
+        }, z.core.$strip>>;
+    }, z.core.$strip>;
+    response: z.ZodObject<{
+        location: z.ZodObject<{
+            name: z.ZodNullable<z.ZodString>;
+            description: z.ZodNullable<z.ZodString>;
+            street: z.ZodNullable<z.ZodString>;
+            custom_id: z.ZodNullable<z.ZodString>;
+            location_manager: z.ZodNullable<z.ZodString>;
+            street_number: z.ZodNullable<z.ZodNumber>;
+            neighborhood: z.ZodNullable<z.ZodString>;
+            city: z.ZodNullable<z.ZodString>;
+            state: z.ZodNullable<z.ZodString>;
+            country: z.ZodNullable<z.ZodString>;
+            zip_code: z.ZodNullable<z.ZodNumber>;
+            phone: z.ZodNullable<z.ZodString>;
+            production_capacity: z.ZodNullable<z.ZodNumber>;
+            is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+            id: z.ZodNumber;
+            created_at: z.ZodString;
+            updated_at: z.ZodString;
+        }, z.core.$strip>;
+        location_location_types: z.ZodArray<z.ZodObject<{
+            location_id: z.ZodNumber;
+            location_type_id: z.ZodNumber;
+            id: z.ZodNumber;
+            location: z.ZodObject<{
+                name: z.ZodNullable<z.ZodString>;
+                description: z.ZodNullable<z.ZodString>;
+                street: z.ZodNullable<z.ZodString>;
+                custom_id: z.ZodNullable<z.ZodString>;
+                location_manager: z.ZodNullable<z.ZodString>;
+                street_number: z.ZodNullable<z.ZodNumber>;
+                neighborhood: z.ZodNullable<z.ZodString>;
+                city: z.ZodNullable<z.ZodString>;
+                state: z.ZodNullable<z.ZodString>;
+                country: z.ZodNullable<z.ZodString>;
+                zip_code: z.ZodNullable<z.ZodNumber>;
+                phone: z.ZodNullable<z.ZodString>;
+                production_capacity: z.ZodNullable<z.ZodNumber>;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+                id: z.ZodNumber;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+            location_type: z.ZodObject<{
+                id: z.ZodNumber;
+                name: z.ZodString;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+        }, z.core.$strip>>;
+        location_production_lines: z.ZodArray<z.ZodObject<{
+            location_id: z.ZodNumber;
+            location_type_id: z.ZodNumber;
+            id: z.ZodNumber;
+            location: z.ZodObject<{
+                name: z.ZodNullable<z.ZodString>;
+                description: z.ZodNullable<z.ZodString>;
+                street: z.ZodNullable<z.ZodString>;
+                custom_id: z.ZodNullable<z.ZodString>;
+                location_manager: z.ZodNullable<z.ZodString>;
+                street_number: z.ZodNullable<z.ZodNumber>;
+                neighborhood: z.ZodNullable<z.ZodString>;
+                city: z.ZodNullable<z.ZodString>;
+                state: z.ZodNullable<z.ZodString>;
+                country: z.ZodNullable<z.ZodString>;
+                zip_code: z.ZodNullable<z.ZodNumber>;
+                phone: z.ZodNullable<z.ZodString>;
+                production_capacity: z.ZodNullable<z.ZodNumber>;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+                id: z.ZodNumber;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+            production_line: z.ZodObject<{
+                name: z.ZodString;
+                custom_id: z.ZodString;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+                id: z.ZodNumber;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+        }, z.core.$strip>>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
+declare const updateLocationOrchestratorSchema: z.ZodObject<{
+    params: z.ZodObject<{
+        id: z.ZodString;
+    }, z.core.$strict>;
+    query: z.ZodObject<{}, z.core.$strict>;
+    body: z.ZodObject<{
+        payload: z.ZodPipe<z.ZodPipe<z.ZodString, z.ZodTransform<any, string>>, z.ZodObject<{
+            location: z.ZodObject<{
+                name: z.ZodNullable<z.ZodString>;
+                description: z.ZodNullable<z.ZodString>;
+                street: z.ZodNullable<z.ZodString>;
+                custom_id: z.ZodNullable<z.ZodString>;
+                location_manager: z.ZodNullable<z.ZodString>;
+                street_number: z.ZodNullable<z.ZodNumber>;
+                neighborhood: z.ZodNullable<z.ZodString>;
+                city: z.ZodNullable<z.ZodString>;
+                state: z.ZodNullable<z.ZodString>;
+                country: z.ZodNullable<z.ZodString>;
+                zip_code: z.ZodNullable<z.ZodNumber>;
+                phone: z.ZodNullable<z.ZodString>;
+                production_capacity: z.ZodNullable<z.ZodNumber>;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+            }, z.core.$strip>;
+            location_location_types_manager: z.ZodObject<{
+                added: z.ZodArray<z.ZodObject<{
+                    location_type_id: z.ZodNumber;
+                    location_id: z.ZodOptional<z.ZodUndefined>;
+                }, z.core.$strict>>;
+                updated: z.ZodArray<z.ZodObject<{
+                    location_id: z.ZodOptional<z.ZodNumber>;
+                    location_type_id: z.ZodOptional<z.ZodNumber>;
+                    id: z.ZodNumber;
+                }, z.core.$strip>>;
+                deleted: z.ZodArray<z.ZodObject<{
+                    location_id: z.ZodNumber;
+                    location_type_id: z.ZodNumber;
+                    id: z.ZodNumber;
+                }, z.core.$strip>>;
+            }, z.core.$strip>;
+            location_production_lines_manager: z.ZodObject<{
+                added: z.ZodArray<z.ZodObject<{
+                    production_line_id: z.ZodNumber;
+                    location_id: z.ZodOptional<z.ZodUndefined>;
+                }, z.core.$strict>>;
+                updated: z.ZodArray<z.ZodObject<{
+                    location_id: z.ZodOptional<z.ZodNumber>;
+                    production_line_id: z.ZodOptional<z.ZodNumber>;
+                    id: z.ZodNumber;
+                }, z.core.$strip>>;
+                deleted: z.ZodArray<z.ZodObject<{
+                    location_id: z.ZodNumber;
+                    production_line_id: z.ZodNumber;
+                    id: z.ZodNumber;
+                }, z.core.$strip>>;
+            }, z.core.$strip>;
+        }, z.core.$strip>>;
+    }, z.core.$strip>;
+    response: z.ZodObject<{
+        location: z.ZodObject<{
+            name: z.ZodNullable<z.ZodString>;
+            description: z.ZodNullable<z.ZodString>;
+            street: z.ZodNullable<z.ZodString>;
+            custom_id: z.ZodNullable<z.ZodString>;
+            location_manager: z.ZodNullable<z.ZodString>;
+            street_number: z.ZodNullable<z.ZodNumber>;
+            neighborhood: z.ZodNullable<z.ZodString>;
+            city: z.ZodNullable<z.ZodString>;
+            state: z.ZodNullable<z.ZodString>;
+            country: z.ZodNullable<z.ZodString>;
+            zip_code: z.ZodNullable<z.ZodNumber>;
+            phone: z.ZodNullable<z.ZodString>;
+            production_capacity: z.ZodNullable<z.ZodNumber>;
+            is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+            id: z.ZodNumber;
+            created_at: z.ZodString;
+            updated_at: z.ZodString;
+        }, z.core.$strip>;
+        location_location_types: z.ZodArray<z.ZodObject<{
+            location_id: z.ZodNumber;
+            location_type_id: z.ZodNumber;
+            id: z.ZodNumber;
+            location: z.ZodObject<{
+                name: z.ZodNullable<z.ZodString>;
+                description: z.ZodNullable<z.ZodString>;
+                street: z.ZodNullable<z.ZodString>;
+                custom_id: z.ZodNullable<z.ZodString>;
+                location_manager: z.ZodNullable<z.ZodString>;
+                street_number: z.ZodNullable<z.ZodNumber>;
+                neighborhood: z.ZodNullable<z.ZodString>;
+                city: z.ZodNullable<z.ZodString>;
+                state: z.ZodNullable<z.ZodString>;
+                country: z.ZodNullable<z.ZodString>;
+                zip_code: z.ZodNullable<z.ZodNumber>;
+                phone: z.ZodNullable<z.ZodString>;
+                production_capacity: z.ZodNullable<z.ZodNumber>;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+                id: z.ZodNumber;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+            location_type: z.ZodObject<{
+                id: z.ZodNumber;
+                name: z.ZodString;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+        }, z.core.$strip>>;
+        location_production_lines: z.ZodArray<z.ZodObject<{
+            location_id: z.ZodNumber;
+            location_type_id: z.ZodNumber;
+            id: z.ZodNumber;
+            location: z.ZodObject<{
+                name: z.ZodNullable<z.ZodString>;
+                description: z.ZodNullable<z.ZodString>;
+                street: z.ZodNullable<z.ZodString>;
+                custom_id: z.ZodNullable<z.ZodString>;
+                location_manager: z.ZodNullable<z.ZodString>;
+                street_number: z.ZodNullable<z.ZodNumber>;
+                neighborhood: z.ZodNullable<z.ZodString>;
+                city: z.ZodNullable<z.ZodString>;
+                state: z.ZodNullable<z.ZodString>;
+                country: z.ZodNullable<z.ZodString>;
+                zip_code: z.ZodNullable<z.ZodNumber>;
+                phone: z.ZodNullable<z.ZodString>;
+                production_capacity: z.ZodNullable<z.ZodNumber>;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+                id: z.ZodNumber;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+            production_line: z.ZodObject<{
+                name: z.ZodString;
+                custom_id: z.ZodString;
+                is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
+                id: z.ZodNumber;
+                created_at: z.ZodString;
+                updated_at: z.ZodString;
+            }, z.core.$strip>;
+        }, z.core.$strip>>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
+type CreateLocationOrchestratorSchema = EndpointSchema<z.infer<typeof createLocationOrchestratorSchema>["params"], z.infer<typeof createLocationOrchestratorSchema>["body"], z.infer<typeof createLocationOrchestratorSchema>["query"], z.infer<typeof createLocationOrchestratorSchema>["response"]>;
+type UpdateLocationOrchestratorSchema = EndpointSchema<z.infer<typeof updateLocationOrchestratorSchema>["params"], z.infer<typeof updateLocationOrchestratorSchema>["body"], z.infer<typeof updateLocationOrchestratorSchema>["query"], z.infer<typeof updateLocationOrchestratorSchema>["response"]>;
+export type { UpdateLocationOrchestratorSchema, CreateLocationOrchestratorSchema };
+export { updateLocationOrchestratorSchema, createLocationOrchestratorSchema };

@@ -1,4 +1,4 @@
-import { EndpointSchema } from "../../../../../shared/typed-request-endpoint/endpoint.interface";
+import { EndpointSchema } from "@src/shared/typed-request-endpoint/endpoint.interface";
 import z from "zod";
 declare const createProductOrchestratorSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
@@ -13,7 +13,7 @@ declare const createProductOrchestratorSchema: z.ZodObject<{
                 presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+                barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
@@ -54,9 +54,9 @@ declare const createProductOrchestratorSchema: z.ZodObject<{
                 }, z.core.$strip>>>;
             }, z.core.$strip>]>>;
             product_discount_ranges: z.ZodArray<z.ZodObject<{
-                unit_price: z.ZodNumber;
                 min_qty: z.ZodNumber;
                 max_qty: z.ZodNumber;
+                unit_price: z.ZodNumber;
                 product_id: z.ZodOptional<z.ZodUndefined>;
             }, z.core.$strip>>;
         }, z.core.$strip>>;
@@ -71,7 +71,7 @@ declare const createProductOrchestratorSchema: z.ZodObject<{
             presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+            barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
@@ -128,7 +128,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
                 presentation: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
                 unit_of_measure: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
                 storage_conditions: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
-                barcode: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodNumber>>>;
+                barcode: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>>;
                 sku: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
                 photo: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
                 sale_price: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>>;
@@ -222,9 +222,9 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
             }, z.core.$strip>;
             product_discount_ranges_manager: z.ZodObject<{
                 added: z.ZodArray<z.ZodObject<{
-                    unit_price: z.ZodNumber;
                     min_qty: z.ZodNumber;
                     max_qty: z.ZodNumber;
+                    unit_price: z.ZodNumber;
                     product_id: z.ZodOptional<z.ZodUndefined>;
                 }, z.core.$strip>>;
                 updated: z.ZodArray<z.ZodObject<{
@@ -256,7 +256,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
             presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            barcode: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+            barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;

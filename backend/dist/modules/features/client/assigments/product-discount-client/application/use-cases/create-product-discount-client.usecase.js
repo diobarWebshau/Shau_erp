@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductDiscountClientUseCase = void 0;
-const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -54,17 +54,17 @@ class CreateProductDiscountClientUseCase {
         this.repoProduct = repoProduct;
         this.repoClient = repoClient;
     }
-    async execute(data) {
-        const validClient = await this.repoClient.findById(data.client_id);
+    async execute(data, tx) {
+        const validClient = await this.repoClient.findById(data.client_id, tx);
         if (!validClient)
             throw new http_error_1.default(404, "El cliente seleccionado no existe.");
-        const validProduct = await this.repoProduct.findById(data.product_id);
+        const validProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validProduct)
             throw new http_error_1.default(404, "El producto seleccionado no existe.");
-        const validDuplicate = await this.repo.findByProductClientId(data.product_id, data.product_id);
+        const validDuplicate = await this.repo.findByProductClientId(data.product_id, data.client_id, tx);
         if (validDuplicate)
             throw new http_error_1.default(409, "El cliente ya tiene un descuento para el producto ingresado.");
-        const created = await this.repo.create(data);
+        const created = await this.repo.create(data, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del descueto del producto al cliente.");
         return created;

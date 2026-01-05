@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductionLineRepository = void 0;
 const production_lines_orm_1 = require("../orm/production-lines.orm");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const sequelize_1 = require("sequelize");
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -68,13 +69,34 @@ class ProductionLineRepository {
     // ================================================================
     // SELECTS
     // ================================================================
-    findAll = async (tx) => {
+    findAll = async (query, tx) => {
+        const { filter, exclude_ids, is_active, ...rest } = query;
+        const where = {
+            ...(exclude_ids?.length
+                ? { id: { [sequelize_1.Op.notIn]: exclude_ids } }
+                : {}),
+            ...(is_active !== undefined ? { is_active } : {}),
+            ...Object.fromEntries(Object.entries(rest)
+                .filter(([, v]) => v !== undefined)
+                .map(([k, v]) => [
+                k,
+                Array.isArray(v) ? { [sequelize_1.Op.notIn]: v } : v,
+            ])),
+            ...(filter
+                ? {
+                    [sequelize_1.Op.or]: [
+                        { name: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { custom_id: { [sequelize_1.Op.like]: `%${filter}%` } },
+                    ],
+                }
+                : {}),
+        };
         const rows = await production_lines_orm_1.ProductionLineModel.findAll({
+            where,
+            attributes: production_lines_orm_1.ProductionLineModel.getAllFields(),
             transaction: tx,
-            attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
-        const rowsMap = rows.map((pl) => mapModelToDomain(pl));
-        return rowsMap;
+        return rows.map(pl => mapModelToDomain(pl));
     };
     findById = async (id, tx) => {
         const row = await production_lines_orm_1.ProductionLineModel.findByPk(id, {
@@ -119,12 +141,10 @@ class ProductionLineRepository {
         if (!existing)
             throw new http_error_1.default(404, "La línea de producción que se desea actualizar no fue posible encontrarla.");
         // 2. Aplicar UPDATE
-        const [affectedCount] = await production_lines_orm_1.ProductionLineModel.update(data, {
+        await production_lines_orm_1.ProductionLineModel.update(data, {
             where: { id },
             transaction: tx
         });
-        if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la línea de producción.");
         // 3. Obtener la locación actualizada
         const updated = await production_lines_orm_1.ProductionLineModel.findByPk(id, {
             transaction: tx,

@@ -1,4 +1,4 @@
-import { ApiRequest, ApiResponse } from "../../../../../../../shared/typed-request-endpoint/typed-request.interface";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { GetAllClientAddresssSchema, CreateClientAddressSchema, UpdateClientAddressSchema, DeleteClientAddressSchema, GetByClientIdClientAddressSchema, GetByIdClientAddressSchema } from "../../application/dto/client-address.endpoint.schema";
 export declare class ClientAddressController {
     private readonly repoClientAddress;

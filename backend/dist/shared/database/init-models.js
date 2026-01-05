@@ -1,22 +1,32 @@
 "use strict";
+// ? CLIENT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initModels = initModels;
-const product_input_process_orm_1 = require("../../modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm");
-const location_production_line_orm_1 = require("../../modules/features/location/assigments/location-production-line/infrastructure/orm/location-production-line.orm");
-const product_discount_range_orm_1 = require("../../modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm");
-const product_discount_client_orm_1 = require("../../modules/features/client/assigments/product-discount-client/infrastructure/orm/product-discount-client.orm");
-const location_location_type_orm_1 = require("../../modules/features/location/assigments/location-location-type/infrastructure/orm/location-location-type.orm");
-const product_process_orm_1 = require("../../modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm");
-const product_inputs_orm_1 = require("../../modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm");
-const client_address_orm_1 = require("../../modules/features/client/assigments/client-addresses/infrastructure/orm/client-address.orm");
-const production_lines_orm_1 = require("../../modules/core/production-line/infrastructure/orm/production-lines.orm");
-const location_type_orm_1 = require("../../modules/core/location-type/infrastructure/orm/location-type.orm");
-const input_type_orm_1 = require("../../modules/core/input-type/infrastructure/orm/input-type.orm");
-const location_orm_1 = require("../../modules/core/location/infrastructure/orm/location.orm");
-const process_orm_1 = require("../../modules/core/process/infrastructure/orm/process.orm");
-const product_orm_1 = require("../../modules/core/product/infrastructure/orm/product.orm");
-const clients_orm_1 = require("../../modules/core/client/infrastructure/orm/clients.orm");
-const input_orm_1 = require("../../modules/core/input/infrastructure/orm/input.orm");
+const client_address_orm_1 = require("@modules/features/client/assigments/client-addresses/infrastructure/orm/client-address.orm");
+const clients_orm_1 = require("@modules/core/client/infrastructure/orm/clients.orm");
+const product_discount_client_orm_1 = require("@modules/features/client/assigments/product-discount-client/infrastructure/orm/product-discount-client.orm");
+// ? LOCATION
+const location_orm_1 = require("@modules/core/location/infrastructure/orm/location.orm");
+const location_type_orm_1 = require("@modules/core/location-type/infrastructure/orm/location-type.orm");
+const location_location_type_orm_1 = require("@modules/features/location/assigments/location-location-type/infrastructure/orm/location-location-type.orm");
+const location_production_line_orm_1 = require("@modules/features/location/assigments/location-production-line/infrastructure/orm/location-production-line.orm");
+// ? PRODUCTION LINE
+const production_lines_orm_1 = require("@modules/core/production-line/infrastructure/orm/production-lines.orm");
+const production_line_product_orm_1 = require("@modules/features/production-line/assigments/production-line-product/infrastructure/orm/production-line-product.orm");
+// ? PRODUCTS
+const input_type_orm_1 = require("@modules/core/input-type/infrastructure/orm/input-type.orm");
+const input_orm_1 = require("@modules/core/input/infrastructure/orm/input.orm");
+const product_discount_range_orm_1 = require("@src/modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm");
+const product_input_process_orm_1 = require("@modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm");
+const product_process_orm_1 = require("@src/modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm");
+const product_inputs_orm_1 = require("@src/modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm");
+const process_orm_1 = require("@modules/core/process/infrastructure/orm/process.orm");
+const product_orm_1 = require("@modules/core/product/infrastructure/orm/product.orm");
+// ? PURCHASED ORDER
+const purchased_order_product_orm_1 = require("./../../modules/features/purchased-order/assigments/purchased-order-product/infrastructure/orm/purchased-order-product.orm");
+const applied_product_discount_client_orm_1 = require("./../../modules/features/purchased-order/assigments/purchased-order-product/assigments/applied-product-discount-client/infrastructure/orm/applied-product-discount-client.orm");
+const applied_product_discount_range_orm_1 = require("./../../modules/features/purchased-order/assigments/purchased-order-product/assigments/applied-product-discount-range/infrastructure/orm/applied-product-discount-range.orm");
+const purchased_order_orm_1 = require("./../../modules/features/purchased-order/infrastructure/orm/purchased-order.orm");
 /**
  * init-models.ts
  * ------------------------------------------------------------------
@@ -88,6 +98,7 @@ function initModels() {
         ProductDiscountRangeModel: product_discount_range_orm_1.ProductDiscountRangeModel,
         LocationLocationTypeModel: location_location_type_orm_1.LocationLocationTypeModel,
         ProductDiscountClientModel: product_discount_client_orm_1.ProductDiscountClientModel,
+        ProductionLineProductModel: production_line_product_orm_1.ProductionLineProductModel,
         ProductInputProcessModel: product_input_process_orm_1.ProductInputProcessModel,
         ProductProcessModel: product_process_orm_1.ProductProcessModel,
         ProductInputModel: product_inputs_orm_1.ProductInputModel,
@@ -100,6 +111,10 @@ function initModels() {
         ProductModel: product_orm_1.ProductModel,
         ClientModel: clients_orm_1.ClientModel,
         InputModel: input_orm_1.InputModel,
+        PurchasedOrderProductModel: purchased_order_product_orm_1.PurchasedOrderProductModel,
+        AppliedProductDiscountClientModel: applied_product_discount_client_orm_1.AppliedProductDiscountClientModel,
+        AppliedProductDiscountRangeModel: applied_product_discount_range_orm_1.AppliedProductDiscountRangeModel,
+        PurchasedOrderModel: purchased_order_orm_1.PurchasedOrderModel
     };
 }
 ;

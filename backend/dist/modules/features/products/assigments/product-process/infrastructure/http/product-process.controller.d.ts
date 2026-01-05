@@ -1,4 +1,4 @@
-import type { ApiRequest, ApiResponse } from "../../../../../../../shared/typed-request-endpoint/typed-request.interface";
+import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { CreateProductProcessSchema, DeleteProductProcessSchema, GetAllProductProcesssSchema, GetByIdProductProcessSchema, UpdateProductProcessSchema, GetByIdProductProcessProductProcesSchema } from "../../application/dto/product-process.endpoint.schema";
 /**
  * Controller (Infrastructure / HTTP)

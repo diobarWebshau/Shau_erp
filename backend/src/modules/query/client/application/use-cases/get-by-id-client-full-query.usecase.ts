@@ -1,0 +1,85 @@
+import { ProductDiscountClientResponseOrchestratorDto } from "@modules/features/client/orchestration/application/dto/client-orchestrator.model.schema";
+import { ClientAddressResponseDto } from "@modules/features/client/assigments/client-addresses/application/dto/client-address.model.schema";
+import type { ClientFullQueryResult, ClientFullQueryResultDto } from "../../domain/client-query.type";
+import { ClientResponseDto } from "@modules/core/client/application/dto/client.model.schema";
+import ImageHandler from "@helpers/imageHandlerClass";
+import { Transaction } from "sequelize";
+import { IClientQueryRepository } from "../../domain/client-query.repository";
+
+/**
+ * UseCase
+ * ------------------------------------------------------------------
+ * Representa un caso de uso dentro de la capa de aplicación.
+ * Encapsula una operación del sistema, gestionando validaciones,
+ * reglas de negocio y coordinación con el repositorio. Su propósito
+ * es manejar la lógica de actualización de un registro, asegurando
+ * consistencia y control de la transacción.
+ *
+ * Función técnica:
+ * - Define la semántica de una acción del sistema (ej. crear, actualizar, eliminar).
+ * - Orquesta la interacción entre el dominio (entidades, reglas de negocio) y la infraestructura (repositorios, servicios externos).
+ * - Aplica validaciones previas a la persistencia, como existencia del registro, unicidad de campos, y detección de cambios.
+ * - Coordina operaciones atómicas delegadas al repositorio, garantizando que la transacción se ejecute de forma consistente.
+ * - Devuelve resultados tipados y coherentes con el contrato de la API o capa superior.
+ *
+ * Qué hace:
+ * - Encapsula la lógica de negocio aplicada a una operación concreta.
+ * - Gestiona validaciones y reglas antes de modificar el estado del sistema.
+ * - Controla el flujo de la operación (ej. si no hay cambios, retorna el registro original).
+ * - Delegar la persistencia y transacciones al repositorio, manteniendo separación de responsabilidades.
+ *
+ * Qué no hace:
+ * - No representa una entidad del negocio ni modela conceptos del dominio.
+ * - No maneja directamente infraestructura (bases de datos, frameworks, librerías externas).
+ * - No sustituye a la capa de presentación ni decide cómo se muestran los resultados.
+ * - No expone detalles técnicos de almacenamiento ni protocolos de comunicación.
+ *
+ * Convención de nombres:
+ * Un caso de uso no lleva el sufijo "Entity" porque no representa un objeto del dominio,
+ * sino una acción del sistema. Las entidades modelan conceptos del negocio; los casos de uso
+ * expresan operaciones sobre esos conceptos, por eso se nombran como "UseCase".
+ *
+ * Ubicación en la arquitectura Clean + Core + Features + Orchestrators:
+ * - Clean/Core: las entidades y reglas de negocio puras.
+ * - Features: repositorios, servicios y adaptadores que implementan infraestructura.
+ * - UseCase: capa de aplicación que orquesta la lógica de negocio con infraestructura.
+ * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
+ *   para responder a las solicitudes externas.
+ */
+
+export class GetByIdClientsFullQueryUseCase {
+    constructor(private readonly repo: IClientQueryRepository) { }
+    async execute(id: number, tx?: Transaction): Promise<ClientFullQueryResultDto | null> {
+        const clientRecord: ClientFullQueryResult | null = await this.repo.getByIdClientFullQuery(id, tx);
+        if (!clientRecord) return null;
+        const { addresses, discounts, ...client }: ClientFullQueryResult = clientRecord;
+        const dataClient: ClientResponseDto = {
+            ...client,
+            created_at: client.created_at.toISOString(),
+            updated_at: client.updated_at.toISOString(),
+        }
+        const dataDiscounts: ProductDiscountClientResponseOrchestratorDto[] = discounts.length ? await Promise.all(discounts.map(async (disc) => ({
+            ...disc,
+            created_at: disc.created_at.toISOString(),
+            updated_at: disc.updated_at.toISOString(),
+            product: {
+                ...disc.product,
+                created_at: disc.product.created_at.toISOString(),
+                updated_at: disc.product.updated_at.toISOString(),
+                photo: disc.product.photo ? await ImageHandler.convertToBase64(disc.product.photo) : null
+            }
+        }))) : [];
+
+        const dataAddresses: ClientAddressResponseDto[] = addresses.length ? addresses.map((addr) => ({
+            ...addr,
+            created_at: addr.created_at.toISOString(),
+            updated_at: addr.updated_at.toISOString(),
+        })) : [];
+        const clientFullResult: ClientFullQueryResultDto = {
+            ...dataClient,
+            addresses: dataAddresses,
+            discounts: dataDiscounts
+        }
+        return clientFullResult;
+    }
+};

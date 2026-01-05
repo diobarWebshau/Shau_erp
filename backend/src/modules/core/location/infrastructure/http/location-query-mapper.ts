@@ -1,6 +1,6 @@
 import { normalizeToArray, normalizeToBoolean, normalizeToNumberArray } from "@shared/query-reqyest/query-request-normalizer";
 import { GetAllLocationsSchema } from "./../../application/dto/location.endpoint.schema"
-import type { LocationtSearchCriteria } from "../../domain/location.types";
+import type { LocationSearchCriteria } from "../../domain/location.types";
 
 /**
  * Query → Criteria Mapper
@@ -48,7 +48,7 @@ import type { LocationtSearchCriteria } from "../../domain/location.types";
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
 
-export const mapLocationQueryToCriteria = (query: GetAllLocationsSchema["query"]): LocationtSearchCriteria => {
+export const mapLocationQueryToCriteria = (query: GetAllLocationsSchema["query"]): LocationSearchCriteria => {
     return {
         filter: query?.filter,
         exclude_ids: normalizeToNumberArray(query?.exclude_ids),

@@ -1,7 +1,7 @@
-import { IProcessRepository } from "../../../../../../../modules/core/process/domain/process.repository";
+import { IProcessRepository } from "@src/modules/core/process/domain/process.repository";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
 import type { ProductProcessProps, ProductProcessCreateProps } from "../../domain/product-process.types";
-import { IProductRepository } from "../../../../../../../modules/core/product/domain/product.repository.interface";
+import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 import { Transaction } from "sequelize";
 /**
  * UseCase

@@ -1,8 +1,8 @@
 import { Transaction } from "sequelize";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
 import type { LocationLocationTypeProps, LocationLocationTypeCreateProps } from "../../domain/location-location-type.types";
-import { ILocationTypeRepository } from "../../../../../../../modules/core/location-type/domain/location-type.repository";
-import { ILocationRepository } from "../../../../../../../modules/core/location/domain/location.repository.interface";
+import { ILocationTypeRepository } from "@src/modules/core/location-type/domain/location-type.repository";
+import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
 /**
  * UseCase
  * ------------------------------------------------------------------

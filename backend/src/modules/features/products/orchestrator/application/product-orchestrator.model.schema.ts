@@ -208,16 +208,17 @@ const productOrchestratorResponseSchema = z.object({
 // |                        ORCHESTRATOR — DTO                                             |
 // =========================================================================================
 
-type ProductOrchestratorUpdateDTO = z.infer<typeof productOrchestratorUpdateSchema>;
-type ProductOrchestratorCreateDTO = z.infer<typeof productOrchestratorCreateSchema>;
-type ProductOrchestratorReponseDTO = z.infer<typeof productOrchestratorResponseSchema>;
-type ProductOrchestratorPayloadDTO = z.infer<typeof productOrchestratorCreateRequestSchema>;
+type ProductOrchestratorUpdateDto = z.infer<typeof productOrchestratorUpdateSchema>;
+type ProductOrchestratorCreateDto = z.infer<typeof productOrchestratorCreateSchema>;
+type ProductOrchestratorReponseDto = z.infer<typeof productOrchestratorResponseSchema>;
+type ProductOrchestratorCreateRequestDto = z.infer<typeof productOrchestratorCreateRequestSchema>;
 
 export type {
-    ProductOrchestratorCreateDTO,
-    ProductOrchestratorUpdateDTO,
-    ProductOrchestratorReponseDTO,
-    ProductOrchestratorPayloadDTO
+    ProductOrchestratorCreateDto,
+    ProductOrchestratorUpdateDto,
+    ProductOrchestratorReponseDto,
+    ProductOrchestratorCreateRequestDto,
+
 };
 
 export {

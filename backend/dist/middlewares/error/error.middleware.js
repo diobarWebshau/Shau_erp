@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const validation_error_js_1 = require("../../shared/errors/validation-error/validation-error.js");
+const validation_error_js_1 = require("@shared/errors/validation-error/validation-error.js");
 const winston_js_1 = __importDefault(require("../../utils/winston/winston.js"));
-const http_error_js_1 = __importDefault(require("../../shared/errors/http/http-error.js"));
+const http_error_js_1 = __importDefault(require("@shared/errors/http/http-error.js"));
 const sequelize_1 = require("sequelize");
 const isProduction = process.env.NODE_ENV === "production";
 function isSqlError(error) {

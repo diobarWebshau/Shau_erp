@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountRangeRepository = void 0;
 const product_discount_range_orm_1 = require("../orm/product-discount-range.orm");
-const http_error_1 = __importDefault(require("../../../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -57,10 +57,10 @@ const mapModelToDomain = (model) => {
     const json = model.toJSON();
     return {
         id: json.id,
-        unit_price: json.unit_price,
+        unit_price: Number(json.unit_price),
         product_id: json.product_id,
-        max_qty: json.max_qty,
-        min_qty: json.min_qty,
+        max_qty: Number(json.max_qty),
+        min_qty: Number(json.min_qty),
         created_at: json.created_at,
         updated_at: json.created_at
     };

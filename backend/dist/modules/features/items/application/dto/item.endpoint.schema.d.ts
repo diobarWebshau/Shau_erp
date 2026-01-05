@@ -1,4 +1,4 @@
-import { EndpointSchema } from "../../../../../shared/typed-request-endpoint/endpoint.interface";
+import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import z from "zod";
 declare const getAllItemSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;

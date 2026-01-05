@@ -8,24 +8,23 @@ const product_discount_range_repository_1 = require("../../assigments/product-di
 const product_input_process_repository_1 = require("../../assigments/product-input-process/infrastructure/repository/product-input-process.repository");
 const product_process_repository_1 = require("../../assigments/product-process/infrastructure/repository/product-process.repository");
 const product_input_repository_1 = require("../../assigments/product-input/infrastructure/repository/product-input.repository");
-const producto_repository_1 = require("../../../../../modules/core/product/infrastructure/repository/producto.repository");
-const process_repository_1 = __importDefault(require("../../../../../modules/core/process/infrastructure/repository/process.repository"));
+const product_query_repository_1 = require("../../../../query/product/infrastructure/product-query.repository");
+const producto_repository_1 = require("@modules/core/product/infrastructure/repository/producto.repository");
 const update_product_orchestrator_usecase_1 = require("../application/update-product-orchestrator.usecase");
 const create_product_orchestrator_usecase_1 = require("../application/create-product-orchestrator.usecase");
-const input_repository_1 = require("../../../../../modules/core/input/infrastructure/repository/input.repository");
-const product_query_repository_1 = require("../../../../query/product/infrastructure/product-query.repository");
-const local_file_cleanup_service_1 = require("../../../../../shared/files/local-file-cleanup.service");
-const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
+const process_repository_1 = __importDefault(require("@modules/core/process/infrastructure/repository/process.repository"));
+const input_repository_1 = require("@modules/core/input/infrastructure/repository/input.repository");
+const local_file_cleanup_service_1 = require("@shared/files/local-file-cleanup.service");
 class ProductOrchestratorController {
     createProductOrchestrator;
     updateProductOrchestrator;
     productInputProcessRepo;
     productDiscountRepo;
     productProcessRepo;
+    productQueryRepo;
     productInputRepo;
     fileCleaner;
     processRepo;
-    productQueryRepo;
     inputRepo;
     repo;
     constructor() {
@@ -62,23 +61,6 @@ class ProductOrchestratorController {
         });
     }
     ;
-    formattResponse = async (response) => {
-        return {
-            product: {
-                ...response.product,
-                photo: response.product.photo ? await imageHandlerClass_1.default.convertToBase64(response.product.photo) : null,
-                created_at: response.product.created_at.toISOString(),
-                updated_at: response.product.updated_at.toISOString(),
-            },
-            product_discount_ranges: response.product_discount_ranges.map((pdr) => ({
-                ...pdr,
-                created_at: pdr.created_at.toISOString(),
-                updated_at: pdr.updated_at.toISOString(),
-            })),
-            products_inputs: response.products_inputs,
-            product_processes: response.product_processes
-        };
-    };
     create = async (req, res) => {
         const { payload, photo } = req.body;
         const updatePayload = {
@@ -91,8 +73,7 @@ class ProductOrchestratorController {
             },
         };
         const result = await this.createProductOrchestrator.execute(updatePayload);
-        const formattResult = await this.formattResponse(result);
-        return res.status(201).send(formattResult);
+        return res.status(201).send(result);
     };
     update = async (req, res) => {
         const { payload, photo } = req.body;
@@ -107,8 +88,7 @@ class ProductOrchestratorController {
             },
         };
         const result = await this.updateProductOrchestrator.execute(Number(id), updatePayload);
-        const formattResult = await this.formattResponse(result);
-        return res.status(201).send(formattResult);
+        return res.status(201).send(result);
     };
 }
 exports.ProductOrchestratorController = ProductOrchestratorController;

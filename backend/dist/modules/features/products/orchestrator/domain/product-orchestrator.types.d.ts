@@ -4,11 +4,11 @@ import type { ProductProcessCreateProps, ProductProcessUpdateProps, ProductProce
 import type { ProductInputCreateProps, ProductInputUpdateProps, ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
 import { ProductDiscountRangeResponseDto } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 import { ProductProcessResponseDto } from "../../assigments/product-process/application/dto/product-process.model.schema";
-import type { ProcessCreateProps, ProcessProps, ProcessSearchCriteria } from "../../../../core/process/domain/process.types";
-import type { ProductCreateProps, ProductUpdateProps, ProductProps } from "../../../../core/product/domain/product.types";
+import type { ProcessCreateProps, ProcessProps, ProcessSearchCriteria } from "@modules/core/process/domain/process.types";
+import type { ProductCreateProps, ProductUpdateProps, ProductProps } from "@modules/core/product/domain/product.types";
 import { ProductInputResponseDto } from "../../assigments/product-input/application/dto/product-input.model.schema";
-import { ProductResponseDto } from "../../../../../modules/core/product/application/dto/product.model.schema";
-import type { InputProps } from "../../../../core/input/domain/input.types";
+import { ProductResponseDto } from "@src/modules/core/product/application/dto/product.model.schema";
+import type { InputProps } from "@modules/core/input/domain/input.types";
 type NoProductId = {
     product_id?: never;
 };

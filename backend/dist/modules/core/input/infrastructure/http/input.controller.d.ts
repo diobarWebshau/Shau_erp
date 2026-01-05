@@ -1,4 +1,4 @@
-import { ApiRequest, ApiResponse } from "../../../../../shared/typed-request-endpoint/typed-request.interface";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { DeleteinputSchema, GetAllinputsSchema, GetByBarcodeinputSchema, GetByCustomIdinputSchema, GetByIdinputSchema, CreateinputSchema, GetByNameinputSchema, GetBySkuinputSchema, UpdateinputSchema } from "../../application/dto/input.endpoint.schema";
 /**
  * Controller (Infrastructure / HTTP)

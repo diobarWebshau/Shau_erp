@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationProductionLineModel = void 0;
 const sequelize_1 = require("sequelize");
-const sequelize_2 = require("../../../../../../../config/mysql/sequelize");
+const sequelize_2 = require("@config/mysql/sequelize");
 class LocationProductionLineModel extends sequelize_1.Model {
     // STATIC METHODS preserved exactly from your original service design
     static getEditableFields = () => [

@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateLocationTypeUseCase = void 0;
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -54,7 +54,7 @@ class CreateLocationTypeUseCase {
         if (data.name) {
             const existsByName = await this.repo.findByName(data.name);
             if (existsByName)
-                throw new http_error_1.default(409, "El nombre ingresado para el  nueva tipo de locación, ya esta utilizado por otro tipo de locación.");
+                throw new http_error_1.default(409, "El nombre ingresado para el nuevo tipo de locación, ya esta utilizado por otro tipo de locación.");
         }
         const created = await this.repo.create(data, tx);
         if (!created)

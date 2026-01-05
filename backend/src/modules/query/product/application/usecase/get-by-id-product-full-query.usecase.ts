@@ -1,5 +1,9 @@
+import { ProductDiscountRangeResponseDto } from "@modules/features/products/assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
+import { ProductDiscountRangeProps } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
+import type { ProductFullQueryResult, ProductFullQueryResultDto } from "../../domain/product-query.type";
+import { ProductResponseDto } from "@modules/core/product/application/dto/product.model.schema";
 import type { ProductQueryRepository } from "../../infrastructure/product-query.repository";
-import type { ProductFullQueryResult } from "../../domain/product-query.type";
+import ImageHandler from "@helpers/imageHandlerClass";
 import { Transaction } from "sequelize";
 
 /**
@@ -45,7 +49,29 @@ import { Transaction } from "sequelize";
 
 export class GetByIdProductsFullQueryUseCase {
     constructor(private readonly repo: ProductQueryRepository) { }
-    async execute(id: number, tx?: Transaction): Promise<ProductFullQueryResult | null> {
-        return await this.repo.getByIdProductFullQueryResult(id, tx);
+    async execute(id: number, tx?: Transaction): Promise<ProductFullQueryResultDto | null> {
+        const productRecord: ProductFullQueryResult | null = await this.repo.getByIdProductFullQueryResult(id, tx);
+        if (!productRecord) return null;
+        const { products_inputs, product_processes, product_discount_ranges, ...rest } = productRecord;
+        const dataProduct: ProductResponseDto = {
+            ...rest,
+            photo: rest.photo ? await ImageHandler.convertToBase64(rest.photo) : null,
+            created_at: rest?.created_at.toISOString(),
+            updated_at: rest?.created_at.toISOString()
+        }
+        const dataDiscounts: ProductDiscountRangeResponseDto[] = product_discount_ranges.map(
+            (pdr: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => ({
+                ...pdr,
+                created_at: pdr?.created_at.toISOString(),
+                updated_at: pdr?.created_at.toISOString()
+            })
+        ) ?? [];
+        const productFullResult: ProductFullQueryResultDto = {
+            ...dataProduct,
+            products_inputs: products_inputs ?? [],
+            product_discount_ranges: dataDiscounts ?? [],
+            product_processes: product_processes ?? []
+        };
+        return productFullResult;
     }
 };

@@ -9,6 +9,7 @@ const create_production_line_usecase_1 = require("../../application/use-cases/cr
 const delete_production_line_usecase_1 = require("../../application/use-cases/delete-production-line.usecase");
 const update_production_line_usecase_1 = require("../../application/use-cases/update-production-line.usecase");
 const production_line_repository_1 = require("../repository/production-line.repository");
+const production_line_query_mapper_1 = require("./production-line-query-mapper");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -92,8 +93,10 @@ class ProductionLineController {
     // ============================================================
     // GET ALL
     // ============================================================
-    getAll = async (_req, res) => {
-        const result = await this.getAllUseCase.execute();
+    getAll = async (req, res) => {
+        const queryRequest = req.query;
+        const query = (0, production_line_query_mapper_1.mapProductionLineQueryToCriteria)(queryRequest);
+        const result = await this.getAllUseCase.execute(query);
         const formatted = result.map(l => this.formatResponse(l));
         return res.status(200).send(formatted);
     };

@@ -59,8 +59,10 @@ export class UpdateProductInputUseCase {
         ];
         const filteredBody: ProductInputUpdateProps = pickEditableFields(data, editableFields);
         const merged: ProductInputProps = { ...existing, ...filteredBody };
-        const normalizedExisting: ProductInputUpdateProps = deepNormalizeDecimals<ProductInputUpdateProps>(existing, ["equivalence"]);
-        const normalizedMerged: ProductInputUpdateProps = deepNormalizeDecimals<ProductInputUpdateProps>(merged, ["equivalence"]);
+        const normalizedExisting: ProductInputUpdateProps =
+            deepNormalizeDecimals<ProductInputUpdateProps>(existing, ["equivalence"]);
+        const normalizedMerged: ProductInputUpdateProps =
+            deepNormalizeDecimals<ProductInputUpdateProps>(merged, ["equivalence"]);
         const updateValues: ProductInputUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
         const updated: ProductInputProps = await this.repo.update(id, updateValues, tx);

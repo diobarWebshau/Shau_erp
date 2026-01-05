@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
-import type { LocationProps, LocationtSearchCriteria } from "../../domain/location.types";
+import type { LocationProps, LocationSearchCriteria } from "../../domain/location.types";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +44,5 @@ import type { LocationProps, LocationtSearchCriteria } from "../../domain/locati
 export declare class GetAllLocationsUseCase {
     private readonly repo;
     constructor(repo: ILocationRepository);
-    execute(query: LocationtSearchCriteria, tx?: Transaction): Promise<LocationProps[]>;
+    execute(query: LocationSearchCriteria, tx?: Transaction): Promise<LocationProps[]>;
 }

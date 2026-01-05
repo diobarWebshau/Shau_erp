@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessRouter = void 0;
 const process_endpoint_schema_1 = require("../../application/dto/process.endpoint.schema");
-const zod_middleware_1 = require("../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const process_controller_1 = require("./process.controller");
 const express_1 = require("express");
 /**

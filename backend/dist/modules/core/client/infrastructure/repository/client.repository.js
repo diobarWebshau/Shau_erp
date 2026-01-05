@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientRepository = void 0;
 const sequelize_1 = require("sequelize");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const clients_orm_1 = require("../orm/clients.orm");
 /**
  * Repository (Infrastructure)
@@ -63,7 +63,7 @@ const mapModelToDomain = (model) => {
         company_name: json.company_name,
         country: json.country,
         created_at: json.created_at,
-        credit_limit: json.credit_limit,
+        credit_limit: Number(json.credit_limit),
         email: json.email,
         is_active: json.is_active,
         neighborhood: json.neighborhood,

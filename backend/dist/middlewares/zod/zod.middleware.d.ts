@@ -1,5 +1,5 @@
-import type { ApiRequest, ApiResponse } from "../../shared/typed-request-endpoint/typed-request.interface.js";
-import type { EndpointZodSchema } from "../../shared/typed-request-endpoint/endpoint-zod.schema";
+import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface.js";
+import type { EndpointZodSchema } from "@shared/typed-request-endpoint/endpoint-zod.schema";
 import type { NextFunction } from "express";
 /**
  * ============================================================================================

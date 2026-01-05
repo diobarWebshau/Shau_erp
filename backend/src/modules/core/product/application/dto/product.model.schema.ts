@@ -57,7 +57,10 @@ const productCreateSchema = z.object({
     presentation: z.string().nullable().optional(),
     unit_of_measure: z.string().nullable().optional(),
     storage_conditions: z.string().nullable().optional(),
-    barcode: z.number().nullable().optional(),
+    barcode: z.preprocess(
+        toNumberOrNull,
+        z.number({ message: "barcode must be a number" })
+    ).nullable().optional(),
     sku: z.string().nullable().optional(),
     photo: z.string().nullable().optional(),
     sale_price: z.preprocess(

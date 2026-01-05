@@ -3,16 +3,15 @@ import { ProductInputProcessRepository } from "../../assigments/product-input-pr
 import { CreateProductOrchestratorSchema, UpdateProductOrchestratorSchema } from "../application/product-orchestrator.endpoint.schema";
 import { ProductProcessRepository } from "../../assigments/product-process/infrastructure/repository/product-process.repository";
 import { ProductInputRepository } from "../../assigments/product-input/infrastructure/repository/product-input.repository";
-import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
-import { ProductOrchestrator, ProductOrchestratorResponse } from "../domain/product-orchestrator.types";
-import ProcessRepository from "@src/modules/core/process/infrastructure/repository/process.repository";
+import { ProductQueryRepository } from "../../../../query/product/infrastructure/product-query.repository";
+import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
 import { UpdateProductOrchestratorUseCase } from "../application/update-product-orchestrator.usecase";
 import { CreateProductOrchestratorUseCase } from "../application/create-product-orchestrator.usecase";
-import { InputRepository } from "@src/modules/core/input/infrastructure/repository/input.repository";
-import { ApiRequest, ApiResponse } from "@src/shared/typed-request-endpoint/typed-request.interface";
-import { ProductQueryRepository } from "../../../../query/product/infrastructure/product-query.repository";
-import { LocalFileCleanupService } from "@src/shared/files/local-file-cleanup.service";
-import ImageHandler from "@src/helpers/imageHandlerClass";
+import ProcessRepository from "@modules/core/process/infrastructure/repository/process.repository";
+import { InputRepository } from "@modules/core/input/infrastructure/repository/input.repository";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
+import { ProductOrchestratorResponse } from "../domain/product-orchestrator.types";
+import { LocalFileCleanupService } from "@shared/files/local-file-cleanup.service";
 
 export class ProductOrchestratorController {
     private readonly createProductOrchestrator: CreateProductOrchestratorUseCase;
@@ -20,10 +19,10 @@ export class ProductOrchestratorController {
     private readonly productInputProcessRepo: ProductInputProcessRepository;
     private readonly productDiscountRepo: ProductDiscountRangeRepository;
     private readonly productProcessRepo: ProductProcessRepository;
+    private readonly productQueryRepo: ProductQueryRepository;
     private readonly productInputRepo: ProductInputRepository;
     private readonly fileCleaner: LocalFileCleanupService;
     private readonly processRepo: ProcessRepository;
-    private readonly productQueryRepo: ProductQueryRepository;
 
     private readonly inputRepo: InputRepository;
     private readonly repo: ProductRepository;
@@ -61,24 +60,6 @@ export class ProductOrchestratorController {
         });
     };
 
-    private formattResponse = async (response: ProductOrchestrator): Promise<ProductOrchestratorResponse> => {
-        return {
-            product: {
-                ...response.product,
-                photo: response.product.photo ? await ImageHandler.convertToBase64(response.product.photo) : null,
-                created_at: response.product.created_at.toISOString(),
-                updated_at: response.product.updated_at.toISOString(),
-            },
-            product_discount_ranges: response.product_discount_ranges.map((pdr) => ({
-                ...pdr,
-                created_at: pdr.created_at.toISOString(),
-                updated_at: pdr.updated_at.toISOString(),
-            })),
-            products_inputs: response.products_inputs,
-            product_processes: response.product_processes
-        }
-    }
-
     create = async (req: ApiRequest<CreateProductOrchestratorSchema>, res: ApiResponse<CreateProductOrchestratorSchema>) => {
         const { payload, photo }: CreateProductOrchestratorSchema["body"] = req.body;
         const updatePayload = {
@@ -92,9 +73,8 @@ export class ProductOrchestratorController {
                 )
             },
         }
-        const result: ProductOrchestrator = await this.createProductOrchestrator.execute(updatePayload);
-        const formattResult: ProductOrchestratorResponse = await this.formattResponse(result);
-        return res.status(201).send(formattResult);
+        const result: ProductOrchestratorResponse = await this.createProductOrchestrator.execute(updatePayload);
+        return res.status(201).send(result);
     };
 
     update = async (req: ApiRequest<UpdateProductOrchestratorSchema>, res: ApiResponse<UpdateProductOrchestratorSchema>) => {
@@ -111,9 +91,8 @@ export class ProductOrchestratorController {
                 )
             },
         }
-        const result: ProductOrchestrator = await this.updateProductOrchestrator.execute(Number(id), updatePayload);
-        const formattResult: ProductOrchestratorResponse = await this.formattResponse(result);
-        return res.status(201).send(formattResult);
+        const result: ProductOrchestratorResponse = await this.updateProductOrchestrator.execute(Number(id), updatePayload);
+        return res.status(201).send(result);
     }
 };
 

@@ -12,11 +12,11 @@ const get_input_by_name_usecase_1 = require("../../application/use-cases/get-inp
 const get_all_inputs_usecase_1 = require("../../application/use-cases/get-all-inputs.usecase");
 const create_input_usecase_1 = require("../../application/use-cases/create-input.usecase");
 const delete_input_usecase_1 = require("../../application/use-cases/delete-input.usecase");
-const local_file_cleanup_service_1 = require("../../../../../shared/files/local-file-cleanup.service");
+const local_file_cleanup_service_1 = require("@shared/files/local-file-cleanup.service");
 const update_input_usecase_1 = require("../../application/use-cases/update-input.usecase");
 const input_repository_1 = require("../repository/input.repository");
 const input_query_mapper_1 = require("./input-query-mapper");
-const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
+const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------

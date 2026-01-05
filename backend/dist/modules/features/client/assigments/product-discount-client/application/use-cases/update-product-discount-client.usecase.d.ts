@@ -1,5 +1,6 @@
 import type { ProductDiscountClientUpdateProps, ProductDiscountClientProps } from "../../domain/product-discount-client.types";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -43,5 +44,5 @@ import type { IProductDiscountClientRepository } from "../../domain/product-disc
 export declare class UpdateProductDiscountClientUseCase {
     private readonly repo;
     constructor(repo: IProductDiscountClientRepository);
-    execute(id: number, data: ProductDiscountClientUpdateProps): Promise<ProductDiscountClientProps>;
+    execute(id: number, data: ProductDiscountClientUpdateProps, tx?: Transaction): Promise<ProductDiscountClientProps>;
 }

@@ -4,13 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ItemQueryController = void 0;
-const producto_repository_1 = require("../../../../core/product/infrastructure/repository/producto.repository");
-const item_repository_1 = require("../../../../features/items/infrastructure/repository/item.repository");
+const producto_repository_1 = require("@modules/core/product/infrastructure/repository/producto.repository");
+const item_repository_1 = require("@modules/features/items/infrastructure/repository/item.repository");
 const get_by_id_item_query_usecase_1 = require("../../application/use-case/get-by-id-item-query.usecase");
-const input_repository_1 = require("../../../../core/input/infrastructure/repository/input.repository");
+const input_repository_1 = require("@modules/core/input/infrastructure/repository/input.repository");
 const get_all_item_query_usecase_1 = require("../../application/use-case/get-all-item-query.usecase");
 const item_query_mapper_1 = require("./item-query-mapper");
-const imageHandlerClass_1 = __importDefault(require("../../../../../helpers/imageHandlerClass"));
+const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------

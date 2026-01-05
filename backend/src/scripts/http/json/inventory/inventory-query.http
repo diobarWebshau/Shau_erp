@@ -1,0 +1,6 @@
+### GET ALL
+GET http://localhost:3003/query/inventory HTTP/1.1
+### GET ALL
+GET http://localhost:3003/query/inventory/like?filter=Location c HTTP/1.1
+### GET ALL
+GET http://localhost:3003/query/inventory/inventory-id/20  HTTP/1.1

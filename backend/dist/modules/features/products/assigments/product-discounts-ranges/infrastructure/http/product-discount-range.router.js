@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountRangeRouter = void 0;
 // src/modules/location/infrastructure/http/location.router.ts
-const zod_middleware_1 = require("../../../../../../../middlewares/zod/zod.middleware");
+const zod_middleware_1 = require("@middlewares/zod/zod.middleware");
 const product_discount_range_endpoint_schema_1 = require("../../application/dto/product_discount-range.endpoint.schema");
 const product_discount_range_controller_1 = require("./product-discount-range.controller");
 const express_1 = require("express");

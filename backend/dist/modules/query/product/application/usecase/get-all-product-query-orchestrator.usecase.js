@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllProductsQueryOrchestratorUseCase = void 0;
+const imageHandlerClass_1 = __importDefault(require("@src/helpers/imageHandlerClass"));
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -47,7 +51,28 @@ class GetAllProductsQueryOrchestratorUseCase {
         this.repo = repo;
     }
     async execute(query, tx) {
-        return await this.repo.getAllProductOrchestratorResult(query, tx);
+        const productsResposne = await this.repo.getAllProductOrchestratorResult(query, tx);
+        const productsResultOrchestrator = [];
+        for (const p of productsResposne) {
+            const { products_inputs, product_processes, product_discount_ranges, ...rest } = p;
+            const productResultOrch = {
+                product: {
+                    ...rest,
+                    photo: rest.photo ? await imageHandlerClass_1.default.convertToBase64(rest.photo) : null,
+                    created_at: rest?.created_at.toISOString(),
+                    updated_at: rest?.updated_at.toISOString(),
+                },
+                products_inputs: products_inputs ?? [],
+                product_discount_ranges: product_discount_ranges.map((pdr) => ({
+                    ...pdr,
+                    created_at: pdr?.created_at.toISOString(),
+                    updated_at: pdr?.updated_at.toISOString()
+                })) ?? [],
+                product_processes: product_processes ?? []
+            };
+            productsResultOrchestrator.push(productResultOrch);
+        }
+        return productsResultOrchestrator;
     }
 }
 exports.GetAllProductsQueryOrchestratorUseCase = GetAllProductsQueryOrchestratorUseCase;

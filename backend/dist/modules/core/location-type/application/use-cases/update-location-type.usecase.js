@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateLocationTypeUseCase = void 0;
-const validation_diff_engine_backend_1 = require("../../../../../helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("../../../../../helpers/pickEditableFields");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
+const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
  * ------------------------------------------------------------------

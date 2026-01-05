@@ -1,0 +1,11 @@
+### GET PRODUCTS WITH ALL RELATIOSHIPS
+GET http://localhost:3003/query/client HTTP/1.1
+
+### GET PRODUCTS WITH ALL RELATIOSHIPS
+GET http://localhost:3003/query/client/1 HTTP/1.1
+
+### GET CLIENT ORCHESTRATOR 
+GET http://localhost:3003/query/client/orchestrator HTTP/1.1
+
+### GET BY ID CLIENT ORCHESTRATOR 
+GET http://localhost:3003/query/client/orchestrator/1 HTTP/1.1

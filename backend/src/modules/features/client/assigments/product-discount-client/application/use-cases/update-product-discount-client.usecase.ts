@@ -4,6 +4,7 @@ import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleani
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -48,8 +49,8 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class UpdateProductDiscountClientUseCase {
     constructor(private readonly repo: IProductDiscountClientRepository) { }
-    async execute(id: number, data: ProductDiscountClientUpdateProps): Promise<ProductDiscountClientProps> {
-        const existing: ProductDiscountClientProps | null = await this.repo.findById(id);
+    async execute(id: number, data: ProductDiscountClientUpdateProps, tx?: Transaction): Promise<ProductDiscountClientProps> {
+        const existing: ProductDiscountClientProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del descuento del producto para el cliente que se desea actualizar no fue posible encontrarla."
         );
@@ -62,7 +63,7 @@ export class UpdateProductDiscountClientUseCase {
         const normalizedMerged: ProductDiscountClientUpdateProps = deepNormalizeDecimals<ProductDiscountClientUpdateProps>(merged, ["discount_percentage"]);
         const updateValues: ProductDiscountClientUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
         if (!Object.keys(updateValues).length) return existing;
-        const updated: ProductDiscountClientProps = await this.repo.update(id, updateValues);
+        const updated: ProductDiscountClientProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar el descuento del producto para el cliente."
         );

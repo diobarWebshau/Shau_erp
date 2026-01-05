@@ -71,10 +71,10 @@ interface LocationProps {
     created_at: Date;
     updated_at: Date;
 }
-type LocationCreateProps = Partial<Omit<LocationProps, "created_at" | "updated_at" | "id">>;
+type LocationCreateProps = Omit<LocationProps, "created_at" | "updated_at" | "id">;
 type LocationUpdateProps = Partial<LocationCreateProps>;
 
-interface LocationtSearchCriteria {
+interface LocationSearchCriteria {
     filter?: string,
     exclude_ids?: number[],
     name?: string | string[],
@@ -86,6 +86,6 @@ interface LocationtSearchCriteria {
 }
 
 export type {
-    LocationCreateProps, LocationProps, 
-    LocationUpdateProps, LocationtSearchCriteria
+    LocationCreateProps, LocationProps,
+    LocationUpdateProps, LocationSearchCriteria
 }

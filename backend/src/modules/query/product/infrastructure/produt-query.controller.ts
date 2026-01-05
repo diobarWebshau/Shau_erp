@@ -1,18 +1,14 @@
 
 import { GetAllProductFullQuerySchema, GetAllProductOrchestratorSchema, GetByIdProductFullQuerySchema, GetByIdProductOrchestratorSchema } from "../application/dto/product-query.endpoint.schema";
-import { ProductFullQueryResult, ProductFullQueryResultDto, ProductOrchestratorQuery, ProductSearchCriteria } from "../domain/product-query.type";
-import { ProductDiscountRangeResponseDto } from "@modules/features/products/assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
 import { GetByIdProductsQueryOrchestratorUseCase } from "../application/usecase/get-by-id-product-query-orchestrator.usecase";
 import { GetAllProductsQueryOrchestratorUseCase } from "../application/usecase/get-all-product-query-orchestrator.usecase";
-import { ProductDiscountRangeProps } from "@modules/features/products/assigments/product-discounts-ranges/domain/product-discount-range.types";
+import { ProductOrchestratorResponse } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
 import { GetByIdProductsFullQueryUseCase } from "../application/usecase/get-by-id-product-full-query.usecase";
 import { mapProductQueryToCriteria } from "@modules/core/product/infrastructure/http/product-query-mapper";
 import { GetAllProductsFullQueryUseCase } from "../application/usecase/get-all-product-full-query.usecase";
-import { ProductOrchestratorResponse } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
-import { ProductResponseDto } from "@modules/core/product/application/dto/product.model.schema";
+import { ProductFullQueryResultDto, ProductSearchCriteria } from "../domain/product-query.type";
 import { ProductQueryRepository } from "./product-query.repository";
-import ImageHandler from "@src/helpers/imageHandlerClass";
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -82,118 +78,27 @@ export class ProductQueryController {
     getAllProductOrchestrator = async (req: ApiRequest<GetAllProductOrchestratorSchema>, res: ApiResponse<GetAllProductOrchestratorSchema>) => {
         const queryRequest: GetAllProductOrchestratorSchema["query"] = req.query;
         const query: ProductSearchCriteria = mapProductQueryToCriteria(queryRequest);
-        const products: ProductOrchestratorQuery[] = await this.getAllProductOrchestatorUseCase.execute(query);
-        const productsResultOrchestrator: ProductOrchestratorResponse[] = [];
-        for (const p of products) {
-            const { products_inputs, product_processes, product_discount_ranges, product } = p;
-            const dataProduct: ProductResponseDto = {
-                ...product,
-                photo: product.photo ? await ImageHandler.convertToBase64(product.photo) : null,
-                created_at: product?.created_at.toISOString(),
-                updated_at: product?.updated_at.toISOString(),
-            }
-            const dataDiscounts: ProductDiscountRangeResponseDto[] = product_discount_ranges.map(
-                (pdr: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => ({
-                    ...pdr,
-                    created_at: pdr?.created_at.toISOString(),
-                    updated_at: pdr?.updated_at.toISOString()
-                })
-            ) ?? [];
-            const productResultOrch: ProductOrchestratorResponse = {
-                product: dataProduct,
-                products_inputs: products_inputs ?? [],
-                product_discount_ranges: dataDiscounts ?? [],
-                product_processes: product_processes ?? []
-            };
-            productsResultOrchestrator.push(productResultOrch);
-        };
-        return res.status(200).json(productsResultOrchestrator);
+        const products: ProductOrchestratorResponse[] = await this.getAllProductOrchestatorUseCase.execute(query);
+        return res.status(200).json(products);
     };
 
     getByIdProductOrchestrator = async (req: ApiRequest<GetByIdProductOrchestratorSchema>, res: ApiResponse<GetByIdProductOrchestratorSchema>) => {
         const { id }: GetByIdProductOrchestratorSchema["params"] = req.params;
-        const productRecord: ProductOrchestratorQuery | null = await this.getByIdProductOrchestratorUseCase.execute(Number(id));
-        if (!productRecord) return null;
-        const { products_inputs, product_processes, product_discount_ranges, product } = productRecord;
-        const dataProduct: ProductResponseDto = {
-            ...product,
-            photo: product.photo ? await ImageHandler.convertToBase64(product.photo) : null,
-            created_at: product?.created_at.toISOString(),
-            updated_at: product?.updated_at.toISOString()
-        }
-        const dataDiscounts: ProductDiscountRangeResponseDto[] = product_discount_ranges.map(
-            (pdr: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => ({
-                ...pdr,
-                created_at: pdr?.created_at.toISOString(),
-                updated_at: pdr?.updated_at.toISOString()
-            })
-        ) ?? [];
-        const productResultOrch: ProductOrchestratorResponse = {
-            product: dataProduct,
-            products_inputs: products_inputs ?? [],
-            product_discount_ranges: dataDiscounts ?? [],
-            product_processes: product_processes ?? []
-        };
-        return res.status(200).json(productResultOrch);
+        const productRecord: ProductOrchestratorResponse | null = await this.getByIdProductOrchestratorUseCase.execute(Number(id));
+        return res.status(200).json(productRecord);
     };
 
     getAllProductFullQuery = async (req: ApiRequest<GetAllProductFullQuerySchema>, res: ApiResponse<GetAllProductFullQuerySchema>) => {
         const queryRequest: GetAllProductOrchestratorSchema["query"] = req.query;
         const query: ProductSearchCriteria = mapProductQueryToCriteria(queryRequest);
-        const products: ProductFullQueryResult[] = await this.getAllProductFullUseCase.execute(query);
-        if (!products) return [];
-        const productsFullResultArray: ProductFullQueryResultDto[] = [];
-        for (const p of products) {
-            const { products_inputs, product_processes, product_discount_ranges, ...rest } = p;
-            const dataProduct: ProductResponseDto = {
-                ...rest,
-                photo: rest.photo ? await ImageHandler.convertToBase64(rest.photo) : null,
-                created_at: rest?.created_at.toISOString(),
-                updated_at: rest?.created_at.toISOString()
-            }
-            const dataDiscounts: ProductDiscountRangeResponseDto[] = product_discount_ranges.map(
-                (pdr: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => ({
-                    ...pdr,
-                    created_at: pdr?.created_at.toISOString(),
-                    updated_at: pdr?.created_at.toISOString()
-                })
-            ) ?? [];
-            const productFullResult: ProductFullQueryResultDto = {
-                ...dataProduct,
-                products_inputs: products_inputs ?? [],
-                product_discount_ranges: dataDiscounts ?? [],
-                product_processes: product_processes ?? []
-            };
-            productsFullResultArray.push(productFullResult);
-        };
-        return res.status(200).json(productsFullResultArray);
+        const products: ProductFullQueryResultDto[] = await this.getAllProductFullUseCase.execute(query);
+        return res.status(200).json(products);
     };
 
     getByIdProductFullQuery = async (req: ApiRequest<GetByIdProductFullQuerySchema>, res: ApiResponse<GetByIdProductFullQuerySchema>) => {
         const { id }: GetByIdProductFullQuerySchema["params"] = req.params;
-        const product: ProductFullQueryResult | null = await this.GetByIdProductFullUseCase.execute(Number(id));
-        if (!product) return null;
-        const { products_inputs, product_processes, product_discount_ranges, ...rest } = product;
-        const dataProduct: ProductResponseDto = {
-            ...rest,
-            photo: product.photo ? await ImageHandler.convertToBase64(product.photo) : null,
-            created_at: rest?.created_at.toISOString(),
-            updated_at: rest?.created_at.toISOString()
-        }
-        const dataDiscounts: ProductDiscountRangeResponseDto[] = product_discount_ranges.map(
-            (pdr: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => ({
-                ...pdr,
-                created_at: pdr?.created_at.toISOString(),
-                updated_at: pdr?.created_at.toISOString()
-            })
-        ) ?? [];
-        const productFullResult: ProductFullQueryResultDto = {
-            ...dataProduct,
-            products_inputs: products_inputs ?? [],
-            product_discount_ranges: dataDiscounts ?? [],
-            product_processes: product_processes ?? []
-        };
-        return res.status(200).json(productFullResult);
+        const product: ProductFullQueryResultDto | null = await this.GetByIdProductFullUseCase.execute(Number(id));
+        return res.status(200).json(product);
     };
 
 };

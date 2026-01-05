@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationRepository = void 0;
 const sequelize_1 = require("sequelize");
-const http_error_1 = __importDefault(require("../../../../../shared/errors/http/http-error"));
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const location_orm_1 = require("../orm/location.orm");
 /**
  * Repository (Infrastructure)

@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalFileCleanupService = void 0;
-const imageHandlerClass_1 = __importDefault(require("../../helpers/imageHandlerClass"));
+const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * LocalFileCleanupService
  * ------------------------------------------------------------------

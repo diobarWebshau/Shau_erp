@@ -2,6 +2,8 @@ import type { ClientCreateProps, ClientProps } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
+import { ClientCreateDto } from "../dto/client.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 
 /**
  * UseCase
@@ -44,30 +46,39 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+
+const mapClientCreateDtoToDomain = (data: ClientCreateDto): ClientCreateProps => ({
+    ...data,
+    credit_limit: data.credit_limit ? DecimalVO.from(data.credit_limit) : null,
+});
+
 export class CreateClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    async execute(data: ClientCreateProps, tx?: Transaction): Promise<ClientProps> {
-        if (data?.cfdi) {
-            const existsByName: ClientProps | null = await this.repo.findByCfdi(data.cfdi, tx);
+    async execute(data: ClientCreateDto, tx?: Transaction): Promise<ClientProps> {
+
+        const createData: ClientCreateProps = mapClientCreateDtoToDomain(data);
+
+        if (createData.cfdi) {
+            const existsByName: ClientProps | null = await this.repo.findByCfdi(createData.cfdi, tx);
             if (existsByName) throw new HttpError(409,
                 "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );
         }
-        if (data?.tax_id) {
-            const existsByName: ClientProps | null = await this.repo.findByTaxId(data.tax_id, tx);
+        if (createData.tax_id) {
+            const existsByName: ClientProps | null = await this.repo.findByTaxId(createData.tax_id, tx);
             if (existsByName) throw new HttpError(409,
                 "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );
         }
-        if (data?.company_name) {
-            const existsByName: ClientProps | null = await this.repo.findByCompanyName(data.company_name, tx);
+        if (createData.company_name) {
+            const existsByName: ClientProps | null = await this.repo.findByCompanyName(createData.company_name, tx);
             if (existsByName) throw new HttpError(409,
                 "El nombre ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
             );
         }
-        const created: ClientProps = await this.repo.create(data, tx);
+        const created: ClientProps = await this.repo.create(createData, tx);
         if (!created) throw new HttpError(500,
-            "No fue posible crear la nueva locación."
+            "No fue posible crear el nuevo cliente."
         );
         return created;
     }

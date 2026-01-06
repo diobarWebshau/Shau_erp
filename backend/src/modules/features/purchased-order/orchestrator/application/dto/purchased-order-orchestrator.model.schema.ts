@@ -51,12 +51,12 @@ const purchasedOrderProductUpdateRequestOrchestratorSchema = z.object({
 // |                        ORCHESTRATOR — RESPONSE                                        |
 // =========================================================================================
 
-const purchasedOrderResponseOrchestratorSchema = {
+const purchasedOrderResponseOrchestratorSchema = z.object({
     purchased_order: purchasedOrderResponseschema,
     purchased_order_products: z.array(purchasedOrderProductQueryResponseSchema),
     client_address: clientAddressResponseSchema,
     client: clientResponseSchema
-};
+});
 
 
 // =========================================================================================

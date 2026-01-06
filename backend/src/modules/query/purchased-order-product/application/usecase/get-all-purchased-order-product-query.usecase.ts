@@ -1,3 +1,4 @@
+import { PurchasedOrderProductQueryProps, PurchasedOrderProductQueryResponse } from "../../domain/purchased-order-product-query.type";
 import { IPurchasedOrderProductQueryRespository } from "../../domain/purchased-order-product-query.repository"
 import { Transaction } from "sequelize";
 
@@ -6,9 +7,9 @@ export class GetAllPurchasedOrderProductQueryUseCase {
     constructor(repo: IPurchasedOrderProductQueryRespository) {
         this.purchasedOrderProductQueryRepo = repo;
     };
-    execute = async (tx?: Transaction) => {
-        const purchasedOrderProductQueryResponse = await this.purchasedOrderProductQueryRepo.getAll(tx);
-        const purchasedOrderProductQueryResponseFormatted = purchasedOrderProductQueryResponse.map((pop) => ({
+    execute = async (tx?: Transaction): Promise<PurchasedOrderProductQueryResponse[]> => {
+        const purchasedOrderProductQueryResponse: PurchasedOrderProductQueryProps[] = await this.purchasedOrderProductQueryRepo.getAll(tx);
+        const purchasedOrderProductQueryResponseFormatted: PurchasedOrderProductQueryResponse[] = purchasedOrderProductQueryResponse.map((pop) => ({
             ...pop,
             product: {
                 ...pop.product,

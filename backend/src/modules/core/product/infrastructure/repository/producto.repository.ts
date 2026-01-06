@@ -1,8 +1,8 @@
-import type { ProductCreateProps, ProductProps, ProductUpdateProps, ProductSearchCriteria } from "../../domain/product.types";
+import type { ProductCreateProps, ProductUpdateProps, ProductSearchCriteria, ProductProps } from "../../domain/product.types";
 import type { IProductRepository } from "../../domain/product.repository.interface";
+import { ProductAttributes, ProductModel } from "../orm/product.orm";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
-import { ProductModel } from "../orm/product.orm";
 
 /**
  * Repository (Infrastructure)
@@ -53,26 +53,27 @@ import { ProductModel } from "../orm/product.orm";
  */
 
 const mapModelToDomain = (model: ProductModel): ProductProps => {
-    const json: ProductProps = model.toJSON();
-    return {
-        id: json.id,
-        custom_id: json.custom_id,
-        name: json.name,
-        type: json.type,
-        description: json.description,
-        presentation: json.presentation,
-        unit_of_measure: json.unit_of_measure,
-        production_cost: Number(json.production_cost),
-        storage_conditions: json.storage_conditions,
-        barcode: json.barcode,
-        sku: json.sku,
-        sale_price: Number(json.sale_price),
-        photo: json.photo,
-        is_draft: json.is_draft,
-        is_active: json.is_active,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+    const productAttributes: ProductAttributes = model.toJSON();
+    const productDomain: ProductProps = {
+        id: productAttributes.id,
+        custom_id: productAttributes.custom_id,
+        name: productAttributes.name,
+        type: productAttributes.type,
+        description: productAttributes.description,
+        presentation: productAttributes.presentation,
+        unit_of_measure: productAttributes.unit_of_measure,
+        production_cost: Number(productAttributes.production_cost),
+        storage_conditions: productAttributes.storage_conditions,
+        barcode: productAttributes.barcode,
+        sku: productAttributes.sku,
+        sale_price: Number(productAttributes.sale_price),
+        photo: productAttributes.photo,
+        is_draft: productAttributes.is_draft,
+        is_active: productAttributes.is_active,
+        created_at: (productAttributes.created_at instanceof Date) ? productAttributes.created_at : new Date(productAttributes.created_at),
+        updated_at: (productAttributes.updated_at instanceof Date) ? productAttributes.updated_at : new Date(productAttributes.updated_at)
     };
+    return productDomain;
 }
 
 export class ProductRepository implements IProductRepository {
@@ -81,7 +82,7 @@ export class ProductRepository implements IProductRepository {
     // ================================================================
     findAll = async (query: ProductSearchCriteria, tx?: Transaction): Promise<ProductProps[]> => {
         const { filter, exclude_ids, is_active, ...rest } = query;
-        const where: WhereOptions<ProductProps> = {
+        const where: WhereOptions<ProductAttributes> = {
             ...(exclude_ids?.length
                 ? { id: { [Op.notIn]: exclude_ids } }
                 : {}),
@@ -97,10 +98,11 @@ export class ProductRepository implements IProductRepository {
             ...(filter
                 ? {
                     [Op.or]: [
-                        { company_name: { [Op.like]: `%${filter}%` } },
-                        { email: { [Op.like]: `%${filter}%` } },
-                        { tax_id: { [Op.like]: `%${filter}%` } },
-                        { cfdi: { [Op.like]: `%${filter}%` } },
+                        { name: { [Op.like]: `%${filter}%` } },
+                        { description: { [Op.like]: `%${filter}%` } },
+                        { custom_id: { [Op.like]: `%${filter}%` } },
+                        { presentation: { [Op.like]: `%${filter}%` } },
+                        { storage_conditions: { [Op.like]: `%${filter}%` } },
                     ],
                 }
                 : {}),
@@ -108,14 +110,14 @@ export class ProductRepository implements IProductRepository {
         const rows: ProductModel[] = await ProductModel.findAll({
             where,
             transaction: tx,
-            attributes: ProductModel.getAllFields() as (keyof ProductProps)[],
+            attributes: ProductModel.getAllFields() as (keyof ProductAttributes)[],
         });
         return rows.map(pl => mapModelToDomain(pl));
     };
     findById = async (id: number, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
+            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
@@ -123,7 +125,7 @@ export class ProductRepository implements IProductRepository {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { name },
-            attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
+            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
@@ -131,7 +133,7 @@ export class ProductRepository implements IProductRepository {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { custom_id: custom_id },
-            attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
+            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
@@ -139,7 +141,7 @@ export class ProductRepository implements IProductRepository {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { sku: sku },
-            attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
+            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
@@ -147,7 +149,7 @@ export class ProductRepository implements IProductRepository {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { barcode: barcode },
-            attributes: ProductModel.getAllFields() as ((keyof ProductProps)[])
+            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
         return row ? mapModelToDomain(row) : null;
     }
@@ -180,7 +182,7 @@ export class ProductRepository implements IProductRepository {
         // 3. Obtener la locación actualizada
         const updated: ProductModel | null = await ProductModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductModel.getAllFields() as ((keyof ProductProps)[]),
+            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el producto.");
         return mapModelToDomain(updated);

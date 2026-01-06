@@ -45,21 +45,41 @@
 
 const normalizeToArray = (value?: string | string[]): string[] | undefined => {
     if (value === undefined) return undefined;
-    return Array.isArray(value) ? value : [value];
+
+    const arr = Array.isArray(value) ? value : [value];
+    const cleaned = arr
+        .map(v => v.trim())
+        .filter(v => v.length > 0);
+
+    return cleaned.length ? cleaned : undefined;
 };
+
+
 const normalizeToNumberArray = (value?: string | string[]): number[] | undefined => {
     const arr = normalizeToArray(value);
     if (!arr) return undefined;
-    return arr
+
+    const nums = arr
         .map(v => Number(v))
         .filter(v => !Number.isNaN(v));
+
+    return nums.length ? nums : undefined;
 };
+
 
 const normalizeToBoolean = (value?: string | number | boolean): boolean | undefined => {
     if (value === undefined) return undefined;
     if (typeof value === "boolean") return value;
-    if (value === 1 || value === "1" || value === "true") return true;
-    if (value === 0 || value === "0" || value === "false") return false;
+
+    if (typeof value === "number") {
+        if (value === 1) return true;
+        if (value === 0) return false;
+        return undefined;
+    }
+
+    const v = value.trim().toLowerCase();
+    if (v === "1" || v === "true" || v === "on" || v === "yes") return true;
+    if (v === "0" || v === "false" || v === "off" || v === "no") return false;
     return undefined;
 };
 

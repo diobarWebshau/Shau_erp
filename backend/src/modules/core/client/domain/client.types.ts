@@ -1,3 +1,5 @@
+import { DecimalVO } from "@shared/domain/value-objects/decimal.vo";
+
 /**
  * Domain Types
  * ------------------------------------------------------------------
@@ -46,6 +48,7 @@
  *   derivados de estos tipos.
  */
 
+
 interface ClientProps {
     id: number,
     company_name: string,
@@ -59,7 +62,7 @@ interface ClientProps {
     street_number: number,
     neighborhood: string,
     payment_terms: string | null,
-    credit_limit: number | null,
+    credit_limit: DecimalVO | null,
     zip_code: number,
     tax_regimen: string | null,
     cfdi: string,
@@ -76,18 +79,17 @@ type ClientUpdateProps = Partial<ClientCreateProps>;
 interface ClientSearchCriteria {
     filter?: string;
     exclude_ids?: number[];
-    company_name?: string | string[];
-    tax_id?: string | string[];
-    email?: string | string[];
-    phone?: string | string[];
-    city?: string | string[];
-    state?: string | string[];
-    country?: string | string[];
-    street?: string | string[];
-    neighborhood?: string | string[];
-    tax_regimen?: string | string[];
-    payment_terms?: string | string[];
-    cfdi?: string | string[];
+    company_name?: string[];
+    tax_id?: string[];
+    email?: string[];
+    city?: string[];
+    state?: string[];
+    country?: string[];
+    street?: string[];
+    neighborhood?: string[];
+    tax_regimen?: string[];
+    payment_terms?: string[];
+    cfdi?: string[];
     is_active?: boolean;
 };
 

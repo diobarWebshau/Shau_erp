@@ -1,8 +1,9 @@
-import type { ClientCreateProps, ClientProps, ClientUpdateProps, ClientSearchCriteria } from "../../domain/client.types";
+import type { ClientCreateProps, ClientUpdateProps, ClientProps, ClientSearchCriteria } from "../../domain/client.types";
+import { ClientModel, ClientAttributes, ClientCreateAttributes, ClientUpdateAttributes } from "../orm/clients.orm";
 import type { IClientRepository } from "../../domain/client.repository.interface";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
-import { ClientModel } from "../orm/clients.orm";
 
 /**
  * Repository (Infrastructure)
@@ -52,39 +53,39 @@ import { ClientModel } from "../orm/clients.orm";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ClientModel): ClientProps => {
-    const json: ClientProps = model.toJSON();
+const mapClientModelToDomain = (model: ClientModel): ClientProps => {
+    const data: ClientAttributes = model.toJSON();
     return {
-        id: json.id,
-        cfdi: json.cfdi,
-        city: json.city,
-        company_name: json.company_name,
-        country: json.country,
-        created_at: json.created_at,
-        credit_limit: Number(json.credit_limit),
-        email: json.email,
-        is_active: json.is_active,
-        neighborhood: json.neighborhood,
-        payment_method: json.payment_method,
-        payment_terms: json.payment_terms,
-        phone: json.phone,
-        state: json.state,
-        street: json.street,
-        street_number: json.street_number,
-        tax_id: json.tax_id,
-        tax_regimen: json.tax_regimen,
-        updated_at: json.updated_at,
-        zip_code: json.zip_code
+        ...data,
+        credit_limit: (data.credit_limit) ? DecimalVO.from(data.credit_limit) : null,
+        created_at: (data.created_at instanceof Date) ? data.created_at : new Date(data.created_at),
+        updated_at: (data.updated_at instanceof Date) ? data.updated_at : new Date(data.updated_at)
+    };
+};
+
+const mapClientCreateDomainToModel = (data: ClientCreateProps): ClientCreateAttributes => ({
+    ...data,
+    credit_limit: data.credit_limit ? data.credit_limit.toString() : null,
+});
+
+
+const mapClientUpdateDomainToModel = (data: ClientUpdateProps): ClientUpdateAttributes => {
+    const { credit_limit, ...rest } = data;
+    return {
+        ...rest,
+        ...(credit_limit !== undefined
+            ? { credit_limit: credit_limit === null ? null : credit_limit.toString() }
+            : {}),
     };
 };
 
 export class ClientRepository implements IClientRepository {
     // ================================================================
-    // SELECTS
+    // | SELECTS                                                      |
     // ================================================================
     findAll = async (query: ClientSearchCriteria, tx?: Transaction): Promise<ClientProps[]> => {
         const { filter, exclude_ids, is_active, ...rest } = query;
-        const where: WhereOptions<ClientProps> = {
+        const where: WhereOptions<ClientAttributes> = {
             ...(exclude_ids?.length
                 ? { id: { [Op.notIn]: exclude_ids } }
                 : {}),
@@ -109,82 +110,83 @@ export class ClientRepository implements IClientRepository {
                 : {}),
         };
         const rows: ClientModel[] = await ClientModel.findAll({
-            where,
-            attributes: ClientModel.getAllFields() as (keyof ClientProps)[],
-            transaction: tx,
+            where, transaction: tx,
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapClientModelToDomain(pl));
     };
     findById = async (id: number, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findByPk(id, {
-            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[]),
+            attributes: ClientModel.getAllFields() as ((keyof ClientAttributes)[]),
             transaction: tx,
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     }
     findByCompanyName = async (company_name: string, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findOne({
             where: { company_name },
             transaction: tx,
-            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     }
     findByCfdi = async (cfdi: string, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findOne({
             where: { cfdi: cfdi },
             transaction: tx,
-            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     }
     findByTaxId = async (tax_id: string, tx?: Transaction): Promise<ClientProps | null> => {
         const row: ClientModel | null = await ClientModel.findOne({
             where: { tax_id: tax_id },
             transaction: tx,
-            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     }
     // ================================================================
-    // CREATE
+    // | CREATE                                                       |
     // ================================================================
     create = async (data: ClientCreateProps, tx?: Transaction): Promise<ClientProps> => {
-        const created: ClientModel = await ClientModel.create(data, { transaction: tx });
+        const created: ClientModel = await ClientModel.create(mapClientCreateDomainToModel(data), { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el nuevo cliente.");
-        return mapModelToDomain(created);
+        return mapClientModelToDomain(created);
     }
     // ================================================================
-    // UPDATE
+    // | UPDATE                                                       |
     // ================================================================
     update = async (id: number, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps> => {
-        // 1. Verificar existencia
-        const existing: ClientModel | null = await ClientModel.findByPk(id);
-        if (!existing) throw new HttpError(404,
-            "El cliente que se desea actualizar no fue posible encontrarlo."
-        );
-        // 2. Aplicar UPDATE
-        const [affectedCount]: [affectedCount: number] = await ClientModel.update(data, {
+        const existing = await ClientModel.findByPk(id, {
+            transaction: tx,
+        });
+        if (!existing) throw new HttpError(404, "El cliente que se desea actualizar no fue posible encontrarlo.");
+
+        const existingDomain = mapClientModelToDomain(existing);
+
+        if (!Object.keys(data).length) return existingDomain;
+
+        const [affectedCount] = await ClientModel.update(mapClientUpdateDomainToModel(data), {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar el cliente.");
-        // 3. Obtener la locación actualizada
-        const updated: ClientModel | null = await ClientModel.findByPk(id, {
-            attributes: ClientModel.getAllFields() as ((keyof ClientProps)[]),
+
+        if (!affectedCount) return existingDomain;
+
+        const updated = await ClientModel.findByPk(id, {
             transaction: tx,
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el cliente.");
-        return mapModelToDomain(updated);
-    }
+
+        return mapClientModelToDomain(updated);
+    };
+
     // ================================================================
-    // DELETE
+    // | DELETE                                                       |
     // ================================================================
     delete = async (id: number, tx?: Transaction): Promise<void> => {
-        const existing: ClientModel | null = await ClientModel.findByPk(id);
+        const existing: ClientModel | null = await ClientModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing) throw new HttpError(404,
-            "No se encontro la línea de producción que se pretende eliminar."
+            "No se encontro el cliente que se pretende eliminar."
         );
         const deleted: number = await ClientModel.destroy({
             where: { id },

@@ -1,6 +1,8 @@
-import { Transaction } from "sequelize";
+import { normalizeToArray, normalizeToBoolean, normalizeToNumberArray } from "@src/shared/query-reqyest/query-request-normalizer";
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import type { InputProps, InputSearchCriteria } from "../../domain/input.types";
+import { InputQueryDto } from "../dto/input.model.schema";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -43,9 +45,25 @@ import type { InputProps, InputSearchCriteria } from "../../domain/input.types";
  *   para responder a las solicitudes externas.
  */
 
+const mapInputQueryDtoToCriteria = (query: InputQueryDto): InputSearchCriteria => {
+    return {
+        filter: query.filter?.trim() || undefined,
+        exclude_ids: normalizeToNumberArray(query.exclude_ids),
+        name: normalizeToArray(query.name),
+        description: normalizeToArray(query.description),
+        sku: normalizeToArray(query.sku),
+        presentation: normalizeToArray(query.presentation),
+        unit_of_measure: normalizeToArray(query.unit_of_measure),
+        barcode: normalizeToArray(query.barcode),
+        custom_id: normalizeToArray(query.custom_id),
+        is_draft: normalizeToBoolean(query.is_draft),
+        is_active: normalizeToBoolean(query.is_active),
+    };
+};
+
 export class GetAllInputsUseCase {
     constructor(private readonly repo: IInputRepository) { }
-    async execute(query: InputSearchCriteria, tx?: Transaction): Promise<InputProps[]> {
-        return await this.repo.findAll(query, tx);
+    async execute(query: InputQueryDto, tx?: Transaction): Promise<InputProps[]> {
+        return await this.repo.findAll(mapInputQueryDtoToCriteria(query), tx);
     }
 };

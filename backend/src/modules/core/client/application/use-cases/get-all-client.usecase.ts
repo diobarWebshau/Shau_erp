@@ -1,6 +1,8 @@
-import { Transaction } from "sequelize";
+import { normalizeToArray, normalizeToBoolean, normalizeToNumberArray } from "@shared/query-reqyest/query-request-normalizer";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import type { ClientProps, ClientSearchCriteria } from "../../domain/client.types";
+import { ClientQueryDto } from "../dto/client.model.schema";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -43,9 +45,28 @@ import type { ClientProps, ClientSearchCriteria } from "../../domain/client.type
  *   para responder a las solicitudes externas.
  */
 
+const mapClientQueryDtoToCriteria = (query: ClientQueryDto): ClientSearchCriteria => {
+    return {
+        filter: query.filter?.trim() || undefined,
+        exclude_ids: normalizeToNumberArray(query.exclude_ids),
+        company_name: normalizeToArray(query.company_name),
+        tax_id: normalizeToArray(query.tax_id),
+        email: normalizeToArray(query.email),
+        city: normalizeToArray(query.city),
+        state: normalizeToArray(query.state),
+        country: normalizeToArray(query.country),
+        street: normalizeToArray(query.street),
+        neighborhood: normalizeToArray(query.neighborhood),
+        tax_regimen: normalizeToArray(query.tax_regimen),
+        payment_terms: normalizeToArray(query.payment_terms),
+        cfdi: normalizeToArray(query.cfdi),
+        is_active: normalizeToBoolean(query.is_active),
+    };
+};
+
 export class GetAllClientsUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    async execute(query: ClientSearchCriteria, tx?:Transaction): Promise<ClientProps[]> {
-        return await this.repo.findAll(query, tx);
+    async execute(query: ClientQueryDto, tx?: Transaction): Promise<ClientProps[]> {
+        return await this.repo.findAll(mapClientQueryDtoToCriteria(query), tx);
     }
 };

@@ -9,15 +9,14 @@ import { CreateInputUseCase } from "../../application/use-cases/create-input.use
 import { DeleteInputUseCase } from "../../application/use-cases/delete-input.usecase";
 import { LocalFileCleanupService } from "@shared/files/local-file-cleanup.service";
 import { UpdateInputUseCase } from "../../application/use-cases/update-input.usecase";
-import { InputProps, InputSearchCriteria } from "../../domain/input.types"
 import { InputResponseDto } from "../../application/dto/input.model.schema";
+import { InputProps } from "../../domain/input.types"
 import { InputRepository } from "../repository/input.repository";
 import {
     DeleteinputSchema, GetAllinputsSchema, GetByBarcodeinputSchema,
     GetByCustomIdinputSchema, GetByIdinputSchema, CreateinputSchema,
     GetByNameinputSchema, GetBySkuinputSchema, UpdateinputSchema
 } from "../../application/dto/input.endpoint.schema";
-import { mapInputQueryToCriteria } from "./input-query-mapper";
 import ImageHandler from "@helpers/imageHandlerClass";
 
 /**
@@ -70,6 +69,15 @@ import ImageHandler from "@helpers/imageHandlerClass";
  *   de forma coherente hacia Inputes externos.
  */
 
+const formatResponse = (client: InputProps): InputResponseDto => {
+    return {
+        ...client,
+        unit_cost: client.unit_cost ? client.unit_cost.toString() : null,
+        created_at: client.created_at.toISOString(),
+        updated_at: client.updated_at.toISOString()
+    };
+};
+
 export class InputController {
 
     private readonly repo: InputRepository;
@@ -103,28 +111,13 @@ export class InputController {
     }
 
     // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-
-    /** Formatea un Location para convertir fechas a ISO */
-    private async formatResponse(input: InputProps): Promise<InputResponseDto> {
-        return {
-            ...input,
-            photo: input.photo ? await ImageHandler.convertToBase64(input.photo) : null,
-            created_at: input.created_at.toISOString(),
-            updated_at: input.updated_at.toISOString()
-        };
-    };
-
-    // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req: ApiRequest<GetAllinputsSchema>, res: ApiResponse<GetAllinputsSchema>) => {
-        const queryRequest: GetAllinputsSchema["query"] = req.query;
-        const query: InputSearchCriteria = mapInputQueryToCriteria(queryRequest);
+        const query: GetAllinputsSchema["query"] = req.query;
         const result: InputProps[] = await this.getAllUseCase.execute(query)
         const formatted: InputResponseDto[] = await Promise.all(
-            result.map(p => this.formatResponse(p))
+            result.map(p => formatResponse(p))
         );
         return res.status(200).send(formatted);
     };
@@ -136,7 +129,7 @@ export class InputController {
         const { id }: GetByIdinputSchema["params"] = req.params
         const result: InputProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: InputResponseDto = await this.formatResponse(result)
+        const formatted: InputResponseDto = await formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -147,7 +140,7 @@ export class InputController {
         const { custom_id }: GetByCustomIdinputSchema["params"] = req.params
         const result: InputProps | null = await this.getByCustomIdUseCase.execute(custom_id);
         if (!result) return res.status(204).send(null);
-        const formatted: InputResponseDto = await this.formatResponse(result)
+        const formatted: InputResponseDto = await formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -158,7 +151,7 @@ export class InputController {
         const { sku }: GetBySkuinputSchema["params"] = req.params
         const result: InputProps | null = await this.getBySkuUseCase.execute(sku);
         if (!result) return res.status(204).send(null);
-        const formatted: InputResponseDto = await this.formatResponse(result)
+        const formatted: InputResponseDto = await formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -169,7 +162,7 @@ export class InputController {
         const { name }: GetByNameinputSchema["params"] = req.params
         const result: InputProps | null = await this.getByNameUseCase.execute(name);
         if (!result) return res.status(204).send(null);
-        const formatted: InputResponseDto = await this.formatResponse(result)
+        const formatted: InputResponseDto = await formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -180,7 +173,7 @@ export class InputController {
         const { barcode }: GetByBarcodeinputSchema["params"] = req.params
         const result: InputProps | null = await this.getByBarcodeUseCase.execute(Number(barcode));
         if (!result) return res.status(204).send(null);
-        const formatted: InputResponseDto = await this.formatResponse(result)
+        const formatted: InputResponseDto = await formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -195,7 +188,7 @@ export class InputController {
             const created = await this.createUseCase.execute(body);
 
             // 2️⃣ Formatear salida final
-            const formatted = await this.formatResponse(created);
+            const formatted = await formatResponse(created);
 
             return res.status(201).send(formatted);
 
@@ -279,7 +272,7 @@ export class InputController {
             // 6️⃣ RESPUESTA
             // -----------------------------------------------------------
             const formatted: InputResponseDto =
-                await this.formatResponse({
+                await formatResponse({
                     ...updated,
                     ...(finalPhotoPath ? { photo: finalPhotoPath } : {}),
                 });

@@ -76,14 +76,14 @@ type ProductCreateAttributes = Omit<ProductAttributes, "id" | "created_at" | "up
 type ProductUpdateAttributes = Partial<ProductCreateAttributes>;
 
 class ProductModel extends Model<ProductAttributes, ProductCreateAttributes> {
-    static getEditableFields(): string[] {
+    static getEditableFields(): (keyof ProductAttributes)[] {
         return [
             "name", "storage_conditions", "description", "unit_of_measure", "presentation",
             "production_cost", "barcode", "type", "sku", "sale_price",
             "is_active", "photo", "is_draft", "custom_id"
         ];
     }
-    static getAllFields(): string[] {
+    static getAllFields(): (keyof ProductAttributes)[] {
         return [
             "id", "updated_at", "created_at",
             "name", "storage_conditions", "description", "unit_of_measure", "presentation",

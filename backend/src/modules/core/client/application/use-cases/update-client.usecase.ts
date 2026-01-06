@@ -1,8 +1,7 @@
-import type { ClientProps, ClientUpdateProps } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
+import type { ClientProps, ClientUpdateProps } from "../../domain/client.types";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+import { ClientUpdateDto } from "../dto/client.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -47,49 +46,43 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapClientDtoToDomain = (data: ClientUpdateDto): ClientUpdateProps => {
+    const { credit_limit, ...rest } = data;
+    return {
+        ...rest,
+        ...(credit_limit !== undefined
+            ? { credit_limit: credit_limit === null ? null : DecimalVO.from(credit_limit) }
+            : {}),
+    };
+};
+
 export class UpdateClientUseCase {
     constructor(private readonly repo: IClientRepository) { }
-    async execute(id: number, data: ClientUpdateProps, tx?: Transaction): Promise<ClientProps> {
+    async execute(id: number, data: ClientUpdateDto, tx?: Transaction): Promise<ClientProps> {
+        const dataUpdate: ClientUpdateProps = mapClientDtoToDomain(data);
         const existing: ClientProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "El cliente que se desea actualizar no fue posible encontrarlo."
         );
-        const editableFields: (keyof ClientUpdateProps)[] = [
-            "cfdi", "city", "company_name", "country",
-            "credit_limit", "email", "email",
-            "is_active", "neighborhood", "payment_method",
-            "payment_terms", "phone", "state", "street",
-            "street_number", "tax_id", "tax_regimen",
-            "zip_code"
-        ];
-        const filteredBody: ClientUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ClientProps = { ...existing, ...filteredBody };
-        const normalizedExisting: ClientUpdateProps = deepNormalizeDecimals<ClientUpdateProps>(existing, ["credit_limit"]);
-        const normalizedMerged: ClientUpdateProps = deepNormalizeDecimals<ClientUpdateProps>(merged, ["credit_limit"]);
-        const updateValues: ClientUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) return existing;
-        if (updateValues?.company_name) {
-            const check: ClientProps | null = await this.repo.findByCompanyName(updateValues.company_name, tx);
+        if (dataUpdate?.company_name) {
+            const check: ClientProps | null = await this.repo.findByCompanyName(dataUpdate.company_name, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El nombre ingresado para el cliente, ya esta utilizado por otro cliente."
             );
         }
-        if (updateValues?.cfdi) {
-            const existsByName: ClientProps | null = await this.repo.findByCfdi(updateValues.cfdi, tx);
-            if (existsByName) throw new HttpError(409,
-                "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
-            );
+        if (dataUpdate?.cfdi) {
+            const found = await this.repo.findByCfdi(dataUpdate.cfdi, tx);
+            if (found && String(found.id) !== String(id)) {
+                throw new HttpError(409, "El cfdi ... ya está utilizado por otro cliente.");
+            }
         }
-        if (updateValues?.tax_id) {
-            const existsByName: ClientProps | null = await this.repo.findByTaxId(updateValues.tax_id, tx);
-            if (existsByName) throw new HttpError(409,
-                "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente."
-            );
+        if (dataUpdate?.tax_id) {
+            const found = await this.repo.findByTaxId(dataUpdate.tax_id, tx);
+            if (found && String(found.id) !== String(id)) {
+                throw new HttpError(409, "El tax id ... ya está utilizado por otro cliente.");
+            }
         }
-        const updated: ClientProps = await this.repo.update(id, updateValues, tx);
-        if (!updated) throw new HttpError(500,
-            "No fue posible actualizar el cliente."
-        );
+        const updated: ClientProps = await this.repo.update(id, dataUpdate, tx);
         return updated;
     }
 }

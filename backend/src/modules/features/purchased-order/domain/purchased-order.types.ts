@@ -3,7 +3,7 @@
 interface PurchasedOrderProps {
     id: number,
     order_code: string,
-    delivery_date: Date,
+    delivery_date: Date | null,
     status: string,
     // client fields
     client_id: number,

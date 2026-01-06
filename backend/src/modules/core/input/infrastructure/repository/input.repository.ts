@@ -1,8 +1,9 @@
 import type { InputCreateProps, InputProps, InputUpdateProps, InputSearchCriteria } from "../../domain/input.types";
+import { InputAttributes, InputCreateAttributes, InputModel, InputUpdateAttributes } from "../orm/input.orm";
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
-import { InputModel } from "../orm/input.orm";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 
 /**
  * Repository (Infrastructure)
@@ -52,28 +53,41 @@ import { InputModel } from "../orm/input.orm";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: InputModel): InputProps => {
-    const json: InputProps = model.toJSON();
+const mapInputModelToDomain = (model: InputModel): InputProps => {
+    const inputAttributes: InputAttributes = model.toJSON();
     return {
-        id: json.id,
-        custom_id: json.custom_id,
-        name: json.name,
-        description: json.description,
-        presentation: json.presentation,
-        unit_of_measure: json.unit_of_measure,
-        storage_conditions: json.storage_conditions,
-        barcode: json.barcode,
-        sku: json.sku,
-        photo: json.photo,
-        is_draft: json.is_draft,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
-        input_types_id: json.input_types_id,
-        is_active: json.is_active,
-        supplier: json.supplier,
-        unit_cost: Number(json.unit_cost)
+        ...inputAttributes,
+        unit_cost: (inputAttributes.unit_cost) ? DecimalVO.from(inputAttributes.unit_cost) : null,
     };
 }
+
+const mapInputCreateDomainToModel = (data: InputCreateProps): InputCreateAttributes => ({
+    custom_id: data.custom_id ?? null,
+    name: data.name ?? null,
+    description: data.description ?? null,
+    sku: data.sku ?? null,
+    presentation: data.presentation ?? null,
+    unit_of_measure: data.unit_of_measure ?? null,
+    storage_conditions: data.storage_conditions ?? null,
+    barcode: data.barcode ?? null,
+    input_types_id: data.input_types_id ?? null,
+    supplier: data.supplier ?? null,
+    photo: data.photo ?? null,
+    unit_cost: data.unit_cost ? data.unit_cost.toString() : null,
+    is_draft: data.is_draft,
+    is_active: data.is_active,
+});
+
+const mapInputUpdateModelToDomain = (data: InputUpdateProps): InputUpdateAttributes => {
+    const { unit_cost, ...rest } = data;
+    return {
+        ...rest,
+        ...(unit_cost !== undefined
+            ? { unit_cost: unit_cost === null ? null : unit_cost.toString() }
+            : {}),
+    };
+};
+
 
 export class InputRepository implements IInputRepository {
     // ================================================================
@@ -81,7 +95,7 @@ export class InputRepository implements IInputRepository {
     // ================================================================
     findAll = async (query: InputSearchCriteria, tx?: Transaction): Promise<InputProps[]> => {
         const { filter, exclude_ids, is_active, ...rest } = query;
-        const where: WhereOptions<InputProps> = {
+        const where: WhereOptions<InputAttributes> = {
             ...(exclude_ids?.length
                 ? { id: { [Op.notIn]: exclude_ids } }
                 : {}),
@@ -97,10 +111,11 @@ export class InputRepository implements IInputRepository {
             ...(filter
                 ? {
                     [Op.or]: [
-                        { company_name: { [Op.like]: `%${filter}%` } },
-                        { email: { [Op.like]: `%${filter}%` } },
-                        { tax_id: { [Op.like]: `%${filter}%` } },
-                        { cfdi: { [Op.like]: `%${filter}%` } },
+                        { name: { [Op.like]: `%${filter}%` } },
+                        { custom_id: { [Op.like]: `%${filter}%` } },
+                        { sku: { [Op.like]: `%${filter}%` } },
+                        { description: { [Op.like]: `%${filter}%` } },
+                        { barcode: { [Op.like]: `%${filter}%` } },
                     ],
                 }
                 : {}),
@@ -108,56 +123,50 @@ export class InputRepository implements IInputRepository {
         const rows: InputModel[] = await InputModel.findAll({
             where,
             transaction: tx,
-            attributes: InputModel.getAllFields() as (keyof InputProps)[],
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapInputModelToDomain(pl));
     };
     findById = async (id: number, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findByPk(id, {
             transaction: tx,
-            attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     }
     findByName = async (name: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { name },
             transaction: tx,
-            attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     }
     findByCustomId = async (custom_id: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { custom_id: custom_id },
             transaction: tx,
-            attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     }
     findBySku = async (sku: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { sku: sku },
             transaction: tx,
-            attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     }
     findByBarcode = async (barcode: string, tx?: Transaction): Promise<InputProps | null> => {
         const row: InputModel | null = await InputModel.findOne({
             where: { barcode: barcode },
             transaction: tx,
-            attributes: InputModel.getAllFields() as ((keyof InputProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data: InputCreateProps, tx?: Transaction): Promise<InputProps> => {
-        const created: InputModel = await InputModel.create(data, { transaction: tx });
+        const created: InputModel = await InputModel.create(mapInputCreateDomainToModel(data), { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el nuevo insumo.");
-        return mapModelToDomain(created);
+        return mapInputModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -170,20 +179,20 @@ export class InputRepository implements IInputRepository {
         if (!existing) throw new HttpError(404,
             "El insumo que se desea actualizar no fue posible encontrarlo."
         );
+        const existingDomain: InputProps = mapInputModelToDomain(existing);
+        if (!Object.keys(data).length) return existingDomain;
         // 2. Aplicar UPDATE
-        const [affectedCount]: [affectedCount: number] = await InputModel.update(data, {
+        const [affectedCount]: [affectedCount: number] = await InputModel.update(mapInputUpdateModelToDomain(data), {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount) return mapModelToDomain(existing);
-
+        if (!affectedCount) return existingDomain;
         // 3. Obtener la locación actualizada
         const updated: InputModel | null = await InputModel.findByPk(id, {
             transaction: tx,
-            attributes: InputModel.getAllFields() as ((keyof InputProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el insumo.");
-        return mapModelToDomain(updated);
+        return mapInputModelToDomain(updated);
     }
     // ================================================================
     // DELETE

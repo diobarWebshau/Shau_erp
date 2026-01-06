@@ -1,9 +1,8 @@
 import { z } from "zod";
 
-
 const purchasedOrderCreateschema = z.object({
     order_code: z.string(),
-    delivery_date: z.string(),
+    delivery_date: z.string().nullable(),
     total_price: z.number(),
     status: z.string(),
     // client fields
@@ -42,18 +41,34 @@ const purchasedOrderResponseschema = purchasedOrderCreateschema.extend({
     created_at: z.string(),
 });
 
+const purchasedOrderQuerySchema = z.object({
+    filter: z.string().optional(),
+    exclude_ids: z.union([
+        z.string(),
+        z.array(z.string())
+    ]).optional(),
+    company_name: z.union([z.string(), z.array(z.string())]).optional(),
+    order_code: z.union([z.string(), z.array(z.string())]).optional(),
+    payment_method: z.union([z.string(), z.array(z.string())]).optional(),
+    payment_terms: z.union([z.string(), z.array(z.string())]).optional(),
+    email: z.union([z.string(), z.array(z.string())]).optional(),
+}).strict();
+
 type PurchasedOrderCreateschemaDto = z.infer<typeof purchasedOrderCreateschema>;
 type PurchasedOrderUpdateSchemaDto = z.infer<typeof purchasedOrderUpdateSchema>;
 type PurchasedOrderResponseschemaDto = z.infer<typeof purchasedOrderResponseschema>;
+type PurchasedOrderQuerySchemaDto = z.infer<typeof purchasedOrderQuerySchema>;
 
 export type {
     PurchasedOrderCreateschemaDto,
     PurchasedOrderUpdateSchemaDto,
-    PurchasedOrderResponseschemaDto
-}
+    PurchasedOrderResponseschemaDto,
+    PurchasedOrderQuerySchemaDto
+};
 
 export {
     purchasedOrderCreateschema,
     purchasedOrderUpdateSchema,
-    purchasedOrderResponseschema
+    purchasedOrderResponseschema,
+    purchasedOrderQuerySchema
 };

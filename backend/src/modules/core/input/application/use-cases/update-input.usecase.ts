@@ -6,6 +6,8 @@ import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import ImageHandler from "@helpers/imageHandlerClass";
 import { Transaction } from "sequelize";
+import { InputUpdateDto } from "../dto/input.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 
 /**
  * UseCase
@@ -47,10 +49,23 @@ import { Transaction } from "sequelize";
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+
+const mapInputDtoToDomain = (data: InputUpdateDto): InputUpdateProps => {
+    const { unit_cost, ...rest } = data;
+    return {
+        ...rest,
+        ...(unit_cost !== undefined
+            ? { credit_limit: unit_cost === null ? null : DecimalVO.from(unit_cost) }
+            : {}),
+    };
+};
+
 export class UpdateInputUseCase {
     constructor(private readonly repo: IInputRepository) { }
 
-    async execute(id: number, data: InputUpdateProps, tx?: Transaction): Promise<InputProps> {
+    async execute(id: number, data: InputUpdateDto, tx?: Transaction): Promise<InputProps> {
+
+        const updateData = mapInputDtoToDomain(data);
 
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
@@ -77,7 +92,7 @@ export class UpdateInputUseCase {
             "is_active",
         ];
 
-        const filteredBody: InputUpdateProps = pickEditableFields(data, editableFields);
+        const filteredBody: InputUpdateProps = pickEditableFields(updateData, editableFields);
 
         // ------------------------------------------------------------------
         // 🔀 MERGE DE ESTADO ACTUAL + CAMBIOS PROPUESTOS
@@ -105,10 +120,10 @@ export class UpdateInputUseCase {
         // 🔐 VALIDACIONES DE UNICIDAD
         // ------------------------------------------------------------------
         // Las validaciones de unicidad se basan en la intención del usuario
-        // (data), no en los cambios efectivos (updateValues), para evitar
+        // (updateData), no en los cambios efectivos (updateValues), para evitar
         // inconsistencias y falsos negativos.
-        if (data.name) {
-            const existsByName = await this.repo.findByName(data.name, tx);
+        if (updateData.name) {
+            const existsByName = await this.repo.findByName(updateData.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -117,8 +132,8 @@ export class UpdateInputUseCase {
             }
         }
 
-        if (data.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku, tx);
+        if (updateData.sku) {
+            const existsBySku = await this.repo.findBySku(updateData.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -127,8 +142,8 @@ export class UpdateInputUseCase {
             }
         }
 
-        if (data.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
+        if (updateData.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(updateData.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -137,8 +152,8 @@ export class UpdateInputUseCase {
             }
         }
 
-        if (data.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
+        if (updateData.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(updateData.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new HttpError(
                     409,

@@ -3,6 +3,8 @@ import type { IInputRepository } from "../../domain/input.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import ImageHandler from "@helpers/imageHandlerClass";
 import { Transaction } from "sequelize";
+import { InputCreateDto } from "../dto/input.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 
 /**
  * UseCase
@@ -45,18 +47,26 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapInputCreateDtoToDomain = (data: InputCreateDto): InputCreateProps => ({
+    ...data,
+    unit_cost: data.unit_cost ? DecimalVO.from(data.unit_cost) : null
+});
+
+
 export class CreateInputUseCase {
     constructor(
         private readonly repo: IInputRepository
     ) { }
 
-    async execute(data: InputCreateProps, tx?: Transaction): Promise<InputProps> {
+    async execute(data: InputCreateDto, tx?: Transaction): Promise<InputProps> {
+
+        const createData: InputCreateProps = mapInputCreateDtoToDomain(data);
 
         // ------------------------------------------------------------------
         // 🔎 VALIDACIONES DE NEGOCIO
         // ------------------------------------------------------------------
-        if (data?.name) {
-            const existsByName = await this.repo.findByName(data.name, tx);
+        if (createData?.name) {
+            const existsByName = await this.repo.findByName(createData.name, tx);
             if (existsByName) {
                 throw new HttpError(
                     409,
@@ -65,8 +75,8 @@ export class CreateInputUseCase {
             }
         }
 
-        if (data?.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku, tx);
+        if (createData?.sku) {
+            const existsBySku = await this.repo.findBySku(createData.sku, tx);
             if (existsBySku) {
                 throw new HttpError(
                     409,
@@ -75,8 +85,8 @@ export class CreateInputUseCase {
             }
         }
 
-        if (data?.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
+        if (createData?.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(createData.custom_id, tx);
             if (existsByCustomId) {
                 throw new HttpError(
                     409,
@@ -85,8 +95,8 @@ export class CreateInputUseCase {
             }
         }
 
-        if (data?.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
+        if (createData?.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(createData.barcode.toString(), tx);
             if (existsByBarcode) {
                 throw new HttpError(
                     409,
@@ -98,7 +108,7 @@ export class CreateInputUseCase {
         // ------------------------------------------------------------------
         // 🟢 CREACIÓN INICIAL DEL InputO (SIN TOCAR FS AÚN)
         // ------------------------------------------------------------------
-        const created: InputProps = await this.repo.create(data, tx);
+        const created: InputProps = await this.repo.create(createData, tx);
 
         if (!created) {
             throw new HttpError(500, "No fue posible crear el nuevo Inputo");
@@ -107,11 +117,11 @@ export class CreateInputUseCase {
         // ------------------------------------------------------------------
         // 🖼️ ORGANIZACIÓN DE IMAGEN (POST-CREACIÓN)
         // ------------------------------------------------------------------
-        if (data.photo) {
+        if (createData.photo) {
             try {
                 const newRelativePath =
                     await ImageHandler.moveImageToEntityDirectory(
-                        data.photo,
+                        createData.photo,
                         "inputs",
                         created.id.toString()
                     );
@@ -127,7 +137,7 @@ export class CreateInputUseCase {
             } catch (error) {
                 // Si algo falla durante el move, limpiar archivo temporal.
                 // La creación del Inputo NO se revierte: el Inputo puede existir sin imagen.
-                try { await ImageHandler.removeImageIfExists(data.photo); }
+                try { await ImageHandler.removeImageIfExists(createData.photo); }
                 catch { /* silencio intencional */ }
                 // Propagar el error para que la capa superior decida cómo responder
                 throw error;

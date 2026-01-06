@@ -1,3 +1,5 @@
+import { stringOrStringArray } from "@shared/application/string-or-string-array.schema";
+import { decimalString } from "@shared/application/decimal.schema";
 import { z } from "zod";
 
 /**
@@ -61,7 +63,7 @@ const clientCreateSchema = z.object({
     neighborhood: z.string(),
     payment_terms: z.string().nullable(),
     zip_code: z.number(),
-    credit_limit: z.number().nullable(),
+    credit_limit: decimalString.nullable(),
     tax_regimen: z.string().nullable(),
     cfdi: z.string(),
     payment_method: z.string().nullable(),
@@ -122,33 +124,19 @@ const clientResponseSchema = clientCreateSchema.extend({
  */
 const clientQuerySchema = z.object({
     filter: z.string().optional(),
-
-    exclude_ids: z.union([
-        z.string(),
-        z.array(z.string())
-    ]).optional(),
-
-    company_name: z.union([z.string(), z.array(z.string())]).optional(),
-    tax_id: z.union([z.string(), z.array(z.string())]).optional(),
-    email: z.union([z.string(), z.array(z.string())]).optional(),
-    phone: z.union([z.string(), z.array(z.string())]).optional(),
-    city: z.union([z.string(), z.array(z.string())]).optional(),
-    state: z.union([z.string(), z.array(z.string())]).optional(),
-    country: z.union([z.string(), z.array(z.string())]).optional(),
-    street: z.union([z.string(), z.array(z.string())]).optional(),
-    neighborhood: z.union([z.string(), z.array(z.string())]).optional(),
-    tax_regimen: z.union([z.string(), z.array(z.string())]).optional(),
-    payment_terms: z.union([z.string(), z.array(z.string())]).optional(),
-    cfdi: z.union([z.string(), z.array(z.string())]).optional(),
-    is_active: z.preprocess(
-        (val) => {
-            if (typeof val === "boolean") return val;
-            if (val === "true" || val === "1" || val === 1) return true;
-            if (val === "false" || val === "0" || val === 0) return false;
-            return val;
-        },
-        z.boolean({ message: "Active must be a boolean" })
-    ).optional(),
+    exclude_ids: stringOrStringArray.optional(),
+    company_name: stringOrStringArray.optional(),
+    tax_id: stringOrStringArray.optional(),
+    email: stringOrStringArray.optional(),
+    city: stringOrStringArray.optional(),
+    state: stringOrStringArray.optional(),
+    country: stringOrStringArray.optional(),
+    street: stringOrStringArray.optional(),
+    neighborhood: stringOrStringArray.optional(),
+    tax_regimen: stringOrStringArray.optional(),
+    payment_terms: stringOrStringArray.optional(),
+    cfdi: stringOrStringArray.optional(),
+    is_active: z.string().optional(),
 }).strict();
 
 /**
@@ -198,7 +186,7 @@ const clientQuerySchema = z.object({
 type ClientCreateDto = z.infer<typeof clientCreateSchema>;
 type ClientUpdateDto = z.infer<typeof clientUpdateSchema>;
 type ClientResponseDto = z.infer<typeof clientResponseSchema>;
-type ClientQueryDto = z.infer<typeof clientResponseSchema>;
+type ClientQueryDto = z.infer<typeof clientQuerySchema>;
 
 export {
     clientCreateSchema,

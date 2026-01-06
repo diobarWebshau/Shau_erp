@@ -9,11 +9,10 @@ import { DeleteClientUseCase } from "../../application/use-cases/delete-client.u
 import { UpdateClientUseCase } from "../../application/use-cases/update-client.usecase";
 import { ClientResponseDto } from "../../application/dto/client.model.schema";
 import { ClientRepository } from "../repository/client.repository";
-import { ClientProps, ClientSearchCriteria } from "../../domain/client.types"
+import { ClientProps } from "../../domain/client.types"
 import {
     GetAllClientsSchema, CreateClientSchema, UpdateClientSchema, DeleteClientSchema,
 } from "../../application/dto/client.endpoint.schema";
-import { mapClientQueryToCriteria } from "./client-query-mapper";
 
 
 /**
@@ -66,6 +65,15 @@ import { mapClientQueryToCriteria } from "./client-query-mapper";
  *   de forma coherente hacia clientes externos.
  */
 
+const formatResponse = (client: ClientProps): ClientResponseDto => {
+    return {
+        ...client,
+        credit_limit: client.credit_limit ? client.credit_limit.toString() : null,
+        created_at: client.created_at.toISOString(),
+        updated_at: client.updated_at.toISOString()
+    };
+};
+
 export class ClientController {
 
     private readonly repo: ClientRepository;
@@ -93,22 +101,15 @@ export class ClientController {
     // ============================================================
 
     /** Formatea un Location para convertir fechas a ISO */
-    private formatResponse(client: ClientProps): ClientResponseDto {
-        return {
-            ...client,
-            created_at: client.created_at.toISOString(),
-            updated_at: client.updated_at.toISOString()
-        };
-    };
+
 
     // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req: ApiRequest<GetAllClientsSchema>, res: ApiResponse<GetAllClientsSchema>) => {
-        const queryRequest: GetAllClientsSchema["query"] = req.query;
-        const query: ClientSearchCriteria = mapClientQueryToCriteria(queryRequest);
+        const query: GetAllClientsSchema["query"] = req.query;
         const result: ClientProps[] = await this.getAllUseCase.execute(query);
-        const formatted: ClientResponseDto[] = result.map(l => this.formatResponse(l));
+        const formatted: ClientResponseDto[] = result.map(l => formatResponse(l));
         return res.status(200).send(formatted);
     };
 
@@ -119,7 +120,7 @@ export class ClientController {
         const { id }: GetByIdClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = this.formatResponse(result)
+        const formatted: ClientResponseDto = formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -130,7 +131,7 @@ export class ClientController {
         const { id }: GetByIdClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = this.formatResponse(result)
+        const formatted: ClientResponseDto = formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -141,7 +142,7 @@ export class ClientController {
         const { cfdi }: GetByCfdiClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByCfdiUseCase.execute(cfdi);
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = this.formatResponse(result)
+        const formatted: ClientResponseDto = formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -152,7 +153,7 @@ export class ClientController {
         const { company_name }: GetByCompanyNameClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByCompanyNameUseCase.execute(company_name);
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = this.formatResponse(result)
+        const formatted: ClientResponseDto = formatResponse(result)
         return res.status(200).send(formatted);
     };
 
@@ -162,7 +163,7 @@ export class ClientController {
     create = async (req: ApiRequest<CreateClientSchema>, res: ApiResponse<CreateClientSchema>) => {
         const body: CreateClientSchema["body"] = req.body;
         const created: ClientProps = await this.createUseCase.execute(body);
-        const formatted: ClientResponseDto = this.formatResponse(created);
+        const formatted: ClientResponseDto = formatResponse(created);
         return res.status(201).send(formatted);
     };
 
@@ -173,7 +174,7 @@ export class ClientController {
         const { id }: UpdateClientSchema["params"] = req.params;
         const body: UpdateClientSchema["body"] = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted: ClientResponseDto = this.formatResponse(updated);
+        const formatted: ClientResponseDto = formatResponse(updated);
         return res.status(200).send(formatted);
     };
 

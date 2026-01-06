@@ -52,7 +52,7 @@ interface InputTypeProps {
     created_at: Date,
     updated_at: Date
 };
-type InputTypeCreateProps = Partial<Omit<InputTypeProps, "created_at" | "updated_at" | "id">>
+type InputTypeCreateProps = Omit<InputTypeProps, "created_at" | "updated_at" | "id">;
 type InputTypeUpdateProps = Partial<InputTypeCreateProps>; 
 
 export type {

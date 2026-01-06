@@ -77,11 +77,11 @@ type LocationUpdateProps = Partial<LocationCreateProps>;
 interface LocationSearchCriteria {
     filter?: string,
     exclude_ids?: number[],
-    name?: string | string[],
-    decription?: string | string[],
-    email?: string | string[],
-    phone?: string | string[],
-    custom_id?: string | string[],
+    name?: string[],
+    decription?: string[],
+    email?: string[],
+    phone?: string[],
+    custom_id?: string[],
     is_active?: boolean;
 }
 

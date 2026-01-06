@@ -2,6 +2,7 @@ import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
 import type { ProcessCreateProps, ProcessProps } from "../../domain/process.types";
 import HttpError from "@shared/errors/http/http-error";
+import { ProcessCreateDto } from "../dto/process.model.schema";
 
 /**
  * UseCase
@@ -46,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class CreateProcessUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    execute = async (data: ProcessCreateProps, tx?: Transaction) => {
+    execute = async (data: ProcessCreateDto, tx?: Transaction) => {
         if (data.name) {
             const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName)

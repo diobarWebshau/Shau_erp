@@ -1,6 +1,7 @@
-import type { IInputTypeRepository } from "../../domain/input-type.repository";
 import type { InputTypeProps, InputTypeUpdateProps } from "../../domain/input-type.types";
+import type { IInputTypeRepository } from "../../domain/input-type.repository";
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
+import { InputTypeUpdateDto } from "../dto/input-type.model.schema";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
@@ -47,7 +48,7 @@ import { Transaction } from "sequelize";
  */
 export class UpdateInputTypeUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
-    execute = async (id: number, data: InputTypeUpdateProps, tx?: Transaction) => {
+    execute = async (id: number, data: InputTypeUpdateDto, tx?: Transaction) => {
         const existing = await this.repo.findById(Number(id), tx);
         if (!existing) throw new HttpError(404,
             "El tipo de locación que se desea actualizar no fue posible encontrarlo."

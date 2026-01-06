@@ -1,7 +1,8 @@
 import { InventoryCreateProps, InventoryProps } from "../../domain/inventory.types";
 import { IInventoryRepository } from "../../domain/inventory.repository.interface";
+import { DecimalVO } from "@shared/domain/value-objects/decimal.vo";
+import { inventoryCreateDto } from "../dto/inventory.model.schema";
 import { Transaction } from "sequelize";
-import { inventoryResponseDto } from "../dto/inventory.model.schema";
 
 /**
  * UseCase
@@ -44,6 +45,14 @@ import { inventoryResponseDto } from "../dto/inventory.model.schema";
  *   para responder a las solicitudes externas.
  */
 
+const mapInventoryCreateDtoToDomain = (data: inventoryCreateDto): InventoryCreateProps => ({
+    ...data,
+    maximum_stock: DecimalVO.from(data.maximum_stock),
+    minimum_stock: DecimalVO.from(data.minimum_stock),
+    stock: DecimalVO.from(data.stock)
+});
+
+
 export class CreateInventoryUseCase {
 
     private readonly repo: IInventoryRepository;
@@ -52,13 +61,9 @@ export class CreateInventoryUseCase {
         this.repo = repo;
     };
 
-    execute = async (data: InventoryCreateProps, tx?: Transaction): Promise<inventoryResponseDto> => {
-        const responseInventory: InventoryProps = await this.repo.create(data, tx);
-        const inventoryFormmatted: inventoryResponseDto = {
-            ...responseInventory,
-            created_at: responseInventory.created_at.toISOString(),
-            updated_at: responseInventory.updated_at.toISOString(),
-        }
-        return inventoryFormmatted;
+    execute = async (data: inventoryCreateDto, tx?: Transaction): Promise<InventoryProps> => {
+        const createData = mapInventoryCreateDtoToDomain(data);
+        const responseInventory: InventoryProps = await this.repo.create(createData, tx);
+        return responseInventory;
     };
 };

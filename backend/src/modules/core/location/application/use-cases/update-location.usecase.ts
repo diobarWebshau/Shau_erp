@@ -5,6 +5,7 @@ import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
+import { LocationUpdateDto } from "../dto/location.model.schema";
 
 /**
  * UseCase
@@ -50,7 +51,7 @@ import { Transaction } from "sequelize";
 
 export class UpdateLocationUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    async execute(id: number, data: LocationUpdateProps, tx?: Transaction): Promise<LocationProps> {
+    async execute(id: number, data: LocationUpdateDto, tx?: Transaction): Promise<LocationProps> {
         const existing: LocationProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La locación que se desea actualizar no fue posible encontrarla."

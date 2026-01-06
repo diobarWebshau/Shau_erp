@@ -73,13 +73,13 @@ export class UpdateClientUseCase {
         if (dataUpdate?.cfdi) {
             const found = await this.repo.findByCfdi(dataUpdate.cfdi, tx);
             if (found && String(found.id) !== String(id)) {
-                throw new HttpError(409, "El cfdi ... ya está utilizado por otro cliente.");
+                throw new HttpError(409, "El cfdi ya está utilizado por otro cliente.");
             }
         }
         if (dataUpdate?.tax_id) {
             const found = await this.repo.findByTaxId(dataUpdate.tax_id, tx);
             if (found && String(found.id) !== String(id)) {
-                throw new HttpError(409, "El tax id ... ya está utilizado por otro cliente.");
+                throw new HttpError(409, "El tax id ya está utilizado por otro cliente.");
             }
         }
         const updated: ClientProps = await this.repo.update(id, dataUpdate, tx);

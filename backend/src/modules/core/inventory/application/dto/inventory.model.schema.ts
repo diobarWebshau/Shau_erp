@@ -1,9 +1,9 @@
 import z from "zod";
 
 const inventoryCreateSchema = z.object({
-    stock: z.number(),
-    minimum_stock: z.number(),
-    maximum_stock: z.number(),
+    stock: z.string(),
+    minimum_stock: z.string(),
+    maximum_stock: z.string(),
     lead_time: z.number()
 });
 

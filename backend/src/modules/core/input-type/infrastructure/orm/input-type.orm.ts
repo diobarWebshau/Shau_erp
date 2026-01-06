@@ -66,9 +66,10 @@ interface InputTypeAttributes {
     updated_at: Date
 }
 
-type InputTypeCreationAttributes = Partial<Omit<InputTypeAttributes, 'id' | 'created_at' | 'updated_at'>>;
+type InputTypeCreateAttributes = Omit<InputTypeAttributes, 'id' | 'created_at' | 'updated_at'>;
+type InputTypeUpdateAttributes = Partial<InputTypeAttributes>;
 
-class InputTypeModel extends Model<InputTypeAttributes, InputTypeCreationAttributes> {
+class InputTypeModel extends Model<InputTypeAttributes, InputTypeCreateAttributes> {
     declare id: number;
     declare name: string;
     declare created_at: Date;
@@ -103,8 +104,9 @@ InputTypeModel.init({
     updatedAt: "updated_at"
 });
 
-export { InputTypeModel};
+export { InputTypeModel };
 export type {
     InputTypeAttributes,
-    InputTypeCreationAttributes
+    InputTypeUpdateAttributes,
+    InputTypeCreateAttributes
 };

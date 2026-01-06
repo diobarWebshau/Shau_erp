@@ -1,7 +1,7 @@
 // src/modules/Input/infrastructure/repository/Input.repository.ts
 import type { InputTypeProps, InputTypeCreateProps, InputTypeUpdateProps } from "../../domain/input-type.types";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
-import { InputTypeModel } from "../orm/input-type.orm";
+import { InputTypeAttributes, InputTypeModel } from "../orm/input-type.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -54,15 +54,15 @@ import { Transaction } from "sequelize";
  */
 
 
-function mapModelToDomain(model: InputTypeModel): InputTypeProps {
-    const json: InputTypeProps = model.toJSON();
+function mapInputTypeModelToDomain(model: InputTypeModel): InputTypeProps {
+    const inputTypeAttributes: InputTypeAttributes = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        id: inputTypeAttributes.id,
+        name: inputTypeAttributes.name,
+        created_at: inputTypeAttributes.created_at,
+        updated_at: inputTypeAttributes.updated_at,
     };
-}
+};
 
 export class InputTypeRepository implements IInputTypeRepository {
 
@@ -72,27 +72,24 @@ export class InputTypeRepository implements IInputTypeRepository {
 
     async findAll(tx?: Transaction): Promise<InputTypeProps[]> {
         const rows: InputTypeModel[] = await InputTypeModel.findAll({
-            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
             transaction: tx
         });
-        return rows.map(mapModelToDomain);
+        return rows.map(mapInputTypeModelToDomain);
     };
 
     async findById(id: number, tx?: Transaction): Promise<InputTypeProps | null> {
         const row: InputTypeModel | null = await InputTypeModel.findByPk(id, {
-            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputTypeModelToDomain(row) : null;
     };
 
     async findByName(name: string, tx?: Transaction): Promise<InputTypeProps | null> {
         const row: InputTypeModel | null = await InputTypeModel.findOne({
             where: { name },
-            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputTypeModelToDomain(row) : null;
     };
 
     // ================================================================
@@ -102,7 +99,7 @@ export class InputTypeRepository implements IInputTypeRepository {
     async create(data: InputTypeCreateProps, tx?: Transaction): Promise<InputTypeProps> {
         const created: InputTypeModel | null = await InputTypeModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el tipo de insumo.");
-        return mapModelToDomain(created);
+        return mapInputTypeModelToDomain(created);
     }
 
     // ================================================================
@@ -110,26 +107,29 @@ export class InputTypeRepository implements IInputTypeRepository {
     // ================================================================
     async update(id: number, data: InputTypeUpdateProps, tx?: Transaction): Promise<InputTypeProps> {
         // 1. Verificar existencia
-        const existing: InputTypeProps | null = await InputTypeModel.findByPk(id, {
+        const existing: InputTypeModel | null = await InputTypeModel.findByPk(id, {
             transaction: tx
         });
         if (!existing) throw new HttpError(
             404,
             "El tipo de insumo que se desea actualizar no fue posible encontrarla."
         );
+        const existingDomain = mapInputTypeModelToDomain(existing);
+
+        if (!Object.keys(data).length) return existingDomain;
+
         // 2. Aplicar UPDATE
         const [affectedCount]: [affectedCount: number] = await InputTypeModel.update(data, {
             where: { id },
             transaction: tx
         });
-        if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el tipo de insumo.");
+        if (!affectedCount) return existingDomain;
         // 3. Obtener la insumo actualizada
         const updated: InputTypeModel | null = await InputTypeModel.findByPk(id, {
-            attributes: InputTypeModel.getAllFields() as ((keyof InputTypeProps)[]),
             transaction: tx
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el tipo de insumo.");
-        return mapModelToDomain(updated);
+        return mapInputTypeModelToDomain(updated);
     }
 
     // ================================================================

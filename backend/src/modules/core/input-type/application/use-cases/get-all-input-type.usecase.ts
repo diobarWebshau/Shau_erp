@@ -1,6 +1,6 @@
-import { Transaction } from "sequelize";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
 import type { InputTypeProps } from "../../domain/input-type.types";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase

@@ -77,6 +77,25 @@ type InputUpdateAttributes = Partial<InputCreateAttributes>;
 
 
 class InputModel extends Model<InputAttributes, InputCreateAttributes> {
+
+    declare id: number;
+    declare custom_id: string | null;
+    declare name: string | null;
+    declare description: string | null;
+    declare sku: string | null;
+    declare presentation: string | null;
+    declare unit_of_measure: string | null;
+    declare storage_conditions: string | null;
+    declare barcode: number | null;
+    declare input_types_id: number | null;
+    declare unit_cost: string | null;
+    declare supplier: string | null;
+    declare photo: string | null;
+    declare is_draft: boolean;
+    declare is_active: boolean;
+    declare created_at: Date;
+    declare updated_at: Date;
+
     static getEditableFields(): (keyof InputUpdateAttributes)[] {
         return [
             "custom_id", "name", "description", "sku", "presentation",

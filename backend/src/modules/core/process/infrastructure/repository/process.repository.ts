@@ -1,7 +1,7 @@
 // src/modules/location/infrastructure/repository/location.repository.ts
 import type { ProcessProps, ProcessCreateProps, ProcessUpdateProps, ProcessSearchCriteria } from "../../domain/process.types";
 import type { IProcessRepository } from "../../domain/process.repository";
-import { ProcessModel } from "../orm/process.orm";
+import { ProcessAttributes, ProcessModel } from "../orm/process.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { Op, Transaction, WhereOptions } from "sequelize";
 
@@ -54,14 +54,12 @@ import { Op, Transaction, WhereOptions } from "sequelize";
  */
 
 
-function mapModelToDomain(model: ProcessModel): ProcessProps {
-    const json: ProcessProps = model.toJSON();
+function mapProcessModelToDomain(model: ProcessModel): ProcessProps {
+    const json: ProcessAttributes = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        description: json.description,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        ...json,
+        created_at: json.created_at instanceof Date ? json.created_at : new Date(json.created_at),
+        updated_at: json.updated_at instanceof Date ? json.updated_at : new Date(json.updated_at)
     };
 }
 
@@ -101,7 +99,7 @@ export class ProcessRepository implements IProcessRepository {
             transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[])
         });
-        return rows.map(mapModelToDomain);
+        return rows.map(mapProcessModelToDomain);
     }
 
     async findById(id: number, tx?: Transaction): Promise<ProcessProps | null> {
@@ -109,7 +107,7 @@ export class ProcessRepository implements IProcessRepository {
             transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProcessModelToDomain(row) : null;
     }
 
     async findByName(name: string, tx?: Transaction): Promise<ProcessProps | null> {
@@ -118,7 +116,7 @@ export class ProcessRepository implements IProcessRepository {
             transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProcessModelToDomain(row) : null;
     }
 
     // ================================================================
@@ -127,7 +125,7 @@ export class ProcessRepository implements IProcessRepository {
     async create(data: ProcessCreateProps, tx?: Transaction): Promise<ProcessProps> {
         const created: ProcessModel | null = await ProcessModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el tipo de proceso.");
-        return mapModelToDomain(created);
+        return mapProcessModelToDomain(created);
     }
 
     // ================================================================
@@ -135,26 +133,28 @@ export class ProcessRepository implements IProcessRepository {
     // ================================================================
     async update(id: number, data: ProcessUpdateProps, tx?: Transaction): Promise<ProcessProps> {
         // 1. Verificar existencia
-        const existing: ProcessProps | null = await ProcessModel.findByPk(id, {
+        const existing: ProcessModel | null = await ProcessModel.findByPk(id, {
             transaction: tx
         });
-        if (!existing) throw new HttpError(
-            404,
+        if (!existing) throw new HttpError(404,
             "El proceso que se desea actualizar no fue posible encontrarla."
         );
+        const existingDomain = mapProcessModelToDomain(existing);
+
+        if (!Object.keys(data).length) return existingDomain;
         // 2. Aplicar UPDATE
         const [affectedCount]: [affectedCount: number] = await ProcessModel.update(data, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el proceso.");
+        if (!affectedCount)  return existingDomain;
         // 3. Obtener la proceso actualizada
         const updated: ProcessModel | null = await ProcessModel.findByPk(id, {
             transaction: tx,
             attributes: ProcessModel.getAllFields() as ((keyof ProcessProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el proceso.");
-        return mapModelToDomain(updated);
+        return mapProcessModelToDomain(updated);
     }
 
     // ================================================================

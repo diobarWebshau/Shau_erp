@@ -2,6 +2,7 @@ import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import type { LocationCreateProps, LocationProps } from "../../domain/location.types";
 import HttpError from "@shared/errors/http/http-error";
+import { LocationCreateDto } from "../dto/location.model.schema";
 
 /**
  * UseCase
@@ -46,7 +47,7 @@ import HttpError from "@shared/errors/http/http-error";
 
 export class CreateLocationUseCase {
     constructor(private readonly repo: ILocationRepository) { }
-    async execute(data: LocationCreateProps, tx?: Transaction): Promise<LocationProps> {
+    async execute(data: LocationCreateDto, tx?: Transaction): Promise<LocationProps> {
         if (data.name) {
             const existsByName: LocationProps | null = await this.repo.findByName(data.name, tx);
             if (existsByName) throw new HttpError(409,

@@ -1,3 +1,4 @@
+import { stringOrStringArray } from "@src/shared/application/string-or-string-array.schema";
 import { z } from "zod";
 
 /**
@@ -82,12 +83,9 @@ const processResponseSchema = processCreateSchema.extend({
  */
 const processQuerySchema = z.object({
     filter: z.string().optional(),
-    exclude_ids: z.union([
-        z.string(),
-        z.array(z.string())
-    ]).optional(),
-    name: z.union([z.string(), z.array(z.string())]).optional(),
-    description: z.union([z.string(), z.array(z.string())]).optional(),
+    exclude_ids: stringOrStringArray.optional(),
+    name: stringOrStringArray.optional(),
+    description: stringOrStringArray.optional(),
 }).strict();
 
 /**

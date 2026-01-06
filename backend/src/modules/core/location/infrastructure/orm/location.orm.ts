@@ -1,5 +1,5 @@
-import { DataTypes, Model } from "sequelize";
 import { sequelize } from "@config/mysql/sequelize";
+import { DataTypes, Model } from "sequelize";
 
 /**
  * Infrastructure Model (Sequelize)

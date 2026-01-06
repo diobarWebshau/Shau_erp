@@ -3,17 +3,28 @@ import { DataTypes, Model } from "sequelize";
 
 interface InventoryAttributes {
     id: number,
-    stock: number,
-    minimum_stock: number,
-    maximum_stock: number,
+    stock: string,
+    minimum_stock: string,
+    maximum_stock: string,
     lead_time: number,
     created_at: Date,
     updated_at: Date,
 }
 
-type InventoriesCreateAttributes = Omit<InventoryAttributes, "id" | "created_at" | "updated_at">;
+type InventoryCreateAttributes = Omit<InventoryAttributes, "id" | "created_at" | "updated_at">;
 
-class InventoryModel extends Model<InventoryAttributes, InventoriesCreateAttributes> {
+type InventoryUpdateAttributes = Partial<InventoryAttributes>;
+
+class InventoryModel extends Model<InventoryAttributes, InventoryCreateAttributes> {
+
+    declare id: number;
+    declare stock: string;
+    declare minimum_stock: string;
+    declare maximum_stock: string;
+    declare lead_time: number;
+    declare created_at: Date;
+    declare updated_at: Date;
+
     static getAllFields = (): (keyof InventoryAttributes)[] => [
         "id", "stock", "minimum_stock",
         "maximum_stock", "lead_time",
@@ -69,7 +80,8 @@ InventoryModel.init({
 
 export type {
     InventoryAttributes,
-    InventoriesCreateAttributes
+    InventoryCreateAttributes,
+    InventoryUpdateAttributes
 };
 
 export { InventoryModel };

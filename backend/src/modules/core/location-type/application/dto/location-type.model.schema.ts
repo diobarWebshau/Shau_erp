@@ -60,12 +60,11 @@ const locationTypeUpdateSchema = locationTypeCreateSchema.partial();
  * Representa el objeto completo que devuelve la API en las respuestas.
  * Incluye los campos de creación más los metadatos generados por el sistema.
  */
-const locationTypeResponseSchema = z.object({
+const locationTypeResponseSchema = locationTypeCreateSchema.extend({
     id: z.number().int(),
-    name: z.string(),
     created_at: z.string(),
     updated_at: z.string(),
-})
+});
 
 
 /**

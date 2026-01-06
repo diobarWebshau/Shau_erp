@@ -54,13 +54,12 @@ import { Transaction } from "sequelize";
  */
 
 
-function mapModelToDomain(model: LocationTypeModel): LocationTypeProps {
+function mapLocationTypeModelToDomain(model: LocationTypeModel): LocationTypeProps {
     const json: LocationTypeProps = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        ...json,
+        created_at: (json.created_at instanceof Date) ? json.created_at : new Date(json.created_at),
+        updated_at: (json.updated_at instanceof Date) ? json.updated_at : new Date(json.updated_at)
     };
 }
 
@@ -71,27 +70,24 @@ export class LocationTypeRepository implements ILocationTypeRepository {
     // ================================================================
     async findAll(tx?: Transaction): Promise<LocationTypeProps[]> {
         const rows: LocationTypeModel[] = await LocationTypeModel.findAll({
-            attributes: LocationTypeModel.getAllFields() as ((keyof LocationTypeProps)[]),
             transaction: tx,
         });
-        return rows.map(mapModelToDomain);
+        return rows.map(mapLocationTypeModelToDomain);
     }
 
     async findById(id: number, tx?: Transaction): Promise<LocationTypeProps | null> {
         const row: LocationTypeModel | null = await LocationTypeModel.findByPk(id, {
-            attributes: LocationTypeModel.getAllFields() as ((keyof LocationTypeProps)[]),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapLocationTypeModelToDomain(row) : null;
     }
 
     async findByName(name: string, tx?: Transaction): Promise<LocationTypeProps | null> {
         const row: LocationTypeModel | null = await LocationTypeModel.findOne({
             where: { name },
             transaction: tx,
-            attributes: LocationTypeModel.getAllFields() as ((keyof LocationTypeProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapLocationTypeModelToDomain(row) : null;
     }
 
     // ================================================================
@@ -100,32 +96,36 @@ export class LocationTypeRepository implements ILocationTypeRepository {
     async create(data: LocationTypeCreateProps, tx?: Transaction): Promise<LocationTypeProps> {
         const created: LocationTypeModel | null = await LocationTypeModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el tipo de locación.");
-        return mapModelToDomain(created);
+        return mapLocationTypeModelToDomain(created);
     }
 
     // ================================================================
     // UPDATE
     // ================================================================
     async update(id: number, data: LocationTypeUpdateProps, tx?: Transaction): Promise<LocationTypeProps> {
-        const existing: LocationTypeProps | null = await LocationTypeModel.findByPk(id, {
+        const existing: LocationTypeModel | null = await LocationTypeModel.findByPk(id, {
             transaction: tx
         });
         if (!existing) throw new HttpError(404,
             "El tipo de locación que se desea actualizar no fue posible encontrarla."
         );
+
+        const existingDomain = mapLocationTypeModelToDomain(existing);
+
+        if (!Object.keys(data).length) return existingDomain;
+
         // 2. Aplicar UPDATE
         const [affectedCount]: [affectedCount: number] = await LocationTypeModel.update(data, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount) throw new HttpError(500, "No fue posible actualizar el tipo de locación.");
+        if (!affectedCount) return existingDomain;
         // 3. Obtener la locación actualizada
         const updated: LocationTypeModel | null = await LocationTypeModel.findByPk(id, {
             transaction: tx,
-            attributes: LocationTypeModel.getAllFields() as ((keyof LocationTypeProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el tipo de locación.");
-        return mapModelToDomain(updated);
+        return mapLocationTypeModelToDomain(updated);
     }
 
     // ================================================================

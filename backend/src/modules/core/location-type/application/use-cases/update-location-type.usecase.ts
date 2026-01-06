@@ -1,5 +1,6 @@
 import type { ILocationTypeRepository } from "./../../domain/location-type.repository";
 import type { LocationTypeProps, LocationTypeUpdateProps } from "../../domain/location-type.types";
+import { LocationTypeUpdateDto } from "../dto/location-type.model.schema";
 import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
@@ -47,7 +48,7 @@ import { Transaction } from "sequelize";
  */
 export class UpdateLocationTypeUseCase {
     constructor(private readonly repo: ILocationTypeRepository) { }
-    execute = async (id: number, data: LocationTypeUpdateProps, tx?: Transaction) => {
+    execute = async (id: number, data: LocationTypeUpdateDto, tx?: Transaction) => {
         const existing = await this.repo.findById(id);
         if (!existing) throw new HttpError(
             404,

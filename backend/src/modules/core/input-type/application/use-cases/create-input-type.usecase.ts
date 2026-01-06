@@ -1,7 +1,8 @@
-import { Transaction } from "sequelize";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
-import type { InputTypeCreateProps, InputTypeProps } from "../../domain/input-type.types";
+import type {  InputTypeProps } from "../../domain/input-type.types";
+import { InputTypeCreateDto } from "../dto/input-type.model.schema";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -44,9 +45,10 @@ import HttpError from "@shared/errors/http/http-error";
  *   para responder a las solicitudes externas.
  */
 
+
 export class CreateInputTypeUseCase {
     constructor(private readonly repo: IInputTypeRepository) { }
-    execute = async (data: InputTypeCreateProps, tx?: Transaction) => {
+    execute = async (data: InputTypeCreateDto, tx?: Transaction) => {
         if (data.name) {
             const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName) throw new HttpError(409,

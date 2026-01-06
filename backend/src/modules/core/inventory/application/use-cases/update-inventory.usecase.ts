@@ -1,10 +1,7 @@
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
 import { InventoryProps, InventoryUpdateProps } from "../../domain/inventory.types";
 import { IInventoryRepository } from "../../domain/inventory.repository.interface";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { inventoryResponseDto } from "../dto/inventory.model.schema";
-import { pickEditableFields } from "@helpers/pickEditableFields";
-import HttpError from "@shared/errors/http/http-error";
+import { DecimalVO } from "@shared/domain/value-objects/decimal.vo";
+import { inventoryUpdateDto } from "../dto/inventory.model.schema";
 import { Transaction } from "sequelize";
 
 /**
@@ -48,6 +45,21 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapInventoryDtoToDomain = (data: inventoryUpdateDto): InventoryUpdateProps => {
+    const { stock, maximum_stock, minimum_stock, ...rest } = data;
+    return {
+        ...rest,
+        ...(stock !== undefined
+            ? { stock: DecimalVO.from(stock) }
+            : {}),
+        ...(maximum_stock !== undefined
+            ? { maximum_stock: DecimalVO.from(maximum_stock) }
+            : {}),
+        ...(minimum_stock !== undefined
+            ? { minimum_stock: DecimalVO.from(minimum_stock) }
+            : {}),
+    };
+};
 
 export class UpdateInventoryUseCase {
 
@@ -57,52 +69,9 @@ export class UpdateInventoryUseCase {
         this.repo = repo;
     };
 
-    execute = async (id: number, data: InventoryUpdateProps, tx?: Transaction): Promise<inventoryResponseDto> => {
-
-        const existing: InventoryProps | null = await this.repo.findById(id, tx);
-
-        if (!existing) {
-            throw new HttpError(
-                404,
-                "El inventario que se desea actualizar no fue posible encontrarlo."
-            );
-        }
-
-        const editableFields: (keyof InventoryUpdateProps)[] = [
-            "lead_time", "maximum_stock", "minimum_stock", "stock"
-        ];
-
-        const filteredBody: InventoryUpdateProps = pickEditableFields(data, editableFields);
-
-        const merged: InventoryProps = { ...existing, ...filteredBody, };
-
-
-        const normalizedExisting: InventoryUpdateProps = deepNormalizeDecimals<InventoryUpdateProps>(existing, ["lead_time", "maximum_stock", "minimum_stock", "stock"]);
-        const normalizedMerged: InventoryUpdateProps = deepNormalizeDecimals<InventoryUpdateProps>(merged, ["lead_time", "maximum_stock", "minimum_stock", "stock"]);
-
-        const updateValues: InventoryUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-
-        if (!Object.keys(updateValues).length) {
-            const responseExistingFormatted: inventoryResponseDto = {
-                ...existing,
-                updated_at: existing.updated_at.toISOString(),
-                created_at: existing.created_at.toISOString()
-            };
-            return responseExistingFormatted;
-        }
-        const responseUpdate: InventoryProps = await this.repo.update(id, updateValues, tx);
-
-        if (!responseUpdate) throw new HttpError(
-            500,
-            "No fue posible actualizar el inventario."
-        );
-
-        const responseUpdateFormatted: inventoryResponseDto = {
-            ...responseUpdate,
-            updated_at: responseUpdate.updated_at.toISOString(),
-            created_at: responseUpdate.created_at.toISOString()
-        };
-
-        return responseUpdateFormatted;
+    execute = async (id: number, data: inventoryUpdateDto, tx?: Transaction): Promise<InventoryProps> => {
+        const updateData = mapInventoryDtoToDomain(data);
+        const responseUpdate: InventoryProps = await this.repo.update(id, updateData, tx);
+        return responseUpdate;
     };
 };

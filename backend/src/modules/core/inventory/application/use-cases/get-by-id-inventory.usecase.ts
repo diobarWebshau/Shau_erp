@@ -1,5 +1,4 @@
 import { IInventoryRepository } from "../../domain/inventory.repository.interface";
-import { inventoryResponseDto } from "../dto/inventory.model.schema";
 import { InventoryProps } from "../../domain/inventory.types";
 import { Transaction } from "sequelize";
 
@@ -53,14 +52,8 @@ export class GetByIdInventoryUseCase {
         this.repo = repo;
     };
 
-    execute = async (id: number, tx?: Transaction): Promise<inventoryResponseDto | null> => {
+    execute = async (id: number, tx?: Transaction): Promise<InventoryProps | null> => {
         const inventoryResponse: InventoryProps | null = await this.repo.findById(id, tx);
-        if (!inventoryResponse) return null;
-        const inventoryResponseFormatted: inventoryResponseDto = {
-            ...inventoryResponse,
-            created_at: inventoryResponse.created_at.toISOString(),
-            updated_at: inventoryResponse.updated_at.toISOString(),
-        };
-        return inventoryResponseFormatted;
+        return inventoryResponse;
     };
 };

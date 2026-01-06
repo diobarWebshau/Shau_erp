@@ -53,13 +53,8 @@ export class GetAllInventoryUseCase {
         this.repo = repo;
     };
 
-    execute = async (tx?: Transaction): Promise<inventoryResponseDto[]> => {
+    execute = async (tx?: Transaction): Promise<InventoryProps[]> => {
         const responseInventory: InventoryProps[] = await this.repo.findAll(tx);
-        const responseInventoryFormatted = responseInventory.map((i) => ({
-            ...i,
-            created_at: i.created_at.toISOString(),
-            updated_at: i.updated_at.toISOString(),
-        }));
-        return responseInventoryFormatted;
+        return responseInventory;
     };
 };

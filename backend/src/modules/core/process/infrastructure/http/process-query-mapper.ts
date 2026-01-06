@@ -1,5 +1,5 @@
 import { normalizeToArray, normalizeToNumberArray } from "@shared/query-reqyest/query-request-normalizer";
-import { GetAllProcessesSchema } from "../../application/dto/process.endpoint.schema"
+import { ProcessQueryDto } from "../../application/dto/process.model.schema";
 import type { ProcessSearchCriteria } from "../../domain/process.types";
 
 /**
@@ -48,7 +48,7 @@ import type { ProcessSearchCriteria } from "../../domain/process.types";
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
 
-export const mapProcessQueryToCriteria = (query: GetAllProcessesSchema["query"]): ProcessSearchCriteria => {
+export const mapProcessQueryToCriteria = (query: ProcessQueryDto): ProcessSearchCriteria => {
     return {
         filter: query.filter,
         exclude_ids: normalizeToNumberArray(query.exclude_ids),

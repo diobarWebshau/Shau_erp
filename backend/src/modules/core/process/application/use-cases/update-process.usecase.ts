@@ -4,6 +4,7 @@ import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
+import { ProcessUpdateDto } from "../dto/process.model.schema";
 
 /**
  * UseCase
@@ -47,7 +48,7 @@ import { Transaction } from "sequelize";
  */
 export class UpdateProcessUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    execute = async (id: number, data: ProcessUpdateProps, tx?: Transaction) => {
+    execute = async (id: number, data: ProcessUpdateDto, tx?: Transaction) => {
         const existing = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "El tipo de proceso que se desea actualizar no fue posible encontrarlo."

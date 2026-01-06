@@ -1,3 +1,4 @@
+import { stringOrStringArray } from "@src/shared/application/string-or-string-array.schema";
 import { z } from "zod";
 
 /**
@@ -104,15 +105,12 @@ const locationResponseSchema = locationCreateSchema.extend({
  */
 const locationQuerySchema = z.object({
     filter: z.string().optional(),
-    exclude_ids: z.union([
-        z.string(),
-        z.array(z.string())
-    ]).optional(),
-    name: z.union([z.string(), z.array(z.string())]).optional(),
-    description: z.union([z.string(), z.array(z.string())]).optional(),
-    email: z.union([z.string(), z.array(z.string())]).optional(),
-    phone: z.union([z.string(), z.array(z.string())]).optional(),
-    custom_id: z.union([z.string(), z.array(z.string())]).optional(),
+    exclude_ids: stringOrStringArray.optional(),
+    name: stringOrStringArray.optional(),
+    description: stringOrStringArray.optional(),
+    email: stringOrStringArray.optional(),
+    phone: stringOrStringArray.optional(),
+    custom_id: stringOrStringArray.optional(),
     is_active: z.preprocess(
         (val) => {
             if (typeof val === "boolean") return val;
@@ -169,7 +167,7 @@ const locationQuerySchema = z.object({
 type LocationCreateDto = z.infer<typeof locationCreateSchema>;
 type LocationResponseDto = z.infer<typeof locationResponseSchema>;
 type LocationUpdateDto = z.infer<typeof locationUpdateSchema>;
-type LocationQuerySchema = z.infer<typeof locationQuerySchema>;
+type LocationQueryDto = z.infer<typeof locationQuerySchema>;
 
 export {
     locationCreateSchema,
@@ -182,7 +180,7 @@ export type {
     LocationResponseDto,
     LocationCreateDto,
     LocationUpdateDto,
-    LocationQuerySchema
+    LocationQueryDto
 }
 
 

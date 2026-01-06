@@ -95,7 +95,7 @@ class ClientModel extends Model<ClientAttributes, ClientCreateAttributes> {
     declare street_number: number;
     declare neighborhood: string;
     declare payment_terms: string | null;
-    declare credit_limit: number | null;
+    declare credit_limit: string | null;
     declare zip_code: number;
     declare tax_regimen: string | null;
     declare cfdi: string;

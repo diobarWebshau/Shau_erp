@@ -64,6 +64,15 @@ import type {
  *   de forma coherente hacia clientes externos.
  */
 
+/** Formatea un Location para convertir fechas a ISO */
+const mapLocationTypeDomainToDto = (location: LocationTypeProps): LocationTypeResponseDto => {
+    return {
+        ...location,
+        created_at: location.created_at.toISOString(),
+        updated_at: location.updated_at.toISOString()
+    };
+}
+
 export class LocationTypeController {
 
     private readonly repo: LocationRepository;
@@ -83,27 +92,13 @@ export class LocationTypeController {
         this.updateUseCase = new UpdateLocationTypeUseCase(this.repo);
         this.deleteUseCase = new DeleteLocationTypeUseCase(this.repo);
     }
-
-
-    // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-
-    /** Formatea un Location para convertir fechas a ISO */
-    private formatResponse(location: LocationTypeProps): LocationTypeResponseDto {
-        return {
-            ...location,
-            created_at: location.created_at.toISOString(),
-            updated_at: location.updated_at.toISOString()
-        };
-    }
-
+    
     // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (_req: ApiRequest<GetAllLocationTypeSchema>, res: ApiResponse<GetAllLocationTypeSchema>) => {
         const result: LocationTypeProps[] = await this.getAllUseCase.execute();
-        const formatted: LocationTypeResponseDto[] = result.map(l => this.formatResponse(l));
+        const formatted: LocationTypeResponseDto[] = result.map(l => mapLocationTypeDomainToDto(l));
         return res.status(200).send(formatted);
     };
 
@@ -115,7 +110,7 @@ export class LocationTypeController {
         const { id }: GetByIdLocationTypeSchema["params"] = req.params;
         const result: LocationTypeProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: LocationTypeResponseDto = this.formatResponse(result);
+        const formatted: LocationTypeResponseDto = mapLocationTypeDomainToDto(result);
         return res.status(200).send(formatted);
     };
 
@@ -128,7 +123,7 @@ export class LocationTypeController {
         const { name }: GetByNameLocationTypeSchema["params"] = req.params;
         const result: LocationTypeProps | null = await this.getByNameUseCase.execute(name);
         if (!result) return res.status(204).send(null);
-        return res.status(200).send(this.formatResponse(result));
+        return res.status(200).send(mapLocationTypeDomainToDto(result));
     };
 
 
@@ -138,7 +133,7 @@ export class LocationTypeController {
     create = async (req: ApiRequest<CreateLocationTypeSchema>, res: ApiResponse<CreateLocationTypeSchema>) => {
         const body: CreateLocationTypeSchema["body"] = req.body;
         const created: LocationTypeProps | null = await this.createUseCase.execute(body);
-        const formatted: LocationTypeResponseDto = this.formatResponse(created);
+        const formatted: LocationTypeResponseDto = mapLocationTypeDomainToDto(created);
         return res.status(201).send(formatted);
     };
 
@@ -150,7 +145,7 @@ export class LocationTypeController {
         const { id }: UpdateLocationTypeSchema["params"] = req.params;
         const body: UpdateLocationTypeSchema["body"] = req.body;
         const updated: LocationTypeProps | null = await this.updateUseCase.execute(Number(id), body);
-        const formatted: LocationTypeResponseDto = this.formatResponse(updated);
+        const formatted: LocationTypeResponseDto = mapLocationTypeDomainToDto(updated);
         return res.status(200).send(formatted);
     };
 

@@ -1,6 +1,8 @@
-import { Transaction } from "sequelize";
+import { mapProcessQueryToCriteria } from "./../../infrastructure/http/process-query-mapper"
 import type { IProcessRepository } from "../../domain/process.repository";
-import type { ProcessProps, ProcessSearchCriteria } from "../../domain/process.types";
+import type { ProcessProps } from "../../domain/process.types";
+import { ProcessQueryDto } from "../dto/process.model.schema";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -43,11 +45,10 @@ import type { ProcessProps, ProcessSearchCriteria } from "../../domain/process.t
  *   para responder a las solicitudes externas.
  */
 
-
 export class GetAllProcessesUseCase {
     constructor(private readonly repo: IProcessRepository) { }
-    async execute(query: ProcessSearchCriteria, tx?: Transaction): Promise<ProcessProps[]> {
-        const result: ProcessProps[] = await this.repo.findAll(query, tx);
+    async execute(query: ProcessQueryDto, tx?: Transaction): Promise<ProcessProps[]> {
+        const result: ProcessProps[] = await this.repo.findAll(mapProcessQueryToCriteria(query), tx);
         return result;
     }
 }

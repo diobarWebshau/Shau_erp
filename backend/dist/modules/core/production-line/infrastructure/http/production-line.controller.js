@@ -9,7 +9,6 @@ const create_production_line_usecase_1 = require("../../application/use-cases/cr
 const delete_production_line_usecase_1 = require("../../application/use-cases/delete-production-line.usecase");
 const update_production_line_usecase_1 = require("../../application/use-cases/update-production-line.usecase");
 const production_line_repository_1 = require("../repository/production-line.repository");
-const production_line_query_mapper_1 = require("./production-line-query-mapper");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -59,6 +58,14 @@ const production_line_query_mapper_1 = require("./production-line-query-mapper")
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
+/** Formatea un Location para convertir fechas a ISO */
+const mapProductionLineDomainToDto = (production_line) => {
+    return {
+        ...production_line,
+        created_at: production_line.created_at.toISOString(),
+        updated_at: production_line.updated_at.toISOString()
+    };
+};
 class ProductionLineController {
     repo;
     getAllUseCase;
@@ -81,23 +88,13 @@ class ProductionLineController {
     // ============================================================
     // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
     // ============================================================
-    /** Formatea un Location para convertir fechas a ISO */
-    formatResponse(production_line) {
-        return {
-            ...production_line,
-            created_at: production_line.created_at.toISOString(),
-            updated_at: production_line.updated_at.toISOString()
-        };
-    }
-    ;
     // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req, res) => {
-        const queryRequest = req.query;
-        const query = (0, production_line_query_mapper_1.mapProductionLineQueryToCriteria)(queryRequest);
+        const query = req.query;
         const result = await this.getAllUseCase.execute(query);
-        const formatted = result.map(l => this.formatResponse(l));
+        const formatted = result.map(l => mapProductionLineDomainToDto(l));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -108,7 +105,7 @@ class ProductionLineController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = mapProductionLineDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -119,7 +116,7 @@ class ProductionLineController {
         const result = await this.getByNameUseCase.execute(name);
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = mapProductionLineDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -130,7 +127,7 @@ class ProductionLineController {
         const result = await this.getByCustomIdUseCase.execute(custom_id);
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = mapProductionLineDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -139,7 +136,7 @@ class ProductionLineController {
     create = async (req, res) => {
         const body = req.body;
         const created = await this.createUseCase.execute(body);
-        const formatted = this.formatResponse(created);
+        const formatted = mapProductionLineDomainToDto(created);
         return res.status(201).send(formatted);
     };
     // ============================================================
@@ -149,7 +146,7 @@ class ProductionLineController {
         const { id } = req.params;
         const body = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted = this.formatResponse(updated);
+        const formatted = mapProductionLineDomainToDto(updated);
         return res.status(200).send(formatted);
     };
     // ============================================================

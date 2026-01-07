@@ -169,6 +169,6 @@ declare const locationQuerySchema: z.ZodObject<{
 type LocationCreateDto = z.infer<typeof locationCreateSchema>;
 type LocationResponseDto = z.infer<typeof locationResponseSchema>;
 type LocationUpdateDto = z.infer<typeof locationUpdateSchema>;
-type LocationQuerySchema = z.infer<typeof locationQuerySchema>;
+type LocationQueryDto = z.infer<typeof locationQuerySchema>;
 export { locationCreateSchema, locationResponseSchema, locationUpdateSchema, locationQuerySchema, };
-export type { LocationResponseDto, LocationCreateDto, LocationUpdateDto, LocationQuerySchema };
+export type { LocationResponseDto, LocationCreateDto, LocationUpdateDto, LocationQueryDto };

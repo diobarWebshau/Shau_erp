@@ -1,5 +1,5 @@
-import { GetAllLocationsSchema } from "./../../application/dto/location.endpoint.schema";
 import type { LocationSearchCriteria } from "../../domain/location.types";
+import { LocationQueryDto } from "../../application/dto/location.model.schema";
 /**
  * Query → Criteria Mapper
  * ------------------------------------------------------------------
@@ -45,4 +45,4 @@ import type { LocationSearchCriteria } from "../../domain/location.types";
  * - Infrastructure/HTTP: mappers convierten queries en criterios.
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
-export declare const mapLocationQueryToCriteria: (query: GetAllLocationsSchema["query"]) => LocationSearchCriteria;
+export declare const mapLocationQueryToCriteria: (query: LocationQueryDto) => LocationSearchCriteria;

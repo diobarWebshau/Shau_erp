@@ -1,12 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryController = void 0;
-const inventory_repository_1 = require("../repository/inventory.repository");
 const get_all_inventory_usecase_1 = require("../../application/use-cases/get-all-inventory.usecase");
 const get_by_id_inventory_usecase_1 = require("../../application/use-cases/get-by-id-inventory.usecase");
 const update_inventory_usecase_1 = require("../../application/use-cases/update-inventory.usecase");
 const delete_inventory_usecase_1 = require("../../application/use-cases/delete-inventory.usecase");
 const create_inventory_usecase_1 = require("../../application/use-cases/create-inventory.usecase");
+const inventory_repository_1 = require("../repository/inventory.repository");
+const mapInventoryDomainToDto = (data) => ({
+    ...data,
+    stock: data.stock.toString(),
+    maximum_stock: data.maximum_stock.toString(),
+    minimum_stock: data.minimum_stock.toString(),
+    created_at: data.created_at.toISOString(),
+    updated_at: data.updated_at.toISOString(),
+});
 class InventoryController {
     repo;
     getAllInventoryUseCase;
@@ -25,23 +33,24 @@ class InventoryController {
     ;
     getAll = async (_req, res) => {
         const inventoryResponses = await this.getAllInventoryUseCase.execute();
-        return res.status(200).json(inventoryResponses);
+        const inventoryResponseDto = inventoryResponses.map(mapInventoryDomainToDto);
+        return res.status(200).json(inventoryResponseDto);
     };
     getById = async (req, res) => {
         const { id } = req.params;
         const inventoryResponse = await this.getByIdInventoryUseCase.execute(Number(id));
-        return res.status(200).json(inventoryResponse);
+        return res.status(200).json(inventoryResponse ? mapInventoryDomainToDto(inventoryResponse) : null);
     };
     create = async (req, res) => {
         const body = req.body;
         const inventoryResponse = await this.createInventoryUseCase.execute(body);
-        return res.status(201).json(inventoryResponse);
+        return res.status(201).json(mapInventoryDomainToDto(inventoryResponse));
     };
     update = async (req, res) => {
         const { id } = req.params;
         const body = req.body;
         const inventoryResponse = await this.updateInventoryUseCase.execute(Number(id), body);
-        return res.status(200).json(inventoryResponse);
+        return res.status(200).json(mapInventoryDomainToDto(inventoryResponse));
     };
     delete = async (req, res) => {
         const { id } = req.params;

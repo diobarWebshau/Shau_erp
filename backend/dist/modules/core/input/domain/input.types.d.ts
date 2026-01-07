@@ -1,3 +1,4 @@
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 /**
  * Domain Types
  * ------------------------------------------------------------------
@@ -56,7 +57,7 @@ interface InputProps {
     storage_conditions?: string | null;
     barcode?: number | null;
     input_types_id?: number | null;
-    unit_cost?: number | null;
+    unit_cost?: DecimalVO | null;
     supplier?: string | null;
     photo?: string | null;
     is_draft: boolean;
@@ -69,13 +70,13 @@ type InputUpdateProps = Partial<InputCreateProps>;
 interface InputSearchCriteria {
     filter?: string;
     exclude_ids?: number[];
-    name?: string | string[];
-    description?: string | string[];
-    sku?: string | string[];
-    presentation?: string | string[];
-    unit_of_measure?: string | string[];
-    barcode?: string | string[];
-    custom_id?: string | string[];
+    name?: string[];
+    description?: string[];
+    sku?: string[];
+    presentation?: string[];
+    unit_of_measure?: string[];
+    barcode?: string[];
+    custom_id?: string[];
     is_draft?: boolean;
     is_active?: boolean;
 }

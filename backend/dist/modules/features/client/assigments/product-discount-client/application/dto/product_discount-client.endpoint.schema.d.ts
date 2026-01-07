@@ -24,7 +24,7 @@ declare const getAllProductDiscountClientSchema: z.ZodObject<{
     response: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -43,7 +43,7 @@ declare const getByIdProductDiscountClientSchema: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -63,7 +63,7 @@ declare const getByProductIdClientIdProductDiscountClientSchema: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -82,7 +82,7 @@ declare const getByProductIdProductDiscountClientSchema: z.ZodObject<{
     response: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -98,12 +98,12 @@ declare const createProductDiscountClientSchema: z.ZodObject<{
     body: z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -121,12 +121,12 @@ declare const updateProductDiscountClientSchema: z.ZodObject<{
     body: z.ZodObject<{
         product_id: z.ZodOptional<z.ZodNumber>;
         client_id: z.ZodOptional<z.ZodNumber>;
-        discount_percentage: z.ZodOptional<z.ZodNumber>;
+        discount_percentage: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;

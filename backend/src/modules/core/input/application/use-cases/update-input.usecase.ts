@@ -1,13 +1,10 @@
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
 import type { IInputRepository } from "../../domain/input.repository.interface";
 import type { InputProps, InputUpdateProps } from "../../domain/input.types";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+import { InputUpdateDto } from "../dto/input.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import ImageHandler from "@helpers/imageHandlerClass";
 import { Transaction } from "sequelize";
-import { InputUpdateDto } from "../dto/input.model.schema";
-import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 
 /**
  * UseCase
@@ -79,42 +76,7 @@ export class UpdateInputUseCase {
             );
         }
 
-        // ------------------------------------------------------------------
-        // ✏️ FILTRADO DE CAMPOS EDITABLES
-        // ------------------------------------------------------------------
-        // Se define explícitamente qué campos pueden ser modificados.
-        // Esto evita actualizaciones accidentales o maliciosas de
-        // propiedades no editables del dominio.
-        const editableFields: (keyof InputUpdateProps)[] = [
-            "custom_id", "name", "description", "sku", "presentation",
-            "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
-            "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
-            "is_active",
-        ];
-
-        const filteredBody: InputUpdateProps = pickEditableFields(updateData, editableFields);
-
-        // ------------------------------------------------------------------
-        // 🔀 MERGE DE ESTADO ACTUAL + CAMBIOS PROPUESTOS
-        // ------------------------------------------------------------------
-        // Se construye un estado "virtual" del Inputo combinando
-        // el estado persistido con los cambios entrantes.
-        const merged: InputProps = { ...existing, ...filteredBody, };
-
-
-        const normalizedExisting: InputUpdateProps = deepNormalizeDecimals<InputUpdateProps>(existing, ["unit_cost", "barcode"]);
-        const normalizedMerged: InputUpdateProps = deepNormalizeDecimals<InputUpdateProps>(merged, ["unit_cost", "barcode"]);
-
-        // ------------------------------------------------------------------
-        // 🧮 DETECCIÓN DE CAMBIOS EFECTIVOS
-        // ------------------------------------------------------------------
-        // Se calcula la diferencia real entre el estado actual y el
-        // estado resultante. Esto evita writes innecesarios en BD.
-        const updateValues: InputUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-
-        if (!Object.keys(updateValues).length) {
-            return existing;
-        }
+        if (!Object.keys(updateData).length) return existing;
 
         // ------------------------------------------------------------------
         // 🔐 VALIDACIONES DE UNICIDAD
@@ -171,8 +133,8 @@ export class UpdateInputUseCase {
         const previousPhoto: string | null = existing.photo ?? null;
 
         const nextPhoto: string | null =
-            "photo" in updateValues
-                ? updateValues.photo ?? null
+            "photo" in updateData
+                ? updateData.photo ?? null
                 : null;
 
         const photoWasReplaced: boolean =
@@ -185,8 +147,7 @@ export class UpdateInputUseCase {
         // ------------------------------------------------------------------
         // Se delega al repositorio la operación de update, garantizando
         // que la transacción sea consistente.
-        const updated: InputProps =
-            await this.repo.update(id, updateValues, tx);
+        const updated: InputProps = await this.repo.update(id, updateData, tx);
 
         if (!updated) {
             throw new HttpError(

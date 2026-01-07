@@ -1,6 +1,7 @@
-import { Transaction } from "sequelize";
 import type { IProductRepository } from "../../domain/product.repository.interface";
-import type { ProductProps, ProductSearchCriteria } from "../../domain/product.types";
+import type { ProductProps } from "../../domain/product.types";
+import { ProductQueryDto } from "../dto/product.model.schema";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +45,5 @@ import type { ProductProps, ProductSearchCriteria } from "../../domain/product.t
 export declare class GetAllProductsUseCase {
     private readonly repo;
     constructor(repo: IProductRepository);
-    execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductProps[]>;
+    execute(query: ProductQueryDto, tx?: Transaction): Promise<ProductProps[]>;
 }

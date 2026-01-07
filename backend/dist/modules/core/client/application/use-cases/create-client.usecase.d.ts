@@ -1,5 +1,6 @@
-import type { ClientCreateProps, ClientProps } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
+import type { ClientCreateProps, ClientProps } from "../../domain/client.types";
+import { ClientCreateDto } from "../dto/client.model.schema";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -41,8 +42,9 @@ import { Transaction } from "sequelize";
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+export declare const mapClientCreateDtoToDomain: (data: ClientCreateDto) => ClientCreateProps;
 export declare class CreateClientUseCase {
     private readonly repo;
     constructor(repo: IClientRepository);
-    execute(data: ClientCreateProps, tx?: Transaction): Promise<ClientProps>;
+    execute(data: ClientCreateDto, tx?: Transaction): Promise<ClientProps>;
 }

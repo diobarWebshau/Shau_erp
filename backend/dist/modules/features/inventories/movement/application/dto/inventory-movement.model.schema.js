@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.inventoryMovementUpdateSchema = exports.inventoryMovementResponseSchema = exports.inventoryMovementCreateSchema = void 0;
 const form_data_normalizers_1 = require("@shared/http/input/normalizers/form-data.normalizers");
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
 const zod_1 = require("zod");
 const inventoryMovementCreateSchema = zod_1.z.object({
     location_id: zod_1.z.number(),
@@ -9,7 +10,7 @@ const inventoryMovementCreateSchema = zod_1.z.object({
     item_id: zod_1.z.number(),
     item_type: zod_1.z.enum(["product", "input"]),
     item_name: zod_1.z.string(),
-    qty: zod_1.z.number(),
+    qty: decimal_schema_1.decimalString,
     movement_type: zod_1.z.enum(["in", "out", "allocate"]),
     reference_id: zod_1.z.number().nullable(),
     reference_type: zod_1.z.enum(["Production Order", "Order", "Transfer", "Purchased", "Scrap", "Internal Production Order"]),

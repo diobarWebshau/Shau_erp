@@ -4,7 +4,7 @@ import { GetAllInventoryLocationItemUseCase } from "../../application/use-cases/
 import { DeleteInventoryLocationItemUseCase } from "../../application/use-cases/delete-inventory-location-item.usecase";
 import { UpdateInventoryLocationItemUseCase } from "../../application/use-cases/update-inventory-location-item.usecase";
 import { CreateInventoryLocationItemUseCase } from "../../application/use-cases/create-inventory-location-item.usecase";
-import { InventoryLocationItemResponseSchemaDto } from "../../application/dto/inventory-location-item.model.schema";
+import { InventoryLocationItemResponseDto } from "../../application/dto/inventory-location-item.model.schema";
 import { InventoryRepository } from "@src/modules/core/inventory/infrastructure/repository/inventory.repository";
 import { LocationRepository } from "@src/modules/core/location/infrastructure/repository/location.repository";
 import { IInventoryLocationItemRepository } from "../../domain/inventory-location-item.repository.interface";
@@ -20,7 +20,17 @@ import {
     CreateInventoryLocationItemSchema, DeleteInventoryLocationItemSchema,
     GetAllInventoryLocationItemSchema, GetByIdInventoryLocationItemSchema,
     UpdateInventoryLocationItemSchema, GetByLocationItemInventoryLocationItemSchema
-} from "./../../application/dto/inventory-location-item.endpoint.schema"
+} from "./../../application/dto/inventory-location-item.endpoint.schema";
+import { InventoryLocationItemProps } from "../../domain/inventory-location-item.types";
+
+
+const mapInventoryLocationItemDomainToDto = (data: InventoryLocationItemProps): InventoryLocationItemResponseDto => {
+    return {
+        ...data,
+        created_at: data.created_at.toISOString(),
+        updated_at: data.updated_at.toISOString()
+    };
+}
 
 export class InventoryLocationItemController {
 
@@ -59,29 +69,36 @@ export class InventoryLocationItemController {
     };
 
     getAll = async (_req: ApiRequest<GetAllInventoryLocationItemSchema>, res: ApiResponse<GetAllInventoryLocationItemSchema>) => {
-        const inventoryLocationItemResponse: InventoryLocationItemResponseSchemaDto[] = await this.getAllInventoryLocationItemUseCase.execute();
-        return res.status(200).json(inventoryLocationItemResponse);
+        const inventoryLocationItemResponse: InventoryLocationItemProps[] = await this.getAllInventoryLocationItemUseCase.execute();
+        const inventoryLocationItemResult = inventoryLocationItemResponse.map(mapInventoryLocationItemDomainToDto);
+        return res.status(200).json(inventoryLocationItemResult);
     }
     getById = async (req: ApiRequest<GetByIdInventoryLocationItemSchema>, res: ApiResponse<GetByIdInventoryLocationItemSchema>) => {
         const { id }: GetByIdInventoryLocationItemSchema["params"] = req.params;
-        const inventoryLocationItemResponse: InventoryLocationItemResponseSchemaDto | null = await this.getByIdInventoryLocationItemUseCase.execute(Number(id));
-        return res.status(200).json(inventoryLocationItemResponse);
+        const inventoryLocationItemResponse: InventoryLocationItemProps | null = await this.getByIdInventoryLocationItemUseCase.execute(Number(id));
+        if (!inventoryLocationItemResponse) return res.status(200).json(null);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(200).json(inventoryLocationItemResult);
     }
     getByLocationItem = async (req: ApiRequest<GetByLocationItemInventoryLocationItemSchema>, res: ApiResponse<GetByLocationItemInventoryLocationItemSchema>) => {
-        const { location_id, item_id, item_type}: GetByLocationItemInventoryLocationItemSchema["params"] = req.params;
-        const inventoryLocationItemResponse: InventoryLocationItemResponseSchemaDto | null = await this.getByLocationItemInventoryLocationItemUseCase.execute(Number(location_id), Number(item_id), item_type);
-        return res.status(200).json(inventoryLocationItemResponse);
+        const { location_id, item_id, item_type }: GetByLocationItemInventoryLocationItemSchema["params"] = req.params;
+        const inventoryLocationItemResponse: InventoryLocationItemProps | null = await this.getByLocationItemInventoryLocationItemUseCase.execute(Number(location_id), Number(item_id), item_type);
+        if (!inventoryLocationItemResponse) return res.status(200).json(null);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(200).json(inventoryLocationItemResult);
     }
     create = async (req: ApiRequest<CreateInventoryLocationItemSchema>, res: ApiResponse<CreateInventoryLocationItemSchema>) => {
         const body: CreateInventoryLocationItemSchema["body"] = req.body;
-        const inventoryLocationItemResponse: InventoryLocationItemResponseSchemaDto = await this.createInventoryLocationItemUseCase.execute(body);
-        return res.status(201).json(inventoryLocationItemResponse);
+        const inventoryLocationItemResponse: InventoryLocationItemProps = await this.createInventoryLocationItemUseCase.execute(body);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(201).json(inventoryLocationItemResult);
     }
     update = async (req: ApiRequest<UpdateInventoryLocationItemSchema>, res: ApiResponse<UpdateInventoryLocationItemSchema>) => {
         const { id }: UpdateInventoryLocationItemSchema["params"] = req.params;
         const body: UpdateInventoryLocationItemSchema["body"] = req.body;
-        const inventoryLocationItemResponse: InventoryLocationItemResponseSchemaDto = await this.updateInventoryLocationItemUseCase.execute(id, body);
-        return res.status(200).json(inventoryLocationItemResponse);
+        const inventoryLocationItemResponse: InventoryLocationItemProps = await this.updateInventoryLocationItemUseCase.execute(id, body);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(200).json(inventoryLocationItemResult);
 
     }
     delete = async (req: ApiRequest<DeleteInventoryLocationItemSchema>, res: ApiResponse<DeleteInventoryLocationItemSchema>) => {

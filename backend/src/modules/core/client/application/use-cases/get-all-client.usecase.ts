@@ -45,7 +45,7 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
-const mapClientQueryDtoToCriteria = (query: ClientQueryDto): ClientSearchCriteria => {
+const mapClientQueryDtoToDomain = (query: ClientQueryDto): ClientSearchCriteria => {
     return {
         filter: query.filter?.trim() || undefined,
         exclude_ids: normalizeToNumberArray(query.exclude_ids),
@@ -67,6 +67,6 @@ const mapClientQueryDtoToCriteria = (query: ClientQueryDto): ClientSearchCriteri
 export class GetAllClientsUseCase {
     constructor(private readonly repo: IClientRepository) { }
     async execute(query: ClientQueryDto, tx?: Transaction): Promise<ClientProps[]> {
-        return await this.repo.findAll(mapClientQueryDtoToCriteria(query), tx);
+        return await this.repo.findAll(mapClientQueryDtoToDomain(query), tx);
     }
 };

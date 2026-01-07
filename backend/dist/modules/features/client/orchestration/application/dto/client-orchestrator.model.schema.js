@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clientResponseOrchestratorSchema = exports.productDiscountClientResponseOrchestratorSchema = exports.clientUpdateRequestOrchestratorSchema = exports.clientUpdateOrchestratorSchema = exports.clientAddressUpdateOrchestrator = exports.productDiscountClientUpdateOrchestrator = exports.clientCreateRequestOrchestratorSchema = exports.clientCreateOrchestratorSchema = exports.ProductDiscountClientCreateOrchestratorSchema = exports.clientAddressCreateOrchestratorSchema = void 0;
+exports.clientResponseOrchestratorSchema = exports.productDiscountClientResponseOrchestratorSchema = exports.clientUpdateRequestOrchestratorSchema = exports.clientUpdateOrchestratorSchema = exports.clientAddressUpdateOrchestrator = exports.productDiscountClientUpdateOrchestrator = exports.clientCreateRequestOrchestratorSchema = exports.clientCreateOrchestratorSchema = exports.productDiscountClientCreateOrchestratorSchema = exports.clientAddressCreateOrchestratorSchema = void 0;
 const product_discount_client_model_schema_1 = require("../../../assigments/product-discount-client/application/dto/product-discount-client.model.schema");
 const client_address_model_schema_1 = require("../../../assigments/client-addresses/application/dto/client-address.model.schema");
 const client_model_schema_1 = require("@modules/core/client/application/dto/client.model.schema");
@@ -19,10 +19,10 @@ exports.clientAddressCreateOrchestratorSchema = clientAddressCreateOrchestratorS
 // --------------------------------------------------
 // |🔹 Discounts                                    |
 // --------------------------------------------------
-const ProductDiscountClientCreateOrchestratorSchema = product_discount_client_model_schema_1.ProductDiscountClientCreateSchema.omit({
+const productDiscountClientCreateOrchestratorSchema = product_discount_client_model_schema_1.ProductDiscountClientCreateSchema.omit({
     client_id: true
 }).extend({ client_id: zod_1.z.undefined().optional() }).strict();
-exports.ProductDiscountClientCreateOrchestratorSchema = ProductDiscountClientCreateOrchestratorSchema;
+exports.productDiscountClientCreateOrchestratorSchema = productDiscountClientCreateOrchestratorSchema;
 // --------------------------------------------------
 // 🔹 OBJECT CLIENT ORCHESTRATOR CREATE            |
 // --------------------------------------------------
@@ -30,7 +30,7 @@ exports.ProductDiscountClientCreateOrchestratorSchema = ProductDiscountClientCre
 const clientCreateOrchestratorSchema = zod_1.z.object({
     client: client_model_schema_1.clientCreateSchema,
     addresses: zod_1.z.array(clientAddressCreateOrchestratorSchema),
-    discounts: zod_1.z.array(ProductDiscountClientCreateOrchestratorSchema)
+    discounts: zod_1.z.array(productDiscountClientCreateOrchestratorSchema)
 });
 exports.clientCreateOrchestratorSchema = clientCreateOrchestratorSchema;
 // * Esquema de la request para el REQUEST HTTP en CREATE
@@ -61,7 +61,7 @@ const productDiscountClientUpdateOrchestrator = product_discount_client_model_sc
 });
 exports.productDiscountClientUpdateOrchestrator = productDiscountClientUpdateOrchestrator;
 const productDiscountClientManagerSchema = zod_1.z.object({
-    added: zod_1.z.array(ProductDiscountClientCreateOrchestratorSchema),
+    added: zod_1.z.array(productDiscountClientCreateOrchestratorSchema),
     updated: zod_1.z.array(productDiscountClientUpdateOrchestrator),
     deleted: zod_1.z.array(product_discount_client_model_schema_1.ProductDiscountClientReponseSchema),
 });

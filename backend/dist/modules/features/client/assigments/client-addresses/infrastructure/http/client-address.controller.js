@@ -7,8 +7,15 @@ const get_all_client_address_usecase_1 = require("../../application/use-cases/ge
 const create_client_address_usecase_1 = require("../../application/use-cases/create-client-address.usecase");
 const delete_client_address_usecase_1 = require("../../application/use-cases/delete-client-address.usecase");
 const update_client_address_usecase_1 = require("../../application/use-cases/update-client-address.usecase");
-const client_address_repository_1 = require("../repository/client-address.repository");
 const client_repository_1 = require("@modules/core/client/infrastructure/repository/client.repository");
+const client_address_repository_1 = require("../repository/client-address.repository");
+const mapClientAddressDomainToDto = (clientAddress) => {
+    return {
+        ...clientAddress,
+        created_at: clientAddress.created_at.toISOString(),
+        updated_at: clientAddress.updated_at.toISOString()
+    };
+};
 class ClientAddressController {
     repoClientAddress;
     repoClient;
@@ -29,23 +36,11 @@ class ClientAddressController {
         this.deleteUseCase = new delete_client_address_usecase_1.DeleteClientAddressUseCase(this.repoClientAddress);
     }
     // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-    /** Formatea un Location para convertir fechas a ISO */
-    formatResponse(clientAddress) {
-        return {
-            ...clientAddress,
-            created_at: clientAddress.created_at.toISOString(),
-            updated_at: clientAddress.updated_at.toISOString()
-        };
-    }
-    ;
-    // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (_req, res) => {
         const result = await this.getAllUseCase.execute();
-        const formatted = result.map(l => this.formatResponse(l));
+        const formatted = result.map(l => mapClientAddressDomainToDto(l));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -56,7 +51,7 @@ class ClientAddressController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = mapClientAddressDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -67,7 +62,7 @@ class ClientAddressController {
         const result = await this.getByClientIdUseCase.execute(client_id);
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = mapClientAddressDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -76,7 +71,7 @@ class ClientAddressController {
     create = async (req, res) => {
         const body = req.body;
         const created = await this.createUseCase.execute(body);
-        const formatted = this.formatResponse(created);
+        const formatted = mapClientAddressDomainToDto(created);
         return res.status(201).send(formatted);
     };
     // ============================================================
@@ -86,7 +81,7 @@ class ClientAddressController {
         const { id } = req.params;
         const body = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted = this.formatResponse(updated);
+        const formatted = mapClientAddressDomainToDto(updated);
         return res.status(200).send(formatted);
     };
     // ============================================================

@@ -60,7 +60,7 @@ InputModel.init({
         allowNull: true,
     },
     input_types_id: {
-        type: sequelize_2.DataTypes.DECIMAL(14, 4),
+        type: sequelize_2.DataTypes.INTEGER,
         allowNull: true,
     },
     is_draft: {

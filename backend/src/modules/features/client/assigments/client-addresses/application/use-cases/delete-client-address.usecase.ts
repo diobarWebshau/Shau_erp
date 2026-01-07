@@ -1,7 +1,7 @@
-import { Transaction } from "sequelize";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
 import { ClientAddressProps } from "../../domain/client-address.types";
 import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase

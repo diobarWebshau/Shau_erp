@@ -1,9 +1,10 @@
-import type { ClientAddressCreateProps, ClientAddressProps } from "../../domain/client-address.types";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
+import { IClientRepository } from "@src/modules/core/client/domain/client.repository.interface";
+import { ClientAddressCreateDto } from "../dto/client-address.model.schema";
+import type { ClientAddressProps } from "../../domain/client-address.types";
+import { ClientProps } from "@src/modules/core/client/domain/client.types";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
-import { IClientRepository } from "@src/modules/core/client/domain/client.repository.interface";
-import { ClientProps } from "@src/modules/core/client/domain/client.types";
 
 /**
  * UseCase
@@ -48,7 +49,7 @@ import { ClientProps } from "@src/modules/core/client/domain/client.types";
 
 export class CreateClientAddressUseCase {
     constructor(private readonly repo: IClientAddressRepository, private readonly repoClient: IClientRepository) { }
-    async execute(data: ClientAddressCreateProps, tx?: Transaction): Promise<ClientAddressProps> {
+    async execute(data: ClientAddressCreateDto, tx?: Transaction): Promise<ClientAddressProps> {
         const validClient: ClientProps | null = await this.repoClient.findById(data.client_id, tx);
         if (!validClient) throw new HttpError(404,
             "Al cliente que se le intenta crear una dirección, no existe."

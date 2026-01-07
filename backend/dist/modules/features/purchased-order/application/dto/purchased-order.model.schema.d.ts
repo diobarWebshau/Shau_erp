@@ -1,7 +1,7 @@
 import { z } from "zod";
 declare const purchasedOrderCreateschema: z.ZodObject<{
     order_code: z.ZodString;
-    delivery_date: z.ZodString;
+    delivery_date: z.ZodNullable<z.ZodString>;
     total_price: z.ZodNumber;
     status: z.ZodString;
     client_id: z.ZodNumber;
@@ -31,7 +31,7 @@ declare const purchasedOrderCreateschema: z.ZodObject<{
 }, z.core.$strip>;
 declare const purchasedOrderUpdateSchema: z.ZodObject<{
     order_code: z.ZodOptional<z.ZodString>;
-    delivery_date: z.ZodOptional<z.ZodString>;
+    delivery_date: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     total_price: z.ZodOptional<z.ZodNumber>;
     status: z.ZodOptional<z.ZodString>;
     client_id: z.ZodOptional<z.ZodNumber>;
@@ -61,7 +61,7 @@ declare const purchasedOrderUpdateSchema: z.ZodObject<{
 }, z.core.$strip>;
 declare const purchasedOrderResponseschema: z.ZodObject<{
     order_code: z.ZodString;
-    delivery_date: z.ZodString;
+    delivery_date: z.ZodNullable<z.ZodString>;
     total_price: z.ZodNumber;
     status: z.ZodString;
     client_id: z.ZodNumber;
@@ -92,8 +92,18 @@ declare const purchasedOrderResponseschema: z.ZodObject<{
     updated_at: z.ZodString;
     created_at: z.ZodString;
 }, z.core.$strip>;
+declare const purchasedOrderQuerySchema: z.ZodObject<{
+    filter: z.ZodOptional<z.ZodString>;
+    exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    company_name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    order_code: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    payment_method: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    payment_terms: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+    email: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
+}, z.core.$strict>;
 type PurchasedOrderCreateschemaDto = z.infer<typeof purchasedOrderCreateschema>;
 type PurchasedOrderUpdateSchemaDto = z.infer<typeof purchasedOrderUpdateSchema>;
 type PurchasedOrderResponseschemaDto = z.infer<typeof purchasedOrderResponseschema>;
-export type { PurchasedOrderCreateschemaDto, PurchasedOrderUpdateSchemaDto, PurchasedOrderResponseschemaDto };
-export { purchasedOrderCreateschema, purchasedOrderUpdateSchema, purchasedOrderResponseschema };
+type PurchasedOrderQuerySchemaDto = z.infer<typeof purchasedOrderQuerySchema>;
+export type { PurchasedOrderCreateschemaDto, PurchasedOrderUpdateSchemaDto, PurchasedOrderResponseschemaDto, PurchasedOrderQuerySchemaDto };
+export { purchasedOrderCreateschema, purchasedOrderUpdateSchema, purchasedOrderResponseschema, purchasedOrderQuerySchema };

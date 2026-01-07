@@ -1,6 +1,7 @@
-import { Transaction } from "sequelize";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
-import type { ProductionLineProps, ProductionLineSearchCriteria } from "../../domain/production-line.types";
+import type { ProductionLineProps } from "../../domain/production-line.types";
+import { ProductionLineQueryDto } from "../dto/production-lines.model.schema";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +45,5 @@ import type { ProductionLineProps, ProductionLineSearchCriteria } from "../../do
 export declare class GetAllProductionLinesUseCase {
     private readonly repo;
     constructor(repo: IProductionLineRepository);
-    execute(query: ProductionLineSearchCriteria, tx?: Transaction): Promise<ProductionLineProps[]>;
+    execute(query: ProductionLineQueryDto, tx?: Transaction): Promise<ProductionLineProps[]>;
 }

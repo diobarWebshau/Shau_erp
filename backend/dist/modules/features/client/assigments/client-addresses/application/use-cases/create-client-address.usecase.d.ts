@@ -1,7 +1,8 @@
-import type { ClientAddressCreateProps, ClientAddressProps } from "../../domain/client-address.types";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
-import { Transaction } from "sequelize";
 import { IClientRepository } from "@src/modules/core/client/domain/client.repository.interface";
+import { ClientAddressCreateDto } from "../dto/client-address.model.schema";
+import type { ClientAddressProps } from "../../domain/client-address.types";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -46,5 +47,5 @@ export declare class CreateClientAddressUseCase {
     private readonly repo;
     private readonly repoClient;
     constructor(repo: IClientAddressRepository, repoClient: IClientRepository);
-    execute(data: ClientAddressCreateProps, tx?: Transaction): Promise<ClientAddressProps>;
+    execute(data: ClientAddressCreateDto, tx?: Transaction): Promise<ClientAddressProps>;
 }

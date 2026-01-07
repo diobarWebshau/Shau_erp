@@ -51,6 +51,6 @@ interface LocationTypeProps {
     created_at: Date;
     updated_at: Date;
 }
-type LocationTypeCreateProps = Partial<Omit<LocationTypeProps, "created_at" | "updated_at" | "id">>;
+type LocationTypeCreateProps = Omit<LocationTypeProps, "created_at" | "updated_at" | "id">;
 type LocationTypeUpdateProps = Partial<LocationTypeCreateProps>;
 export type { LocationTypeProps, LocationTypeCreateProps, LocationTypeUpdateProps };

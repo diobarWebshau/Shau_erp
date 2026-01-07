@@ -28,8 +28,8 @@ declare const getAllPurchasedOrderProductQuerySchema: z.ZodObject<{
             barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-            production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+            sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+            production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             id: z.ZodNumber;
@@ -46,7 +46,7 @@ declare const getAllPurchasedOrderProductQuerySchema: z.ZodObject<{
             product_discount_client: z.ZodObject<{
                 product_id: z.ZodNumber;
                 client_id: z.ZodNumber;
-                discount_percentage: z.ZodNumber;
+                discount_percentage: z.ZodString;
                 id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
@@ -103,8 +103,8 @@ declare const getByPurchasedOrderIdPurchasedOrderProductQuerySchema: z.ZodObject
             barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-            production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+            sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+            production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             id: z.ZodNumber;
@@ -121,7 +121,7 @@ declare const getByPurchasedOrderIdPurchasedOrderProductQuerySchema: z.ZodObject
             product_discount_client: z.ZodObject<{
                 product_id: z.ZodNumber;
                 client_id: z.ZodNumber;
-                discount_percentage: z.ZodNumber;
+                discount_percentage: z.ZodString;
                 id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
@@ -178,8 +178,8 @@ declare const getByIdPurchasedOrderProductQuerySchema: z.ZodObject<{
             barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-            production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+            sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+            production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             id: z.ZodNumber;
@@ -196,7 +196,7 @@ declare const getByIdPurchasedOrderProductQuerySchema: z.ZodObject<{
             product_discount_client: z.ZodObject<{
                 product_id: z.ZodNumber;
                 client_id: z.ZodNumber;
-                discount_percentage: z.ZodNumber;
+                discount_percentage: z.ZodString;
                 id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;

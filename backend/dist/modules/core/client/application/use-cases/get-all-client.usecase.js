@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllClientsUseCase = void 0;
+const query_request_normalizer_1 = require("@shared/query-reqyest/query-request-normalizer");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -41,13 +42,31 @@ exports.GetAllClientsUseCase = void 0;
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapClientQueryDtoToDomain = (query) => {
+    return {
+        filter: query.filter?.trim() || undefined,
+        exclude_ids: (0, query_request_normalizer_1.normalizeToNumberArray)(query.exclude_ids),
+        company_name: (0, query_request_normalizer_1.normalizeToArray)(query.company_name),
+        tax_id: (0, query_request_normalizer_1.normalizeToArray)(query.tax_id),
+        email: (0, query_request_normalizer_1.normalizeToArray)(query.email),
+        city: (0, query_request_normalizer_1.normalizeToArray)(query.city),
+        state: (0, query_request_normalizer_1.normalizeToArray)(query.state),
+        country: (0, query_request_normalizer_1.normalizeToArray)(query.country),
+        street: (0, query_request_normalizer_1.normalizeToArray)(query.street),
+        neighborhood: (0, query_request_normalizer_1.normalizeToArray)(query.neighborhood),
+        tax_regimen: (0, query_request_normalizer_1.normalizeToArray)(query.tax_regimen),
+        payment_terms: (0, query_request_normalizer_1.normalizeToArray)(query.payment_terms),
+        cfdi: (0, query_request_normalizer_1.normalizeToArray)(query.cfdi),
+        is_active: (0, query_request_normalizer_1.normalizeToBoolean)(query.is_active),
+    };
+};
 class GetAllClientsUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(query, tx) {
-        return await this.repo.findAll(query, tx);
+        return await this.repo.findAll(mapClientQueryDtoToDomain(query), tx);
     }
 }
 exports.GetAllClientsUseCase = GetAllClientsUseCase;

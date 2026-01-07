@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.locationQuerySchema = exports.locationUpdateSchema = exports.locationResponseSchema = exports.locationCreateSchema = void 0;
+const string_or_string_array_schema_1 = require("@src/shared/application/string-or-string-array.schema");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -103,15 +104,12 @@ exports.locationResponseSchema = locationResponseSchema;
  */
 const locationQuerySchema = zod_1.z.object({
     filter: zod_1.z.string().optional(),
-    exclude_ids: zod_1.z.union([
-        zod_1.z.string(),
-        zod_1.z.array(zod_1.z.string())
-    ]).optional(),
-    name: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    description: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    email: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    phone: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    custom_id: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
+    exclude_ids: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    name: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    description: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    email: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    phone: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    custom_id: string_or_string_array_schema_1.stringOrStringArray.optional(),
     is_active: zod_1.z.preprocess((val) => {
         if (typeof val === "boolean")
             return val;

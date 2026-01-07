@@ -1,5 +1,6 @@
-import type { ClientAddressProps, ClientAddressUpdateProps } from "../../domain/client-address.types";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
+import { ClientAddressUpdateDto } from "../dto/client-address.model.schema";
+import type { ClientAddressProps } from "../../domain/client-address.types";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class UpdateClientAddressUseCase {
     private readonly repo;
     constructor(repo: IClientAddressRepository);
-    execute(id: number, data: ClientAddressUpdateProps, tx?: Transaction): Promise<ClientAddressProps>;
+    execute(id: number, data: ClientAddressUpdateDto, tx?: Transaction): Promise<ClientAddressProps>;
 }

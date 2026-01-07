@@ -15,7 +15,6 @@ const delete_input_usecase_1 = require("../../application/use-cases/delete-input
 const local_file_cleanup_service_1 = require("@shared/files/local-file-cleanup.service");
 const update_input_usecase_1 = require("../../application/use-cases/update-input.usecase");
 const input_repository_1 = require("../repository/input.repository");
-const input_query_mapper_1 = require("./input-query-mapper");
 const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * Controller (Infrastructure / HTTP)
@@ -66,6 +65,14 @@ const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia Inputes externos.
  */
+const formatResponse = (client) => {
+    return {
+        ...client,
+        unit_cost: client.unit_cost ? client.unit_cost.toString() : null,
+        created_at: client.created_at.toISOString(),
+        updated_at: client.updated_at.toISOString()
+    };
+};
 class InputController {
     repo;
     fileCleanup;
@@ -92,26 +99,12 @@ class InputController {
         this.deleteUseCase = new delete_input_usecase_1.DeleteInputUseCase(this.repo, this.fileCleanup);
     }
     // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-    /** Formatea un Location para convertir fechas a ISO */
-    async formatResponse(input) {
-        return {
-            ...input,
-            photo: input.photo ? await imageHandlerClass_1.default.convertToBase64(input.photo) : null,
-            created_at: input.created_at.toISOString(),
-            updated_at: input.updated_at.toISOString()
-        };
-    }
-    ;
-    // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req, res) => {
-        const queryRequest = req.query;
-        const query = (0, input_query_mapper_1.mapInputQueryToCriteria)(queryRequest);
+        const query = req.query;
         const result = await this.getAllUseCase.execute(query);
-        const formatted = await Promise.all(result.map(p => this.formatResponse(p)));
+        const formatted = await Promise.all(result.map(p => formatResponse(p)));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -122,7 +115,7 @@ class InputController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await formatResponse(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -133,7 +126,7 @@ class InputController {
         const result = await this.getByCustomIdUseCase.execute(custom_id);
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await formatResponse(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -144,7 +137,7 @@ class InputController {
         const result = await this.getBySkuUseCase.execute(sku);
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await formatResponse(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -155,7 +148,7 @@ class InputController {
         const result = await this.getByNameUseCase.execute(name);
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await formatResponse(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -166,7 +159,7 @@ class InputController {
         const result = await this.getByBarcodeUseCase.execute(Number(barcode));
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await formatResponse(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -178,7 +171,7 @@ class InputController {
             // 1️⃣ Ejecutar caso de uso
             const created = await this.createUseCase.execute(body);
             // 2️⃣ Formatear salida final
-            const formatted = await this.formatResponse(created);
+            const formatted = await formatResponse(created);
             return res.status(201).send(formatted);
         }
         catch (error) {
@@ -242,7 +235,7 @@ class InputController {
             // -----------------------------------------------------------
             // 6️⃣ RESPUESTA
             // -----------------------------------------------------------
-            const formatted = await this.formatResponse({
+            const formatted = await formatResponse({
                 ...updated,
                 ...(finalPhotoPath ? { photo: finalPhotoPath } : {}),
             });

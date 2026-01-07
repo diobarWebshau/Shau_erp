@@ -4,9 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateClientUseCase = void 0;
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
-const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -48,48 +46,43 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapClientDtoToDomain = (data) => {
+    const { credit_limit, ...rest } = data;
+    return {
+        ...rest,
+        ...(credit_limit !== undefined
+            ? { credit_limit: credit_limit === null ? null : decimal_vo_1.DecimalVO.from(credit_limit) }
+            : {}),
+    };
+};
 class UpdateClientUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(id, data, tx) {
+        const dataUpdate = mapClientDtoToDomain(data);
         const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "El cliente que se desea actualizar no fue posible encontrarlo.");
-        const editableFields = [
-            "cfdi", "city", "company_name", "country",
-            "credit_limit", "email", "email",
-            "is_active", "neighborhood", "payment_method",
-            "payment_terms", "phone", "state", "street",
-            "street_number", "tax_id", "tax_regimen",
-            "zip_code"
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["credit_limit"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["credit_limit"]);
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length)
-            return existing;
-        if (updateValues?.company_name) {
-            const check = await this.repo.findByCompanyName(updateValues.company_name, tx);
+        if (dataUpdate?.company_name) {
+            const check = await this.repo.findByCompanyName(dataUpdate.company_name, tx);
             if (check && String(check.id) !== String(id))
                 throw new http_error_1.default(409, "El nombre ingresado para el cliente, ya esta utilizado por otro cliente.");
         }
-        if (updateValues?.cfdi) {
-            const existsByName = await this.repo.findByCfdi(updateValues.cfdi, tx);
-            if (existsByName)
-                throw new http_error_1.default(409, "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
+        if (dataUpdate?.cfdi) {
+            const found = await this.repo.findByCfdi(dataUpdate.cfdi, tx);
+            if (found && String(found.id) !== String(id)) {
+                throw new http_error_1.default(409, "El cfdi ya está utilizado por otro cliente.");
+            }
         }
-        if (updateValues?.tax_id) {
-            const existsByName = await this.repo.findByTaxId(updateValues.tax_id, tx);
-            if (existsByName)
-                throw new http_error_1.default(409, "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
+        if (dataUpdate?.tax_id) {
+            const found = await this.repo.findByTaxId(dataUpdate.tax_id, tx);
+            if (found && String(found.id) !== String(id)) {
+                throw new http_error_1.default(409, "El tax id ya está utilizado por otro cliente.");
+            }
         }
-        const updated = await this.repo.update(id, updateValues, tx);
-        if (!updated)
-            throw new http_error_1.default(500, "No fue posible actualizar el cliente.");
+        const updated = await this.repo.update(id, dataUpdate, tx);
         return updated;
     }
 }

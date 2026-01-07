@@ -12,6 +12,13 @@ const location_repository_1 = require("@src/modules/core/location/infrastructure
 const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
 const input_repository_1 = require("@src/modules/core/input/infrastructure/repository/input.repository");
 const inventory_location_item_repository_1 = require("../repository/inventory-location-item.repository");
+const mapInventoryLocationItemDomainToDto = (data) => {
+    return {
+        ...data,
+        created_at: data.created_at.toISOString(),
+        updated_at: data.updated_at.toISOString()
+    };
+};
 class InventoryLocationItemController {
     inventoryLocationItemRepo;
     inputRepo;
@@ -48,28 +55,37 @@ class InventoryLocationItemController {
     ;
     getAll = async (_req, res) => {
         const inventoryLocationItemResponse = await this.getAllInventoryLocationItemUseCase.execute();
-        return res.status(200).json(inventoryLocationItemResponse);
+        const inventoryLocationItemResult = inventoryLocationItemResponse.map(mapInventoryLocationItemDomainToDto);
+        return res.status(200).json(inventoryLocationItemResult);
     };
     getById = async (req, res) => {
         const { id } = req.params;
         const inventoryLocationItemResponse = await this.getByIdInventoryLocationItemUseCase.execute(Number(id));
-        return res.status(200).json(inventoryLocationItemResponse);
+        if (!inventoryLocationItemResponse)
+            return res.status(200).json(null);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(200).json(inventoryLocationItemResult);
     };
     getByLocationItem = async (req, res) => {
         const { location_id, item_id, item_type } = req.params;
         const inventoryLocationItemResponse = await this.getByLocationItemInventoryLocationItemUseCase.execute(Number(location_id), Number(item_id), item_type);
-        return res.status(200).json(inventoryLocationItemResponse);
+        if (!inventoryLocationItemResponse)
+            return res.status(200).json(null);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(200).json(inventoryLocationItemResult);
     };
     create = async (req, res) => {
         const body = req.body;
         const inventoryLocationItemResponse = await this.createInventoryLocationItemUseCase.execute(body);
-        return res.status(201).json(inventoryLocationItemResponse);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(201).json(inventoryLocationItemResult);
     };
     update = async (req, res) => {
         const { id } = req.params;
         const body = req.body;
         const inventoryLocationItemResponse = await this.updateInventoryLocationItemUseCase.execute(id, body);
-        return res.status(200).json(inventoryLocationItemResponse);
+        const inventoryLocationItemResult = mapInventoryLocationItemDomainToDto(inventoryLocationItemResponse);
+        return res.status(200).json(inventoryLocationItemResult);
     };
     delete = async (req, res) => {
         const { id } = req.params;

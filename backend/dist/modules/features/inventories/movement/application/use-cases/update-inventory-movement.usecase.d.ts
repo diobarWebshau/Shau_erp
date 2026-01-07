@@ -1,6 +1,6 @@
-import { InventoryMOvementUpdateAttributes } from "../../infrastructure/orm/inventory-movement.orm";
+import { InventoryMovementProps } from "../../domain/inventory-movement.types";
 import { IInventoryMovementRepository } from "../../domain/inventory-movement.repository.interface";
-import { InventoryMovementResponseSchemaDto } from "../dto/inventory-movement.model.schema";
+import { InventoryMovementUpdateDto } from "../dto/inventory-movement.model.schema";
 import { Transaction } from "sequelize";
 interface IUpdateInventoryMovementUseCase {
     repo: IInventoryMovementRepository;
@@ -8,6 +8,6 @@ interface IUpdateInventoryMovementUseCase {
 export declare class UpdateInventoryMovementUseCase {
     private readonly repo;
     constructor({ repo }: IUpdateInventoryMovementUseCase);
-    execute: (id: number, data: InventoryMOvementUpdateAttributes, tx?: Transaction) => Promise<InventoryMovementResponseSchemaDto>;
+    execute: (id: number, data: InventoryMovementUpdateDto, tx?: Transaction) => Promise<InventoryMovementProps>;
 }
 export {};

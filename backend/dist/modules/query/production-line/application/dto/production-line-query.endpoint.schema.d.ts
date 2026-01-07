@@ -2,13 +2,7 @@ import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interfac
 import z from "zod";
 declare const getAllProductionLineOrchestratorSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
-    query: z.ZodObject<{
-        filter: z.ZodOptional<z.ZodString>;
-        exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        custom_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
-    }, z.core.$strict>;
+    query: any;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
         production_line: z.ZodObject<{
@@ -34,8 +28,8 @@ declare const getAllProductionLineOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -83,8 +77,8 @@ declare const getByIdProductionLineOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -104,13 +98,7 @@ declare const getByIdProductionLineOrchestratorSchema: z.ZodObject<{
 }, z.core.$strip>;
 declare const getAllProductionLinetFullQuerySchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strip>;
-    query: z.ZodObject<{
-        filter: z.ZodOptional<z.ZodString>;
-        exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        custom_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
-    }, z.core.$strict>;
+    query: any;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
         name: z.ZodString;
@@ -134,8 +122,8 @@ declare const getAllProductionLinetFullQuerySchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -181,8 +169,8 @@ declare const getByIdProductionLinetFullQuerySchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;

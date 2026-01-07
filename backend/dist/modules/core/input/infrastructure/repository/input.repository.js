@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputRepository = void 0;
+const input_orm_1 = require("../orm/input.orm");
 const sequelize_1 = require("sequelize");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
-const input_orm_1 = require("../orm/input.orm");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -54,26 +55,36 @@ const input_orm_1 = require("../orm/input.orm");
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapInputModelToDomain = (model) => {
+    const inputAttributes = model.toJSON();
     return {
-        id: json.id,
-        custom_id: json.custom_id,
-        name: json.name,
-        description: json.description,
-        presentation: json.presentation,
-        unit_of_measure: json.unit_of_measure,
-        storage_conditions: json.storage_conditions,
-        barcode: json.barcode,
-        sku: json.sku,
-        photo: json.photo,
-        is_draft: json.is_draft,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
-        input_types_id: json.input_types_id,
-        is_active: json.is_active,
-        supplier: json.supplier,
-        unit_cost: Number(json.unit_cost)
+        ...inputAttributes,
+        unit_cost: (inputAttributes.unit_cost) ? decimal_vo_1.DecimalVO.from(inputAttributes.unit_cost) : null,
+    };
+};
+const mapInputCreateDomainToModel = (data) => ({
+    custom_id: data.custom_id ?? null,
+    name: data.name ?? null,
+    description: data.description ?? null,
+    sku: data.sku ?? null,
+    presentation: data.presentation ?? null,
+    unit_of_measure: data.unit_of_measure ?? null,
+    storage_conditions: data.storage_conditions ?? null,
+    barcode: data.barcode ?? null,
+    input_types_id: data.input_types_id ?? null,
+    supplier: data.supplier ?? null,
+    photo: data.photo ?? null,
+    unit_cost: data.unit_cost ? data.unit_cost.toString() : null,
+    is_draft: data.is_draft,
+    is_active: data.is_active,
+});
+const mapInputUpdateModelToDomain = (data) => {
+    const { unit_cost, ...rest } = data;
+    return {
+        ...rest,
+        ...(unit_cost !== undefined
+            ? { unit_cost: unit_cost === null ? null : unit_cost.toString() }
+            : {}),
     };
 };
 class InputRepository {
@@ -96,10 +107,11 @@ class InputRepository {
             ...(filter
                 ? {
                     [sequelize_1.Op.or]: [
-                        { company_name: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { email: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { tax_id: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { cfdi: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { name: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { custom_id: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { sku: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { description: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { barcode: { [sequelize_1.Op.like]: `%${filter}%` } },
                     ],
                 }
                 : {}),
@@ -107,57 +119,51 @@ class InputRepository {
         const rows = await input_orm_1.InputModel.findAll({
             where,
             transaction: tx,
-            attributes: input_orm_1.InputModel.getAllFields(),
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapInputModelToDomain(pl));
     };
     findById = async (id, tx) => {
         const row = await input_orm_1.InputModel.findByPk(id, {
             transaction: tx,
-            attributes: input_orm_1.InputModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     };
     findByName = async (name, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { name },
             transaction: tx,
-            attributes: input_orm_1.InputModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     };
     findByCustomId = async (custom_id, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { custom_id: custom_id },
             transaction: tx,
-            attributes: input_orm_1.InputModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     };
     findBySku = async (sku, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { sku: sku },
             transaction: tx,
-            attributes: input_orm_1.InputModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     };
     findByBarcode = async (barcode, tx) => {
         const row = await input_orm_1.InputModel.findOne({
             where: { barcode: barcode },
             transaction: tx,
-            attributes: input_orm_1.InputModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data, tx) => {
-        const created = await input_orm_1.InputModel.create(data, { transaction: tx });
+        const created = await input_orm_1.InputModel.create(mapInputCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear el nuevo insumo.");
-        return mapModelToDomain(created);
+        return mapInputModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -169,21 +175,23 @@ class InputRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "El insumo que se desea actualizar no fue posible encontrarlo.");
+        const existingDomain = mapInputModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
-        const [affectedCount] = await input_orm_1.InputModel.update(data, {
+        const [affectedCount] = await input_orm_1.InputModel.update(mapInputUpdateModelToDomain(data), {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            return mapModelToDomain(existing);
+            return existingDomain;
         // 3. Obtener la locación actualizada
         const updated = await input_orm_1.InputModel.findByPk(id, {
             transaction: tx,
-            attributes: input_orm_1.InputModel.getAllFields(),
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el insumo.");
-        return mapModelToDomain(updated);
+        return mapInputModelToDomain(updated);
     };
     // ================================================================
     // DELETE

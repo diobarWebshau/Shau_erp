@@ -1,7 +1,6 @@
 import { IInventoryRepository } from "../../domain/inventory.repository.interface";
 import { InventoryProps } from "../../domain/inventory.types";
 import { Transaction } from "sequelize";
-import { inventoryResponseDto } from "../dto/inventory.model.schema";
 
 /**
  * UseCase

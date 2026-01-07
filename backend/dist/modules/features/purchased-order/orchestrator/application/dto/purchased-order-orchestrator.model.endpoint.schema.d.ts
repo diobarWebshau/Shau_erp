@@ -7,7 +7,7 @@ declare const createPurchasedOrderOrchestratorSchema: z.ZodObject<{
         payload: z.ZodObject<{
             purchased_order: z.ZodObject<{
                 order_code: z.ZodString;
-                delivery_date: z.ZodString;
+                delivery_date: z.ZodNullable<z.ZodString>;
                 total_price: z.ZodNumber;
                 status: z.ZodString;
                 client_id: z.ZodNumber;
@@ -50,10 +50,10 @@ declare const createPurchasedOrderOrchestratorSchema: z.ZodObject<{
             }, z.core.$strip>>;
         }, z.core.$strip>;
     }, z.core.$strip>;
-    response: {
+    response: z.ZodObject<{
         purchased_order: z.ZodObject<{
             order_code: z.ZodString;
-            delivery_date: z.ZodString;
+            delivery_date: z.ZodNullable<z.ZodString>;
             total_price: z.ZodNumber;
             status: z.ZodString;
             client_id: z.ZodNumber;
@@ -108,8 +108,8 @@ declare const createPurchasedOrderOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -126,7 +126,7 @@ declare const createPurchasedOrderOrchestratorSchema: z.ZodObject<{
                 product_discount_client: z.ZodObject<{
                     product_id: z.ZodNumber;
                     client_id: z.ZodNumber;
-                    discount_percentage: z.ZodNumber;
+                    discount_percentage: z.ZodString;
                     id: z.ZodNumber;
                     created_at: z.ZodString;
                     updated_at: z.ZodString;
@@ -178,7 +178,7 @@ declare const createPurchasedOrderOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodString;
             payment_terms: z.ZodNullable<z.ZodString>;
             zip_code: z.ZodNumber;
-            credit_limit: z.ZodNullable<z.ZodNumber>;
+            credit_limit: z.ZodNullable<z.ZodString>;
             tax_regimen: z.ZodNullable<z.ZodString>;
             cfdi: z.ZodString;
             payment_method: z.ZodNullable<z.ZodString>;
@@ -187,7 +187,7 @@ declare const createPurchasedOrderOrchestratorSchema: z.ZodObject<{
             created_at: z.ZodString;
             updated_at: z.ZodString;
         }, z.core.$strip>;
-    };
+    }, z.core.$strip>;
 }, z.core.$strip>;
 declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
     params: z.ZodObject<{
@@ -198,7 +198,7 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
         payload: z.ZodObject<{
             purchased_order: z.ZodObject<{
                 order_code: z.ZodOptional<z.ZodString>;
-                delivery_date: z.ZodOptional<z.ZodString>;
+                delivery_date: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 total_price: z.ZodOptional<z.ZodNumber>;
                 status: z.ZodOptional<z.ZodString>;
                 client_id: z.ZodOptional<z.ZodNumber>;
@@ -230,7 +230,7 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
                 added: z.ZodArray<z.ZodObject<{
                     purchased_order: z.ZodObject<{
                         order_code: z.ZodString;
-                        delivery_date: z.ZodString;
+                        delivery_date: z.ZodNullable<z.ZodString>;
                         total_price: z.ZodNumber;
                         status: z.ZodString;
                         client_id: z.ZodNumber;
@@ -274,7 +274,7 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
                 }, z.core.$strip>>;
                 updated: z.ZodArray<z.ZodObject<{
                     order_code: z.ZodOptional<z.ZodString>;
-                    delivery_date: z.ZodOptional<z.ZodString>;
+                    delivery_date: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                     total_price: z.ZodOptional<z.ZodNumber>;
                     status: z.ZodOptional<z.ZodString>;
                     client_id: z.ZodOptional<z.ZodNumber>;
@@ -305,7 +305,7 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
                 }, z.core.$strip>>;
                 deleted: z.ZodArray<z.ZodObject<{
                     order_code: z.ZodString;
-                    delivery_date: z.ZodString;
+                    delivery_date: z.ZodNullable<z.ZodString>;
                     total_price: z.ZodNumber;
                     status: z.ZodString;
                     client_id: z.ZodNumber;
@@ -339,10 +339,10 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
             }, z.core.$strip>;
         }, z.core.$strip>;
     }, z.core.$strip>;
-    response: {
+    response: z.ZodObject<{
         purchased_order: z.ZodObject<{
             order_code: z.ZodString;
-            delivery_date: z.ZodString;
+            delivery_date: z.ZodNullable<z.ZodString>;
             total_price: z.ZodNumber;
             status: z.ZodString;
             client_id: z.ZodNumber;
@@ -397,8 +397,8 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -415,7 +415,7 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
                 product_discount_client: z.ZodObject<{
                     product_id: z.ZodNumber;
                     client_id: z.ZodNumber;
-                    discount_percentage: z.ZodNumber;
+                    discount_percentage: z.ZodString;
                     id: z.ZodNumber;
                     created_at: z.ZodString;
                     updated_at: z.ZodString;
@@ -467,7 +467,7 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodString;
             payment_terms: z.ZodNullable<z.ZodString>;
             zip_code: z.ZodNumber;
-            credit_limit: z.ZodNullable<z.ZodNumber>;
+            credit_limit: z.ZodNullable<z.ZodString>;
             tax_regimen: z.ZodNullable<z.ZodString>;
             cfdi: z.ZodString;
             payment_method: z.ZodNullable<z.ZodString>;
@@ -476,7 +476,7 @@ declare const updatePurchasedOrderOrchestratorSchema: z.ZodObject<{
             created_at: z.ZodString;
             updated_at: z.ZodString;
         }, z.core.$strip>;
-    };
+    }, z.core.$strip>;
 }, z.core.$strip>;
 type CreatePurchasedOrderOrchestratorSchema = EndpointSchema<z.infer<typeof createPurchasedOrderOrchestratorSchema>["params"], z.infer<typeof createPurchasedOrderOrchestratorSchema>["body"], z.infer<typeof createPurchasedOrderOrchestratorSchema>["query"], z.infer<typeof createPurchasedOrderOrchestratorSchema>["response"]>;
 type UpdatePurchasedOrderOrchestratorSchema = EndpointSchema<z.infer<typeof updatePurchasedOrderOrchestratorSchema>["params"], z.infer<typeof updatePurchasedOrderOrchestratorSchema>["body"], z.infer<typeof updatePurchasedOrderOrchestratorSchema>["query"], z.infer<typeof updatePurchasedOrderOrchestratorSchema>["response"]>;

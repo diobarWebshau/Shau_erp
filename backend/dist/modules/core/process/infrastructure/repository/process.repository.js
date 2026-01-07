@@ -54,14 +54,12 @@ const sequelize_1 = require("sequelize");
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-function mapModelToDomain(model) {
+function mapProcessModelToDomain(model) {
     const json = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        description: json.description,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        ...json,
+        created_at: json.created_at instanceof Date ? json.created_at : new Date(json.created_at),
+        updated_at: json.updated_at instanceof Date ? json.updated_at : new Date(json.updated_at)
     };
 }
 class ProcessRepository {
@@ -96,14 +94,14 @@ class ProcessRepository {
             transaction: tx,
             attributes: process_orm_1.ProcessModel.getAllFields()
         });
-        return rows.map(mapModelToDomain);
+        return rows.map(mapProcessModelToDomain);
     }
     async findById(id, tx) {
         const row = await process_orm_1.ProcessModel.findByPk(id, {
             transaction: tx,
             attributes: process_orm_1.ProcessModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProcessModelToDomain(row) : null;
     }
     async findByName(name, tx) {
         const row = await process_orm_1.ProcessModel.findOne({
@@ -111,7 +109,7 @@ class ProcessRepository {
             transaction: tx,
             attributes: process_orm_1.ProcessModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProcessModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
@@ -120,7 +118,7 @@ class ProcessRepository {
         const created = await process_orm_1.ProcessModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear el tipo de proceso.");
-        return mapModelToDomain(created);
+        return mapProcessModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -132,13 +130,16 @@ class ProcessRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "El proceso que se desea actualizar no fue posible encontrarla.");
+        const existingDomain = mapProcessModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
         const [affectedCount] = await process_orm_1.ProcessModel.update(data, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar el proceso.");
+            return existingDomain;
         // 3. Obtener la proceso actualizada
         const updated = await process_orm_1.ProcessModel.findByPk(id, {
             transaction: tx,
@@ -146,7 +147,7 @@ class ProcessRepository {
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el proceso.");
-        return mapModelToDomain(updated);
+        return mapProcessModelToDomain(updated);
     }
     // ================================================================
     // DELETE

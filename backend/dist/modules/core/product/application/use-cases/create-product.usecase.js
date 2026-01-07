@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductUseCase = void 0;
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
@@ -46,35 +47,41 @@ const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductCreateDtoToDomain = (data) => ({
+    ...data,
+    production_cost: data.production_cost ? decimal_vo_1.DecimalVO.from(data.production_cost) : null,
+    sale_price: data.sale_price ? decimal_vo_1.DecimalVO.from(data.sale_price) : null,
+});
 class CreateProductUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(data, tx) {
+        const createData = mapProductCreateDtoToDomain(data);
         // ------------------------------------------------------------------
         // 🔎 VALIDACIONES DE NEGOCIO
         // ------------------------------------------------------------------
-        if (data?.name) {
-            const existsByName = await this.repo.findByName(data.name, tx);
+        if (createData?.name) {
+            const existsByName = await this.repo.findByName(createData.name, tx);
             if (existsByName) {
                 throw new http_error_1.default(409, "El nombre ingresado para el nuevo producte, ya esta utilizado por otro producte.");
             }
         }
-        if (data?.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku, tx);
+        if (createData?.sku) {
+            const existsBySku = await this.repo.findBySku(createData.sku, tx);
             if (existsBySku) {
                 throw new http_error_1.default(409, "El sku ingresado para el nuevo producte, ya esta utilizado por otro producte.");
             }
         }
-        if (data?.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
+        if (createData?.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(createData.custom_id, tx);
             if (existsByCustomId) {
                 throw new http_error_1.default(409, "El id único ingresado para el nuevo producte, ya esta utilizado por otro producte.");
             }
         }
-        if (data?.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
+        if (createData?.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(createData.barcode.toString(), tx);
             if (existsByBarcode) {
                 throw new http_error_1.default(409, "El codigo de barras ingresado para el nuevo producte, ya esta utilizado por otro producte.");
             }
@@ -82,16 +89,16 @@ class CreateProductUseCase {
         // ------------------------------------------------------------------
         // 🟢 CREACIÓN INICIAL DEL PRODUCTO (SIN TOCAR FS AÚN)
         // ------------------------------------------------------------------
-        const created = await this.repo.create(data, tx);
+        const created = await this.repo.create(createData, tx);
         if (!created) {
             throw new http_error_1.default(500, "No fue posible crear el nuevo producto");
         }
         // ------------------------------------------------------------------
         // 🖼️ ORGANIZACIÓN DE IMAGEN (POST-CREACIÓN)
         // ------------------------------------------------------------------
-        if (data.photo) {
+        if (createData.photo) {
             try {
-                const newRelativePath = await imageHandlerClass_1.default.moveImageToEntityDirectory(data.photo, "products", created.id.toString());
+                const newRelativePath = await imageHandlerClass_1.default.moveImageToEntityDirectory(createData.photo, "products", created.id.toString());
                 // Actualizar únicamente el campo photo
                 await this.repo.update(created.id, {
                     photo: newRelativePath,
@@ -103,7 +110,7 @@ class CreateProductUseCase {
                 // Si algo falla durante el move, limpiar archivo temporal.
                 // La creación del producto NO se revierte: el producto puede existir sin imagen.
                 try {
-                    await imageHandlerClass_1.default.removeImageIfExists(data.photo);
+                    await imageHandlerClass_1.default.removeImageIfExists(createData.photo);
                 }
                 catch {
                     // silencio intencional

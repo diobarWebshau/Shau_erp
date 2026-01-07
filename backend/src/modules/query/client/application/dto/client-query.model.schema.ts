@@ -3,6 +3,8 @@ import { clientAddressResponseSchema } from "@modules/features/client/assigments
 import { clientResponseOrchestratorSchema } from "@modules/features/client/orchestration/application/dto/client-orchestrator.model.schema"
 import { productQueryFullResponseSchema } from "@modules/query/product/application/dto/product-query.model.schema";
 import { clientResponseSchema } from "@modules/core/client/application/dto/client.model.schema";
+import { clientQuerySchema } from "@modules/core/client/application/dto/client.model.schema";
+import { ClientQueryDto } from "@modules/core/client/application/dto/client.model.schema";
 import z from "zod";
 
 const clientQueryOrchestratorSchema = clientResponseOrchestratorSchema;
@@ -17,10 +19,13 @@ type ClientQueryFullOrchestratorResponseDto = z.infer<typeof clientQueryOrchestr
 
 export type {
     ClientQueryFullResponseDto,
-    ClientQueryFullOrchestratorResponseDto
+    ClientQueryFullOrchestratorResponseDto,
+    ClientQueryDto
 };
 
 export {
     clientAddressResponseSchema,
-    clientQueryFullResponseSchema
+    clientQueryFullResponseSchema,
+    clientQuerySchema
+
 };

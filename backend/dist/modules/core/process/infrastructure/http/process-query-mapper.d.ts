@@ -1,4 +1,4 @@
-import { GetAllProcessesSchema } from "../../application/dto/process.endpoint.schema";
+import { ProcessQueryDto } from "../../application/dto/process.model.schema";
 import type { ProcessSearchCriteria } from "../../domain/process.types";
 /**
  * Query → Criteria Mapper
@@ -45,4 +45,4 @@ import type { ProcessSearchCriteria } from "../../domain/process.types";
  * - Infrastructure/HTTP: mappers convierten queries en criterios.
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
-export declare const mapProcessQueryToCriteria: (query: GetAllProcessesSchema["query"]) => ProcessSearchCriteria;
+export declare const mapProcessQueryToCriteria: (query: ProcessQueryDto) => ProcessSearchCriteria;

@@ -1,10 +1,8 @@
 import type { IProcessRepository } from "../../domain/process.repository";
-import type { ProcessProps, ProcessUpdateProps } from "../../domain/process.types";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
+import type { ProcessProps, } from "../../domain/process.types";
+import { ProcessUpdateDto } from "../dto/process.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
-import { ProcessUpdateDto } from "../dto/process.model.schema";
 
 /**
  * UseCase
@@ -53,20 +51,16 @@ export class UpdateProcessUseCase {
         if (!existing) throw new HttpError(404,
             "El tipo de proceso que se desea actualizar no fue posible encontrarlo."
         );
-        const editableFields: (keyof ProcessUpdateProps)[] = ["name"];
-        const filteredBody: ProcessUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ProcessUpdateProps = { ...existing, ...filteredBody };
-        const updateValues: ProcessUpdateProps = await diffObjects(existing, merged);
-        if (!Object.keys(updateValues).length) return existing;
-        if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name, tx);
+        if (!Object.keys(data).length) return existing;
+        if (data?.name) {
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName)
                 throw new HttpError(
                     409,
                     "El nombre ingresado para el proceso, ya esta utilizado por otro proceso."
                 );
         }
-        const updated: ProcessProps = await this.repo.update(id, updateValues, tx);
+        const updated: ProcessProps = await this.repo.update(id, data, tx);
         if (!updated) throw new HttpError(500, "No fue posible actualizar la proceso.");
         return updated;
     }

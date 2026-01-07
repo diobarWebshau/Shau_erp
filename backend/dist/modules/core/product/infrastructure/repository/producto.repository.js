@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductRepository = void 0;
+const product_orm_1 = require("../orm/product.orm");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const sequelize_1 = require("sequelize");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
-const product_orm_1 = require("../orm/product.orm");
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -54,26 +55,43 @@ const product_orm_1 = require("../orm/product.orm");
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapProductModelToDomain = (model) => {
+    const productAttributes = model.toJSON();
+    const productDomain = {
+        ...productAttributes,
+        production_cost: productAttributes.production_cost ? decimal_vo_1.DecimalVO.from(productAttributes.production_cost) : null,
+        sale_price: productAttributes.sale_price ? decimal_vo_1.DecimalVO.from(productAttributes.sale_price) : null,
+        created_at: (productAttributes.created_at instanceof Date) ? productAttributes.created_at : new Date(productAttributes.created_at),
+        updated_at: (productAttributes.updated_at instanceof Date) ? productAttributes.updated_at : new Date(productAttributes.updated_at)
+    };
+    return productDomain;
+};
+const mapProductCreateDomainToModel = (data) => ({
+    is_active: data.is_active,
+    is_draft: data.is_draft,
+    barcode: data.barcode ? data.barcode : null,
+    custom_id: data.custom_id ? data.custom_id : null,
+    description: data.description ? data.description : null,
+    name: data.name ? data.name : null,
+    photo: data.photo ? data.photo : null,
+    presentation: data.presentation ? data.presentation : null,
+    production_cost: data.production_cost ? data.production_cost.toString() : null,
+    sale_price: data.sale_price ? data.sale_price.toString() : null,
+    sku: data.sku ? data.sku : null,
+    storage_conditions: data.storage_conditions ? data.storage_conditions : null,
+    type: data.type ? data.type : null,
+    unit_of_measure: data.unit_of_measure ? data.unit_of_measure : null
+});
+const mapProductUpdateModelToDomain = (data) => {
+    const { production_cost, sale_price, ...rest } = data;
     return {
-        id: json.id,
-        custom_id: json.custom_id,
-        name: json.name,
-        type: json.type,
-        description: json.description,
-        presentation: json.presentation,
-        unit_of_measure: json.unit_of_measure,
-        production_cost: Number(json.production_cost),
-        storage_conditions: json.storage_conditions,
-        barcode: json.barcode,
-        sku: json.sku,
-        sale_price: Number(json.sale_price),
-        photo: json.photo,
-        is_draft: json.is_draft,
-        is_active: json.is_active,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        ...rest,
+        ...(production_cost !== undefined
+            ? { production_cost: production_cost === null ? null : production_cost.toString() }
+            : {}),
+        ...(sale_price !== undefined
+            ? { sale_price: sale_price === null ? null : sale_price.toString() }
+            : {}),
     };
 };
 class ProductRepository {
@@ -96,10 +114,11 @@ class ProductRepository {
             ...(filter
                 ? {
                     [sequelize_1.Op.or]: [
-                        { company_name: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { email: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { tax_id: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { cfdi: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { name: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { description: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { custom_id: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { presentation: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { storage_conditions: { [sequelize_1.Op.like]: `%${filter}%` } },
                     ],
                 }
                 : {}),
@@ -109,55 +128,50 @@ class ProductRepository {
             transaction: tx,
             attributes: product_orm_1.ProductModel.getAllFields(),
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapProductModelToDomain(pl));
     };
     findById = async (id, tx) => {
         const row = await product_orm_1.ProductModel.findByPk(id, {
             transaction: tx,
-            attributes: product_orm_1.ProductModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     };
     findByName = async (name, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
             transaction: tx,
             where: { name },
-            attributes: product_orm_1.ProductModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     };
     findByCustomId = async (custom_id, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
             transaction: tx,
             where: { custom_id: custom_id },
-            attributes: product_orm_1.ProductModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     };
     findBySku = async (sku, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
             transaction: tx,
             where: { sku: sku },
-            attributes: product_orm_1.ProductModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     };
     findByBarcode = async (barcode, tx) => {
         const row = await product_orm_1.ProductModel.findOne({
             transaction: tx,
             where: { barcode: barcode },
-            attributes: product_orm_1.ProductModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data, tx) => {
-        const created = await product_orm_1.ProductModel.create(data, { transaction: tx });
+        const created = await product_orm_1.ProductModel.create(mapProductCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear el nuevo producto.");
-        return mapModelToDomain(created);
+        return mapProductModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -168,22 +182,23 @@ class ProductRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "El producto que se desea actualizar no fue posible encontrarlo.");
+        const existingDomain = mapProductModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
-        // const [affectedCount]: [affectedCount: number] = 
-        await product_orm_1.ProductModel.update(data, {
+        const [affectedCount] = await product_orm_1.ProductModel.update(mapProductUpdateModelToDomain(data), {
             where: { id },
             transaction: tx,
         });
-        // if (!affectedCount)
-        //     throw new HttpError(500, "No fue posible actualizar el producto.");
-        // 3. Obtener la locación actualizada
+        if (!affectedCount)
+            return existingDomain;
         const updated = await product_orm_1.ProductModel.findByPk(id, {
             transaction: tx,
             attributes: product_orm_1.ProductModel.getAllFields(),
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el producto.");
-        return mapModelToDomain(updated);
+        return mapProductModelToDomain(updated);
     };
     // ================================================================
     // DELETE
@@ -204,3 +219,4 @@ class ProductRepository {
     };
 }
 exports.ProductRepository = ProductRepository;
+;

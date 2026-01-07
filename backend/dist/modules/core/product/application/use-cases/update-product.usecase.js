@@ -4,11 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProductUseCase = void 0;
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
-const decimal_normalization_and_cleaning_utils_1 = require("@src/helpers/decimal-normalization-and-cleaning.utils");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -49,6 +47,18 @@ const decimal_normalization_and_cleaning_utils_1 = require("@src/helpers/decimal
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductDtoToDomain = (data) => {
+    const { sale_price, production_cost, ...rest } = data;
+    return {
+        ...rest,
+        ...(sale_price !== undefined
+            ? { credit_limit: sale_price === null ? null : decimal_vo_1.DecimalVO.from(sale_price) }
+            : {}),
+        ...(production_cost !== undefined
+            ? { credit_limit: production_cost === null ? null : decimal_vo_1.DecimalVO.from(production_cost) }
+            : {}),
+    };
+};
 class UpdateProductUseCase {
     repo;
     constructor(repo) {
@@ -62,55 +72,35 @@ class UpdateProductUseCase {
         if (!existing) {
             throw new http_error_1.default(404, "El Producte que se desea actualizar no fue posible encontrarlo.");
         }
-        // ------------------------------------------------------------------
-        // ✏️ FILTRADO DE CAMPOS EDITABLES
-        // ------------------------------------------------------------------
-        // Se define explícitamente qué campos pueden ser modificados.
-        // Esto evita actualizaciones accidentales o maliciosas de
-        // propiedades no editables del dominio.
-        const editableFields = [
-            "name", "storage_conditions", "description", "unit_of_measure",
-            "presentation", "production_cost", "barcode", "type", "sku",
-            "sale_price", "is_active", "photo", "is_draft", "custom_id",
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["sale_price", "production_cost", "barcode"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["sale_price", "production_cost", "barcode"]);
-        // ------------------------------------------------------------------
-        // 🧮 DETECCIÓN DE CAMBIOS EFECTIVOS
-        // ------------------------------------------------------------------
-        // Se calcula la diferencia real entre el estado actual y el
-        // estado resultante. Esto evita writes innecesarios en BD.
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length)
+        const updateData = mapProductDtoToDomain(data);
+        if (!Object.keys(updateData).length)
             return existing;
         // ------------------------------------------------------------------
         // 🔐 VALIDACIONES DE UNICIDAD
         // ------------------------------------------------------------------
         // Las validaciones de unicidad se basan en la intención del usuario
-        // (data), no en los cambios efectivos (updateValues), para evitar
+        // (data), no en los cambios efectivos (updateData), para evitar
         // inconsistencias y falsos negativos.
-        if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name, tx);
+        if (updateData.name) {
+            const existsByName = await this.repo.findByName(updateData.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new http_error_1.default(409, "El nombre ingresado para el producte ya está en uso.");
             }
         }
-        if (updateValues.sku) {
-            const existsBySku = await this.repo.findBySku(updateValues.sku, tx);
+        if (updateData.sku) {
+            const existsBySku = await this.repo.findBySku(updateData.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new http_error_1.default(409, "El sku ingresado para el producte ya está en uso.");
             }
         }
-        if (updateValues.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(updateValues.custom_id, tx);
+        if (updateData.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(updateData.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new http_error_1.default(409, "El id único ingresado para el producte ya está en uso.");
             }
         }
-        if (updateValues.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(updateValues.barcode.toString(), tx);
+        if (updateData.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(updateData.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new http_error_1.default(409, "El código de barras ingresado para el producte ya está en uso.");
             }
@@ -122,8 +112,8 @@ class UpdateProductUseCase {
         // Solo compara rutas finales (strings) ya resueltas
         // por la capa de orquestación (controller).
         const previousPhoto = existing.photo ?? null;
-        const nextPhoto = "photo" in updateValues
-            ? updateValues.photo ?? null
+        const nextPhoto = "photo" in updateData
+            ? updateData.photo ?? null
             : null;
         const photoWasReplaced = previousPhoto !== null &&
             nextPhoto !== null &&
@@ -133,7 +123,7 @@ class UpdateProductUseCase {
         // ------------------------------------------------------------------
         // Se delega al repositorio la operación de update, garantizando
         // que la transacción sea consistente.
-        const updated = await this.repo.update(id, updateValues, tx);
+        const updated = await this.repo.update(id, updateData, tx);
         if (!updated) {
             throw new http_error_1.default(500, "No fue posible actualizar el Producte.");
         }

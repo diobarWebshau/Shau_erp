@@ -9,15 +9,14 @@ import { CreateProductUseCase } from "../../application/use-cases/create-product
 import { DeleteProductUseCase } from "../../application/use-cases/delete-product.usecase";
 import { UpdateProductUseCase } from "../../application/use-cases/update-product.usecase";
 import { LocalFileCleanupService } from "@shared/files/local-file-cleanup.service";
-import { ProductProps, ProductSearchCriteria } from "../../domain/product.types"
 import { ProductResponseDto } from "../../application/dto/product.model.schema";
 import { ProductRepository } from "../repository/producto.repository";
+import { ProductProps } from "../../domain/product.types"
 import {
     DeleteProductSchema, GetAllProductsSchema, GetByBarcodeProductSchema,
     GetByCustomIdProductSchema, GetByIdProductSchema, CreateProductSchema,
     GetByNameProductSchema, GetBySkuProductSchema, UpdateProductSchema
 } from "../../application/dto/product.endpoint.schema";
-import { mapProductQueryToCriteria } from "./product-query-mapper";
 import ImageHandler from "@helpers/imageHandlerClass";
 
 /**
@@ -70,6 +69,18 @@ import ImageHandler from "@helpers/imageHandlerClass";
  *   de forma coherente hacia productes externos.
  */
 
+/** Formatea un Location para convertir fechas a ISO */
+const mapProductDomainToDto = async (product: ProductProps): Promise<ProductResponseDto> => {
+    return {
+        ...product,
+        photo: product.photo ? await ImageHandler.convertToBase64(product.photo) : null,
+        sale_price: product.sale_price ? product.sale_price?.toString() : null,
+        production_cost: product.production_cost ? product.production_cost?.toString() : null,
+        created_at: product.created_at.toISOString(),
+        updated_at: product.updated_at.toISOString()
+    };
+};
+
 export class ProductController {
 
     private readonly repo: ProductRepository;
@@ -103,28 +114,13 @@ export class ProductController {
     }
 
     // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-
-    /** Formatea un Location para convertir fechas a ISO */
-    private async formatResponse(product: ProductProps): Promise<ProductResponseDto> {
-        return {
-            ...product,
-            photo: product.photo ? await ImageHandler.convertToBase64(product.photo) : null,
-            created_at: product.created_at.toISOString(),
-            updated_at: product.updated_at.toISOString()
-        };
-    };
-
-    // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req: ApiRequest<GetAllProductsSchema>, res: ApiResponse<GetAllProductsSchema>) => {
-        const queryRequest: GetAllProductsSchema["query"] = req.query;
-        const query: ProductSearchCriteria = mapProductQueryToCriteria(queryRequest);
+        const query: GetAllProductsSchema["query"] = req.query;
         const result: ProductProps[] = await this.getAllUseCase.execute(query)
         const formatted: ProductResponseDto[] = await Promise.all(
-            result.map(p => this.formatResponse(p))
+            result.map(p => mapProductDomainToDto(p))
         );
         return res.status(200).send(formatted);
     };
@@ -136,7 +132,7 @@ export class ProductController {
         const { id }: GetByIdProductSchema["params"] = req.params;
         const result: ProductProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ProductResponseDto = await this.formatResponse(result)
+        const formatted: ProductResponseDto = await mapProductDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -147,7 +143,7 @@ export class ProductController {
         const { custom_id }: GetByCustomIdProductSchema["params"] = req.params
         const result: ProductProps | null = await this.getByCustomIdUseCase.execute(custom_id);
         if (!result) return res.status(204).send(null);
-        const formatted: ProductResponseDto = await this.formatResponse(result)
+        const formatted: ProductResponseDto = await mapProductDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -158,7 +154,7 @@ export class ProductController {
         const { sku }: GetBySkuProductSchema["params"] = req.params
         const result: ProductProps | null = await this.getBySkuUseCase.execute(sku);
         if (!result) return res.status(204).send(null);
-        const formatted: ProductResponseDto = await this.formatResponse(result)
+        const formatted: ProductResponseDto = await mapProductDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -169,7 +165,7 @@ export class ProductController {
         const { name }: GetByNameProductSchema["params"] = req.params
         const result: ProductProps | null = await this.getByNameUseCase.execute(name);
         if (!result) return res.status(204).send(null);
-        const formatted: ProductResponseDto = await this.formatResponse(result)
+        const formatted: ProductResponseDto = await mapProductDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -180,7 +176,7 @@ export class ProductController {
         const { barcode }: GetByBarcodeProductSchema["params"] = req.params
         const result: ProductProps | null = await this.getByBarcodeUseCase.execute(Number(barcode));
         if (!result) return res.status(204).send(null);
-        const formatted: ProductResponseDto = await this.formatResponse(result)
+        const formatted: ProductResponseDto = await mapProductDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -194,7 +190,7 @@ export class ProductController {
         const body: CreateProductSchema["body"] = req.body;
         try {
             const created: ProductProps = await this.createUseCase.execute(body);
-            const formatted: ProductResponseDto = await this.formatResponse(created);
+            const formatted: ProductResponseDto = await mapProductDomainToDto(created);
             return res.status(201).send(formatted);
         } catch (error) {
             // 🧹 LIMPIEZA DE IMAGEN TEMPORAL SI FALLA EL CREATE
@@ -279,7 +275,7 @@ export class ProductController {
             // 6️⃣ RESPUESTA
             // -----------------------------------------------------------
             const formatted: ProductResponseDto =
-                await this.formatResponse({
+                await mapProductDomainToDto({
                     ...updated,
                     ...(finalPhotoPath ? { photo: finalPhotoPath } : {}),
                 });

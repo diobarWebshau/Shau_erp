@@ -1,7 +1,5 @@
 import type { LocationLocationTypeUpdateProps, LocationLocationTypeProps } from "../../domain/location-location-type.types";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -53,14 +51,8 @@ export class UpdateLocationLocationTypeUseCase {
         if (!existing) throw new HttpError(404,
             "La asignación del tipo de locacíon a la locación que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof LocationLocationTypeUpdateProps)[] = [
-            "location_id", "location_type_id"
-        ];
-        const filteredBody: LocationLocationTypeUpdateProps = pickEditableFields(data, editableFields);
-        const merged: LocationLocationTypeProps = { ...existing, ...filteredBody };
-        const updateValues: LocationLocationTypeUpdateProps = await diffObjects(existing, merged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: LocationLocationTypeProps = await this.repo.update(id, updateValues, tx);
+        if (!Object.keys(data).length) return existing;
+        const updated: LocationLocationTypeProps = await this.repo.update(id, data, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion del tipo de locacíon a la locación."
         );

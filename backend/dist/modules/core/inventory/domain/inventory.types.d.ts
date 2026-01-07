@@ -1,8 +1,9 @@
+import { DecimalVO } from "@shared/domain/value-objects/decimal.vo";
 interface InventoryProps {
     id: number;
-    stock: number;
-    minimum_stock: number;
-    maximum_stock: number;
+    stock: DecimalVO;
+    minimum_stock: DecimalVO;
+    maximum_stock: DecimalVO;
     lead_time: number;
     created_at: Date;
     updated_at: Date;

@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.clientQuerySchema = exports.clientResponseSchema = exports.clientUpdateSchema = exports.clientCreateSchema = void 0;
+const string_or_string_array_schema_1 = require("@shared/application/string-or-string-array.schema");
+const decimal_schema_1 = require("@shared/application/decimal.schema");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -62,7 +64,7 @@ const clientCreateSchema = zod_1.z.object({
     neighborhood: zod_1.z.string(),
     payment_terms: zod_1.z.string().nullable(),
     zip_code: zod_1.z.number(),
-    credit_limit: zod_1.z.number().nullable(),
+    credit_limit: decimal_schema_1.decimalString.nullable(),
     tax_regimen: zod_1.z.string().nullable(),
     cfdi: zod_1.z.string(),
     payment_method: zod_1.z.string().nullable(),
@@ -123,30 +125,18 @@ exports.clientResponseSchema = clientResponseSchema;
  */
 const clientQuerySchema = zod_1.z.object({
     filter: zod_1.z.string().optional(),
-    exclude_ids: zod_1.z.union([
-        zod_1.z.string(),
-        zod_1.z.array(zod_1.z.string())
-    ]).optional(),
-    company_name: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    tax_id: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    email: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    phone: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    city: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    state: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    country: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    street: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    neighborhood: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    tax_regimen: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    payment_terms: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    cfdi: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    is_active: zod_1.z.preprocess((val) => {
-        if (typeof val === "boolean")
-            return val;
-        if (val === "true" || val === "1" || val === 1)
-            return true;
-        if (val === "false" || val === "0" || val === 0)
-            return false;
-        return val;
-    }, zod_1.z.boolean({ message: "Active must be a boolean" })).optional(),
+    exclude_ids: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    company_name: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    tax_id: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    email: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    city: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    state: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    country: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    street: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    neighborhood: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    tax_regimen: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    payment_terms: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    cfdi: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    is_active: zod_1.z.string().optional(),
 }).strict();
 exports.clientQuerySchema = clientQuerySchema;

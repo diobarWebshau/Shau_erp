@@ -1,5 +1,5 @@
-import { GetAllProductionLinesSchema } from "./../../application/dto/production-lines.endpoint.schema";
 import type { ProductionLineSearchCriteria } from "../../domain/production-line.types";
+import { ProductionLineQueryDto } from "../../application/dto/production-lines.model.schema";
 /**
  * Query → Criteria Mapper
  * ------------------------------------------------------------------
@@ -45,4 +45,4 @@ import type { ProductionLineSearchCriteria } from "../../domain/production-line.
  * - Infrastructure/HTTP: mappers convierten queries en criterios.
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
-export declare const mapProductionLineQueryToCriteria: (query: GetAllProductionLinesSchema["query"]) => ProductionLineSearchCriteria;
+export declare const mapProductionLineQueryDtoToDomain: (query: ProductionLineQueryDto) => ProductionLineSearchCriteria;

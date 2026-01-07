@@ -61,6 +61,14 @@ const location_type_repository_1 = __importDefault(require("../repository/locati
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
+/** Formatea un Location para convertir fechas a ISO */
+const mapLocationTypeDomainToDto = (location) => {
+    return {
+        ...location,
+        created_at: location.created_at.toISOString(),
+        updated_at: location.updated_at.toISOString()
+    };
+};
 class LocationTypeController {
     repo;
     getAllUseCase;
@@ -79,22 +87,11 @@ class LocationTypeController {
         this.deleteUseCase = new delete_location_type_usecase_1.DeleteLocationTypeUseCase(this.repo);
     }
     // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-    /** Formatea un Location para convertir fechas a ISO */
-    formatResponse(location) {
-        return {
-            ...location,
-            created_at: location.created_at.toISOString(),
-            updated_at: location.updated_at.toISOString()
-        };
-    }
-    // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (_req, res) => {
         const result = await this.getAllUseCase.execute();
-        const formatted = result.map(l => this.formatResponse(l));
+        const formatted = result.map(l => mapLocationTypeDomainToDto(l));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -105,7 +102,7 @@ class LocationTypeController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = mapLocationTypeDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -116,7 +113,7 @@ class LocationTypeController {
         const result = await this.getByNameUseCase.execute(name);
         if (!result)
             return res.status(204).send(null);
-        return res.status(200).send(this.formatResponse(result));
+        return res.status(200).send(mapLocationTypeDomainToDto(result));
     };
     // ============================================================
     // CREATE
@@ -124,7 +121,7 @@ class LocationTypeController {
     create = async (req, res) => {
         const body = req.body;
         const created = await this.createUseCase.execute(body);
-        const formatted = this.formatResponse(created);
+        const formatted = mapLocationTypeDomainToDto(created);
         return res.status(201).send(formatted);
     };
     // ============================================================
@@ -134,7 +131,7 @@ class LocationTypeController {
         const { id } = req.params;
         const body = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted = this.formatResponse(updated);
+        const formatted = mapLocationTypeDomainToDto(updated);
         return res.status(200).send(formatted);
     };
     // ============================================================

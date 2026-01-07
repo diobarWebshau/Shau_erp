@@ -9,8 +9,8 @@ declare const clientAddressCreateOrchestratorSchema: z.ZodObject<{
     zip_code: z.ZodNumber;
     client_id: z.ZodOptional<z.ZodUndefined>;
 }, z.core.$strict>;
-declare const ProductDiscountClientCreateOrchestratorSchema: z.ZodObject<{
-    discount_percentage: z.ZodNumber;
+declare const productDiscountClientCreateOrchestratorSchema: z.ZodObject<{
+    discount_percentage: z.ZodString;
     product_id: z.ZodNumber;
     client_id: z.ZodOptional<z.ZodUndefined>;
 }, z.core.$strict>;
@@ -28,7 +28,7 @@ declare const clientCreateOrchestratorSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -45,7 +45,7 @@ declare const clientCreateOrchestratorSchema: z.ZodObject<{
         client_id: z.ZodOptional<z.ZodUndefined>;
     }, z.core.$strict>>;
     discounts: z.ZodArray<z.ZodObject<{
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         product_id: z.ZodNumber;
         client_id: z.ZodOptional<z.ZodUndefined>;
     }, z.core.$strict>>;
@@ -65,7 +65,7 @@ declare const clientCreateRequestOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodString;
             payment_terms: z.ZodNullable<z.ZodString>;
             zip_code: z.ZodNumber;
-            credit_limit: z.ZodNullable<z.ZodNumber>;
+            credit_limit: z.ZodNullable<z.ZodString>;
             tax_regimen: z.ZodNullable<z.ZodString>;
             cfdi: z.ZodString;
             payment_method: z.ZodNullable<z.ZodString>;
@@ -82,7 +82,7 @@ declare const clientCreateRequestOrchestratorSchema: z.ZodObject<{
             client_id: z.ZodOptional<z.ZodUndefined>;
         }, z.core.$strict>>;
         discounts: z.ZodArray<z.ZodObject<{
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             product_id: z.ZodNumber;
             client_id: z.ZodOptional<z.ZodUndefined>;
         }, z.core.$strict>>;
@@ -102,7 +102,7 @@ declare const clientAddressUpdateOrchestrator: z.ZodObject<{
 declare const productDiscountClientUpdateOrchestrator: z.ZodObject<{
     product_id: z.ZodOptional<z.ZodNumber>;
     client_id: z.ZodOptional<z.ZodNumber>;
-    discount_percentage: z.ZodOptional<z.ZodNumber>;
+    discount_percentage: z.ZodOptional<z.ZodString>;
     id: z.ZodNumber;
 }, z.core.$strip>;
 declare const clientUpdateOrchestratorSchema: z.ZodObject<{
@@ -119,7 +119,7 @@ declare const clientUpdateOrchestratorSchema: z.ZodObject<{
         neighborhood: z.ZodOptional<z.ZodString>;
         payment_terms: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         zip_code: z.ZodOptional<z.ZodNumber>;
-        credit_limit: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        credit_limit: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         tax_regimen: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         cfdi: z.ZodOptional<z.ZodString>;
         payment_method: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -163,20 +163,20 @@ declare const clientUpdateOrchestratorSchema: z.ZodObject<{
     }, z.core.$strip>;
     discounts_manager: z.ZodObject<{
         added: z.ZodArray<z.ZodObject<{
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             product_id: z.ZodNumber;
             client_id: z.ZodOptional<z.ZodUndefined>;
         }, z.core.$strict>>;
         updated: z.ZodArray<z.ZodObject<{
             product_id: z.ZodOptional<z.ZodNumber>;
             client_id: z.ZodOptional<z.ZodNumber>;
-            discount_percentage: z.ZodOptional<z.ZodNumber>;
+            discount_percentage: z.ZodOptional<z.ZodString>;
             id: z.ZodNumber;
         }, z.core.$strip>>;
         deleted: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
             client_id: z.ZodNumber;
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             id: z.ZodNumber;
             created_at: z.ZodString;
             updated_at: z.ZodString;
@@ -198,7 +198,7 @@ declare const clientUpdateRequestOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodOptional<z.ZodString>;
             payment_terms: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             zip_code: z.ZodOptional<z.ZodNumber>;
-            credit_limit: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+            credit_limit: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             tax_regimen: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             cfdi: z.ZodOptional<z.ZodString>;
             payment_method: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -242,20 +242,20 @@ declare const clientUpdateRequestOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>;
         discounts_manager: z.ZodObject<{
             added: z.ZodArray<z.ZodObject<{
-                discount_percentage: z.ZodNumber;
+                discount_percentage: z.ZodString;
                 product_id: z.ZodNumber;
                 client_id: z.ZodOptional<z.ZodUndefined>;
             }, z.core.$strict>>;
             updated: z.ZodArray<z.ZodObject<{
                 product_id: z.ZodOptional<z.ZodNumber>;
                 client_id: z.ZodOptional<z.ZodNumber>;
-                discount_percentage: z.ZodOptional<z.ZodNumber>;
+                discount_percentage: z.ZodOptional<z.ZodString>;
                 id: z.ZodNumber;
             }, z.core.$strip>>;
             deleted: z.ZodArray<z.ZodObject<{
                 product_id: z.ZodNumber;
                 client_id: z.ZodNumber;
-                discount_percentage: z.ZodNumber;
+                discount_percentage: z.ZodString;
                 id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
@@ -266,7 +266,7 @@ declare const clientUpdateRequestOrchestratorSchema: z.ZodObject<{
 declare const productDiscountClientResponseOrchestratorSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     client_id: z.ZodNumber;
-    discount_percentage: z.ZodNumber;
+    discount_percentage: z.ZodString;
     id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;
@@ -281,8 +281,8 @@ declare const productDiscountClientResponseOrchestratorSchema: z.ZodObject<{
         barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
         sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-        production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+        sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+        production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
         is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
         id: z.ZodNumber;
@@ -304,7 +304,7 @@ declare const clientResponseOrchestratorSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -329,7 +329,7 @@ declare const clientResponseOrchestratorSchema: z.ZodObject<{
     discounts: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -344,8 +344,8 @@ declare const clientResponseOrchestratorSchema: z.ZodObject<{
             barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-            production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+            sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+            production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             id: z.ZodNumber;
@@ -354,11 +354,13 @@ declare const clientResponseOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
+type ClientAddressCreateOrchestratorDto = z.infer<typeof clientAddressCreateOrchestratorSchema>;
+type ProductDiscountClientCreateOrchestratorDto = z.infer<typeof productDiscountClientCreateOrchestratorSchema>;
 type ClientOrchestratorCreateDto = z.infer<typeof clientCreateOrchestratorSchema>;
 type ClientOrchestratorUpdateDto = z.infer<typeof clientUpdateOrchestratorSchema>;
 type ClientOrchestratorResponseDto = z.infer<typeof clientResponseOrchestratorSchema>;
 type ClientOrchestratorCreateRequestDto = z.infer<typeof clientCreateRequestOrchestratorSchema>;
 type ClientOrchestratorUpdateRequestDto = z.infer<typeof clientUpdateRequestOrchestratorSchema>;
 type ProductDiscountClientResponseOrchestratorDto = z.infer<typeof productDiscountClientResponseOrchestratorSchema>;
-export { clientAddressCreateOrchestratorSchema, ProductDiscountClientCreateOrchestratorSchema, clientCreateOrchestratorSchema, clientCreateRequestOrchestratorSchema, productDiscountClientUpdateOrchestrator, clientAddressUpdateOrchestrator, clientUpdateOrchestratorSchema, clientUpdateRequestOrchestratorSchema, productDiscountClientResponseOrchestratorSchema, clientResponseOrchestratorSchema, };
-export type { ClientOrchestratorCreateDto, ClientOrchestratorUpdateDto, ClientOrchestratorResponseDto, ClientOrchestratorCreateRequestDto, ClientOrchestratorUpdateRequestDto, ProductDiscountClientResponseOrchestratorDto };
+export { clientAddressCreateOrchestratorSchema, productDiscountClientCreateOrchestratorSchema, clientCreateOrchestratorSchema, clientCreateRequestOrchestratorSchema, productDiscountClientUpdateOrchestrator, clientAddressUpdateOrchestrator, clientUpdateOrchestratorSchema, clientUpdateRequestOrchestratorSchema, productDiscountClientResponseOrchestratorSchema, clientResponseOrchestratorSchema, };
+export type { ClientOrchestratorCreateDto, ClientOrchestratorUpdateDto, ClientOrchestratorResponseDto, ClientOrchestratorCreateRequestDto, ClientOrchestratorUpdateRequestDto, ProductDiscountClientResponseOrchestratorDto, ClientAddressCreateOrchestratorDto, ProductDiscountClientCreateOrchestratorDto };

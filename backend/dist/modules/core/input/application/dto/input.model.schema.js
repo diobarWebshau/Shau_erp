@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.inputQuerySchema = exports.inputResponseSchema = exports.inputUpdateSchema = exports.inputCreateSchema = void 0;
 const form_data_normalizers_1 = require("@shared/http/input/normalizers/form-data.normalizers");
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
+const string_or_string_array_schema_1 = require("@src/shared/application/string-or-string-array.schema");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -62,9 +64,9 @@ const inputCreateSchema = zod_1.z.object({
     photo: zod_1.z.string().nullable().optional(),
     supplier: zod_1.z.string().nullable().optional(),
     input_types_id: zod_1.z.preprocess(form_data_normalizers_1.toNumberOrNull, zod_1.z.number({ message: "input_types_id must be a number" })).nullable().optional(),
-    unit_cost: zod_1.z.preprocess(form_data_normalizers_1.toNumberOrNull, zod_1.z.number({ message: "sale_price must be a number" })).nullable().optional(),
-    is_active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "status must be a boolean" })),
-    is_draft: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.coerce.boolean({ message: "Active must be a boolean" })),
+    unit_cost: decimal_schema_1.decimalString.nullable().optional(),
+    is_active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "status must be a boolean" })),
+    is_draft: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "Active must be a boolean" })),
 });
 exports.inputCreateSchema = inputCreateSchema;
 /**
@@ -113,17 +115,14 @@ exports.inputResponseSchema = inputResponseSchema;
  */
 const inputQuerySchema = zod_1.z.object({
     filter: zod_1.z.string().optional(),
-    exclude_ids: zod_1.z.union([
-        zod_1.z.string(),
-        zod_1.z.array(zod_1.z.string())
-    ]).optional(),
-    name: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    description: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    sku: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    presentation: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    unit_of_measure: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    barcode: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    custom_id: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
+    exclude_ids: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    name: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    description: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    sku: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    presentation: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    unit_of_measure: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    barcode: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    custom_id: string_or_string_array_schema_1.stringOrStringArray.optional(),
     is_active: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "is_active must be a boolean" })).optional(),
     is_draft: zod_1.z.preprocess(form_data_normalizers_1.toBoolean, zod_1.z.boolean({ message: "is_draft must be a boolean" })).optional(),
 }).strict();

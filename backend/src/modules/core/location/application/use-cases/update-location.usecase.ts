@@ -1,8 +1,5 @@
-import { deepNormalizeDecimals } from "@src/helpers/decimal-normalization-and-cleaning.utils";
-import type { LocationUpdateProps, LocationProps } from "../../domain/location.types";
+import type { LocationProps } from "../../domain/location.types";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 import { LocationUpdateDto } from "../dto/location.model.schema";
@@ -56,35 +53,20 @@ export class UpdateLocationUseCase {
         if (!existing) throw new HttpError(404,
             "La locación que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof LocationUpdateProps)[] = [
-            "name", "description", "phone",
-            "street", "street_number", "neighborhood",
-            "city", "state", "country", "zip_code",
-            "production_capacity", "location_manager", "custom_id",
-            "is_active"
-        ];
-        const filteredBody: LocationUpdateProps = pickEditableFields(data, editableFields);
-        const merged: LocationProps = { ...existing, ...filteredBody };
-        const normalizedExisting: LocationUpdateProps = deepNormalizeDecimals<LocationUpdateProps>(existing, ["street_number", "zip_code"]);
-        const normalizedMerged: LocationUpdateProps = deepNormalizeDecimals<LocationUpdateProps>(merged, ["street_number", "zip_code"]);
-        const updateValues: LocationUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) return existing;
-        if (updateValues.name) {
-            const check: LocationProps | null = await this.repo.findByName(updateValues.name, tx);
+        if (!Object.keys(data).length) return existing;
+        if (data?.name) {
+            const check: LocationProps | null = await this.repo.findByName(data.name, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El nombre ingresado para la locación, ya esta utilizado por otra locación."
             );
         }
-        if (updateValues?.custom_id) {
-            const check = await this.repo.findByCustomId(updateValues.custom_id, tx);
+        if (data?.custom_id) {
+            const check = await this.repo.findByCustomId(data.custom_id, tx);
             if (check && String(check.id) !== String(id)) throw new HttpError(409,
                 "El id unico ingresado para la locación, ya esta utilizado por otra locación."
             );
         }
-        const updated: LocationProps = await this.repo.update(id, updateValues, tx);
-        if (!updated) throw new HttpError(500,
-            "No fue posible actualizar la locación."
-        );
+        const updated: LocationProps = await this.repo.update(id, data, tx);
         return updated;
     }
 }

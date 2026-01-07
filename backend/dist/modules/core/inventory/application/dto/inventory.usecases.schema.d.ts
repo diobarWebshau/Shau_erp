@@ -18,9 +18,9 @@ declare const getAllInventoryScehma: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
-        stock: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        stock: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
         lead_time: z.ZodNumber;
         id: z.ZodNumber;
         created_at: z.ZodString;
@@ -34,9 +34,9 @@ declare const getByIdInventoryScehma: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodNullable<z.ZodObject<{
-        stock: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        stock: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
         lead_time: z.ZodNumber;
         id: z.ZodNumber;
         created_at: z.ZodString;
@@ -47,15 +47,15 @@ declare const createInventorySchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{
-        stock: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        stock: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
         lead_time: z.ZodNumber;
     }, z.core.$strip>;
     response: z.ZodObject<{
-        stock: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        stock: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
         lead_time: z.ZodNumber;
         id: z.ZodNumber;
         created_at: z.ZodString;
@@ -68,15 +68,15 @@ declare const updateInventorySchema: z.ZodObject<{
     }, z.core.$strict>;
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{
-        stock: z.ZodOptional<z.ZodNumber>;
-        minimum_stock: z.ZodOptional<z.ZodNumber>;
-        maximum_stock: z.ZodOptional<z.ZodNumber>;
+        stock: z.ZodOptional<z.ZodString>;
+        minimum_stock: z.ZodOptional<z.ZodString>;
+        maximum_stock: z.ZodOptional<z.ZodString>;
         lead_time: z.ZodOptional<z.ZodNumber>;
     }, z.core.$strip>;
     response: z.ZodObject<{
-        stock: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        stock: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
         lead_time: z.ZodNumber;
         id: z.ZodNumber;
         created_at: z.ZodString;

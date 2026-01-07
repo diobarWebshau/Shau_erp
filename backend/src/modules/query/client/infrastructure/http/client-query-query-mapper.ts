@@ -58,7 +58,6 @@ export const mapClientQueryToCriteria = (query: GetAllClientFullQuerySchema["que
         payment_terms: normalizeToArray(query?.payment_terms),
         neighborhood: normalizeToArray(query?.neighborhood),
         company_name: normalizeToArray(query?.company_name),
-        phone: normalizeToArray(query?.phone),
         street: normalizeToArray(query?.street),
         tax_id: normalizeToArray(query?.tax_id),
         state: normalizeToArray(query?.state),

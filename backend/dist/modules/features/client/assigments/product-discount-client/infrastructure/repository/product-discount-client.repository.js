@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountClientRepository = void 0;
 const product_discount_client_orm_1 = require("../orm/product-discount-client.orm");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
@@ -53,15 +54,30 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapProductDiscountClientModelToDomain = (model) => {
+    const productDiscountClientAttributes = model.toJSON();
     return {
-        id: json.id,
-        discount_percentage: Number(json.discount_percentage),
-        product_id: json.product_id,
-        client_id: json.client_id,
-        created_at: json.created_at,
-        updated_at: json.created_at
+        ...productDiscountClientAttributes,
+        discount_percentage: decimal_vo_1.DecimalVO.from(productDiscountClientAttributes.discount_percentage),
+        created_at: (productDiscountClientAttributes.created_at instanceof Date)
+            ? productDiscountClientAttributes.created_at : new Date(productDiscountClientAttributes.created_at),
+        updated_at: (productDiscountClientAttributes.updated_at instanceof Date)
+            ? productDiscountClientAttributes.updated_at : new Date(productDiscountClientAttributes.updated_at)
+    };
+};
+const mapProductDiscountClientCreateDomainToModel = (data) => {
+    return {
+        ...data,
+        discount_percentage: data.discount_percentage.toString()
+    };
+};
+const mapProductDiscountClientUpdateDomainToModel = (data) => {
+    const { discount_percentage, ...rest } = data;
+    return {
+        ...rest,
+        ...(discount_percentage !== undefined
+            ? { discount_percentage: discount_percentage.toString() }
+            : {}),
     };
 };
 class ProductDiscountClientRepository {
@@ -73,7 +89,7 @@ class ProductDiscountClientRepository {
             transaction: tx,
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapProductDiscountClientModelToDomain(r));
         return rowsMap;
     };
     findById = async (id, tx) => {
@@ -82,7 +98,7 @@ class ProductDiscountClientRepository {
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
         console.log("diobar");
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductDiscountClientModelToDomain(row) : null;
     };
     findByClientId = async (client_id, tx) => {
         const rows = await product_discount_client_orm_1.ProductDiscountClientModel.findAll({
@@ -90,7 +106,7 @@ class ProductDiscountClientRepository {
             transaction: tx,
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapProductDiscountClientModelToDomain(r));
         return rowsMap;
     };
     findByProductClientId = async (product_id, client_id, tx) => {
@@ -100,16 +116,16 @@ class ProductDiscountClientRepository {
             attributes: product_discount_client_orm_1.ProductDiscountClientModel.getAllFields()
         });
         console.log(`row`, row);
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductDiscountClientModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data, tx) => {
-        const created = await product_discount_client_orm_1.ProductDiscountClientModel.create(data, { transaction: tx });
+        const created = await product_discount_client_orm_1.ProductDiscountClientModel.create(mapProductDiscountClientCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del descuento por rango al producto.");
-        return mapModelToDomain(created);
+        return mapProductDiscountClientModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -121,13 +137,15 @@ class ProductDiscountClientRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla.");
-        // 2. Aplicar UPDATE
-        const [affectedCount] = await product_discount_client_orm_1.ProductDiscountClientModel.update(data, {
+        const existingDomain = mapProductDiscountClientModelToDomain(existing);
+        if (Object.keys(data))
+            return existingDomain;
+        const [affectedCount] = await product_discount_client_orm_1.ProductDiscountClientModel.update(mapProductDiscountClientUpdateDomainToModel(data), {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
+            return existingDomain;
         // 3. Obtener la producto actualizada
         const updated = await product_discount_client_orm_1.ProductDiscountClientModel.findByPk(id, {
             transaction: tx,
@@ -135,7 +153,7 @@ class ProductDiscountClientRepository {
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
-        return mapModelToDomain(updated);
+        return mapProductDiscountClientModelToDomain(updated);
     };
     // ================================================================
     // DELETE

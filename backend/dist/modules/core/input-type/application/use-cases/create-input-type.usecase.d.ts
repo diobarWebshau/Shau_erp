@@ -1,6 +1,7 @@
-import { Transaction } from "sequelize";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
-import type { InputTypeCreateProps, InputTypeProps } from "../../domain/input-type.types";
+import type { InputTypeProps } from "../../domain/input-type.types";
+import { InputTypeCreateDto } from "../dto/input-type.model.schema";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +45,5 @@ import type { InputTypeCreateProps, InputTypeProps } from "../../domain/input-ty
 export declare class CreateInputTypeUseCase {
     private readonly repo;
     constructor(repo: IInputTypeRepository);
-    execute: (data: InputTypeCreateProps, tx?: Transaction) => Promise<InputTypeProps>;
+    execute: (data: InputTypeCreateDto, tx?: Transaction) => Promise<InputTypeProps>;
 }

@@ -29,8 +29,8 @@ declare const inventoryLocationItemResponseSchema: z.ZodObject<{
     created_at: z.ZodString;
     updated_at: z.ZodString;
 }, z.core.$strip>;
-type InventoryLocationnItemCreateSchemaDto = z.infer<typeof inventoryLocationnItemCreateSchema>;
-type InventoryLocationnItemUpdateSchemaDto = z.infer<typeof inventoryLocationItemUpdateSchema>;
-type InventoryLocationItemResponseSchemaDto = z.infer<typeof inventoryLocationItemResponseSchema>;
+type InventoryLocationnItemCreateDto = z.infer<typeof inventoryLocationnItemCreateSchema>;
+type InventoryLocationnItemUpdateDto = z.infer<typeof inventoryLocationItemUpdateSchema>;
+type InventoryLocationItemResponseDto = z.infer<typeof inventoryLocationItemResponseSchema>;
 export { inventoryLocationnItemCreateSchema, inventoryLocationItemUpdateSchema, inventoryLocationItemResponseSchema };
-export type { InventoryLocationnItemCreateSchemaDto, InventoryLocationnItemUpdateSchemaDto, InventoryLocationItemResponseSchemaDto };
+export type { InventoryLocationnItemCreateDto, InventoryLocationnItemUpdateDto, InventoryLocationItemResponseDto };

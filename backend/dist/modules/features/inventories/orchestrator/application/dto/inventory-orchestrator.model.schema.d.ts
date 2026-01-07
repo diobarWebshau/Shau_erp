@@ -11,9 +11,9 @@ declare const inventoryLocationItemOrchestratorCreate: z.ZodObject<{
 }, z.core.$strict>;
 declare const inventoryOrchestratorCreateSchema: z.ZodArray<z.ZodObject<{
     inventory: z.ZodObject<{
-        stock: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        stock: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
         lead_time: z.ZodNumber;
     }, z.core.$strip>;
     inventory_location_item: z.ZodObject<{
@@ -28,9 +28,9 @@ declare const inventoryOrchestratorCreateSchema: z.ZodArray<z.ZodObject<{
 }, z.core.$strip>>;
 declare const inventoryOrchestratorResponseSchema: z.ZodArray<z.ZodObject<{
     inventory: z.ZodObject<{
-        stock: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        stock: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
         lead_time: z.ZodNumber;
         id: z.ZodNumber;
         created_at: z.ZodString;

@@ -22,8 +22,8 @@ declare const getAllinputTypeSchema: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
-        id: z.ZodNumber;
         name: z.ZodString;
+        id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
     }, z.core.$strip>>;
@@ -39,8 +39,8 @@ declare const getByIdinputTypeSchema: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodNullable<z.ZodObject<{
-        id: z.ZodNumber;
         name: z.ZodString;
+        id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
     }, z.core.$strip>>;
@@ -56,8 +56,8 @@ declare const getByNameinputTypeSchema: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodNullable<z.ZodObject<{
-        id: z.ZodNumber;
         name: z.ZodString;
+        id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
     }, z.core.$strip>>;
@@ -73,8 +73,8 @@ declare const createinputTypeSchema: z.ZodObject<{
         name: z.ZodString;
     }, z.core.$strip>;
     response: z.ZodObject<{
-        id: z.ZodNumber;
         name: z.ZodString;
+        id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
     }, z.core.$strip>;
@@ -92,8 +92,8 @@ declare const updateinputTypeSchema: z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>;
     response: z.ZodObject<{
-        id: z.ZodNumber;
         name: z.ZodString;
+        id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
     }, z.core.$strip>;

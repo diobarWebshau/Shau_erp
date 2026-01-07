@@ -56,7 +56,8 @@ interface ProductionLineAttributes {
     created_at: Date;
     updated_at: Date;
 }
-type ProductionLineCreateAttributes = Partial<Omit<ProductionLineAttributes, "id" | "created_at" | "updated_at">>;
+type ProductionLineCreateAttributes = Omit<ProductionLineAttributes, "id" | "created_at" | "updated_at">;
+type ProductionLineUpdateAttributes = Partial<ProductionLineCreateAttributes>;
 declare class ProductionLineModel extends Model<ProductionLineAttributes, ProductionLineCreateAttributes> {
     id: number;
     name: string;
@@ -68,4 +69,4 @@ declare class ProductionLineModel extends Model<ProductionLineAttributes, Produc
     static getAllFields: () => readonly (keyof ProductionLineAttributes)[];
 }
 export { ProductionLineModel };
-export type { ProductionLineAttributes, ProductionLineCreateAttributes };
+export type { ProductionLineAttributes, ProductionLineCreateAttributes, ProductionLineUpdateAttributes };

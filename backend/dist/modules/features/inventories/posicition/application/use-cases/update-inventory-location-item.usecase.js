@@ -9,12 +9,7 @@ class UpdateInventoryLocationItemUseCase {
     ;
     execute = async (id, data, tx) => {
         const InventoryLocationItemResponse = await this.repo.update(id, data, tx);
-        const InventoryLocationItemResponseFormatted = {
-            ...InventoryLocationItemResponse,
-            created_at: InventoryLocationItemResponse.created_at.toISOString(),
-            updated_at: InventoryLocationItemResponse.updated_at.toISOString()
-        };
-        return InventoryLocationItemResponseFormatted;
+        return InventoryLocationItemResponse;
     };
 }
 exports.UpdateInventoryLocationItemUseCase = UpdateInventoryLocationItemUseCase;

@@ -1,4 +1,4 @@
-import type { ClientCreateProps, ClientProps, ClientUpdateProps, ClientSearchCriteria } from "../../domain/client.types";
+import type { ClientCreateProps, ClientUpdateProps, ClientProps, ClientSearchCriteria } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
 import { Transaction } from "sequelize";
 export declare class ClientRepository implements IClientRepository {

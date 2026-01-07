@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientController = void 0;
+exports.ClientController = exports.mapClientDtotoDomain = void 0;
 const get_cllient_by_name_usecase_1 = require("../../application/use-cases/get-cllient-by-name.usecase");
 const get_clietn_by_cfdi_usecase_1 = require("../../application/use-cases/get-clietn-by-cfdi.usecase");
 const get_client_by_id_usecase_1 = require("../../application/use-cases/get-client-by-id.usecase");
@@ -9,7 +9,6 @@ const create_client_usecase_1 = require("../../application/use-cases/create-clie
 const delete_client_usecase_1 = require("../../application/use-cases/delete-client.usecase");
 const update_client_usecase_1 = require("../../application/use-cases/update-client.usecase");
 const client_repository_1 = require("../repository/client.repository");
-const client_query_mapper_1 = require("./client-query-mapper");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -59,6 +58,15 @@ const client_query_mapper_1 = require("./client-query-mapper");
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
+const mapClientDtotoDomain = (client) => {
+    return {
+        ...client,
+        credit_limit: client.credit_limit ? client.credit_limit.toString() : null,
+        created_at: client.created_at.toISOString(),
+        updated_at: client.updated_at.toISOString()
+    };
+};
+exports.mapClientDtotoDomain = mapClientDtotoDomain;
 class ClientController {
     repo;
     getAllUseCase;
@@ -82,22 +90,13 @@ class ClientController {
     // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
     // ============================================================
     /** Formatea un Location para convertir fechas a ISO */
-    formatResponse(client) {
-        return {
-            ...client,
-            created_at: client.created_at.toISOString(),
-            updated_at: client.updated_at.toISOString()
-        };
-    }
-    ;
     // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req, res) => {
-        const queryRequest = req.query;
-        const query = (0, client_query_mapper_1.mapClientQueryToCriteria)(queryRequest);
+        const query = req.query;
         const result = await this.getAllUseCase.execute(query);
-        const formatted = result.map(l => this.formatResponse(l));
+        const formatted = result.map(l => (0, exports.mapClientDtotoDomain)(l));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -108,7 +107,7 @@ class ClientController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = (0, exports.mapClientDtotoDomain)(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -119,7 +118,7 @@ class ClientController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = (0, exports.mapClientDtotoDomain)(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -130,7 +129,7 @@ class ClientController {
         const result = await this.getByCfdiUseCase.execute(cfdi);
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = (0, exports.mapClientDtotoDomain)(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -141,7 +140,7 @@ class ClientController {
         const result = await this.getByCompanyNameUseCase.execute(company_name);
         if (!result)
             return res.status(204).send(null);
-        const formatted = this.formatResponse(result);
+        const formatted = (0, exports.mapClientDtotoDomain)(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -150,7 +149,7 @@ class ClientController {
     create = async (req, res) => {
         const body = req.body;
         const created = await this.createUseCase.execute(body);
-        const formatted = this.formatResponse(created);
+        const formatted = (0, exports.mapClientDtotoDomain)(created);
         return res.status(201).send(formatted);
     };
     // ============================================================
@@ -160,7 +159,7 @@ class ClientController {
         const { id } = req.params;
         const body = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted = this.formatResponse(updated);
+        const formatted = (0, exports.mapClientDtotoDomain)(updated);
         return res.status(200).send(formatted);
     };
     // ============================================================

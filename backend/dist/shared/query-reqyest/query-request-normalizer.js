@@ -48,16 +48,21 @@ exports.normalizeToNumberArray = exports.normalizeToBoolean = exports.normalizeT
 const normalizeToArray = (value) => {
     if (value === undefined)
         return undefined;
-    return Array.isArray(value) ? value : [value];
+    const arr = Array.isArray(value) ? value : [value];
+    const cleaned = arr
+        .map(v => v.trim())
+        .filter(v => v.length > 0);
+    return cleaned.length ? cleaned : undefined;
 };
 exports.normalizeToArray = normalizeToArray;
 const normalizeToNumberArray = (value) => {
     const arr = normalizeToArray(value);
     if (!arr)
         return undefined;
-    return arr
+    const nums = arr
         .map(v => Number(v))
         .filter(v => !Number.isNaN(v));
+    return nums.length ? nums : undefined;
 };
 exports.normalizeToNumberArray = normalizeToNumberArray;
 const normalizeToBoolean = (value) => {
@@ -65,9 +70,17 @@ const normalizeToBoolean = (value) => {
         return undefined;
     if (typeof value === "boolean")
         return value;
-    if (value === 1 || value === "1" || value === "true")
+    if (typeof value === "number") {
+        if (value === 1)
+            return true;
+        if (value === 0)
+            return false;
+        return undefined;
+    }
+    const v = value.trim().toLowerCase();
+    if (v === "1" || v === "true" || v === "on" || v === "yes")
         return true;
-    if (value === 0 || value === "0" || value === "false")
+    if (v === "0" || v === "false" || v === "off" || v === "no")
         return false;
     return undefined;
 };

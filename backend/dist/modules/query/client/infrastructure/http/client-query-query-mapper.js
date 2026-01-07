@@ -57,7 +57,6 @@ const mapClientQueryToCriteria = (query) => {
         payment_terms: (0, query_request_normalizer_1.normalizeToArray)(query?.payment_terms),
         neighborhood: (0, query_request_normalizer_1.normalizeToArray)(query?.neighborhood),
         company_name: (0, query_request_normalizer_1.normalizeToArray)(query?.company_name),
-        phone: (0, query_request_normalizer_1.normalizeToArray)(query?.phone),
         street: (0, query_request_normalizer_1.normalizeToArray)(query?.street),
         tax_id: (0, query_request_normalizer_1.normalizeToArray)(query?.tax_id),
         state: (0, query_request_normalizer_1.normalizeToArray)(query?.state),

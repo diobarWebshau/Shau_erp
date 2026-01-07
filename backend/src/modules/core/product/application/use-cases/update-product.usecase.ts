@@ -1,10 +1,9 @@
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import type { ProductProps, ProductUpdateProps } from "../../domain/product.types";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+import { ProductUpdateDto } from "../dto/product.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import ImageHandler from "@helpers/imageHandlerClass";
-import { deepNormalizeDecimals } from "@src/helpers/decimal-normalization-and-cleaning.utils";
 import { Transaction } from "sequelize";
 
 /**
@@ -47,10 +46,25 @@ import { Transaction } from "sequelize";
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+
+const mapProductDtoToDomain = (data: ProductUpdateDto): ProductUpdateProps => {
+    const { sale_price, production_cost, ...rest } = data;
+    return {
+        ...rest,
+        ...(sale_price !== undefined
+            ? { credit_limit: sale_price === null ? null : DecimalVO.from(sale_price) }
+            : {}),
+        ...(production_cost !== undefined
+            ? { credit_limit: production_cost === null ? null : DecimalVO.from(production_cost) }
+            : {}),
+    };
+};
+
+
 export class UpdateProductUseCase {
     constructor(private readonly repo: IProductRepository) { }
 
-    async execute(id: number, data: ProductUpdateProps, tx?: Transaction): Promise<ProductProps> {
+    async execute(id: number, data: ProductUpdateDto, tx?: Transaction): Promise<ProductProps> {
 
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
@@ -64,42 +78,18 @@ export class UpdateProductUseCase {
             );
         }
 
-        // ------------------------------------------------------------------
-        // ✏️ FILTRADO DE CAMPOS EDITABLES
-        // ------------------------------------------------------------------
-        // Se define explícitamente qué campos pueden ser modificados.
-        // Esto evita actualizaciones accidentales o maliciosas de
-        // propiedades no editables del dominio.
-        const editableFields: (keyof ProductUpdateProps)[] = [
-            "name", "storage_conditions", "description", "unit_of_measure",
-            "presentation", "production_cost", "barcode", "type", "sku",
-            "sale_price", "is_active", "photo", "is_draft", "custom_id",
-        ];
+        const updateData = mapProductDtoToDomain(data);
 
-        const filteredBody: ProductUpdateProps = pickEditableFields(data, editableFields);
-
-        const merged: ProductProps = { ...existing, ...filteredBody };
-
-        const normalizedExisting: ProductUpdateProps = deepNormalizeDecimals<ProductUpdateProps>(existing, ["sale_price", "production_cost", "barcode"]);
-        const normalizedMerged: ProductUpdateProps = deepNormalizeDecimals<ProductUpdateProps>(merged, ["sale_price", "production_cost", "barcode"]);
-
-        // ------------------------------------------------------------------
-        // 🧮 DETECCIÓN DE CAMBIOS EFECTIVOS
-        // ------------------------------------------------------------------
-        // Se calcula la diferencia real entre el estado actual y el
-        // estado resultante. Esto evita writes innecesarios en BD.
-
-        const updateValues: ProductUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) return existing;
+        if (!Object.keys(updateData).length) return existing;
 
         // ------------------------------------------------------------------
         // 🔐 VALIDACIONES DE UNICIDAD
         // ------------------------------------------------------------------
         // Las validaciones de unicidad se basan en la intención del usuario
-        // (data), no en los cambios efectivos (updateValues), para evitar
+        // (data), no en los cambios efectivos (updateData), para evitar
         // inconsistencias y falsos negativos.
-        if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name, tx);
+        if (updateData.name) {
+            const existsByName = await this.repo.findByName(updateData.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -108,8 +98,8 @@ export class UpdateProductUseCase {
             }
         }
 
-        if (updateValues.sku) {
-            const existsBySku = await this.repo.findBySku(updateValues.sku, tx);
+        if (updateData.sku) {
+            const existsBySku = await this.repo.findBySku(updateData.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -118,8 +108,8 @@ export class UpdateProductUseCase {
             }
         }
 
-        if (updateValues.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(updateValues.custom_id, tx);
+        if (updateData.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(updateData.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -128,8 +118,8 @@ export class UpdateProductUseCase {
             }
         }
 
-        if (updateValues.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(updateValues.barcode.toString(), tx);
+        if (updateData.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(updateData.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new HttpError(
                     409,
@@ -147,8 +137,8 @@ export class UpdateProductUseCase {
         const previousPhoto: string | null = existing.photo ?? null;
 
         const nextPhoto: string | null =
-            "photo" in updateValues
-                ? updateValues.photo ?? null
+            "photo" in updateData
+                ? updateData.photo ?? null
                 : null;
 
         const photoWasReplaced: boolean =
@@ -161,7 +151,7 @@ export class UpdateProductUseCase {
         // ------------------------------------------------------------------
         // Se delega al repositorio la operación de update, garantizando
         // que la transacción sea consistente.
-        const updated: ProductProps = await this.repo.update(id, updateValues, tx);
+        const updated: ProductProps = await this.repo.update(id, updateData, tx);
 
         if (!updated) {
             throw new HttpError(

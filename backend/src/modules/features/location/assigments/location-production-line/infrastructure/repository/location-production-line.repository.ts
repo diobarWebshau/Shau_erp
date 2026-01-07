@@ -115,8 +115,7 @@ export class LocationProductionLineRepository implements ILocationProductionLine
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
+        if (!affectedCount) return existing;
         // 3. Obtener la locación actualizada
         const updated: LocationProductionLineModel | null = await LocationProductionLineModel.findByPk(id, {
             transaction: tx,

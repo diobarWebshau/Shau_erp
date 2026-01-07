@@ -59,11 +59,11 @@ interface ProductAttributes {
     description?: string | null,
     presentation?: string | null,
     unit_of_measure?: string | null,
-    production_cost?: number | null,
+    production_cost?: string | null,
     storage_conditions?: string | null,
     barcode?: number | null,
     sku?: string | null,
-    sale_price?: number | null,
+    sale_price?: string | null,
     photo?: string | null,
     is_draft: boolean,
     is_active: boolean,
@@ -76,6 +76,25 @@ type ProductCreateAttributes = Omit<ProductAttributes, "id" | "created_at" | "up
 type ProductUpdateAttributes = Partial<ProductCreateAttributes>;
 
 class ProductModel extends Model<ProductAttributes, ProductCreateAttributes> {
+
+    declare id: number;
+    declare custom_id?: string | null;
+    declare name?: string | null;
+    declare type?: string | null;
+    declare description?: string | null;
+    declare presentation?: string | null;
+    declare unit_of_measure?: string | null;
+    declare production_cost?: string | null;
+    declare storage_conditions?: string | null;
+    declare barcode?: number | null;
+    declare sku?: string | null;
+    declare sale_price?: string | null;
+    declare photo?: string | null;
+    declare is_draft: boolean;
+    declare is_active: boolean;
+    declare created_at: Date;
+    declare updated_at: Date;
+
     static getEditableFields(): (keyof ProductAttributes)[] {
         return [
             "name", "storage_conditions", "description", "unit_of_measure", "presentation",

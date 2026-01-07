@@ -1,9 +1,9 @@
-import type { ClientCreateProps, ClientProps } from "../../domain/client.types";
 import type { IClientRepository } from "../../domain/client.repository.interface";
+import type { ClientCreateProps, ClientProps } from "../../domain/client.types";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+import { ClientCreateDto } from "../dto/client.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
-import { ClientCreateDto } from "../dto/client.model.schema";
-import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 
 /**
  * UseCase
@@ -47,7 +47,7 @@ import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
  */
 
 
-const mapClientCreateDtoToDomain = (data: ClientCreateDto): ClientCreateProps => ({
+export const mapClientCreateDtoToDomain = (data: ClientCreateDto): ClientCreateProps => ({
     ...data,
     credit_limit: data.credit_limit ? DecimalVO.from(data.credit_limit) : null,
 });

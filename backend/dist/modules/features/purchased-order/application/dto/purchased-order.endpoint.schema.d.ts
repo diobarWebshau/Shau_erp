@@ -6,7 +6,7 @@ declare const getAllPurchasedOrderSchema: z.ZodObject<{
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
         order_code: z.ZodString;
-        delivery_date: z.ZodString;
+        delivery_date: z.ZodNullable<z.ZodString>;
         total_price: z.ZodNumber;
         status: z.ZodString;
         client_id: z.ZodNumber;
@@ -46,7 +46,7 @@ declare const getByIdPurchasedOrderSchema: z.ZodObject<{
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodNullable<z.ZodObject<{
         order_code: z.ZodString;
-        delivery_date: z.ZodString;
+        delivery_date: z.ZodNullable<z.ZodString>;
         total_price: z.ZodNumber;
         status: z.ZodString;
         client_id: z.ZodNumber;
@@ -83,7 +83,7 @@ declare const createPurchasedOrderSchema: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{
         order_code: z.ZodString;
-        delivery_date: z.ZodString;
+        delivery_date: z.ZodNullable<z.ZodString>;
         total_price: z.ZodNumber;
         status: z.ZodString;
         client_id: z.ZodNumber;
@@ -113,7 +113,7 @@ declare const createPurchasedOrderSchema: z.ZodObject<{
     }, z.core.$strip>;
     response: z.ZodObject<{
         order_code: z.ZodString;
-        delivery_date: z.ZodString;
+        delivery_date: z.ZodNullable<z.ZodString>;
         total_price: z.ZodNumber;
         status: z.ZodString;
         client_id: z.ZodNumber;
@@ -152,7 +152,7 @@ declare const updatePurchasedOrderSchema: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{
         order_code: z.ZodOptional<z.ZodString>;
-        delivery_date: z.ZodOptional<z.ZodString>;
+        delivery_date: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         total_price: z.ZodOptional<z.ZodNumber>;
         status: z.ZodOptional<z.ZodString>;
         client_id: z.ZodOptional<z.ZodNumber>;
@@ -182,7 +182,7 @@ declare const updatePurchasedOrderSchema: z.ZodObject<{
     }, z.core.$strip>;
     response: z.ZodObject<{
         order_code: z.ZodString;
-        delivery_date: z.ZodString;
+        delivery_date: z.ZodNullable<z.ZodString>;
         total_price: z.ZodNumber;
         status: z.ZodString;
         client_id: z.ZodNumber;

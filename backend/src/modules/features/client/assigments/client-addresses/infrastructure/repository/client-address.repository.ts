@@ -1,25 +1,17 @@
 import type { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateProps } from "../../domain/client-address.types";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
+import { ClientAddressAttributes, ClientAddressModel } from "../orm/client-address.orm";
 import HttpError from "@shared/errors/http/http-error";
-import { ClientAddressModel } from "../orm/client-address.orm";
 import { Transaction } from "sequelize";
 
-const mapModelToDomain = (model: ClientAddressModel): ClientAddressProps => {
-    const json: ClientAddressProps = model.toJSON();
+const mapClientAddressModelToDomain = (model: ClientAddressModel): ClientAddressProps => {
+    const json: ClientAddressAttributes = model.toJSON();
     return {
-        id: json.id,
-        city: json.city,
-        country: json.country,
-        created_at: json.created_at,
-        neighborhood: json.neighborhood,
-        state: json.state,
-        street: json.street,
-        street_number: json.street_number,
-        updated_at: json.updated_at,
-        zip_code: json.zip_code,
-        client_id: json.client_id
+        ...json,
+        updated_at: (json.updated_at instanceof Date) ? json.updated_at : new Date(json.updated_at),
+        created_at: (json.created_at instanceof Date) ? json.created_at : new Date(json.created_at)
     };
-}
+};
 
 export class ClientAddressRepository implements IClientAddressRepository {
     // ================================================================
@@ -27,26 +19,23 @@ export class ClientAddressRepository implements IClientAddressRepository {
     // ================================================================
     findAll = async (tx?: Transaction): Promise<ClientAddressProps[]> => {
         const rows: ClientAddressModel[] = await ClientAddressModel.findAll({
-            transaction: tx,
-            attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[])
+            transaction: tx
         });
-        const rowsMap: ClientAddressProps[] = rows.map((pl) => mapModelToDomain(pl));
+        const rowsMap: ClientAddressProps[] = rows.map((pl) => mapClientAddressModelToDomain(pl));
         return rowsMap;
     }
     findById = async (id: number, tx?: Transaction): Promise<ClientAddressProps | null> => {
         const row: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
-            transaction: tx,
-            attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[])
+            transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientAddressModelToDomain(row) : null;
     }
     findByClientId = async (client_id: string, tx?: Transaction): Promise<ClientAddressProps | null> => {
         const row: ClientAddressModel | null = await ClientAddressModel.findOne({
             transaction: tx,
-            where: { client_id },
-            attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[])
+            where: { client_id }
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientAddressModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
@@ -54,7 +43,7 @@ export class ClientAddressRepository implements IClientAddressRepository {
     create = async (data: ClientAddressCreateProps, tx?: Transaction): Promise<ClientAddressProps> => {
         const created: ClientAddressModel = await ClientAddressModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear la nueva dirección del cliente.");
-        return mapModelToDomain(created);
+        return mapClientAddressModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -67,20 +56,20 @@ export class ClientAddressRepository implements IClientAddressRepository {
         if (!existing) throw new HttpError(404,
             "La dirección del cliente que se desea actualizar no fue posible encontrarlo."
         );
+        const existingDomain = mapClientAddressModelToDomain(existing);
+        if (!Object.keys(data).length) return existingDomain;
         // 2. Aplicar UPDATE
         const [affectedCount]: [affectedCount: number] = await ClientAddressModel.update(data, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
+        if (!affectedCount) return existing;
         // 3. Obtener la locación actualizada
         const updated: ClientAddressModel | null = await ClientAddressModel.findByPk(id, {
             transaction: tx,
-            attributes: ClientAddressModel.getAllFields() as ((keyof ClientAddressProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la dirección del cliente.");
-        return mapModelToDomain(updated);
+        return mapClientAddressModelToDomain(updated);
     }
     // ================================================================
     // DELETE

@@ -1,6 +1,6 @@
 import type { ProductionLineCreateProps, ProductionLineProps, ProductionLineSearchCriteria, ProductionLineUpdateProps } from "../../domain/production-line.types";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
-import { ProductionLineModel } from "../orm/production-lines.orm";
+import { ProductionLineAttributes, ProductionLineModel } from "../orm/production-lines.orm";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
 
@@ -52,17 +52,15 @@ import HttpError from "@shared/errors/http/http-error";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductionLineModel): ProductionLineProps => {
-    const json: ProductionLineProps = model.toJSON();
+const mapProductionLineModelToDomain = (model: ProductionLineModel): ProductionLineProps => {
+    const json: ProductionLineAttributes = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        custom_id: json.custom_id,
+        ...json,
         is_active: Boolean(json.is_active),
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        created_at: json.created_at instanceof Date ? json.created_at : new Date(json.created_at),
+        updated_at: json.updated_at instanceof Date ? json.updated_at : new Date(json.updated_at),
     };
-}
+};
 
 export class ProductionLineRepository implements IProductionLineRepository {
     // ================================================================
@@ -94,33 +92,29 @@ export class ProductionLineRepository implements IProductionLineRepository {
         };
         const rows: ProductionLineModel[] = await ProductionLineModel.findAll({
             where,
-            attributes: ProductionLineModel.getAllFields() as (keyof ProductionLineProps)[],
             transaction: tx,
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapProductionLineModelToDomain(pl));
     }
     findById = async (id: number, tx?: Transaction): Promise<ProductionLineProps | null> => {
         const row: ProductionLineModel | null = await ProductionLineModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductionLineModelToDomain(row) : null;
     }
     findByName = async (name: string, tx?: Transaction): Promise<ProductionLineProps | null> => {
         const row: ProductionLineModel | null = await ProductionLineModel.findOne({
             where: { name },
             transaction: tx,
-            attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductionLineModelToDomain(row) : null;
     }
     findByCustomId = async (custom_id: string, tx?: Transaction): Promise<ProductionLineProps | null> => {
         const row: ProductionLineModel | null = await ProductionLineModel.findOne({
             where: { custom_id },
             transaction: tx,
-            attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductionLineModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
@@ -128,7 +122,7 @@ export class ProductionLineRepository implements IProductionLineRepository {
     create = async (data: ProductionLineCreateProps, tx?: Transaction): Promise<ProductionLineProps> => {
         const created: ProductionLineModel = await ProductionLineModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear la nueva línea de producción.");
-        return mapModelToDomain(created);
+        return mapProductionLineModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -141,6 +135,8 @@ export class ProductionLineRepository implements IProductionLineRepository {
         if (!existing) throw new HttpError(404,
             "La línea de producción que se desea actualizar no fue posible encontrarla."
         );
+
+
         // 2. Aplicar UPDATE
         await ProductionLineModel.update(data, {
             where: { id },
@@ -149,10 +145,9 @@ export class ProductionLineRepository implements IProductionLineRepository {
         // 3. Obtener la locación actualizada
         const updated: ProductionLineModel | null = await ProductionLineModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductionLineModel.getAllFields() as ((keyof ProductionLineProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la línea de producción actualizada.");
-        return mapModelToDomain(updated);
+        return mapProductionLineModelToDomain(updated);
     }
     // ================================================================
     // DELETE

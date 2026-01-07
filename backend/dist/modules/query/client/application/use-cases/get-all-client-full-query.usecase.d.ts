@@ -1,5 +1,6 @@
-import type { ClientFullQueryResultDto, ClientSearchCriteria } from "../../domain/client-query.type";
+import { ClientQueryDto } from "@src/modules/core/client/application/dto/client.model.schema";
 import { IClientQueryRepository } from "../../domain/client-query.repository";
+import type { ClientFullQueryResult } from "../../domain/client-query.type";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class GetAllClientFullQueryUseCase {
     private readonly repo;
     constructor(repo: IClientQueryRepository);
-    execute(query: ClientSearchCriteria, tx?: Transaction): Promise<ClientFullQueryResultDto[]>;
+    execute(query: ClientQueryDto, tx?: Transaction): Promise<ClientFullQueryResult[]>;
 }

@@ -12,7 +12,6 @@ const create_process_usecase_1 = require("../../application/use-cases/create-pro
 const update_process_usecase_1 = require("../../application/use-cases/update-process.usecase");
 const delete_process_usecase_1 = require("../../application/use-cases/delete-process.usecase");
 const process_repository_1 = __importDefault(require("../repository/process.repository"));
-const process_query_mapper_1 = require("./process-query-mapper");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -94,8 +93,7 @@ class ProcessController {
     // GET ALL
     // ============================================================
     getAll = async (req, res) => {
-        const queryRequest = req.query;
-        const query = (0, process_query_mapper_1.mapProcessQueryToCriteria)(queryRequest);
+        const query = req.query;
         const result = await this.getAllUseCase.execute(query);
         const formatted = result.map(l => this.formatResponse(l));
         return res.status(200).send(formatted);

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllInputsUseCase = void 0;
+const query_request_normalizer_1 = require("@src/shared/query-reqyest/query-request-normalizer");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -41,13 +42,28 @@ exports.GetAllInputsUseCase = void 0;
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapInputQueryDtoToCriteria = (query) => {
+    return {
+        filter: query.filter?.trim() || undefined,
+        exclude_ids: (0, query_request_normalizer_1.normalizeToNumberArray)(query.exclude_ids),
+        name: (0, query_request_normalizer_1.normalizeToArray)(query.name),
+        description: (0, query_request_normalizer_1.normalizeToArray)(query.description),
+        sku: (0, query_request_normalizer_1.normalizeToArray)(query.sku),
+        presentation: (0, query_request_normalizer_1.normalizeToArray)(query.presentation),
+        unit_of_measure: (0, query_request_normalizer_1.normalizeToArray)(query.unit_of_measure),
+        barcode: (0, query_request_normalizer_1.normalizeToArray)(query.barcode),
+        custom_id: (0, query_request_normalizer_1.normalizeToArray)(query.custom_id),
+        is_draft: (0, query_request_normalizer_1.normalizeToBoolean)(query.is_draft),
+        is_active: (0, query_request_normalizer_1.normalizeToBoolean)(query.is_active),
+    };
+};
 class GetAllInputsUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(query, tx) {
-        return await this.repo.findAll(query, tx);
+        return await this.repo.findAll(mapInputQueryDtoToCriteria(query), tx);
     }
 }
 exports.GetAllInputsUseCase = GetAllInputsUseCase;

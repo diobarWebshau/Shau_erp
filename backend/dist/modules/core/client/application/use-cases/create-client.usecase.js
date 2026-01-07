@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateClientUseCase = void 0;
+exports.CreateClientUseCase = exports.mapClientCreateDtoToDomain = void 0;
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -45,30 +46,36 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapClientCreateDtoToDomain = (data) => ({
+    ...data,
+    credit_limit: data.credit_limit ? decimal_vo_1.DecimalVO.from(data.credit_limit) : null,
+});
+exports.mapClientCreateDtoToDomain = mapClientCreateDtoToDomain;
 class CreateClientUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(data, tx) {
-        if (data?.cfdi) {
-            const existsByName = await this.repo.findByCfdi(data.cfdi, tx);
+        const createData = (0, exports.mapClientCreateDtoToDomain)(data);
+        if (createData.cfdi) {
+            const existsByName = await this.repo.findByCfdi(createData.cfdi, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El cfdi ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }
-        if (data?.tax_id) {
-            const existsByName = await this.repo.findByTaxId(data.tax_id, tx);
+        if (createData.tax_id) {
+            const existsByName = await this.repo.findByTaxId(createData.tax_id, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El tax id ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }
-        if (data?.company_name) {
-            const existsByName = await this.repo.findByCompanyName(data.company_name, tx);
+        if (createData.company_name) {
+            const existsByName = await this.repo.findByCompanyName(createData.company_name, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El nombre ingresado para el nuevo cliente, ya esta utilizado por otro cliente.");
         }
-        const created = await this.repo.create(data, tx);
+        const created = await this.repo.create(createData, tx);
         if (!created)
-            throw new http_error_1.default(500, "No fue posible crear la nueva locación.");
+            throw new http_error_1.default(500, "No fue posible crear el nuevo cliente.");
         return created;
     }
 }

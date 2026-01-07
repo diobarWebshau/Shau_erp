@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapProductQueryToCriteria = void 0;
+exports.mapProductQueryToDomain = void 0;
 const query_request_normalizer_1 = require("@shared/query-reqyest/query-request-normalizer");
 /**
  * Query → Criteria Mapper
@@ -47,7 +47,7 @@ const query_request_normalizer_1 = require("@shared/query-reqyest/query-request-
  * - Infrastructure/HTTP: mappers convierten queries en criterios.
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
-const mapProductQueryToCriteria = (query) => {
+const mapProductQueryToDomain = (query) => {
     return {
         filter: query.filter,
         description: (0, query_request_normalizer_1.normalizeToArray)(query.description),
@@ -61,4 +61,4 @@ const mapProductQueryToCriteria = (query) => {
         unit_of_measure: (0, query_request_normalizer_1.normalizeToArray)(query.unit_of_measure)
     };
 };
-exports.mapProductQueryToCriteria = mapProductQueryToCriteria;
+exports.mapProductQueryToDomain = mapProductQueryToDomain;

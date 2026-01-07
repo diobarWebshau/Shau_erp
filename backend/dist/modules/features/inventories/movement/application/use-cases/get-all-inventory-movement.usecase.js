@@ -9,12 +9,7 @@ class GetAllInventoryMovementUseCase {
     ;
     execute = async (tx) => {
         const inventoryReponses = await this.repo.findAll(tx);
-        const inventoryResponseFormmated = inventoryReponses.map((im) => ({
-            ...im,
-            is_locked: Boolean(im.is_locked),
-            created_at: im.created_at.toISOString(),
-        }));
-        return inventoryResponseFormmated;
+        return inventoryReponses;
     };
 }
 exports.GetAllInventoryMovementUseCase = GetAllInventoryMovementUseCase;

@@ -4,8 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProcessUseCase = void 0;
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -56,18 +54,14 @@ class UpdateProcessUseCase {
         const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "El tipo de proceso que se desea actualizar no fue posible encontrarlo.");
-        const editableFields = ["name"];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(existing, merged);
-        if (!Object.keys(updateValues).length)
+        if (!Object.keys(data).length)
             return existing;
-        if (updateValues.name) {
-            const existsByName = await this.repo.findByName(updateValues.name, tx);
+        if (data?.name) {
+            const existsByName = await this.repo.findByName(data.name, tx);
             if (existsByName)
                 throw new http_error_1.default(409, "El nombre ingresado para el proceso, ya esta utilizado por otro proceso.");
         }
-        const updated = await this.repo.update(id, updateValues, tx);
+        const updated = await this.repo.update(id, data, tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la proceso.");
         return updated;

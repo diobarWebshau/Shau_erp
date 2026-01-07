@@ -1,26 +1,63 @@
-import { ClientAddressCreateOrchestrator, ClientAddressUpdateOrchestrator, ClientUpdateOrchestrator, ProductDiscountClientCreateOrchestrator, ProductDiscountClientUpdateOrchestrator } from "../../domain/client-orchestrator.types";
+import { ClientAddressCreateOrchestrator, ClientAddressUpdateOrchestrator, ClientOrchestrator, ClientUpdateOrchestrator, ProductDiscountClientCreateOrchestrator, ProductDiscountClientUpdateOrchestrator } from "../../domain/client-orchestrator.types";
 import { ProductDiscountClientResponseDto } from "../../../assigments/product-discount-client/application/dto/product-discount-client.model.schema";
 import { IProductDiscountClientRepository } from "../../../assigments/product-discount-client/domain/product-discount-client.repository.interface";
 import { ProductDiscountClientCreateProps } from "../../../assigments/product-discount-client/domain/product-discount-client.types";
 import { ClientAddressResponseDto } from "../../../assigments/client-addresses/application/dto/client-address.model.schema";
 import { IClientAddressRepository } from "../../../assigments/client-addresses/domain/client-address.repository.interface";
 import { ClientAddressCreateProps } from "../../../assigments/client-addresses/domain/client-address.types";
+import { IClientQueryRepository } from "@src/modules/query/client/domain/client-query.repository";
 import { IClientRepository } from "@modules/core/client/domain/client.repository.interface";
+import { ClientFullQueryResult } from "@src/modules/query/client/domain/client-query.type";
+import { ClientOrchestratorUpdateDto } from "../dto/client-orchestrator.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import { ClientProps } from "@modules/core/client/domain/client.types";
+import HttpError from "@src/shared/errors/http/http-error";
 import { sequelize } from "@config/mysql/sequelize";
 import { Transaction } from "sequelize";
-import { ClientOrchestratorResponseDto, ProductDiscountClientResponseOrchestratorDto } from "../dto/client-orchestrator.model.schema";
-import { ClientFullQueryResult } from "@src/modules/query/client/domain/client-query.type";
-import { IClientQueryRepository } from "@src/modules/query/client/domain/client-query.repository";
-import { ClientResponseDto } from "@src/modules/core/client/application/dto/client.model.schema";
-import HttpError from "@src/shared/errors/http/http-error";
-import ImageHandler from "@src/helpers/imageHandlerClass";
 
 interface IUpdateClientOrchestratorUseCase {
     productDiscountClientRepo: IProductDiscountClientRepository,
     clientAddressRepo: IClientAddressRepository,
     clientRepo: IClientRepository,
     clientQueryRepo: IClientQueryRepository
+}
+
+
+const mapClientOrchestratorUpdateDtoToDomain = (data: ClientOrchestratorUpdateDto): ClientUpdateOrchestrator => {
+
+    const { addresses_manager, discounts_manager, client } = data;
+
+    const { credit_limit, ...rest_client } = client;
+
+    return {
+        client: {
+            ...rest_client,
+            ...(
+                credit_limit !== undefined
+                    ? { credit_limit: credit_limit === null ? null : DecimalVO.from(credit_limit) }
+                    : {}
+            ),
+        },
+        addresses_manager: addresses_manager,
+        discounts_manager: {
+            added: discounts_manager.added.map((add) => {
+                return {
+                    ...add,
+                    discount_percentage: DecimalVO.from(add.discount_percentage)
+                }
+            }),
+            updated: discounts_manager.updated.map((upt) => {
+                const { discount_percentage, ...rest } = upt;
+                return {
+                    ...rest,
+                    ...(discount_percentage !== undefined
+                        ? { discount_percentage: DecimalVO.from(discount_percentage) }
+                        : {}),
+                };
+            }),
+            deleted: discounts_manager.deleted
+        }
+    };
 }
 
 export class UpdateClientOrchestratorUseCase {
@@ -37,16 +74,18 @@ export class UpdateClientOrchestratorUseCase {
         this.clientQueryRepo = clientQueryRepo;
     };
 
-    execute = async (id: number, data: ClientUpdateOrchestrator): Promise<ClientOrchestratorResponseDto> => {
+    execute = async (id: number, data: ClientOrchestratorUpdateDto): Promise<ClientOrchestrator> => {
         const tx: Transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.REPEATABLE_READ
         });
         try {
 
+            const updateData = mapClientOrchestratorUpdateDtoToDomain(data);
+
             // --------------------------------------------------
             // |🔹 DESTRUCTATION                                |
             // --------------------------------------------------
-            const { client, addresses_manager, discounts_manager }: ClientUpdateOrchestrator = data;
+            const { client, addresses_manager, discounts_manager }: ClientUpdateOrchestrator = updateData;
 
             // --------------------------------------------------
             // |🔹 CLIENT                                       |
@@ -121,7 +160,7 @@ export class UpdateClientOrchestratorUseCase {
                     }
                 }
                 if (updated.length) {
-                    for (const disc of deleted) {
+                    for (const disc of updated) {
                         const { id, ...rest }: ProductDiscountClientUpdateOrchestrator = disc;
                         await this.productDiscountClientRepo.update(id, rest, tx);
                     }
@@ -129,39 +168,17 @@ export class UpdateClientOrchestratorUseCase {
             }
             const clientQueryResponse: ClientFullQueryResult | null = await this.clientQueryRepo.getByIdClientFullQuery(clientUpdateResponse.id, tx);
 
-            if (!clientQueryResponse)
-                throw new HttpError(500, "No se pudo acceder el cliente despues de haber sido actualizadp.");
+            if (!clientQueryResponse) throw new HttpError(500, "No se pudo acceder el cliente despues de haber sido creado.");
 
-            const { addresses: addrs, discounts: discs, ...clt }: ClientFullQueryResult = clientQueryResponse;
+            const { addresses: addresses_query, discounts: discounts_query, ...client_query }: ClientFullQueryResult = clientQueryResponse;
 
-            const dataClient: ClientResponseDto = {
-                ...clt,
-                created_at: clt.created_at.toISOString(),
-                updated_at: clt.updated_at.toISOString(),
-            }
-            const dataDiscounts: ProductDiscountClientResponseOrchestratorDto[] = discs.length ? await Promise.all(discs.map(async (disc) => ({
-                ...disc,
-                created_at: disc.created_at.toISOString(),
-                updated_at: disc.updated_at.toISOString(),
-                product: {
-                    ...disc.product,
-                    created_at: disc.product.created_at.toISOString(),
-                    updated_at: disc.product.updated_at.toISOString(),
-                    photo: disc.product.photo ? await ImageHandler.convertToBase64(disc.product.photo) : null
-                }
-            }))) : [];
-            const dataAddresses: ClientAddressResponseDto[] = addrs.length ? await Promise.all(addrs.map(async (addr) => ({
-                ...addr,
-                created_at: addr.created_at.toISOString(),
-                updated_at: addr.updated_at.toISOString(),
-            }))) : [];
-            const clientFullResult: ClientOrchestratorResponseDto = {
-                client: dataClient,
-                addresses: dataAddresses,
-                discounts: dataDiscounts
-            }
+            const clientFullResult: ClientOrchestrator = {
+                client: client_query,
+                addresses: addresses_query,
+                discounts: discounts_query
+            };
             await tx.commit();
-            return clientFullResult
+            return clientFullResult;
         } catch (error) {
             await tx.rollback();
             throw error;

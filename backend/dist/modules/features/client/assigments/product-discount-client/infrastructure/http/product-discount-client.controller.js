@@ -60,6 +60,15 @@ const client_repository_1 = require("@src/modules/core/client/infrastructure/rep
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
+/** Formatea un Location para convertir fechas a ISO */
+const mapProductDiscountClientDomainToDto = async (productDiscountClient) => {
+    return {
+        ...productDiscountClient,
+        discount_percentage: productDiscountClient.discount_percentage.toString(),
+        created_at: productDiscountClient.created_at.toISOString(),
+        updated_at: productDiscountClient.updated_at.toISOString()
+    };
+};
 class ProductDiscountClientController {
     repo;
     repoProduct;
@@ -84,21 +93,12 @@ class ProductDiscountClientController {
         this.getByProductClientUseCase = new get_product_discount_client_by_product_client_usecase_1.GetProductDiscountClientByProductClientUseCase(this.repo);
     }
     ;
-    /** Formatea un Location para convertir fechas a ISO */
-    async formatResponse(productDiscountClient) {
-        return {
-            ...productDiscountClient,
-            created_at: productDiscountClient.created_at.toISOString(),
-            updated_at: productDiscountClient.updated_at.toISOString()
-        };
-    }
-    ;
     // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (_req, res) => {
         const result = await this.getAllUseCase.execute();
-        const formatted = await Promise.all(result.map(p => this.formatResponse(p)));
+        const formatted = await Promise.all(result.map(p => mapProductDiscountClientDomainToDto(p)));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -107,7 +107,7 @@ class ProductDiscountClientController {
     getByClientId = async (req, res) => {
         const { client_id } = req.params;
         const result = await this.getByProductUseCase.execute(Number(client_id));
-        const formatted = await Promise.all(result.map(p => this.formatResponse(p)));
+        const formatted = await Promise.all(result.map(p => mapProductDiscountClientDomainToDto(p)));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -119,7 +119,7 @@ class ProductDiscountClientController {
         if (!result)
             return res.status(204).send(null);
         await console.log(`result`, result);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDiscountClientDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -130,7 +130,7 @@ class ProductDiscountClientController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDiscountClientDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -139,7 +139,7 @@ class ProductDiscountClientController {
     create = async (req, res) => {
         const body = req.body;
         const created = await this.createUseCase.execute(body);
-        const formatted = await this.formatResponse(created);
+        const formatted = await mapProductDiscountClientDomainToDto(created);
         return res.status(201).send(formatted);
     };
     // ============================================================
@@ -149,7 +149,7 @@ class ProductDiscountClientController {
         const { id } = req.params;
         const body = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted = await this.formatResponse(updated);
+        const formatted = await mapProductDiscountClientDomainToDto(updated);
         return res.status(200).send(formatted);
     };
     // ============================================================

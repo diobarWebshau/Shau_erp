@@ -25,7 +25,6 @@ declare const getAllClientsSchema: z.ZodObject<{
         company_name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         tax_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         email: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        phone: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         city: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         state: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         country: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
@@ -34,7 +33,7 @@ declare const getAllClientsSchema: z.ZodObject<{
         tax_regimen: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         payment_terms: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         cfdi: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
+        is_active: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
@@ -50,7 +49,7 @@ declare const getAllClientsSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -83,7 +82,7 @@ declare const getByIdClientSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -116,7 +115,7 @@ declare const getByCompanyNameClientSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -149,7 +148,7 @@ declare const getByCfdiClientSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -179,7 +178,7 @@ declare const createClientSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -198,7 +197,7 @@ declare const createClientSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -230,7 +229,7 @@ declare const updateClientSchema: z.ZodObject<{
         neighborhood: z.ZodOptional<z.ZodString>;
         payment_terms: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         zip_code: z.ZodOptional<z.ZodNumber>;
-        credit_limit: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+        credit_limit: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         tax_regimen: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         cfdi: z.ZodOptional<z.ZodString>;
         payment_method: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -249,7 +248,7 @@ declare const updateClientSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;

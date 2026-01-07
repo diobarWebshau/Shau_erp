@@ -1,5 +1,10 @@
 import { GetAllClientFullQuerySchema, GetAllClientOrchestratorSchema, GetByIdClientFullQuerySchema, GetByIdClientOrchestratorSchema } from "../../application/dto/client-query.endpoint.schema";
+import { ClientOrchestratorResponseDto } from "@src/modules/features/client/orchestration/application/dto/client-orchestrator.model.schema";
+import { ClientOrchestrator } from "@src/modules/features/client/orchestration/domain/client-orchestrator.types";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
+import { ClientFullQueryResult, ClientFullQueryResultDto } from "../../domain/client-query.type";
+export declare const mapClientOrchestratorDomainToDto: (data: ClientOrchestrator) => ClientOrchestratorResponseDto;
+export declare const mapClientFullQueryDomainToDto: (data: ClientFullQueryResult) => ClientFullQueryResultDto;
 export declare class ClientQueryController {
     private readonly repo;
     private readonly getAllClientOrchestratorUseCase;

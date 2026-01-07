@@ -1,5 +1,5 @@
 import { normalizeToArray, normalizeToBoolean, normalizeToNumberArray } from "@shared/query-reqyest/query-request-normalizer";
-import { GetAllProductsSchema } from "../../application/dto/product.endpoint.schema"
+import { ProductQueryDto } from "../../application/dto/product.model.schema";
 import type { ProductSearchCriteria } from "../../domain/product.types";
 
 /**
@@ -48,7 +48,7 @@ import type { ProductSearchCriteria } from "../../domain/product.types";
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
 
-export const mapProductQueryToCriteria = (query: GetAllProductsSchema["query"]): ProductSearchCriteria => {
+export const mapProductQueryToDomain = (query: ProductQueryDto): ProductSearchCriteria => {
     return {
         filter: query.filter,
         description: normalizeToArray(query.description),

@@ -53,13 +53,12 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-function mapModelToDomain(model) {
+function mapLocationTypeModelToDomain(model) {
     const json = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        ...json,
+        created_at: (json.created_at instanceof Date) ? json.created_at : new Date(json.created_at),
+        updated_at: (json.updated_at instanceof Date) ? json.updated_at : new Date(json.updated_at)
     };
 }
 class LocationTypeRepository {
@@ -68,25 +67,22 @@ class LocationTypeRepository {
     // ================================================================
     async findAll(tx) {
         const rows = await location_type_orm_1.LocationTypeModel.findAll({
-            attributes: location_type_orm_1.LocationTypeModel.getAllFields(),
             transaction: tx,
         });
-        return rows.map(mapModelToDomain);
+        return rows.map(mapLocationTypeModelToDomain);
     }
     async findById(id, tx) {
         const row = await location_type_orm_1.LocationTypeModel.findByPk(id, {
-            attributes: location_type_orm_1.LocationTypeModel.getAllFields(),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapLocationTypeModelToDomain(row) : null;
     }
     async findByName(name, tx) {
         const row = await location_type_orm_1.LocationTypeModel.findOne({
             where: { name },
             transaction: tx,
-            attributes: location_type_orm_1.LocationTypeModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapLocationTypeModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
@@ -95,7 +91,7 @@ class LocationTypeRepository {
         const created = await location_type_orm_1.LocationTypeModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear el tipo de locación.");
-        return mapModelToDomain(created);
+        return mapLocationTypeModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -106,21 +102,23 @@ class LocationTypeRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "El tipo de locación que se desea actualizar no fue posible encontrarla.");
+        const existingDomain = mapLocationTypeModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
         const [affectedCount] = await location_type_orm_1.LocationTypeModel.update(data, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar el tipo de locación.");
+            return existingDomain;
         // 3. Obtener la locación actualizada
         const updated = await location_type_orm_1.LocationTypeModel.findByPk(id, {
             transaction: tx,
-            attributes: location_type_orm_1.LocationTypeModel.getAllFields(),
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el tipo de locación.");
-        return mapModelToDomain(updated);
+        return mapLocationTypeModelToDomain(updated);
     }
     // ================================================================
     // DELETE

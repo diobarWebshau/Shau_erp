@@ -1,8 +1,6 @@
 import type { ILocationTypeRepository } from "./../../domain/location-type.repository";
-import type { LocationTypeProps, LocationTypeUpdateProps } from "../../domain/location-type.types";
+import type { LocationTypeProps } from "../../domain/location-type.types";
 import { LocationTypeUpdateDto } from "../dto/location-type.model.schema";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -54,13 +52,8 @@ export class UpdateLocationTypeUseCase {
             404,
             "El tipo de locación que se desea actualizar no fue posible encontrarlo."
         );
-        const editableFields: (keyof LocationTypeUpdateProps)[] = ["name"];
-        const filteredBody: LocationTypeUpdateProps = pickEditableFields(data, editableFields);
-        const merged: LocationTypeUpdateProps = { ...existing, ...filteredBody };
-        const updateValues: LocationTypeUpdateProps = await diffObjects(existing, merged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: LocationTypeProps = await this.repo.update(id, updateValues, tx);
-        if (!updated) throw new HttpError(500, "No fue posible actualizar la locación.");
+        if (!Object.keys(data).length) return existing;
+        const updated: LocationTypeProps = await this.repo.update(id, data, tx);
         return updated;
     }
 }

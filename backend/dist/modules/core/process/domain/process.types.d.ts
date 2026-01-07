@@ -57,7 +57,7 @@ type ProcessUpdateProps = Partial<ProcessCreateProps>;
 interface ProcessSearchCriteria {
     filter?: string;
     exclude_ids?: number[];
-    name?: string | string[];
-    description?: string | string[];
+    name?: string[];
+    description?: string[];
 }
 export type { ProcessProps, ProcessCreateProps, ProcessUpdateProps, ProcessSearchCriteria };

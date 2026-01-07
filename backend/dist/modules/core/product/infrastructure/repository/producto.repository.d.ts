@@ -1,4 +1,4 @@
-import type { ProductCreateProps, ProductProps, ProductUpdateProps, ProductSearchCriteria } from "../../domain/product.types";
+import type { ProductCreateProps, ProductUpdateProps, ProductSearchCriteria, ProductProps } from "../../domain/product.types";
 import type { IProductRepository } from "../../domain/product.repository.interface";
 import { Transaction } from "sequelize";
 export declare class ProductRepository implements IProductRepository {

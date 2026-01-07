@@ -18,7 +18,7 @@ declare const createClientOrchestratorSchema: z.ZodObject<{
                 neighborhood: z.ZodString;
                 payment_terms: z.ZodNullable<z.ZodString>;
                 zip_code: z.ZodNumber;
-                credit_limit: z.ZodNullable<z.ZodNumber>;
+                credit_limit: z.ZodNullable<z.ZodString>;
                 tax_regimen: z.ZodNullable<z.ZodString>;
                 cfdi: z.ZodString;
                 payment_method: z.ZodNullable<z.ZodString>;
@@ -35,7 +35,7 @@ declare const createClientOrchestratorSchema: z.ZodObject<{
                 client_id: z.ZodOptional<z.ZodUndefined>;
             }, z.core.$strict>>;
             discounts: z.ZodArray<z.ZodObject<{
-                discount_percentage: z.ZodNumber;
+                discount_percentage: z.ZodString;
                 product_id: z.ZodNumber;
                 client_id: z.ZodOptional<z.ZodUndefined>;
             }, z.core.$strict>>;
@@ -55,7 +55,7 @@ declare const createClientOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodString;
             payment_terms: z.ZodNullable<z.ZodString>;
             zip_code: z.ZodNumber;
-            credit_limit: z.ZodNullable<z.ZodNumber>;
+            credit_limit: z.ZodNullable<z.ZodString>;
             tax_regimen: z.ZodNullable<z.ZodString>;
             cfdi: z.ZodString;
             payment_method: z.ZodNullable<z.ZodString>;
@@ -80,7 +80,7 @@ declare const createClientOrchestratorSchema: z.ZodObject<{
         discounts: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
             client_id: z.ZodNumber;
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             id: z.ZodNumber;
             created_at: z.ZodString;
             updated_at: z.ZodString;
@@ -95,8 +95,8 @@ declare const createClientOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -127,7 +127,7 @@ declare const updateClientOrchestratorSchema: z.ZodObject<{
                 neighborhood: z.ZodOptional<z.ZodString>;
                 payment_terms: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 zip_code: z.ZodOptional<z.ZodNumber>;
-                credit_limit: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+                credit_limit: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 tax_regimen: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 cfdi: z.ZodOptional<z.ZodString>;
                 payment_method: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -171,20 +171,20 @@ declare const updateClientOrchestratorSchema: z.ZodObject<{
             }, z.core.$strip>;
             discounts_manager: z.ZodObject<{
                 added: z.ZodArray<z.ZodObject<{
-                    discount_percentage: z.ZodNumber;
+                    discount_percentage: z.ZodString;
                     product_id: z.ZodNumber;
                     client_id: z.ZodOptional<z.ZodUndefined>;
                 }, z.core.$strict>>;
                 updated: z.ZodArray<z.ZodObject<{
                     product_id: z.ZodOptional<z.ZodNumber>;
                     client_id: z.ZodOptional<z.ZodNumber>;
-                    discount_percentage: z.ZodOptional<z.ZodNumber>;
+                    discount_percentage: z.ZodOptional<z.ZodString>;
                     id: z.ZodNumber;
                 }, z.core.$strip>>;
                 deleted: z.ZodArray<z.ZodObject<{
                     product_id: z.ZodNumber;
                     client_id: z.ZodNumber;
-                    discount_percentage: z.ZodNumber;
+                    discount_percentage: z.ZodString;
                     id: z.ZodNumber;
                     created_at: z.ZodString;
                     updated_at: z.ZodString;
@@ -206,7 +206,7 @@ declare const updateClientOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodString;
             payment_terms: z.ZodNullable<z.ZodString>;
             zip_code: z.ZodNumber;
-            credit_limit: z.ZodNullable<z.ZodNumber>;
+            credit_limit: z.ZodNullable<z.ZodString>;
             tax_regimen: z.ZodNullable<z.ZodString>;
             cfdi: z.ZodString;
             payment_method: z.ZodNullable<z.ZodString>;
@@ -231,7 +231,7 @@ declare const updateClientOrchestratorSchema: z.ZodObject<{
         discounts: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
             client_id: z.ZodNumber;
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             id: z.ZodNumber;
             created_at: z.ZodString;
             updated_at: z.ZodString;
@@ -246,8 +246,8 @@ declare const updateClientOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;

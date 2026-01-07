@@ -65,7 +65,7 @@ import {
  *   de forma coherente hacia clientes externos.
  */
 
-const formatResponse = (client: ClientProps): ClientResponseDto => {
+export const mapClientDtotoDomain = (client: ClientProps): ClientResponseDto => {
     return {
         ...client,
         credit_limit: client.credit_limit ? client.credit_limit.toString() : null,
@@ -109,7 +109,7 @@ export class ClientController {
     getAll = async (req: ApiRequest<GetAllClientsSchema>, res: ApiResponse<GetAllClientsSchema>) => {
         const query: GetAllClientsSchema["query"] = req.query;
         const result: ClientProps[] = await this.getAllUseCase.execute(query);
-        const formatted: ClientResponseDto[] = result.map(l => formatResponse(l));
+        const formatted: ClientResponseDto[] = result.map(l => mapClientDtotoDomain(l));
         return res.status(200).send(formatted);
     };
 
@@ -120,7 +120,7 @@ export class ClientController {
         const { id }: GetByIdClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = formatResponse(result)
+        const formatted: ClientResponseDto = mapClientDtotoDomain(result)
         return res.status(200).send(formatted);
     };
 
@@ -131,7 +131,7 @@ export class ClientController {
         const { id }: GetByIdClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = formatResponse(result)
+        const formatted: ClientResponseDto = mapClientDtotoDomain(result)
         return res.status(200).send(formatted);
     };
 
@@ -142,7 +142,7 @@ export class ClientController {
         const { cfdi }: GetByCfdiClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByCfdiUseCase.execute(cfdi);
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = formatResponse(result)
+        const formatted: ClientResponseDto = mapClientDtotoDomain(result)
         return res.status(200).send(formatted);
     };
 
@@ -153,7 +153,7 @@ export class ClientController {
         const { company_name }: GetByCompanyNameClientSchema["params"] = req.params
         const result: ClientProps | null = await this.getByCompanyNameUseCase.execute(company_name);
         if (!result) return res.status(204).send(null);
-        const formatted: ClientResponseDto = formatResponse(result)
+        const formatted: ClientResponseDto = mapClientDtotoDomain(result)
         return res.status(200).send(formatted);
     };
 
@@ -163,7 +163,7 @@ export class ClientController {
     create = async (req: ApiRequest<CreateClientSchema>, res: ApiResponse<CreateClientSchema>) => {
         const body: CreateClientSchema["body"] = req.body;
         const created: ClientProps = await this.createUseCase.execute(body);
-        const formatted: ClientResponseDto = formatResponse(created);
+        const formatted: ClientResponseDto = mapClientDtotoDomain(created);
         return res.status(201).send(formatted);
     };
 
@@ -174,7 +174,7 @@ export class ClientController {
         const { id }: UpdateClientSchema["params"] = req.params;
         const body: UpdateClientSchema["body"] = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted: ClientResponseDto = formatResponse(updated);
+        const formatted: ClientResponseDto = mapClientDtotoDomain(updated);
         return res.status(200).send(formatted);
     };
 

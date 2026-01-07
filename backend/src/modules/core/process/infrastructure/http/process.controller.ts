@@ -8,12 +8,11 @@ import { UpdateProcessUseCase } from "../../application/use-cases/update-process
 import { DeleteProcessUseCase } from "../../application/use-cases/delete-process.usecase";
 import type { ProcessResponseDto } from "../../application/dto/process.model.schema";
 import ProcessRepository from "../repository/process.repository";
-import { ProcessProps, ProcessSearchCriteria } from "../../domain/process.types";
+import { ProcessProps } from "../../domain/process.types";
 import type {
     GetAllProcessesSchema, CreateProcessSchema, DeleteProcessSchema,
     GetByIdProcessSchema, GetByNameProcessSchema, UpdateProcessSchema
 } from "../../application/dto/process.endpoint.schema"
-import { mapProcessQueryToCriteria } from "./process-query-mapper";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -103,8 +102,7 @@ export class ProcessController {
     // GET ALL
     // ============================================================
     getAll = async (req: ApiRequest<GetAllProcessesSchema>, res: ApiResponse<GetAllProcessesSchema>) => {
-        const queryRequest: GetAllProcessesSchema["query"] = req.query;
-        const query: ProcessSearchCriteria = mapProcessQueryToCriteria(queryRequest);
+        const query: GetAllProcessesSchema["query"] = req.query;
         const result: ProcessProps[] = await this.getAllUseCase.execute(query);
         const formatted: ProcessResponseDto[] = result.map(l => this.formatResponse(l));
         return res.status(200).send(formatted);

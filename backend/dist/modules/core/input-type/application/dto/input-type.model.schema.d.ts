@@ -59,8 +59,8 @@ declare const inputTypeUpdateSchema: z.ZodObject<{
  * Incluye los campos de creación más los metadatos generados por el sistema.
  */
 declare const inputTypeResponseSchema: z.ZodObject<{
-    id: z.ZodNumber;
     name: z.ZodString;
+    id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;
 }, z.core.$strip>;

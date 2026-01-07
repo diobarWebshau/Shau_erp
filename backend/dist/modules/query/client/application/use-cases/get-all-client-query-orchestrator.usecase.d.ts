@@ -1,7 +1,7 @@
-import { ClientOrchestratorResponseDto } from "@modules/features/client/orchestration/application/dto/client-orchestrator.model.schema";
-import type { ClientSearchCriteria } from "../../domain/client-query.type";
+import { ClientOrchestrator } from "@src/modules/features/client/orchestration/domain/client-orchestrator.types";
 import { IClientQueryRepository } from "../../domain/client-query.repository";
 import { Transaction } from "sequelize";
+import { ClientQueryDto } from "@src/modules/core/client/application/dto/client.model.schema";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -45,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class GetAllClientsQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: IClientQueryRepository);
-    execute(query: ClientSearchCriteria, tx?: Transaction): Promise<ClientOrchestratorResponseDto[]>;
+    execute(query: ClientQueryDto, tx?: Transaction): Promise<ClientOrchestrator[]>;
 }

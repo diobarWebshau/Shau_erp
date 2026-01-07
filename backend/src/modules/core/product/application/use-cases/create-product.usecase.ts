@@ -1,5 +1,7 @@
 import type { ProductCreateProps, ProductProps } from "../../domain/product.types";
 import type { IProductRepository } from "../../domain/product.repository.interface";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+import { ProductCreateDto } from "../dto/product.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import ImageHandler from "@helpers/imageHandlerClass";
 import { Transaction } from "sequelize";
@@ -45,16 +47,25 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapProductCreateDtoToDomain = (data: ProductCreateDto): ProductCreateProps => ({
+    ...data,
+    production_cost: data.production_cost ? DecimalVO.from(data.production_cost) : null,
+    sale_price: data.sale_price ? DecimalVO.from(data.sale_price) : null,
+});
+
 export class CreateProductUseCase {
     constructor(private readonly repo: IProductRepository) { }
 
-    async execute(data: ProductCreateProps, tx?: Transaction): Promise<ProductProps> {
+    async execute(data: ProductCreateDto, tx?: Transaction): Promise<ProductProps> {
+
+
+        const createData = mapProductCreateDtoToDomain(data);
 
         // ------------------------------------------------------------------
         // 🔎 VALIDACIONES DE NEGOCIO
         // ------------------------------------------------------------------
-        if (data?.name) {
-            const existsByName = await this.repo.findByName(data.name, tx);
+        if (createData?.name) {
+            const existsByName = await this.repo.findByName(createData.name, tx);
             if (existsByName) {
                 throw new HttpError(
                     409,
@@ -63,8 +74,8 @@ export class CreateProductUseCase {
             }
         }
 
-        if (data?.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku, tx);
+        if (createData?.sku) {
+            const existsBySku = await this.repo.findBySku(createData.sku, tx);
             if (existsBySku) {
                 throw new HttpError(
                     409,
@@ -73,8 +84,8 @@ export class CreateProductUseCase {
             }
         }
 
-        if (data?.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
+        if (createData?.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(createData.custom_id, tx);
             if (existsByCustomId) {
                 throw new HttpError(
                     409,
@@ -83,8 +94,8 @@ export class CreateProductUseCase {
             }
         }
 
-        if (data?.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
+        if (createData?.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(createData.barcode.toString(), tx);
             if (existsByBarcode) {
                 throw new HttpError(
                     409,
@@ -96,7 +107,7 @@ export class CreateProductUseCase {
         // ------------------------------------------------------------------
         // 🟢 CREACIÓN INICIAL DEL PRODUCTO (SIN TOCAR FS AÚN)
         // ------------------------------------------------------------------
-        const created: ProductProps = await this.repo.create(data, tx);
+        const created: ProductProps = await this.repo.create(createData, tx);
 
         if (!created) {
             throw new HttpError(500, "No fue posible crear el nuevo producto");
@@ -105,11 +116,11 @@ export class CreateProductUseCase {
         // ------------------------------------------------------------------
         // 🖼️ ORGANIZACIÓN DE IMAGEN (POST-CREACIÓN)
         // ------------------------------------------------------------------
-        if (data.photo) {
+        if (createData.photo) {
             try {
                 const newRelativePath =
                     await ImageHandler.moveImageToEntityDirectory(
-                        data.photo,
+                        createData.photo,
                         "products",
                         created.id.toString()
                     );
@@ -126,7 +137,7 @@ export class CreateProductUseCase {
                 // Si algo falla durante el move, limpiar archivo temporal.
                 // La creación del producto NO se revierte: el producto puede existir sin imagen.
                 try {
-                    await ImageHandler.removeImageIfExists(data.photo);
+                    await ImageHandler.removeImageIfExists(createData.photo);
                 } catch {
                     // silencio intencional
                 }

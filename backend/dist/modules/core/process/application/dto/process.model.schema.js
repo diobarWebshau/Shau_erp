@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.processQuerySchema = exports.processUpdateSchema = exports.processResponseSchema = exports.processCreateSchema = void 0;
+const string_or_string_array_schema_1 = require("@src/shared/application/string-or-string-array.schema");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -83,11 +84,8 @@ exports.processResponseSchema = processResponseSchema;
  */
 const processQuerySchema = zod_1.z.object({
     filter: zod_1.z.string().optional(),
-    exclude_ids: zod_1.z.union([
-        zod_1.z.string(),
-        zod_1.z.array(zod_1.z.string())
-    ]).optional(),
-    name: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    description: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
+    exclude_ids: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    name: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    description: string_or_string_array_schema_1.stringOrStringArray.optional(),
 }).strict();
 exports.processQuerySchema = processQuerySchema;

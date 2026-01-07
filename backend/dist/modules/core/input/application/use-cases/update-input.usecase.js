@@ -4,9 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateInputUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
@@ -49,12 +47,22 @@ const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapInputDtoToDomain = (data) => {
+    const { unit_cost, ...rest } = data;
+    return {
+        ...rest,
+        ...(unit_cost !== undefined
+            ? { credit_limit: unit_cost === null ? null : decimal_vo_1.DecimalVO.from(unit_cost) }
+            : {}),
+    };
+};
 class UpdateInputUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(id, data, tx) {
+        const updateData = mapInputDtoToDomain(data);
         // ------------------------------------------------------------------
         // 🔍 OBTENER ESTADO ACTUAL
         // ------------------------------------------------------------------
@@ -62,62 +70,34 @@ class UpdateInputUseCase {
         if (!existing) {
             throw new http_error_1.default(404, "El insumo que se desea actualizar no fue posible encontrarlo.");
         }
-        // ------------------------------------------------------------------
-        // ✏️ FILTRADO DE CAMPOS EDITABLES
-        // ------------------------------------------------------------------
-        // Se define explícitamente qué campos pueden ser modificados.
-        // Esto evita actualizaciones accidentales o maliciosas de
-        // propiedades no editables del dominio.
-        const editableFields = [
-            "custom_id", "name", "description", "sku", "presentation",
-            "unit_of_measure", "storage_conditions", "barcode", "input_types_id",
-            "unit_cost", "supplier", "photo", "is_draft", "photo", "is_draft",
-            "is_active",
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        // ------------------------------------------------------------------
-        // 🔀 MERGE DE ESTADO ACTUAL + CAMBIOS PROPUESTOS
-        // ------------------------------------------------------------------
-        // Se construye un estado "virtual" del Inputo combinando
-        // el estado persistido con los cambios entrantes.
-        const merged = { ...existing, ...filteredBody, };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["unit_cost", "barcode"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["unit_cost", "barcode"]);
-        // ------------------------------------------------------------------
-        // 🧮 DETECCIÓN DE CAMBIOS EFECTIVOS
-        // ------------------------------------------------------------------
-        // Se calcula la diferencia real entre el estado actual y el
-        // estado resultante. Esto evita writes innecesarios en BD.
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) {
+        if (!Object.keys(updateData).length)
             return existing;
-        }
         // ------------------------------------------------------------------
         // 🔐 VALIDACIONES DE UNICIDAD
         // ------------------------------------------------------------------
         // Las validaciones de unicidad se basan en la intención del usuario
-        // (data), no en los cambios efectivos (updateValues), para evitar
+        // (updateData), no en los cambios efectivos (updateValues), para evitar
         // inconsistencias y falsos negativos.
-        if (data.name) {
-            const existsByName = await this.repo.findByName(data.name, tx);
+        if (updateData.name) {
+            const existsByName = await this.repo.findByName(updateData.name, tx);
             if (existsByName && existsByName.id !== existing.id) {
                 throw new http_error_1.default(409, "El nombre ingresado para el insumo ya está en uso.");
             }
         }
-        if (data.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku, tx);
+        if (updateData.sku) {
+            const existsBySku = await this.repo.findBySku(updateData.sku, tx);
             if (existsBySku && existsBySku.id !== existing.id) {
                 throw new http_error_1.default(409, "El sku ingresado para el insumo ya está en uso.");
             }
         }
-        if (data.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
+        if (updateData.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(updateData.custom_id, tx);
             if (existsByCustomId && existsByCustomId.id !== existing.id) {
                 throw new http_error_1.default(409, "El id único ingresado para el insumo ya está en uso.");
             }
         }
-        if (data.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
+        if (updateData.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(updateData.barcode.toString(), tx);
             if (existsByBarcode && existsByBarcode.id !== existing.id) {
                 throw new http_error_1.default(409, "El código de barras ingresado para el insumo ya está en uso.");
             }
@@ -129,8 +109,8 @@ class UpdateInputUseCase {
         // Solo compara rutas finales (strings) ya resueltas
         // por la capa de orquestación (controller).
         const previousPhoto = existing.photo ?? null;
-        const nextPhoto = "photo" in updateValues
-            ? updateValues.photo ?? null
+        const nextPhoto = "photo" in updateData
+            ? updateData.photo ?? null
             : null;
         const photoWasReplaced = previousPhoto !== null &&
             nextPhoto !== null &&
@@ -140,7 +120,7 @@ class UpdateInputUseCase {
         // ------------------------------------------------------------------
         // Se delega al repositorio la operación de update, garantizando
         // que la transacción sea consistente.
-        const updated = await this.repo.update(id, updateValues, tx);
+        const updated = await this.repo.update(id, updateData, tx);
         if (!updated) {
             throw new http_error_1.default(500, "No fue posible actualizar el insumo.");
         }

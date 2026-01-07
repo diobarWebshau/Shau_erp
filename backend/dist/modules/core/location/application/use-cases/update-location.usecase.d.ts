@@ -1,6 +1,7 @@
-import type { LocationUpdateProps, LocationProps } from "../../domain/location.types";
+import type { LocationProps } from "../../domain/location.types";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
 import { Transaction } from "sequelize";
+import { LocationUpdateDto } from "../dto/location.model.schema";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class UpdateLocationUseCase {
     private readonly repo;
     constructor(repo: ILocationRepository);
-    execute(id: number, data: LocationUpdateProps, tx?: Transaction): Promise<LocationProps>;
+    execute(id: number, data: LocationUpdateDto, tx?: Transaction): Promise<LocationProps>;
 }

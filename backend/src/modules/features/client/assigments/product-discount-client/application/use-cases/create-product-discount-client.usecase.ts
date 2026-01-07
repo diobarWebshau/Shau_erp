@@ -1,10 +1,12 @@
-import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
-import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
 import type { ProductDiscountClientProps, ProductDiscountClientCreateProps } from "../../domain/product-discount-client.types";
+import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
+import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
+import { IClientRepository } from "@modules/core/client/domain/client.repository.interface";
+import { ProductDiscountClientCreateDto } from "../dto/product-discount-client.model.schema";
+import { ProductProps } from "@modules/core/product/domain/product.types";
+import { ClientProps } from "@modules/core/client/domain/client.types";
+import { DecimalVO } from "@shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
-import { IClientRepository } from "@src/modules/core/client/domain/client.repository.interface";
-import { ClientProps } from "@src/modules/core/client/domain/client.types";
-import { ProductProps } from "@src/modules/core/product/domain/product.types";
 import { Transaction } from "sequelize";
 
 /**
@@ -48,13 +50,18 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapProductDiscountClientCreateDtoToDomain = (data: ProductDiscountClientCreateDto): ProductDiscountClientCreateProps => ({
+    ...data,
+    discount_percentage: DecimalVO.from(data.discount_percentage)
+});
+
 export class CreateProductDiscountClientUseCase {
     constructor(
         private readonly repo: IProductDiscountClientRepository,
         private readonly repoProduct: IProductRepository,
         private readonly repoClient: IClientRepository
     ) { }
-    async execute(data: ProductDiscountClientCreateProps, tx?: Transaction): Promise<ProductDiscountClientProps> {
+    async execute(data: ProductDiscountClientCreateDto, tx?: Transaction): Promise<ProductDiscountClientProps> {
         const validClient: ClientProps | null = await this.repoClient.findById(data.client_id, tx);
         if (!validClient) throw new HttpError(404,
             "El cliente seleccionado no existe."
@@ -68,7 +75,7 @@ export class CreateProductDiscountClientUseCase {
         if (validDuplicate) throw new HttpError(409,
             "El cliente ya tiene un descuento para el producto ingresado."
         );
-        const created: ProductDiscountClientProps = await this.repo.create(data, tx);
+        const created: ProductDiscountClientProps = await this.repo.create(mapProductDiscountClientCreateDtoToDomain(data), tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del descueto del producto al cliente."
         );

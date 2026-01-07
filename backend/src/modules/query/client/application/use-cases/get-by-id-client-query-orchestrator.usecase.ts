@@ -1,9 +1,6 @@
-import { ClientOrchestratorResponseDto, ProductDiscountClientResponseOrchestratorDto } from "@src/modules/features/client/orchestration/application/dto/client-orchestrator.model.schema";
-import { ClientAddressResponseDto } from "@src/modules/features/client/assigments/client-addresses/application/dto/client-address.model.schema";
-import { ClientResponseDto } from "@src/modules/core/client/application/dto/client.model.schema";
+import { ClientOrchestrator } from "@src/modules/features/client/orchestration/domain/client-orchestrator.types";
 import { IClientQueryRepository } from "../../domain/client-query.repository";
 import type { ClientFullQueryResult } from "../../domain/client-query.type";
-import ImageHandler from "@src/helpers/imageHandlerClass";
 import { Transaction } from "sequelize";
 
 /**
@@ -49,37 +46,15 @@ import { Transaction } from "sequelize";
 
 export class GetByIdClientsQueryOrchestratorUseCase {
     constructor(private readonly repo: IClientQueryRepository) { }
-    async execute(id: number, tx?: Transaction): Promise<ClientOrchestratorResponseDto | null> {
+    async execute(id: number, tx?: Transaction): Promise<ClientOrchestrator | null> {
         const clientOrchestratorResponse: ClientFullQueryResult | null = await this.repo.getByIdClientFullQuery(id, tx);
         if (!clientOrchestratorResponse) return null;
         const { addresses, discounts, ...client }: ClientFullQueryResult = clientOrchestratorResponse;
-
-        const dataClient: ClientResponseDto = {
-            ...client,
-            created_at: client.created_at.toISOString(),
-            updated_at: client.updated_at.toISOString(),
-        }
-        const dataDiscounts: ProductDiscountClientResponseOrchestratorDto[] = discounts.length ? await Promise.all(discounts.map(async (disc) => ({
-            ...disc,
-            created_at: disc.created_at.toISOString(),
-            updated_at: disc.updated_at.toISOString(),
-            product: {
-                ...disc.product,
-                created_at: disc.product.created_at.toISOString(),
-                updated_at: disc.product.updated_at.toISOString(),
-                photo: disc.product.photo ? await ImageHandler.convertToBase64(disc.product.photo) : null
-            }
-        }))) : [];
-        const dataAddresses: ClientAddressResponseDto[] = addresses.length ? await Promise.all(addresses.map(async (addr) => ({
-            ...addr,
-            created_at: addr.created_at.toISOString(),
-            updated_at: addr.updated_at.toISOString(),
-        }))) : [];
-        const clientFullResult: ClientOrchestratorResponseDto = {
-            client: dataClient,
-            addresses: dataAddresses,
-            discounts: dataDiscounts
-        }
+        const clientFullResult: ClientOrchestrator = {
+            client: client,
+            addresses: addresses,
+            discounts: discounts
+        };
         return clientFullResult;
     }
 };

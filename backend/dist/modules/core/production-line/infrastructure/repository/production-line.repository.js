@@ -54,15 +54,13 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
+const mapProductionLineModelToDomain = (model) => {
     const json = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        custom_id: json.custom_id,
+        ...json,
         is_active: Boolean(json.is_active),
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        created_at: json.created_at instanceof Date ? json.created_at : new Date(json.created_at),
+        updated_at: json.updated_at instanceof Date ? json.updated_at : new Date(json.updated_at),
     };
 };
 class ProductionLineRepository {
@@ -93,33 +91,29 @@ class ProductionLineRepository {
         };
         const rows = await production_lines_orm_1.ProductionLineModel.findAll({
             where,
-            attributes: production_lines_orm_1.ProductionLineModel.getAllFields(),
             transaction: tx,
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapProductionLineModelToDomain(pl));
     };
     findById = async (id, tx) => {
         const row = await production_lines_orm_1.ProductionLineModel.findByPk(id, {
             transaction: tx,
-            attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductionLineModelToDomain(row) : null;
     };
     findByName = async (name, tx) => {
         const row = await production_lines_orm_1.ProductionLineModel.findOne({
             where: { name },
             transaction: tx,
-            attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductionLineModelToDomain(row) : null;
     };
     findByCustomId = async (custom_id, tx) => {
         const row = await production_lines_orm_1.ProductionLineModel.findOne({
             where: { custom_id },
             transaction: tx,
-            attributes: production_lines_orm_1.ProductionLineModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductionLineModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
@@ -128,7 +122,7 @@ class ProductionLineRepository {
         const created = await production_lines_orm_1.ProductionLineModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la nueva línea de producción.");
-        return mapModelToDomain(created);
+        return mapProductionLineModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -148,11 +142,10 @@ class ProductionLineRepository {
         // 3. Obtener la locación actualizada
         const updated = await production_lines_orm_1.ProductionLineModel.findByPk(id, {
             transaction: tx,
-            attributes: production_lines_orm_1.ProductionLineModel.getAllFields(),
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la línea de producción actualizada.");
-        return mapModelToDomain(updated);
+        return mapProductionLineModelToDomain(updated);
     };
     // ================================================================
     // DELETE

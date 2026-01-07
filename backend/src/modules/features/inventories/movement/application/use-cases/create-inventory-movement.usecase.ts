@@ -1,16 +1,16 @@
 import { IInventoryLocationItemRepository } from "../../../posicition/domain/inventory-location-item.repository.interface";
 import { IInventoryQueryRepository } from "@src/modules/query/inventory/domain/inventory-query.repository.interface";
+import { InventoryMovementCreateProps, InventoryMovementProps } from "../../domain/inventory-movement.types";
 import { InventoryLocationItemProps } from "../../../posicition/domain/inventory-location-item.types";
-import { InventoryMovementCreateAttributes } from "../../infrastructure/orm/inventory-movement.orm";
 import { IInventoryMovementRepository } from "../../domain/inventory-movement.repository.interface"
 import { ILocationRepository } from "@modules/core/location/domain/location.repository.interface";
 import { InventoryQueryProps } from "@src/modules/query/inventory/domain/inventory-query.types";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { InventoryMovementResponseSchemaDto } from "../dto/inventory-movement.model.schema";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
-import { InventoryMovementProps } from "../../domain/inventory-movement.types";
+import { InventoryMovementCreateDto } from "../dto/inventory-movement.model.schema";
 import { LocationProps } from "@modules/core/location/domain/location.types";
 import { ProductProps } from "@modules/core/product/domain/product.types";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import { InputProps } from "@modules/core/input/domain/input.types";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
@@ -23,6 +23,12 @@ interface ICreateInventoryMovementUseCase {
     invetoryLocationItemRepo: IInventoryLocationItemRepository,
     inventoryQueryRepo: IInventoryQueryRepository
 };
+
+export const mapInventoryMovementCreateDtoToDomain = (data: InventoryMovementCreateDto): InventoryMovementCreateProps => ({
+    ...data,
+    qty: DecimalVO.from(data.qty)
+});
+
 
 export class CreateInventoryMovementUseCase {
 
@@ -42,19 +48,23 @@ export class CreateInventoryMovementUseCase {
         this.inventoryQueryRepo = inventoryQueryRepo;
     };
 
-    execute = async (data: InventoryMovementCreateAttributes, tx?: Transaction): Promise<InventoryMovementResponseSchemaDto> => {
+    execute = async (data: InventoryMovementCreateDto, tx?: Transaction): Promise<InventoryMovementProps> => {
+
         const validateLocation: LocationProps | null = await this.locationRepo.findById(data.location_id, tx);
         if (!validateLocation) throw new HttpError(404, "La locacíon ingresada no fue posible encontrarla");
-        if (data.item_type === "product") {
-            const validateProduct: ProductProps | null = await this.productRepo.findById(data.item_id, tx);
+
+        const createData = mapInventoryMovementCreateDtoToDomain(data);
+
+        if (createData.item_type === "product") {
+            const validateProduct: ProductProps | null = await this.productRepo.findById(createData.item_id, tx);
             if (!validateProduct) throw new HttpError(404, "El producto que se desea agregar al inventario de la locación no fue posible encontrarlo");
         } else {
-            const validateInput: InputProps | null = await this.inputRepo.findById(data.item_id, tx);
+            const validateInput: InputProps | null = await this.inputRepo.findById(createData.item_id, tx);
             if (!validateInput) throw new HttpError(404, "El insummo que se desea agregar al inventario de la locación no fue posible encontrarlo");
         };
 
         const inventoryLocationItem: InventoryLocationItemProps | null =
-            await this.invetoryLocationItemRepo.findByLocationItem(data.location_id, data.item_id, data.item_type, tx);
+            await this.invetoryLocationItemRepo.findByLocationItem(createData.location_id, createData.item_id, createData.item_type, tx);
 
         if (!inventoryLocationItem) throw new HttpError(404, "La locación no tiene registrado el articulo.");
 
@@ -65,28 +75,26 @@ export class CreateInventoryMovementUseCase {
             throw new HttpError(404, "El articulo dentro la locacion no tienee un slot de inventario.");
         }
 
-        if (data.movement_type === "out") {
-            const qtyMov = data.qty;
-            const available = inventorySlot.stock;
+        if (createData.movement_type === "out") {
+            const qtyMov: DecimalVO = createData.qty;
+            const available = DecimalVO.from(inventorySlot.stock);
 
-            if (!Number.isFinite(qtyMov) || qtyMov <= 0) {
+            if (!qtyMov.isFinite() || qtyMov.lte(0)) {
                 throw new HttpError(400, "La cantidad del movimiento debe ser mayor que 0");
             }
 
-            if (!Number.isInteger(qtyMov)) {
+            if (!qtyMov.isInteger()) {
                 throw new HttpError(400, "La cantidad debe ser un número entero");
             }
-            if (qtyMov > available) {
-                throw new HttpError(409, "La locación no tiene inventario necesario para poder efectuar el movimiento de inventario");
+
+            if (qtyMov.gt(available)) {
+                throw new HttpError(
+                    409,
+                    "La locación no tiene inventario necesario para poder efectuar el movimiento de inventario"
+                );
             }
-        };
-        
-        const inventoryMovementResponse: InventoryMovementProps = await this.repo.create(data, tx);
-        const inventoryMovementResponseFormatted: InventoryMovementResponseSchemaDto = {
-            ...inventoryMovementResponse,
-            is_locked: Boolean(inventoryMovementResponse.is_locked),
-            created_at: inventoryMovementResponse.created_at.toISOString()
         }
-        return inventoryMovementResponseFormatted;
+        const inventoryMovementResponse: InventoryMovementProps = await this.repo.create(createData, tx);
+        return inventoryMovementResponse;
     };
 }; 

@@ -1,25 +1,25 @@
 import { InventoryLocationItemCreateProps, InventoryLocationItemProps, InventoryLocationItemUpdateProps } from "../../domain/inventory-location-item.types";
+import InventoryLocationItemModel, { InventoryLocationItemAttributes } from "../orm/inventory-location-item.orm";
 import { IInventoryLocationItemRepository } from "../../domain/inventory-location-item.repository.interface";
-import InventoryLocationItemModel from "../orm/inventory-location-item.orm";
 import HttpError from "@src/shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
-const mapModelToDomain = (model: InventoryLocationItemModel): InventoryLocationItemProps => {
-    const json: InventoryLocationItemProps = model.toJSON();
-    return { ...json}
+const mapInventoryLocationItemModelToDomain = (model: InventoryLocationItemModel): InventoryLocationItemProps => {
+    const inventoryLocationItemAttributes: InventoryLocationItemAttributes = model.toJSON();
+    return inventoryLocationItemAttributes;
 };
 
 export class InventoryLocationItemRepository implements IInventoryLocationItemRepository {
     findAll = async (tx?: Transaction): Promise<InventoryLocationItemProps[]> => {
         const inventoryLocationItemResponses: InventoryLocationItemModel[] = await InventoryLocationItemModel.findAll({ transaction: tx });
-        const inventoryLocationItemResponsesFormatted: InventoryLocationItemProps[] = inventoryLocationItemResponses.map(mapModelToDomain);
+        const inventoryLocationItemResponsesFormatted: InventoryLocationItemProps[] = inventoryLocationItemResponses.map(mapInventoryLocationItemModelToDomain);
         return inventoryLocationItemResponsesFormatted;
     };
 
     findById = async (id: number, tx?: Transaction): Promise<InventoryLocationItemProps | null> => {
         const inventoryLocationItemResponse: InventoryLocationItemModel | null = await InventoryLocationItemModel.findByPk(id, { transaction: tx });
         if (!inventoryLocationItemResponse) return null;
-        const inventoryLocationItemResponsesFormatted: InventoryLocationItemProps = mapModelToDomain(inventoryLocationItemResponse);
+        const inventoryLocationItemResponsesFormatted: InventoryLocationItemProps = mapInventoryLocationItemModelToDomain(inventoryLocationItemResponse);
         return inventoryLocationItemResponsesFormatted;
     };
 
@@ -33,14 +33,14 @@ export class InventoryLocationItemRepository implements IInventoryLocationItemRe
             transaction: tx
         });
         if (!inventoryLocationItemResponse) return null;
-        const inventoryLocationItemResponsesFormatted: InventoryLocationItemProps = mapModelToDomain(inventoryLocationItemResponse);
+        const inventoryLocationItemResponsesFormatted: InventoryLocationItemProps = mapInventoryLocationItemModelToDomain(inventoryLocationItemResponse);
         return inventoryLocationItemResponsesFormatted;
     };
 
     create = async (data: InventoryLocationItemCreateProps, tx?: Transaction): Promise<InventoryLocationItemProps> => {
         const InventoryLocationItemResponse: InventoryLocationItemModel = await InventoryLocationItemModel.create(data, { transaction: tx });
         if (!InventoryLocationItemResponse) throw new HttpError(500, "No fue posible crear la asignacion de inventario del item a la locación.");
-        const InventoryLocationItemResponseFormatted: InventoryLocationItemProps = mapModelToDomain(InventoryLocationItemResponse);
+        const InventoryLocationItemResponseFormatted: InventoryLocationItemProps = mapInventoryLocationItemModelToDomain(InventoryLocationItemResponse);
         return InventoryLocationItemResponseFormatted;
     };
 
@@ -57,14 +57,14 @@ export class InventoryLocationItemRepository implements IInventoryLocationItemRe
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount) return mapModelToDomain(existing);
+        if (!affectedCount) return mapInventoryLocationItemModelToDomain(existing);
         // 3. Obtener la locación actualizada
         const updated: InventoryLocationItemModel | null = await InventoryLocationItemModel.findByPk(id, {
             transaction: tx,
             attributes: InventoryLocationItemModel.getAllFields() as ((keyof InventoryLocationItemProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignacion de inventario del item a la locación indicada.");
-        return mapModelToDomain(updated);
+        return mapInventoryLocationItemModelToDomain(updated);
     };
 
     delete = async (id: number, tx?: Transaction): Promise<void> => {

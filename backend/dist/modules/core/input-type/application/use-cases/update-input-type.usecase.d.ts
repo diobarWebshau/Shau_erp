@@ -1,5 +1,6 @@
+import type { InputTypeProps } from "../../domain/input-type.types";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
-import type { InputTypeProps, InputTypeUpdateProps } from "../../domain/input-type.types";
+import { InputTypeUpdateDto } from "../dto/input-type.model.schema";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class UpdateInputTypeUseCase {
     private readonly repo;
     constructor(repo: IInputTypeRepository);
-    execute: (id: number, data: InputTypeUpdateProps, tx?: Transaction) => Promise<InputTypeProps>;
+    execute: (id: number, data: InputTypeUpdateDto, tx?: Transaction) => Promise<InputTypeProps>;
 }

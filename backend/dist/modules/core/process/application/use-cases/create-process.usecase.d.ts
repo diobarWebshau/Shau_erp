@@ -1,6 +1,7 @@
 import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
-import type { ProcessCreateProps, ProcessProps } from "../../domain/process.types";
+import type { ProcessProps } from "../../domain/process.types";
+import { ProcessCreateDto } from "../dto/process.model.schema";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +45,5 @@ import type { ProcessCreateProps, ProcessProps } from "../../domain/process.type
 export declare class CreateProcessUseCase {
     private readonly repo;
     constructor(repo: IProcessRepository);
-    execute: (data: ProcessCreateProps, tx?: Transaction) => Promise<ProcessProps>;
+    execute: (data: ProcessCreateDto, tx?: Transaction) => Promise<ProcessProps>;
 }

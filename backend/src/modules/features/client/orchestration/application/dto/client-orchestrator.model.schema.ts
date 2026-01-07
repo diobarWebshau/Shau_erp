@@ -20,7 +20,7 @@ const clientAddressCreateOrchestratorSchema = clientAddressCreateSchema.omit({
 // |🔹 Discounts                                    |
 // --------------------------------------------------
 
-const ProductDiscountClientCreateOrchestratorSchema = ProductDiscountClientCreateSchema.omit({
+const productDiscountClientCreateOrchestratorSchema = ProductDiscountClientCreateSchema.omit({
     client_id: true
 }).extend({ client_id: z.undefined().optional() }).strict();
 
@@ -32,7 +32,7 @@ const ProductDiscountClientCreateOrchestratorSchema = ProductDiscountClientCreat
 const clientCreateOrchestratorSchema = z.object({
     client: clientCreateSchema,
     addresses: z.array(clientAddressCreateOrchestratorSchema),
-    discounts: z.array(ProductDiscountClientCreateOrchestratorSchema)
+    discounts: z.array(productDiscountClientCreateOrchestratorSchema)
 });
 
 // * Esquema de la request para el REQUEST HTTP en CREATE
@@ -67,7 +67,7 @@ const productDiscountClientUpdateOrchestrator = ProductDiscountClientUpdateSchem
 });
 
 const productDiscountClientManagerSchema = z.object({
-    added: z.array(ProductDiscountClientCreateOrchestratorSchema),
+    added: z.array(productDiscountClientCreateOrchestratorSchema),
     updated: z.array(productDiscountClientUpdateOrchestrator),
     deleted: z.array(ProductDiscountClientReponseSchema),
 });
@@ -105,7 +105,8 @@ const clientResponseOrchestratorSchema = z.object({
 // =========================================================================================
 // |                        ORCHESTRATOR — DTO                                             |
 // =========================================================================================
-
+type ClientAddressCreateOrchestratorDto = z.infer<typeof clientAddressCreateOrchestratorSchema>;
+type ProductDiscountClientCreateOrchestratorDto = z.infer<typeof productDiscountClientCreateOrchestratorSchema>;
 type ClientOrchestratorCreateDto = z.infer<typeof clientCreateOrchestratorSchema>;
 type ClientOrchestratorUpdateDto = z.infer<typeof clientUpdateOrchestratorSchema>;
 type ClientOrchestratorResponseDto = z.infer<typeof clientResponseOrchestratorSchema>;
@@ -120,7 +121,7 @@ type ProductDiscountClientResponseOrchestratorDto = z.infer<typeof productDiscou
 export {
     // ******************* CREATE (REQUEST) ******************
     clientAddressCreateOrchestratorSchema,
-    ProductDiscountClientCreateOrchestratorSchema,
+    productDiscountClientCreateOrchestratorSchema,
     clientCreateOrchestratorSchema,
     clientCreateRequestOrchestratorSchema,
     // ******************* UPDATE (REQUEST) ******************
@@ -139,5 +140,7 @@ export type {
     ClientOrchestratorResponseDto,
     ClientOrchestratorCreateRequestDto,
     ClientOrchestratorUpdateRequestDto,
-    ProductDiscountClientResponseOrchestratorDto
+    ProductDiscountClientResponseOrchestratorDto,
+    ClientAddressCreateOrchestratorDto,
+    ProductDiscountClientCreateOrchestratorDto
 }

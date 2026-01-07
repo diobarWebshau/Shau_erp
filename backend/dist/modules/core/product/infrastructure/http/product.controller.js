@@ -15,7 +15,6 @@ const delete_product_usecase_1 = require("../../application/use-cases/delete-pro
 const update_product_usecase_1 = require("../../application/use-cases/update-product.usecase");
 const local_file_cleanup_service_1 = require("@shared/files/local-file-cleanup.service");
 const producto_repository_1 = require("../repository/producto.repository");
-const product_query_mapper_1 = require("./product-query-mapper");
 const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * Controller (Infrastructure / HTTP)
@@ -66,6 +65,17 @@ const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia productes externos.
  */
+/** Formatea un Location para convertir fechas a ISO */
+const mapProductDomainToDto = async (product) => {
+    return {
+        ...product,
+        photo: product.photo ? await imageHandlerClass_1.default.convertToBase64(product.photo) : null,
+        sale_price: product.sale_price ? product.sale_price?.toString() : null,
+        production_cost: product.production_cost ? product.production_cost?.toString() : null,
+        created_at: product.created_at.toISOString(),
+        updated_at: product.updated_at.toISOString()
+    };
+};
 class ProductController {
     repo;
     fileCleanup;
@@ -92,26 +102,12 @@ class ProductController {
         this.deleteUseCase = new delete_product_usecase_1.DeleteProductUseCase(this.repo, this.fileCleanup);
     }
     // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-    /** Formatea un Location para convertir fechas a ISO */
-    async formatResponse(product) {
-        return {
-            ...product,
-            photo: product.photo ? await imageHandlerClass_1.default.convertToBase64(product.photo) : null,
-            created_at: product.created_at.toISOString(),
-            updated_at: product.updated_at.toISOString()
-        };
-    }
-    ;
-    // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req, res) => {
-        const queryRequest = req.query;
-        const query = (0, product_query_mapper_1.mapProductQueryToCriteria)(queryRequest);
+        const query = req.query;
         const result = await this.getAllUseCase.execute(query);
-        const formatted = await Promise.all(result.map(p => this.formatResponse(p)));
+        const formatted = await Promise.all(result.map(p => mapProductDomainToDto(p)));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -122,7 +118,7 @@ class ProductController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -133,7 +129,7 @@ class ProductController {
         const result = await this.getByCustomIdUseCase.execute(custom_id);
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -144,7 +140,7 @@ class ProductController {
         const result = await this.getBySkuUseCase.execute(sku);
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -155,7 +151,7 @@ class ProductController {
         const result = await this.getByNameUseCase.execute(name);
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -166,7 +162,7 @@ class ProductController {
         const result = await this.getByBarcodeUseCase.execute(Number(barcode));
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -179,7 +175,7 @@ class ProductController {
         const body = req.body;
         try {
             const created = await this.createUseCase.execute(body);
-            const formatted = await this.formatResponse(created);
+            const formatted = await mapProductDomainToDto(created);
             return res.status(201).send(formatted);
         }
         catch (error) {
@@ -247,7 +243,7 @@ class ProductController {
             // -----------------------------------------------------------
             // 6️⃣ RESPUESTA
             // -----------------------------------------------------------
-            const formatted = await this.formatResponse({
+            const formatted = await mapProductDomainToDto({
                 ...updated,
                 ...(finalPhotoPath ? { photo: finalPhotoPath } : {}),
             });

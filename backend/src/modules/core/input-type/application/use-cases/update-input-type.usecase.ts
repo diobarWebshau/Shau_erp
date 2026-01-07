@@ -1,8 +1,6 @@
-import type { InputTypeProps, InputTypeUpdateProps } from "../../domain/input-type.types";
+import type { InputTypeProps } from "../../domain/input-type.types";
 import type { IInputTypeRepository } from "../../domain/input-type.repository";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
 import { InputTypeUpdateDto } from "../dto/input-type.model.schema";
-import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -53,12 +51,9 @@ export class UpdateInputTypeUseCase {
         if (!existing) throw new HttpError(404,
             "El tipo de locación que se desea actualizar no fue posible encontrarlo."
         );
-        const editableFields: (keyof InputTypeUpdateProps)[] = ["name"];
-        const filteredBody: InputTypeUpdateProps = pickEditableFields(data, editableFields);
-        const merged: InputTypeUpdateProps = { ...existing, ...filteredBody };
-        const updateValues: InputTypeUpdateProps = await diffObjects(existing, merged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: InputTypeProps = await this.repo.update(Number(id), updateValues, tx);
+
+        if (!Object.keys(data).length) return existing;
+        const updated: InputTypeProps = await this.repo.update(Number(id), data, tx);
         if (!updated) throw new HttpError(500, "No fue posible actualizar la locación.");
         return updated;
     }

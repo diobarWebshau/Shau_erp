@@ -1,6 +1,8 @@
 import type { ProductCreateProps, ProductUpdateProps, ProductSearchCriteria, ProductProps } from "../../domain/product.types";
+import { ProductAttributes, ProductCreateAttributes, ProductModel, ProductUpdateAttributes } from "../orm/product.orm";
 import type { IProductRepository } from "../../domain/product.repository.interface";
-import { ProductAttributes, ProductModel } from "../orm/product.orm";
+import { InputProps } from "@src/modules/core/input/domain/input.types";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import { Op, Transaction, WhereOptions } from "sequelize";
 import HttpError from "@shared/errors/http/http-error";
 
@@ -52,29 +54,47 @@ import HttpError from "@shared/errors/http/http-error";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductModel): ProductProps => {
+const mapProductModelToDomain = (model: ProductModel): ProductProps => {
     const productAttributes: ProductAttributes = model.toJSON();
     const productDomain: ProductProps = {
-        id: productAttributes.id,
-        custom_id: productAttributes.custom_id,
-        name: productAttributes.name,
-        type: productAttributes.type,
-        description: productAttributes.description,
-        presentation: productAttributes.presentation,
-        unit_of_measure: productAttributes.unit_of_measure,
-        production_cost: Number(productAttributes.production_cost),
-        storage_conditions: productAttributes.storage_conditions,
-        barcode: productAttributes.barcode,
-        sku: productAttributes.sku,
-        sale_price: Number(productAttributes.sale_price),
-        photo: productAttributes.photo,
-        is_draft: productAttributes.is_draft,
-        is_active: productAttributes.is_active,
+        ...productAttributes,
+        production_cost: productAttributes.production_cost ? DecimalVO.from(productAttributes.production_cost) : null,
+        sale_price: productAttributes.sale_price ? DecimalVO.from(productAttributes.sale_price) : null,
         created_at: (productAttributes.created_at instanceof Date) ? productAttributes.created_at : new Date(productAttributes.created_at),
         updated_at: (productAttributes.updated_at instanceof Date) ? productAttributes.updated_at : new Date(productAttributes.updated_at)
     };
     return productDomain;
-}
+};
+
+const mapProductCreateDomainToModel = (data: ProductCreateProps): ProductCreateAttributes => ({
+    is_active: data.is_active,
+    is_draft: data.is_draft,
+    barcode: data.barcode ? data.barcode : null,
+    custom_id: data.custom_id ? data.custom_id : null,
+    description: data.description ? data.description : null,
+    name: data.name ? data.name : null,
+    photo: data.photo ? data.photo : null,
+    presentation: data.presentation ? data.presentation : null,
+    production_cost: data.production_cost ? data.production_cost.toString() : null,
+    sale_price: data.sale_price ? data.sale_price.toString() : null,
+    sku: data.sku ? data.sku : null,
+    storage_conditions: data.storage_conditions ? data.storage_conditions : null,
+    type: data.type ? data.type : null,
+    unit_of_measure: data.unit_of_measure ? data.unit_of_measure : null
+});
+
+const mapProductUpdateModelToDomain = (data: ProductUpdateProps): ProductUpdateAttributes => {
+    const { production_cost, sale_price, ...rest } = data;
+    return {
+        ...rest,
+        ...(production_cost !== undefined
+            ? { production_cost: production_cost === null ? null : production_cost.toString() }
+            : {}),
+        ...(sale_price !== undefined
+            ? { sale_price: sale_price === null ? null : sale_price.toString() }
+            : {}),
+    };
+};
 
 export class ProductRepository implements IProductRepository {
     // ================================================================
@@ -112,54 +132,49 @@ export class ProductRepository implements IProductRepository {
             transaction: tx,
             attributes: ProductModel.getAllFields() as (keyof ProductAttributes)[],
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapProductModelToDomain(pl));
     };
     findById = async (id: number, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     }
     findByName = async (name: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { name },
-            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     }
     findByCustomId = async (custom_id: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { custom_id: custom_id },
-            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     }
     findBySku = async (sku: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { sku: sku },
-            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     }
     findByBarcode = async (barcode: string, tx?: Transaction): Promise<ProductProps | null> => {
         const row: ProductModel | null = await ProductModel.findOne({
             transaction: tx,
             where: { barcode: barcode },
-            attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data: ProductCreateProps, tx?: Transaction): Promise<ProductProps> => {
-        const created: ProductModel = await ProductModel.create(data, { transaction: tx });
+        const created: ProductModel = await ProductModel.create(mapProductCreateDomainToModel(data), { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear el nuevo producto.");
-        return mapModelToDomain(created);
+        return mapProductModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -171,21 +186,20 @@ export class ProductRepository implements IProductRepository {
         if (!existing) throw new HttpError(404,
             "El producto que se desea actualizar no fue posible encontrarlo."
         );
+        const existingDomain: InputProps = mapProductModelToDomain(existing);
+        if (!Object.keys(data).length) return existingDomain;
         // 2. Aplicar UPDATE
-        // const [affectedCount]: [affectedCount: number] = 
-        await ProductModel.update(data, {
+        const [affectedCount] = await ProductModel.update(mapProductUpdateModelToDomain(data), {
             where: { id },
             transaction: tx,
         });
-        // if (!affectedCount)
-        //     throw new HttpError(500, "No fue posible actualizar el producto.");
-        // 3. Obtener la locación actualizada
+        if (!affectedCount) return existingDomain;
         const updated: ProductModel | null = await ProductModel.findByPk(id, {
             transaction: tx,
             attributes: ProductModel.getAllFields() as ((keyof ProductAttributes)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el producto.");
-        return mapModelToDomain(updated);
+        return mapProductModelToDomain(updated);
     }
     // ================================================================
     // DELETE
@@ -204,5 +218,4 @@ export class ProductRepository implements IProductRepository {
         if (!deleted) throw new HttpError(500, "No fue posible eliminar el producto.");
         return;
     }
-}
-
+};

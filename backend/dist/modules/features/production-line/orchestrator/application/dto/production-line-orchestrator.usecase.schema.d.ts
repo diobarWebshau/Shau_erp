@@ -30,8 +30,8 @@ declare const createProductionLineOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -81,8 +81,8 @@ declare const updateProductionLineOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;

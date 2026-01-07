@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateInventoryUseCase = void 0;
+const decimal_vo_1 = require("@shared/domain/value-objects/decimal.vo");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -41,6 +42,12 @@ exports.CreateInventoryUseCase = void 0;
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapInventoryCreateDtoToDomain = (data) => ({
+    ...data,
+    maximum_stock: decimal_vo_1.DecimalVO.from(data.maximum_stock),
+    minimum_stock: decimal_vo_1.DecimalVO.from(data.minimum_stock),
+    stock: decimal_vo_1.DecimalVO.from(data.stock)
+});
 class CreateInventoryUseCase {
     repo;
     constructor(repo) {
@@ -48,13 +55,9 @@ class CreateInventoryUseCase {
     }
     ;
     execute = async (data, tx) => {
-        const responseInventory = await this.repo.create(data, tx);
-        const inventoryFormmatted = {
-            ...responseInventory,
-            created_at: responseInventory.created_at.toISOString(),
-            updated_at: responseInventory.updated_at.toISOString(),
-        };
-        return inventoryFormmatted;
+        const createData = mapInventoryCreateDtoToDomain(data);
+        const responseInventory = await this.repo.create(createData, tx);
+        return responseInventory;
     };
 }
 exports.CreateInventoryUseCase = CreateInventoryUseCase;

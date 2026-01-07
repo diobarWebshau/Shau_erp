@@ -116,7 +116,7 @@ class LocationProductionLineRepository {
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la asignación de la línea de producción a la locación.");
+            return existing;
         // 3. Obtener la locación actualizada
         const updated = await location_production_line_orm_1.LocationProductionLineModel.findByPk(id, {
             transaction: tx,

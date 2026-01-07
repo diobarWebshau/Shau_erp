@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
-import type { ProcessCreateProps, ProcessProps } from "../../domain/process.types";
+import type { ProcessProps } from "../../domain/process.types";
 import HttpError from "@shared/errors/http/http-error";
 import { ProcessCreateDto } from "../dto/process.model.schema";
 

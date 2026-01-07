@@ -1,4 +1,4 @@
-import { GetAllProductsSchema } from "../../application/dto/product.endpoint.schema";
+import { ProductQueryDto } from "../../application/dto/product.model.schema";
 import type { ProductSearchCriteria } from "../../domain/product.types";
 /**
  * Query → Criteria Mapper
@@ -45,4 +45,4 @@ import type { ProductSearchCriteria } from "../../domain/product.types";
  * - Infrastructure/HTTP: mappers convierten queries en criterios.
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
-export declare const mapProductQueryToCriteria: (query: GetAllProductsSchema["query"]) => ProductSearchCriteria;
+export declare const mapProductQueryToDomain: (query: ProductQueryDto) => ProductSearchCriteria;

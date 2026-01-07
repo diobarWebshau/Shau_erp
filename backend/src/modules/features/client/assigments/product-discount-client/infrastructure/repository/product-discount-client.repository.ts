@@ -1,6 +1,8 @@
 import type { ProductDiscountClientCreateProps, ProductDiscountClientProps, ProductDiscountClientUpdateProps } from "../../domain/product-discount-client.types";
+import { ProductDiscountClientCreateDto, ProductDiscountClientUpdateDto } from "../../application/dto/product-discount-client.model.schema";
 import type { IProductDiscountClientRepository } from "../../domain/product-discount-client.repository.interface";
-import { ProductDiscountClientModel } from "../orm/product-discount-client.orm";
+import { ProductDiscountClientAttributes, ProductDiscountClientModel } from "../orm/product-discount-client.orm";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -52,15 +54,32 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductDiscountClientModel): ProductDiscountClientProps => {
-    const json: ProductDiscountClientProps = model.toJSON();
+const mapProductDiscountClientModelToDomain = (model: ProductDiscountClientModel): ProductDiscountClientProps => {
+    const productDiscountClientAttributes: ProductDiscountClientAttributes = model.toJSON();
     return {
-        id: json.id,
-        discount_percentage: Number(json.discount_percentage),
-        product_id: json.product_id,
-        client_id: json.client_id,
-        created_at: json.created_at,
-        updated_at: json.created_at
+        ...productDiscountClientAttributes,
+        discount_percentage: DecimalVO.from(productDiscountClientAttributes.discount_percentage),
+        created_at: (productDiscountClientAttributes.created_at instanceof Date)
+            ? productDiscountClientAttributes.created_at : new Date(productDiscountClientAttributes.created_at),
+        updated_at: (productDiscountClientAttributes.updated_at instanceof Date)
+            ? productDiscountClientAttributes.updated_at : new Date(productDiscountClientAttributes.updated_at)
+    };
+};
+
+const mapProductDiscountClientCreateDomainToModel = (data: ProductDiscountClientCreateProps): ProductDiscountClientCreateDto => {
+    return {
+        ...data,
+        discount_percentage: data.discount_percentage.toString()
+    }
+};
+
+const mapProductDiscountClientUpdateDomainToModel = (data: ProductDiscountClientUpdateProps): ProductDiscountClientUpdateDto => {
+    const { discount_percentage, ...rest } = data;
+    return {
+        ...rest,
+        ...(discount_percentage !== undefined
+            ? { discount_percentage: discount_percentage.toString() }
+            : {}),
     };
 };
 
@@ -73,7 +92,7 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
             transaction: tx,
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
-        const rowsMap: ProductDiscountClientProps[] = rows.map((r) => mapModelToDomain(r));
+        const rowsMap: ProductDiscountClientProps[] = rows.map((r) => mapProductDiscountClientModelToDomain(r));
         return rowsMap;
     }
     findById = async (id: number, tx?: Transaction): Promise<ProductDiscountClientProps | null> => {
@@ -82,7 +101,7 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
         console.log("diobar");
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductDiscountClientModelToDomain(row) : null;
     }
 
     findByClientId = async (client_id: number, tx?: Transaction): Promise<ProductDiscountClientProps[]> => {
@@ -91,7 +110,7 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
             transaction: tx,
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
-        const rowsMap: ProductDiscountClientProps[] = rows.map((r) => mapModelToDomain(r));
+        const rowsMap: ProductDiscountClientProps[] = rows.map((r) => mapProductDiscountClientModelToDomain(r));
         return rowsMap;
     }
 
@@ -102,16 +121,16 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[])
         });
         console.log(`row`, row);
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductDiscountClientModelToDomain(row) : null;
     }
 
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data: ProductDiscountClientCreateProps, tx?: Transaction): Promise<ProductDiscountClientProps> => {
-        const created: ProductDiscountClientModel = await ProductDiscountClientModel.create(data, { transaction: tx });
+        const created: ProductDiscountClientModel = await ProductDiscountClientModel.create(mapProductDiscountClientCreateDomainToModel(data), { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear la asignación del descuento por rango al producto.");
-        return mapModelToDomain(created);
+        return mapProductDiscountClientModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -124,20 +143,20 @@ export class ProductDiscountClientRepository implements IProductDiscountClientRe
         if (!existing) throw new HttpError(404,
             "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla."
         );
-        // 2. Aplicar UPDATE
-        const [affectedCount]: [affectedCount: number] = await ProductDiscountClientModel.update(data, {
+        const existingDomain = mapProductDiscountClientModelToDomain(existing);
+        if (Object.keys(data)) return existingDomain;
+        const [affectedCount]: [affectedCount: number] = await ProductDiscountClientModel.update(mapProductDiscountClientUpdateDomainToModel(data), {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
+        if (!affectedCount) return existingDomain;
         // 3. Obtener la producto actualizada
         const updated: ProductDiscountClientModel | null = await ProductDiscountClientModel.findByPk(id, {
             transaction: tx,
             attributes: ProductDiscountClientModel.getAllFields() as ((keyof ProductDiscountClientProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del descuento del producto para el cliente.");
-        return mapModelToDomain(updated);
+        return mapProductDiscountClientModelToDomain(updated);
     }
     // ================================================================
     // DELETE

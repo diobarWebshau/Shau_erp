@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductionLineQuerySchema = exports.productionLineResponseSchema = exports.productionLineUpdateSchema = exports.productionLineCreateSchema = void 0;
+exports.productionLineQuerySchema = exports.productionLineResponseSchema = exports.productionLineUpdateSchema = exports.productionLineCreateSchema = void 0;
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -90,7 +90,7 @@ exports.productionLineResponseSchema = productionLineResponseSchema;
  * - La conversión de tipos (string → number/boolean) se realiza posteriormente
  *   en el controller o en una capa de normalización.
  */
-const ProductionLineQuerySchema = zod_1.z.object({
+const productionLineQuerySchema = zod_1.z.object({
     filter: zod_1.z.string().optional(),
     exclude_ids: zod_1.z.union([
         zod_1.z.string(),
@@ -108,4 +108,4 @@ const ProductionLineQuerySchema = zod_1.z.object({
         return val;
     }, zod_1.z.boolean({ message: "Active must be a boolean" })).optional(),
 }).strict();
-exports.ProductionLineQuerySchema = ProductionLineQuerySchema;
+exports.productionLineQuerySchema = productionLineQuerySchema;

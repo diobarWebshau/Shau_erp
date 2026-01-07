@@ -10,8 +10,6 @@ export declare class ClientAddressController {
     private readonly updateUseCase;
     private readonly deleteUseCase;
     constructor();
-    /** Formatea un Location para convertir fechas a ISO */
-    private formatResponse;
     getAll: (_req: ApiRequest<GetAllClientAddresssSchema>, res: ApiResponse<GetAllClientAddresssSchema>) => Promise<ApiResponse<GetAllClientAddresssSchema>>;
     getById: (req: ApiRequest<GetByIdClientAddressSchema>, res: ApiResponse<GetByIdClientAddressSchema>) => Promise<ApiResponse<GetByIdClientAddressSchema>>;
     getByClientIdName: (req: ApiRequest<GetByClientIdClientAddressSchema>, res: ApiResponse<GetByClientIdClientAddressSchema>) => Promise<ApiResponse<GetByClientIdClientAddressSchema>>;

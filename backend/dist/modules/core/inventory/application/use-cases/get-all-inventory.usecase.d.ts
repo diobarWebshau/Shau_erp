@@ -1,6 +1,6 @@
 import { IInventoryRepository } from "../../domain/inventory.repository.interface";
+import { InventoryProps } from "../../domain/inventory.types";
 import { Transaction } from "sequelize";
-import { inventoryResponseDto } from "../dto/inventory.model.schema";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +44,5 @@ import { inventoryResponseDto } from "../dto/inventory.model.schema";
 export declare class GetAllInventoryUseCase {
     private readonly repo;
     constructor(repo: IInventoryRepository);
-    execute: (tx?: Transaction) => Promise<inventoryResponseDto[]>;
+    execute: (tx?: Transaction) => Promise<InventoryProps[]>;
 }

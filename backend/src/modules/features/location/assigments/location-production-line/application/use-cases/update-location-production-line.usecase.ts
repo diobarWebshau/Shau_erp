@@ -1,7 +1,5 @@
 import type { LocationProductionLineUpdateProps, LocationProductionLineProps } from "../../domain/location-production-line.types";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -53,14 +51,8 @@ export class UpdateLocationProductionLineUseCase {
         if (!existing) throw new HttpError(404,
             "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof LocationProductionLineUpdateProps)[] = [
-            "location_id", "production_line_id"
-        ];
-        const filteredBody: LocationProductionLineUpdateProps = pickEditableFields(data, editableFields);
-        const merged: LocationProductionLineProps = { ...existing, ...filteredBody };
-        const updateValues: LocationProductionLineUpdateProps = await diffObjects(existing, merged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: LocationProductionLineProps = await this.repo.update(id, updateValues, tx);
+        if (!Object.keys(data).length) return existing;
+        const updated: LocationProductionLineProps = await this.repo.update(id, data, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion de la línea de producción a la ubicación."
         );

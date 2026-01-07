@@ -1,3 +1,4 @@
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 /**
  * Domain Types
  * ------------------------------------------------------------------
@@ -46,6 +47,7 @@
  *   derivados de estos tipos.
  */
 
+
 interface ProductProps {
     id: number,
     custom_id?: string | null,
@@ -54,11 +56,11 @@ interface ProductProps {
     description?: string | null,
     presentation?: string | null,
     unit_of_measure?: string | null,
-    production_cost?: number | null,
+    production_cost?: DecimalVO | null,
     storage_conditions?: string | null,
     barcode?: number | null,
     sku?: string | null,
-    sale_price?: number | null,
+    sale_price?: DecimalVO | null,
     photo?: string | null,
     is_draft: boolean,
     is_active: boolean,
@@ -73,14 +75,14 @@ interface ProductSearchCriteria {
     filter?: string,
     exclude_ids?: number[];
 
-    name?: string | string[] ,
-    description?: string | string[],
-    sku?: string | string[],
-    presentation?: string | string[],
-    unit_of_measure?: string | string[],
-    barcode?: string | string[],
-    custom_id?: string | string[],
-    
+    name?: string[],
+    description?: string[],
+    sku?: string[],
+    presentation?: string[],
+    unit_of_measure?: string[],
+    barcode?: string[],
+    custom_id?: string[],
+
     is_draft?: boolean,
     is_active?: boolean
 }

@@ -110,10 +110,6 @@ export class CreateInputUseCase {
         // ------------------------------------------------------------------
         const created: InputProps = await this.repo.create(createData, tx);
 
-        if (!created) {
-            throw new HttpError(500, "No fue posible crear el nuevo Inputo");
-        }
-
         // ------------------------------------------------------------------
         // 🖼️ ORGANIZACIÓN DE IMAGEN (POST-CREACIÓN)
         // ------------------------------------------------------------------

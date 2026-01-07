@@ -43,7 +43,7 @@ import { z } from "zod";
 declare const ProductDiscountClientCreateSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     client_id: z.ZodNumber;
-    discount_percentage: z.ZodNumber;
+    discount_percentage: z.ZodString;
 }, z.core.$strip>;
 /**
  * UpdateSchema
@@ -54,7 +54,7 @@ declare const ProductDiscountClientCreateSchema: z.ZodObject<{
 declare const ProductDiscountClientUpdateSchema: z.ZodObject<{
     product_id: z.ZodOptional<z.ZodNumber>;
     client_id: z.ZodOptional<z.ZodNumber>;
-    discount_percentage: z.ZodOptional<z.ZodNumber>;
+    discount_percentage: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 /**
  * ResponseSchema
@@ -65,7 +65,7 @@ declare const ProductDiscountClientUpdateSchema: z.ZodObject<{
 declare const ProductDiscountClientReponseSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     client_id: z.ZodNumber;
-    discount_percentage: z.ZodNumber;
+    discount_percentage: z.ZodString;
     id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;

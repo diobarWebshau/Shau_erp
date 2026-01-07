@@ -3,14 +3,15 @@ import { IProductDiscountClientRepository } from "../../assigments/product-disco
 import { ClientCreateOrchestratorSchema, ClientUpdateOrchestratorSchema } from "../application/dto/client-orchestrator.endpoint.schema";
 import { ClientAddressRepository } from "../../assigments/client-addresses/infrastructure/repository/client-address.repository";
 import { IClientAddressRepository } from "../../assigments/client-addresses/domain/client-address.repository.interface";
+import { mapClientOrchestratorDomainToDto } from "./../../../../query/client/infrastructure/http/client-query.controller";
 import { ClientQueryRepository } from "@modules/query/client/infrastructure/repository/client-query.repository";
 import { CreateClientOrchestratorUseCase } from "../application/use-cases/create-client-orchestrator.usecase";
 import { UpdateClientOrchestratorUseCase } from "../application/use-cases/update-client-orchestrator.usecase";
-import { ClientOrchestratorResponseDto } from "../application/dto/client-orchestrator.model.schema";
 import { ClientRepository } from "@modules/core/client/infrastructure/repository/client.repository";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { IClientQueryRepository } from "@modules/query/client/domain/client-query.repository";
 import { IClientRepository } from "@modules/core/client/domain/client.repository.interface";
+import { ClientOrchestrator } from "../domain/client-orchestrator.types";
 
 export class ClientOrchestratorController {
 
@@ -42,14 +43,16 @@ export class ClientOrchestratorController {
 
     create = async (req: ApiRequest<ClientCreateOrchestratorSchema>, res: ApiResponse<ClientCreateOrchestratorSchema>) => {
         const { payload }: ClientCreateOrchestratorSchema["body"] = req.body;
-        const result: ClientOrchestratorResponseDto = await this.createClientOrchestratorUseCase.execute(payload);
+        const response: ClientOrchestrator = await this.createClientOrchestratorUseCase.execute(payload);
+        const result = mapClientOrchestratorDomainToDto(response);
         return res.status(201).json(result);
     };
 
     update = async (req: ApiRequest<ClientUpdateOrchestratorSchema>, res: ApiResponse<ClientUpdateOrchestratorSchema>) => {
         const { id }: ClientUpdateOrchestratorSchema["params"] = req.params;
         const { payload }: ClientUpdateOrchestratorSchema["body"] = req.body;
-        const result: ClientOrchestratorResponseDto = await this.updateClientOrchestratorUseCase.execute(Number(id), payload);
+        const response: ClientOrchestrator = await this.updateClientOrchestratorUseCase.execute(Number(id), payload);
+        const result = mapClientOrchestratorDomainToDto(response);
         return res.status(200).json(result);
     };
 

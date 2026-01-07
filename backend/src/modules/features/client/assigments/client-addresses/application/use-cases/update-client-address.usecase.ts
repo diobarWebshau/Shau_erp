@@ -1,8 +1,6 @@
-import type { ClientAddressProps, ClientAddressUpdateProps } from "../../domain/client-address.types";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
+import { ClientAddressUpdateDto } from "../dto/client-address.model.schema";
+import type { ClientAddressProps} from "../../domain/client-address.types";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -49,23 +47,13 @@ import { Transaction } from "sequelize";
 
 export class UpdateClientAddressUseCase {
     constructor(private readonly repo: IClientAddressRepository) { }
-    async execute(id: number, data: ClientAddressUpdateProps, tx?: Transaction): Promise<ClientAddressProps> {
+    async execute(id: number, data: ClientAddressUpdateDto, tx?: Transaction): Promise<ClientAddressProps> {
         const existing: ClientAddressProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "El cliente que se desea actualizar no fue posible encontrarlo."
         );
-        const editableFields: (keyof ClientAddressUpdateProps)[] = [
-            "city", "client_id", "country",
-            "neighborhood", "state", "street", "street_number",
-            "zip_code"
-        ];
-        const filteredBody: ClientAddressUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ClientAddressProps = { ...existing, ...filteredBody };
-        const normalizedExisting: ClientAddressUpdateProps = deepNormalizeDecimals<ClientAddressUpdateProps>(existing, ["zip_code", "street_number"]);
-        const normalizedMerged: ClientAddressUpdateProps = deepNormalizeDecimals<ClientAddressUpdateProps>(merged, ["zip_code", "street_number"]);
-        const updateValues: ClientAddressUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: ClientAddressProps = await this.repo.update(id, updateValues, tx);
+        if (!Object.keys(data).length) return existing;
+        const updated: ClientAddressProps = await this.repo.update(id, data, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar el cliente."
         );

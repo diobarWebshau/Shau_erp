@@ -49,14 +49,7 @@ class GetByIdInventoryUseCase {
     ;
     execute = async (id, tx) => {
         const inventoryResponse = await this.repo.findById(id, tx);
-        if (!inventoryResponse)
-            return null;
-        const inventoryResponseFormatted = {
-            ...inventoryResponse,
-            created_at: inventoryResponse.created_at.toISOString(),
-            updated_at: inventoryResponse.updated_at.toISOString(),
-        };
-        return inventoryResponseFormatted;
+        return inventoryResponse;
     };
 }
 exports.GetByIdInventoryUseCase = GetByIdInventoryUseCase;

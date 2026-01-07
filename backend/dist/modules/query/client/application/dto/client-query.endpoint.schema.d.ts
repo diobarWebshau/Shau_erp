@@ -8,7 +8,6 @@ declare const getAllClientOrchestratorSchema: z.ZodObject<{
         company_name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         tax_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         email: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        phone: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         city: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         state: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         country: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
@@ -17,7 +16,7 @@ declare const getAllClientOrchestratorSchema: z.ZodObject<{
         tax_regimen: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         payment_terms: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         cfdi: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
+        is_active: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
@@ -34,7 +33,7 @@ declare const getAllClientOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodString;
             payment_terms: z.ZodNullable<z.ZodString>;
             zip_code: z.ZodNumber;
-            credit_limit: z.ZodNullable<z.ZodNumber>;
+            credit_limit: z.ZodNullable<z.ZodString>;
             tax_regimen: z.ZodNullable<z.ZodString>;
             cfdi: z.ZodString;
             payment_method: z.ZodNullable<z.ZodString>;
@@ -59,7 +58,7 @@ declare const getAllClientOrchestratorSchema: z.ZodObject<{
         discounts: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
             client_id: z.ZodNumber;
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             id: z.ZodNumber;
             created_at: z.ZodString;
             updated_at: z.ZodString;
@@ -74,8 +73,8 @@ declare const getAllClientOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -95,7 +94,6 @@ declare const getByIdClientOrchestratorSchema: z.ZodObject<{
         company_name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         tax_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         email: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        phone: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         city: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         state: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         country: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
@@ -104,7 +102,7 @@ declare const getByIdClientOrchestratorSchema: z.ZodObject<{
         tax_regimen: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         payment_terms: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         cfdi: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
+        is_active: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodNullable<z.ZodObject<{
@@ -121,7 +119,7 @@ declare const getByIdClientOrchestratorSchema: z.ZodObject<{
             neighborhood: z.ZodString;
             payment_terms: z.ZodNullable<z.ZodString>;
             zip_code: z.ZodNumber;
-            credit_limit: z.ZodNullable<z.ZodNumber>;
+            credit_limit: z.ZodNullable<z.ZodString>;
             tax_regimen: z.ZodNullable<z.ZodString>;
             cfdi: z.ZodString;
             payment_method: z.ZodNullable<z.ZodString>;
@@ -146,7 +144,7 @@ declare const getByIdClientOrchestratorSchema: z.ZodObject<{
         discounts: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
             client_id: z.ZodNumber;
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             id: z.ZodNumber;
             created_at: z.ZodString;
             updated_at: z.ZodString;
@@ -161,8 +159,8 @@ declare const getByIdClientOrchestratorSchema: z.ZodObject<{
                 barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
                 sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-                sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-                production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+                sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+                production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
                 is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
                 id: z.ZodNumber;
@@ -180,7 +178,6 @@ declare const getAllClientFullQuerySchema: z.ZodObject<{
         company_name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         tax_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         email: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        phone: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         city: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         state: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         country: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
@@ -189,7 +186,7 @@ declare const getAllClientFullQuerySchema: z.ZodObject<{
         tax_regimen: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         payment_terms: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
         cfdi: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-        is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
+        is_active: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
@@ -205,7 +202,7 @@ declare const getAllClientFullQuerySchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -216,7 +213,7 @@ declare const getAllClientFullQuerySchema: z.ZodObject<{
         discounts: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
             client_id: z.ZodNumber;
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             id: z.ZodNumber;
             created_at: z.ZodString;
             updated_at: z.ZodString;
@@ -255,7 +252,7 @@ declare const getByIdClientFullQuerySchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -266,7 +263,7 @@ declare const getByIdClientFullQuerySchema: z.ZodObject<{
         discounts: z.ZodArray<z.ZodObject<{
             product_id: z.ZodNumber;
             client_id: z.ZodNumber;
-            discount_percentage: z.ZodNumber;
+            discount_percentage: z.ZodString;
             id: z.ZodNumber;
             created_at: z.ZodString;
             updated_at: z.ZodString;

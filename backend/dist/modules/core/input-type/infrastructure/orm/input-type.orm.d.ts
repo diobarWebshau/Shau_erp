@@ -48,8 +48,9 @@ interface InputTypeAttributes {
     created_at: Date;
     updated_at: Date;
 }
-type InputTypeCreationAttributes = Partial<Omit<InputTypeAttributes, 'id' | 'created_at' | 'updated_at'>>;
-declare class InputTypeModel extends Model<InputTypeAttributes, InputTypeCreationAttributes> {
+type InputTypeCreateAttributes = Omit<InputTypeAttributes, 'id' | 'created_at' | 'updated_at'>;
+type InputTypeUpdateAttributes = Partial<InputTypeAttributes>;
+declare class InputTypeModel extends Model<InputTypeAttributes, InputTypeCreateAttributes> {
     id: number;
     name: string;
     created_at: Date;
@@ -58,4 +59,4 @@ declare class InputTypeModel extends Model<InputTypeAttributes, InputTypeCreatio
     static getEditableFields: () => readonly (keyof InputTypeAttributes)[];
 }
 export { InputTypeModel };
-export type { InputTypeAttributes, InputTypeCreationAttributes };
+export type { InputTypeAttributes, InputTypeUpdateAttributes, InputTypeCreateAttributes };

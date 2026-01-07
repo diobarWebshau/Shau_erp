@@ -57,8 +57,8 @@ declare const getAllLocationOrchestratorSchema: z.ZodObject<{
                 updated_at: z.ZodString;
             }, z.core.$strip>;
             location_type: z.ZodObject<{
-                id: z.ZodNumber;
                 name: z.ZodString;
+                id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
             }, z.core.$strip>;
@@ -147,8 +147,8 @@ declare const getByIdLocationOrchestratorSchema: z.ZodObject<{
                 updated_at: z.ZodString;
             }, z.core.$strip>;
             location_type: z.ZodObject<{
-                id: z.ZodNumber;
                 name: z.ZodString;
+                id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
             }, z.core.$strip>;
@@ -274,8 +274,8 @@ declare const getAllLocationtFullQuerySchema: z.ZodObject<{
                 updated_at: z.ZodString;
             }, z.core.$strip>;
             location_type: z.ZodObject<{
-                id: z.ZodNumber;
                 name: z.ZodString;
+                id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
             }, z.core.$strip>;
@@ -362,8 +362,8 @@ declare const getByIdLocationtFullQuerySchema: z.ZodObject<{
                 updated_at: z.ZodString;
             }, z.core.$strip>;
             location_type: z.ZodObject<{
-                id: z.ZodNumber;
                 name: z.ZodString;
+                id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
             }, z.core.$strip>;

@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationRepository = void 0;
+const location_orm_1 = require("../orm/location.orm");
 const sequelize_1 = require("sequelize");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
-const location_orm_1 = require("../orm/location.orm");
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -54,26 +54,13 @@ const location_orm_1 = require("../orm/location.orm");
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapLocationModelToDomain = (model) => {
+    const locationAttributes = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        description: json.description,
-        custom_id: json.custom_id,
-        phone: json.phone,
-        street: json.street,
-        street_number: json.street_number,
-        neighborhood: json.neighborhood,
-        city: json.city,
-        state: json.state,
-        country: json.country,
-        zip_code: json.zip_code,
-        production_capacity: json.production_capacity,
-        location_manager: json.location_manager,
-        is_active: Boolean(json.is_active),
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        ...locationAttributes,
+        is_active: Boolean(locationAttributes.is_active),
+        created_at: locationAttributes.created_at ? locationAttributes.created_at : new Date(locationAttributes.created_at),
+        updated_at: locationAttributes.updated_at ? locationAttributes.updated_at : new Date(locationAttributes.updated_at)
     };
 };
 class LocationRepository {
@@ -96,10 +83,13 @@ class LocationRepository {
             ...(filter
                 ? {
                     [sequelize_1.Op.or]: [
-                        { company_name: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { email: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { tax_id: { [sequelize_1.Op.like]: `%${filter}%` } },
-                        { cfdi: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { name: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { phone: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { custom_id: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { description: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { state: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { city: { [sequelize_1.Op.like]: `%${filter}%` } },
+                        { country: { [sequelize_1.Op.like]: `%${filter}%` } },
                     ],
                 }
                 : {}),
@@ -107,33 +97,29 @@ class LocationRepository {
         const rows = await location_orm_1.LocationModel.findAll({
             where,
             transaction: tx,
-            attributes: location_orm_1.LocationModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapLocationModelToDomain(r));
         return rowsMap;
     };
     findById = async (id, tx) => {
         const row = await location_orm_1.LocationModel.findByPk(id, {
-            attributes: location_orm_1.LocationModel.getAllFields(),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapLocationModelToDomain(row) : null;
     };
     findByName = async (name, tx) => {
         const row = await location_orm_1.LocationModel.findOne({
             where: { name },
-            attributes: location_orm_1.LocationModel.getAllFields(),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapLocationModelToDomain(row) : null;
     };
     findByCustomId = async (custom_id, tx) => {
         const row = await location_orm_1.LocationModel.findOne({
             where: { custom_id },
             transaction: tx,
-            attributes: location_orm_1.LocationModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapLocationModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
@@ -142,7 +128,7 @@ class LocationRepository {
         const created = await location_orm_1.LocationModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la nueva locación.");
-        return mapModelToDomain(created);
+        return mapLocationModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -154,21 +140,23 @@ class LocationRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La locación que se desea actualizar no fue posible encontrarla.");
+        const existingDomain = mapLocationModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
         const [affectedCount] = await location_orm_1.LocationModel.update(data, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la locación.");
+            return existingDomain;
         // 3. Obtener la locación actualizada
         const updated = await location_orm_1.LocationModel.findByPk(id, {
-            attributes: location_orm_1.LocationModel.getAllFields(),
             transaction: tx
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la locación actualizada.");
-        return mapModelToDomain(updated);
+        return mapLocationModelToDomain(updated);
     };
     // ================================================================
     // DELETE

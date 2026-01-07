@@ -45,11 +45,12 @@
  * - Orchestrators: exponen endpoints que terminan trabajando con DTOs y schemas
  *   derivados de estos tipos.
  */
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 interface ProductDiscountClientProps {
     id: number;
     product_id: number;
     client_id: number;
-    discount_percentage: number;
+    discount_percentage: DecimalVO;
     created_at: Date;
     updated_at: Date;
 }

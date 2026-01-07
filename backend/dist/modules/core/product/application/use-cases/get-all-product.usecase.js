@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllProductsUseCase = void 0;
+const product_query_mapper_1 = require("../../infrastructure/http/product-query-mapper");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -47,7 +48,7 @@ class GetAllProductsUseCase {
         this.repo = repo;
     }
     async execute(query, tx) {
-        return await this.repo.findAll(query, tx);
+        return await this.repo.findAll((0, product_query_mapper_1.mapProductQueryToDomain)(query), tx);
     }
 }
 exports.GetAllProductsUseCase = GetAllProductsUseCase;

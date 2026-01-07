@@ -4,8 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateLocationTypeUseCase = void 0;
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -56,15 +54,9 @@ class UpdateLocationTypeUseCase {
         const existing = await this.repo.findById(id);
         if (!existing)
             throw new http_error_1.default(404, "El tipo de locación que se desea actualizar no fue posible encontrarlo.");
-        const editableFields = ["name"];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(existing, merged);
-        if (!Object.keys(updateValues).length)
+        if (!Object.keys(data).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues, tx);
-        if (!updated)
-            throw new http_error_1.default(500, "No fue posible actualizar la locación.");
+        const updated = await this.repo.update(id, data, tx);
         return updated;
     };
 }

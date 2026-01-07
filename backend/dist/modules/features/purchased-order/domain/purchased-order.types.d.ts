@@ -1,7 +1,7 @@
 interface PurchasedOrderProps {
     id: number;
     order_code: string;
-    delivery_date: Date;
+    delivery_date: Date | null;
     status: string;
     client_id: number;
     company_name: string;

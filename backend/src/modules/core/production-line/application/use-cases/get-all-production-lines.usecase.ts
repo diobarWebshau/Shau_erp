@@ -1,6 +1,8 @@
-import { Transaction } from "sequelize";
+import { mapProductionLineQueryDtoToDomain } from "../../infrastructure/http/production-line-query-mapper";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
-import type { ProductionLineProps, ProductionLineSearchCriteria } from "../../domain/production-line.types";
+import type { ProductionLineProps } from "../../domain/production-line.types";
+import { ProductionLineQueryDto } from "../dto/production-lines.model.schema";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -45,7 +47,7 @@ import type { ProductionLineProps, ProductionLineSearchCriteria } from "../../do
 
 export class GetAllProductionLinesUseCase {
     constructor(private readonly repo: IProductionLineRepository) { }
-    async execute(query: ProductionLineSearchCriteria, tx?: Transaction): Promise<ProductionLineProps[]> {
-        return await this.repo.findAll(query, tx);
+    async execute(query: ProductionLineQueryDto, tx?: Transaction): Promise<ProductionLineProps[]> {
+        return await this.repo.findAll(mapProductionLineQueryDtoToDomain(query), tx);
     }
 }

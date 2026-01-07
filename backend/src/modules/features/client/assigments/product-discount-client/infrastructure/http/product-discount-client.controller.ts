@@ -68,6 +68,17 @@ import { ClientRepository } from "@src/modules/core/client/infrastructure/reposi
  *   de forma coherente hacia clientes externos.
  */
 
+/** Formatea un Location para convertir fechas a ISO */
+const mapProductDiscountClientDomainToDto = async (productDiscountClient: ProductDiscountClientProps): Promise<ProductDiscountClientResponseDto> => {
+    return {
+        ...productDiscountClient,
+        discount_percentage: productDiscountClient.discount_percentage.toString(),
+        created_at: productDiscountClient.created_at.toISOString(),
+        updated_at: productDiscountClient.updated_at.toISOString()
+    };
+};
+
+
 export class ProductDiscountClientController {
 
     private readonly repo: ProductDiscountClientRepository;
@@ -94,14 +105,7 @@ export class ProductDiscountClientController {
         this.getByProductClientUseCase = new GetProductDiscountClientByProductClientUseCase(this.repo);
     };
 
-    /** Formatea un Location para convertir fechas a ISO */
-    private async formatResponse(productDiscountClient: ProductDiscountClientProps): Promise<ProductDiscountClientResponseDto> {
-        return {
-            ...productDiscountClient,
-            created_at: productDiscountClient.created_at.toISOString(),
-            updated_at: productDiscountClient.updated_at.toISOString()
-        };
-    };
+
 
     // ============================================================
     // GET ALL
@@ -109,7 +113,7 @@ export class ProductDiscountClientController {
     getAll = async (_req: ApiRequest<GetAllProductDiscountClientsSchema>, res: ApiResponse<GetAllProductDiscountClientsSchema>) => {
         const result: ProductDiscountClientProps[] = await this.getAllUseCase.execute();
         const formatted: ProductDiscountClientResponseDto[] = await Promise.all(
-            result.map(p => this.formatResponse(p))
+            result.map(p => mapProductDiscountClientDomainToDto(p))
         );
         return res.status(200).send(formatted);
     };
@@ -122,7 +126,7 @@ export class ProductDiscountClientController {
         const { client_id }: GetByProductIdProductDiscountClientSchema["params"] = req.params
         const result: ProductDiscountClientProps[] = await this.getByProductUseCase.execute(Number(client_id));
         const formatted: ProductDiscountClientResponseDto[] = await Promise.all(
-            result.map(p => this.formatResponse(p))
+            result.map(p => mapProductDiscountClientDomainToDto(p))
         );
         return res.status(200).send(formatted);
     };
@@ -136,7 +140,7 @@ export class ProductDiscountClientController {
         const result: ProductDiscountClientProps | null = await this.getByProductClientUseCase.execute(Number(product_id), Number(client_id));
         if (!result) return res.status(204).send(null);
         await console.log(`result`, result)
-        const formatted: ProductDiscountClientResponseDto = await this.formatResponse(result);
+        const formatted: ProductDiscountClientResponseDto = await mapProductDiscountClientDomainToDto(result);
         return res.status(200).send(formatted);
     };
 
@@ -147,7 +151,7 @@ export class ProductDiscountClientController {
         const { id }: GetByIdProductDiscountClientSchema["params"] = req.params
         const result: ProductDiscountClientProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ProductDiscountClientResponseDto = await this.formatResponse(result);
+        const formatted: ProductDiscountClientResponseDto = await mapProductDiscountClientDomainToDto(result);
         return res.status(200).send(formatted);
     };
 
@@ -157,7 +161,7 @@ export class ProductDiscountClientController {
     create = async (req: ApiRequest<CreateProductDiscountClientSchema>, res: ApiResponse<CreateProductDiscountClientSchema>) => {
         const body: ProductDiscountClientCreateDto = req.body;
         const created: ProductDiscountClientProps = await this.createUseCase.execute(body);
-        const formatted: ProductDiscountClientResponseDto = await this.formatResponse(created);
+        const formatted: ProductDiscountClientResponseDto = await mapProductDiscountClientDomainToDto(created);
         return res.status(201).send(formatted);
     };
 
@@ -168,7 +172,7 @@ export class ProductDiscountClientController {
         const { id }: UpdateProductDiscountClientSchema["params"] = req.params;
         const body: ProductDiscountClientUpdateDto = req.body;
         const updated: ProductDiscountClientProps = await this.updateUseCase.execute(Number(id), body);
-        const formatted: ProductDiscountClientResponseDto = await this.formatResponse(updated);
+        const formatted: ProductDiscountClientResponseDto = await mapProductDiscountClientDomainToDto(updated);
         return res.status(200).send(formatted);
     };
 

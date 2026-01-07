@@ -1,5 +1,7 @@
 import { clientAddressResponseSchema } from "@modules/features/client/assigments/client-addresses/application/dto/client-address.model.schema";
 import { productQueryFullResponseSchema } from "@modules/query/product/application/dto/product-query.model.schema";
+import { clientQuerySchema } from "@modules/core/client/application/dto/client.model.schema";
+import { ClientQueryDto } from "@modules/core/client/application/dto/client.model.schema";
 import z from "zod";
 declare const clientQueryOrchestratorSchema: z.ZodObject<{
     client: z.ZodObject<{
@@ -15,7 +17,7 @@ declare const clientQueryOrchestratorSchema: z.ZodObject<{
         neighborhood: z.ZodString;
         payment_terms: z.ZodNullable<z.ZodString>;
         zip_code: z.ZodNumber;
-        credit_limit: z.ZodNullable<z.ZodNumber>;
+        credit_limit: z.ZodNullable<z.ZodString>;
         tax_regimen: z.ZodNullable<z.ZodString>;
         cfdi: z.ZodString;
         payment_method: z.ZodNullable<z.ZodString>;
@@ -40,7 +42,7 @@ declare const clientQueryOrchestratorSchema: z.ZodObject<{
     discounts: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -55,8 +57,8 @@ declare const clientQueryOrchestratorSchema: z.ZodObject<{
             barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
             sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-            sale_price: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-            production_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
+            sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+            production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
             is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             id: z.ZodNumber;
@@ -78,7 +80,7 @@ declare const clientQueryFullResponseSchema: z.ZodObject<{
     neighborhood: z.ZodString;
     payment_terms: z.ZodNullable<z.ZodString>;
     zip_code: z.ZodNumber;
-    credit_limit: z.ZodNullable<z.ZodNumber>;
+    credit_limit: z.ZodNullable<z.ZodString>;
     tax_regimen: z.ZodNullable<z.ZodString>;
     cfdi: z.ZodString;
     payment_method: z.ZodNullable<z.ZodString>;
@@ -89,7 +91,7 @@ declare const clientQueryFullResponseSchema: z.ZodObject<{
     discounts: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -110,5 +112,5 @@ declare const clientQueryFullResponseSchema: z.ZodObject<{
 }, z.core.$strip>;
 type ClientQueryFullResponseDto = z.infer<typeof productQueryFullResponseSchema>;
 type ClientQueryFullOrchestratorResponseDto = z.infer<typeof clientQueryOrchestratorSchema>;
-export type { ClientQueryFullResponseDto, ClientQueryFullOrchestratorResponseDto };
-export { clientAddressResponseSchema, clientQueryFullResponseSchema };
+export type { ClientQueryFullResponseDto, ClientQueryFullOrchestratorResponseDto, ClientQueryDto };
+export { clientAddressResponseSchema, clientQueryFullResponseSchema, clientQuerySchema };

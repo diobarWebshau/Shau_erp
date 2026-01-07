@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductDiscountClientUseCase = void 0;
+const decimal_vo_1 = require("@shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -45,6 +46,10 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductDiscountClientCreateDtoToDomain = (data) => ({
+    ...data,
+    discount_percentage: decimal_vo_1.DecimalVO.from(data.discount_percentage)
+});
 class CreateProductDiscountClientUseCase {
     repo;
     repoProduct;
@@ -64,7 +69,7 @@ class CreateProductDiscountClientUseCase {
         const validDuplicate = await this.repo.findByProductClientId(data.product_id, data.client_id, tx);
         if (validDuplicate)
             throw new http_error_1.default(409, "El cliente ya tiene un descuento para el producto ingresado.");
-        const created = await this.repo.create(data, tx);
+        const created = await this.repo.create(mapProductDiscountClientCreateDtoToDomain(data), tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del descueto del producto al cliente.");
         return created;

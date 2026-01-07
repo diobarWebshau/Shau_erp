@@ -13,7 +13,7 @@ declare const getAllInventoryMovementSchema: z.ZodObject<{
             product: "product";
         }>;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         movement_type: z.ZodEnum<{
             out: "out";
             in: "in";
@@ -50,7 +50,7 @@ declare const getByIdInventoryMovementSchema: z.ZodObject<{
             product: "product";
         }>;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         movement_type: z.ZodEnum<{
             out: "out";
             in: "in";
@@ -84,7 +84,7 @@ declare const createInventoryMovementSchema: z.ZodObject<{
             product: "product";
         }>;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         movement_type: z.ZodEnum<{
             out: "out";
             in: "in";
@@ -112,7 +112,7 @@ declare const createInventoryMovementSchema: z.ZodObject<{
             product: "product";
         }>;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         movement_type: z.ZodEnum<{
             out: "out";
             in: "in";
@@ -148,7 +148,7 @@ declare const updateInventoryMovementSchema: z.ZodObject<{
             product: "product";
         }>>;
         item_name: z.ZodOptional<z.ZodString>;
-        qty: z.ZodOptional<z.ZodNumber>;
+        qty: z.ZodOptional<z.ZodString>;
         movement_type: z.ZodOptional<z.ZodEnum<{
             out: "out";
             in: "in";
@@ -176,7 +176,7 @@ declare const updateInventoryMovementSchema: z.ZodObject<{
             product: "product";
         }>;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         movement_type: z.ZodEnum<{
             out: "out";
             in: "in";

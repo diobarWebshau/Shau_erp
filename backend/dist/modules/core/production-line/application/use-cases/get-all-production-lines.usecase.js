@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllProductionLinesUseCase = void 0;
+const production_line_query_mapper_1 = require("../../infrastructure/http/production-line-query-mapper");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -47,7 +48,7 @@ class GetAllProductionLinesUseCase {
         this.repo = repo;
     }
     async execute(query, tx) {
-        return await this.repo.findAll(query, tx);
+        return await this.repo.findAll((0, production_line_query_mapper_1.mapProductionLineQueryDtoToDomain)(query), tx);
     }
 }
 exports.GetAllProductionLinesUseCase = GetAllProductionLinesUseCase;

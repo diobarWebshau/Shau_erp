@@ -50,18 +50,18 @@ import { Model } from "sequelize";
  */
 interface InputAttributes {
     id: number;
-    custom_id?: string | null;
-    name?: string | null;
-    description?: string | null;
-    sku?: string | null;
-    presentation?: string | null;
-    unit_of_measure?: string | null;
-    storage_conditions?: string | null;
-    barcode?: number | null;
-    input_types_id?: number | null;
-    unit_cost?: number | null;
-    supplier?: string | null;
-    photo?: string | null;
+    custom_id: string | null;
+    name: string | null;
+    description: string | null;
+    sku: string | null;
+    presentation: string | null;
+    unit_of_measure: string | null;
+    storage_conditions: string | null;
+    barcode: number | null;
+    input_types_id: number | null;
+    unit_cost: string | null;
+    supplier: string | null;
+    photo: string | null;
     is_draft: boolean;
     is_active: boolean;
     created_at: Date;
@@ -70,6 +70,23 @@ interface InputAttributes {
 type InputCreateAttributes = Omit<InputAttributes, "id" | "created_at" | "updated_at">;
 type InputUpdateAttributes = Partial<InputCreateAttributes>;
 declare class InputModel extends Model<InputAttributes, InputCreateAttributes> {
+    id: number;
+    custom_id: string | null;
+    name: string | null;
+    description: string | null;
+    sku: string | null;
+    presentation: string | null;
+    unit_of_measure: string | null;
+    storage_conditions: string | null;
+    barcode: number | null;
+    input_types_id: number | null;
+    unit_cost: string | null;
+    supplier: string | null;
+    photo: string | null;
+    is_draft: boolean;
+    is_active: boolean;
+    created_at: Date;
+    updated_at: Date;
     static getEditableFields(): (keyof InputUpdateAttributes)[];
     static getAllFields(): (keyof InputAttributes)[];
 }

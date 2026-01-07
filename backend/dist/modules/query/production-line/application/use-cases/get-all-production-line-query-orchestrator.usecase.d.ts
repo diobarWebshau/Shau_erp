@@ -73,8 +73,8 @@ export declare class GetAllProductionLineQueryOrchestratorUseCase {
                 barcode?: number | null | undefined;
                 sku?: string | null | undefined;
                 photo?: string | null | undefined;
-                sale_price?: number | null | undefined;
-                production_cost?: number | null | undefined;
+                sale_price?: string | null | undefined;
+                production_cost?: string | null | undefined;
             };
             production_line: {
                 name: string;

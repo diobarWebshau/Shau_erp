@@ -39,12 +39,7 @@ class CreateInventoryLocationItemUseCase {
         if (!validateInventory)
             throw new http_error_1.default(404, "El slot de inventario que se desea asignar a la locación no fue posible encontrarlo");
         const inventoryMovementResponse = await this.inventoryLocationItemRepo.create(data, tx);
-        const inventoryMovementResponseFormatted = {
-            ...inventoryMovementResponse,
-            created_at: inventoryMovementResponse.created_at.toISOString(),
-            updated_at: inventoryMovementResponse.updated_at.toISOString()
-        };
-        return inventoryMovementResponseFormatted;
+        return inventoryMovementResponse;
     };
 }
 exports.CreateInventoryLocationItemUseCase = CreateInventoryLocationItemUseCase;

@@ -6,21 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryLocationItemRepository = void 0;
 const inventory_location_item_orm_1 = __importDefault(require("../orm/inventory-location-item.orm"));
 const http_error_1 = __importDefault(require("@src/shared/errors/http/http-error"));
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
-    return { ...json };
+const mapInventoryLocationItemModelToDomain = (model) => {
+    const inventoryLocationItemAttributes = model.toJSON();
+    return inventoryLocationItemAttributes;
 };
 class InventoryLocationItemRepository {
     findAll = async (tx) => {
         const inventoryLocationItemResponses = await inventory_location_item_orm_1.default.findAll({ transaction: tx });
-        const inventoryLocationItemResponsesFormatted = inventoryLocationItemResponses.map(mapModelToDomain);
+        const inventoryLocationItemResponsesFormatted = inventoryLocationItemResponses.map(mapInventoryLocationItemModelToDomain);
         return inventoryLocationItemResponsesFormatted;
     };
     findById = async (id, tx) => {
         const inventoryLocationItemResponse = await inventory_location_item_orm_1.default.findByPk(id, { transaction: tx });
         if (!inventoryLocationItemResponse)
             return null;
-        const inventoryLocationItemResponsesFormatted = mapModelToDomain(inventoryLocationItemResponse);
+        const inventoryLocationItemResponsesFormatted = mapInventoryLocationItemModelToDomain(inventoryLocationItemResponse);
         return inventoryLocationItemResponsesFormatted;
     };
     findByLocationItem = async (location_id, item_id, item_type, tx) => {
@@ -34,14 +34,14 @@ class InventoryLocationItemRepository {
         });
         if (!inventoryLocationItemResponse)
             return null;
-        const inventoryLocationItemResponsesFormatted = mapModelToDomain(inventoryLocationItemResponse);
+        const inventoryLocationItemResponsesFormatted = mapInventoryLocationItemModelToDomain(inventoryLocationItemResponse);
         return inventoryLocationItemResponsesFormatted;
     };
     create = async (data, tx) => {
         const InventoryLocationItemResponse = await inventory_location_item_orm_1.default.create(data, { transaction: tx });
         if (!InventoryLocationItemResponse)
             throw new http_error_1.default(500, "No fue posible crear la asignacion de inventario del item a la locación.");
-        const InventoryLocationItemResponseFormatted = mapModelToDomain(InventoryLocationItemResponse);
+        const InventoryLocationItemResponseFormatted = mapInventoryLocationItemModelToDomain(InventoryLocationItemResponse);
         return InventoryLocationItemResponseFormatted;
     };
     update = async (id, data, tx) => {
@@ -57,7 +57,7 @@ class InventoryLocationItemRepository {
             transaction: tx,
         });
         if (!affectedCount)
-            return mapModelToDomain(existing);
+            return mapInventoryLocationItemModelToDomain(existing);
         // 3. Obtener la locación actualizada
         const updated = await inventory_location_item_orm_1.default.findByPk(id, {
             transaction: tx,
@@ -65,7 +65,7 @@ class InventoryLocationItemRepository {
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignacion de inventario del item a la locación indicada.");
-        return mapModelToDomain(updated);
+        return mapInventoryLocationItemModelToDomain(updated);
     };
     delete = async (id, tx) => {
         const existing = await inventory_location_item_orm_1.default.findByPk(id, {

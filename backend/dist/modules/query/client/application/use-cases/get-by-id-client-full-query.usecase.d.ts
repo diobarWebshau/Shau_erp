@@ -1,6 +1,6 @@
-import type { ClientFullQueryResultDto } from "../../domain/client-query.type";
-import { Transaction } from "sequelize";
 import { IClientQueryRepository } from "../../domain/client-query.repository";
+import type { ClientFullQueryResult } from "../../domain/client-query.type";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +44,5 @@ import { IClientQueryRepository } from "../../domain/client-query.repository";
 export declare class GetByIdClientsFullQueryUseCase {
     private readonly repo;
     constructor(repo: IClientQueryRepository);
-    execute(id: number, tx?: Transaction): Promise<ClientFullQueryResultDto | null>;
+    execute(id: number, tx?: Transaction): Promise<ClientFullQueryResult | null>;
 }

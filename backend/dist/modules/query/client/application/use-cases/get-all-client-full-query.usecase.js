@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllClientFullQueryUseCase = void 0;
-const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
+const map_client_query_dto_to_domain_1 = require("@src/modules/core/client/infrastructure/http/map-client-query-dto-to-domain");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -51,39 +48,8 @@ class GetAllClientFullQueryUseCase {
         this.repo = repo;
     }
     async execute(query, tx) {
-        const clients = await this.repo.getAllClientFullQuery(query, tx);
-        const clientResultOrchestrator = [];
-        for (const c of clients) {
-            const { addresses, discounts, ...client } = c;
-            const dataClient = {
-                ...client,
-                created_at: client.created_at.toISOString(),
-                updated_at: client.updated_at.toISOString(),
-            };
-            const dataDiscounts = discounts.length ? await Promise.all(discounts.map(async (disc) => ({
-                ...disc,
-                created_at: disc.created_at.toISOString(),
-                updated_at: disc.updated_at.toISOString(),
-                product: {
-                    ...disc.product,
-                    created_at: disc.product.created_at.toISOString(),
-                    updated_at: disc.product.updated_at.toISOString(),
-                    photo: disc.product.photo ? await imageHandlerClass_1.default.convertToBase64(disc.product.photo) : null
-                }
-            }))) : [];
-            const dataAddresses = addresses.length ? await Promise.all(addresses.map(async (addr) => ({
-                ...addr,
-                created_at: addr.created_at.toISOString(),
-                updated_at: addr.updated_at.toISOString(),
-            }))) : [];
-            const clientFullResult = {
-                ...dataClient,
-                addresses: dataAddresses,
-                discounts: dataDiscounts
-            };
-            clientResultOrchestrator.push(clientFullResult);
-        }
-        return clientResultOrchestrator;
+        const results = await this.repo.getAllClientFullQuery((0, map_client_query_dto_to_domain_1.mapClientQueryDtoToDomain)(query), tx);
+        return results;
     }
 }
 exports.GetAllClientFullQueryUseCase = GetAllClientFullQueryUseCase;

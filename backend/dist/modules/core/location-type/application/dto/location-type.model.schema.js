@@ -61,9 +61,8 @@ exports.locationTypeUpdateSchema = locationTypeUpdateSchema;
  * Representa el objeto completo que devuelve la API en las respuestas.
  * Incluye los campos de creación más los metadatos generados por el sistema.
  */
-const locationTypeResponseSchema = zod_1.z.object({
+const locationTypeResponseSchema = locationTypeCreateSchema.extend({
     id: zod_1.z.number().int(),
-    name: zod_1.z.string(),
     created_at: zod_1.z.string(),
     updated_at: zod_1.z.string(),
 });

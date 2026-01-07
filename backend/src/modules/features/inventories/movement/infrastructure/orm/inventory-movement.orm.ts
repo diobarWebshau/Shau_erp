@@ -8,7 +8,7 @@ interface InventoryMovementAttributes {
     item_id: number,
     item_type: "product" | "input",
     item_name: string,
-    qty: number,
+    qty: string,
     movement_type: "in" | "out" | "allocate",
     reference_id: number | null,
     reference_type: 'Production Order' | 'Order' | 'Transfer' | "Purchased" | "Scrap" | "Internal Production Order",
@@ -20,10 +20,26 @@ interface InventoryMovementAttributes {
 
 type InventoryMovementCreateAttributes = Omit<InventoryMovementAttributes, "id" | "created_at">;
 
-type InventoryMOvementUpdateAttributes = Partial<InventoryMovementCreateAttributes>;
+type InventoryMovementUpdateAttributes = Partial<InventoryMovementCreateAttributes>;
+
+class InventoryMovementModel extends Model<InventoryMovementAttributes, InventoryMovementUpdateAttributes> {
+
+    declare id: number;
+    declare location_id: number;
+    declare location_name: string;
+    declare item_id: number;
+    declare item_type: "product" | "input";
+    declare item_name: string;
+    declare qty: string;
+    declare movement_type: "in" | "out" | "allocate";
+    declare reference_id: number | null;
+    declare reference_type: 'Production Order' | 'Order' | 'Transfer' | "Purchased" | "Scrap" | "Internal Production Order";
+    declare production_id: number | null;
+    declare description: string | null;
+    declare is_locked: boolean;
+    declare created_at: Date;
 
 
-class InventoryMovementModel extends Model<InventoryMovementAttributes, InventoryMOvementUpdateAttributes> {
     static getAllFields = (): (keyof InventoryMovementAttributes)[] => [
         "id", "location_id", "location_name", "item_id",
         "item_type", "item_name", "qty", "movement_type",
@@ -116,7 +132,7 @@ InventoryMovementModel.init({
 });
 
 export {
-    InventoryMOvementUpdateAttributes,
+    InventoryMovementUpdateAttributes,
     InventoryMovementAttributes,
     InventoryMovementCreateAttributes
 }

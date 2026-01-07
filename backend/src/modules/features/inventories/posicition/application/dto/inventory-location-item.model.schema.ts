@@ -15,9 +15,9 @@ const inventoryLocationItemResponseSchema = inventoryLocationnItemCreateSchema.e
     updated_at: z.string()
 });
 
-type InventoryLocationnItemCreateSchemaDto = z.infer<typeof inventoryLocationnItemCreateSchema>;
-type InventoryLocationnItemUpdateSchemaDto = z.infer<typeof inventoryLocationItemUpdateSchema>;
-type InventoryLocationItemResponseSchemaDto = z.infer<typeof inventoryLocationItemResponseSchema>;
+type InventoryLocationnItemCreateDto = z.infer<typeof inventoryLocationnItemCreateSchema>;
+type InventoryLocationnItemUpdateDto = z.infer<typeof inventoryLocationItemUpdateSchema>;
+type InventoryLocationItemResponseDto = z.infer<typeof inventoryLocationItemResponseSchema>;
 
 export {
     inventoryLocationnItemCreateSchema,
@@ -26,7 +26,7 @@ export {
 };
 
 export type {
-    InventoryLocationnItemCreateSchemaDto,
-    InventoryLocationnItemUpdateSchemaDto,
-    InventoryLocationItemResponseSchemaDto
+    InventoryLocationnItemCreateDto,
+    InventoryLocationnItemUpdateDto,
+    InventoryLocationItemResponseDto
 }

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateInputUseCase = void 0;
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -46,35 +47,40 @@ const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapInputCreateDtoToDomain = (data) => ({
+    ...data,
+    unit_cost: data.unit_cost ? decimal_vo_1.DecimalVO.from(data.unit_cost) : null
+});
 class CreateInputUseCase {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async execute(data, tx) {
+        const createData = mapInputCreateDtoToDomain(data);
         // ------------------------------------------------------------------
         // 🔎 VALIDACIONES DE NEGOCIO
         // ------------------------------------------------------------------
-        if (data?.name) {
-            const existsByName = await this.repo.findByName(data.name, tx);
+        if (createData?.name) {
+            const existsByName = await this.repo.findByName(createData.name, tx);
             if (existsByName) {
                 throw new http_error_1.default(409, "El nombre ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
         }
-        if (data?.sku) {
-            const existsBySku = await this.repo.findBySku(data.sku, tx);
+        if (createData?.sku) {
+            const existsBySku = await this.repo.findBySku(createData.sku, tx);
             if (existsBySku) {
                 throw new http_error_1.default(409, "El sku ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
         }
-        if (data?.custom_id) {
-            const existsByCustomId = await this.repo.findByCustomId(data.custom_id, tx);
+        if (createData?.custom_id) {
+            const existsByCustomId = await this.repo.findByCustomId(createData.custom_id, tx);
             if (existsByCustomId) {
                 throw new http_error_1.default(409, "El id único ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
         }
-        if (data?.barcode) {
-            const existsByBarcode = await this.repo.findByBarcode(data.barcode.toString(), tx);
+        if (createData?.barcode) {
+            const existsByBarcode = await this.repo.findByBarcode(createData.barcode.toString(), tx);
             if (existsByBarcode) {
                 throw new http_error_1.default(409, "El codigo de barras ingresado para el nuevo insumo, ya esta utilizado por otro insumo.");
             }
@@ -82,16 +88,13 @@ class CreateInputUseCase {
         // ------------------------------------------------------------------
         // 🟢 CREACIÓN INICIAL DEL InputO (SIN TOCAR FS AÚN)
         // ------------------------------------------------------------------
-        const created = await this.repo.create(data, tx);
-        if (!created) {
-            throw new http_error_1.default(500, "No fue posible crear el nuevo Inputo");
-        }
+        const created = await this.repo.create(createData, tx);
         // ------------------------------------------------------------------
         // 🖼️ ORGANIZACIÓN DE IMAGEN (POST-CREACIÓN)
         // ------------------------------------------------------------------
-        if (data.photo) {
+        if (createData.photo) {
             try {
-                const newRelativePath = await imageHandlerClass_1.default.moveImageToEntityDirectory(data.photo, "inputs", created.id.toString());
+                const newRelativePath = await imageHandlerClass_1.default.moveImageToEntityDirectory(createData.photo, "inputs", created.id.toString());
                 // Actualizar únicamente el campo photo
                 await this.repo.update(created.id, {
                     photo: newRelativePath,
@@ -103,7 +106,7 @@ class CreateInputUseCase {
                 // Si algo falla durante el move, limpiar archivo temporal.
                 // La creación del Inputo NO se revierte: el Inputo puede existir sin imagen.
                 try {
-                    await imageHandlerClass_1.default.removeImageIfExists(data.photo);
+                    await imageHandlerClass_1.default.removeImageIfExists(createData.photo);
                 }
                 catch { /* silencio intencional */ }
                 // Propagar el error para que la capa superior decida cómo responder

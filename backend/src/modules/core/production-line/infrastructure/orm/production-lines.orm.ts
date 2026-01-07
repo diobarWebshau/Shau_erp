@@ -60,7 +60,9 @@ interface ProductionLineAttributes {
     updated_at: Date
 };
 
-type ProductionLineCreateAttributes = Partial<Omit<ProductionLineAttributes, "id" | "created_at" | "updated_at">>;
+type ProductionLineCreateAttributes = Omit<ProductionLineAttributes, "id" | "created_at" | "updated_at">;
+
+type ProductionLineUpdateAttributes = Partial<ProductionLineCreateAttributes>;
 
 class ProductionLineModel extends Model<ProductionLineAttributes, ProductionLineCreateAttributes> {
 
@@ -119,4 +121,4 @@ ProductionLineModel.init({
 });
 
 export { ProductionLineModel };
-export type { ProductionLineAttributes, ProductionLineCreateAttributes };
+export type { ProductionLineAttributes, ProductionLineCreateAttributes, ProductionLineUpdateAttributes };

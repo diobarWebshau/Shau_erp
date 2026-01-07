@@ -61,7 +61,7 @@ interface ClientAttributes {
     street_number: number;
     neighborhood: string;
     payment_terms: string | null;
-    credit_limit: number | null;
+    credit_limit: string | null;
     zip_code: number;
     tax_regimen: string | null;
     cfdi: string;
@@ -85,7 +85,7 @@ declare class ClientModel extends Model<ClientAttributes, ClientCreateAttributes
     street_number: number;
     neighborhood: string;
     payment_terms: string | null;
-    credit_limit: number | null;
+    credit_limit: string | null;
     zip_code: number;
     tax_regimen: string | null;
     cfdi: string;

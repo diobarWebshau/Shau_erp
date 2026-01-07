@@ -50,10 +50,10 @@ exports.purchasedOrderProductUpdateRequestOrchestratorSchema = purchasedOrderPro
 // =========================================================================================
 // |                        ORCHESTRATOR — RESPONSE                                        |
 // =========================================================================================
-const purchasedOrderResponseOrchestratorSchema = {
+const purchasedOrderResponseOrchestratorSchema = zod_1.z.object({
     purchased_order: purchased_order_model_schema_1.purchasedOrderResponseschema,
     purchased_order_products: zod_1.z.array(purchased_order_product_query_model_schema_1.purchasedOrderProductQueryResponseSchema),
     client_address: client_query_model_schema_1.clientAddressResponseSchema,
     client: client_model_schema_1.clientResponseSchema
-};
+});
 exports.purchasedOrderResponseOrchestratorSchema = purchasedOrderResponseOrchestratorSchema;

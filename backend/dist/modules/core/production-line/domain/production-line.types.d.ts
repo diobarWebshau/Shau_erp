@@ -61,13 +61,13 @@ interface ProductionLineProps {
     created_at: Date;
     updated_at: Date;
 }
-type ProductionLineCreateProps = Partial<Omit<ProductionLineProps, "id" | "created_at" | "updated_at">>;
+type ProductionLineCreateProps = Omit<ProductionLineProps, "id" | "created_at" | "updated_at">;
 type ProductionLineUpdateProps = Partial<ProductionLineCreateProps>;
 interface ProductionLineSearchCriteria {
     filter?: string;
     exclude_ids?: number[];
-    name?: string | string[];
-    custom_id?: string | string[];
+    name?: string[];
+    custom_id?: string[];
     is_active?: boolean;
 }
 export { ProductionLineProps, ProductionLineCreateProps, ProductionLineUpdateProps, ProductionLineSearchCriteria };

@@ -1,11 +1,10 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PurchasedOrderProductRepository = void 0;
-class PurchasedOrderProductRepository {
-    create = async (data, tx) => {
-    };
-    update = async (id, data, tx) => {
-    };
-}
-exports.PurchasedOrderProductRepository = PurchasedOrderProductRepository;
-;
+// import { Transaction } from "sequelize";
+// import { IPurchasedOrderOrchestratorRepository } from "../domain/purchased-order-orchestrator.repository.interface";
+// import { PurchasedOrderCreateOrchestratorProps, PurchasedOrderOrchestrator, PurchasedOrderUpdateOrchestratorProps } from "../domain/purchased-order-orchestrator.types";
+// export class PurchasedOrderProductRepository implements IPurchasedOrderOrchestratorRepository {
+//     create = async (data: PurchasedOrderCreateOrchestratorProps, tx?: Transaction): Promise<PurchasedOrderOrchestrator> => {
+//     };
+//     update = async (id: number, data: PurchasedOrderUpdateOrchestratorProps, tx?: Transaction): Promise<PurchasedOrderOrchestrator> => {
+//     };
+// };

@@ -1,4 +1,6 @@
 import { toBoolean, toNumberOrNull } from "@shared/http/input/normalizers/form-data.normalizers"
+import { stringOrStringArray } from "@src/shared/application/string-or-string-array.schema";
+import { decimalString } from "@src/shared/application/decimal.schema";
 import { z } from "zod";
 
 /**
@@ -63,14 +65,8 @@ const productCreateSchema = z.object({
     ).nullable().optional(),
     sku: z.string().nullable().optional(),
     photo: z.string().nullable().optional(),
-    sale_price: z.preprocess(
-        toNumberOrNull,
-        z.number({ message: "sale_price must be a number" })
-    ).nullable().optional(),
-    production_cost: z.preprocess(
-        toNumberOrNull,
-        z.number({ message: "production_cost must be a number" })
-    ).nullable().optional(),
+    sale_price: decimalString.nullable().optional(),
+    production_cost: decimalString.nullable().optional(),
     is_active: z.preprocess(
         toBoolean, z.coerce.boolean({ message: "Active must be a boolean" })
     ),
@@ -125,19 +121,14 @@ const productResponseSchema = productCreateSchema.extend({
  */
 const productQuerySchema = z.object({
     filter: z.string().optional(),
-    exclude_ids: z.union([
-        z.string(),
-        z.array(z.string())
-    ]).optional(),
-
-    name: z.union([z.string(), z.array(z.string())]).optional(),
-    description: z.union([z.string(), z.array(z.string())]).optional(),
-    sku: z.union([z.string(), z.array(z.string())]).optional(),
-    presentation: z.union([z.string(), z.array(z.string())]).optional(),
-    unit_of_measure: z.union([z.string(), z.array(z.string())]).optional(),
-    barcode: z.union([z.string(), z.array(z.string())]).optional(),
-    custom_id: z.union([z.string(), z.array(z.string())]).optional(),
-
+    exclude_ids: stringOrStringArray.optional(),
+    name: stringOrStringArray.optional(),
+    description: stringOrStringArray.optional(),
+    sku: stringOrStringArray.optional(),
+    presentation: stringOrStringArray.optional(),
+    unit_of_measure: stringOrStringArray.optional(),
+    barcode: stringOrStringArray.optional(),
+    custom_id: stringOrStringArray.optional(),
     is_active: z.preprocess(
         toBoolean, z.boolean({ message: "is_active must be a boolean" })
     ).optional(),
@@ -193,7 +184,7 @@ const productQuerySchema = z.object({
 type ProductCreateDto = z.infer<typeof productCreateSchema>;
 type ProductUpdateDto = z.infer<typeof productUpdateSchema>;
 type ProductResponseDto = z.infer<typeof productResponseSchema>;
-type ProductQueryDto = z.infer<typeof productResponseSchema>;
+type ProductQueryDto = z.infer<typeof productQuerySchema>;
 
 export {
     productCreateSchema,

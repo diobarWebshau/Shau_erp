@@ -22,7 +22,7 @@ const zod_1 = require("zod");
  */
 const getAllProductionLinesSchema = zod_1.z.object({
     params: zod_1.z.object({}).strict(),
-    query: production_lines_model_schema_1.ProductionLineQuerySchema,
+    query: production_lines_model_schema_1.productionLineQuerySchema,
     body: zod_1.z.object({}).strict(),
     response: zod_1.z.array(production_lines_model_schema_1.productionLineResponseSchema)
 });

@@ -62,7 +62,7 @@ interface ProductDiscountClientAttributes {
     id: number;
     product_id: number,
     client_id: number,
-    discount_percentage: number,
+    discount_percentage: string,
     created_at: Date,
     updated_at: Date
 };
@@ -75,14 +75,14 @@ class ProductDiscountClientModel extends Model<ProductDiscountClientAttributes, 
     declare id: number;
     declare product_id: number;
     declare client_id: number;
-    declare discount_percentage: number;
+    declare discount_percentage: string;
     declare created_at: number;
     declare updated_at: number;
 
     static getEditableFields = (): readonly (keyof ProductDiscountClientUpdateAttributes)[] => [
         "product_id", "client_id", "discount_percentage"
     ] as const;
-    
+
     static getAllFields = (): readonly (keyof ProductDiscountClientAttributes)[] => [
         "product_id", "client_id", "discount_percentage",
         "id", "created_at", "updated_at"

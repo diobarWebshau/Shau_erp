@@ -4,8 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryRepository = void 0;
-const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const inventory_orm_1 = require("../orm/inventory.orm");
+const decimal_vo_1 = require("@shared/domain/value-objects/decimal.vo");
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -53,22 +54,42 @@ const inventory_orm_1 = require("../orm/inventory.orm");
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
+const mapInventoryModelToDomain = (model) => {
     const json = model.toJSON();
     return {
-        id: json.id,
-        lead_time: json.lead_time,
-        maximum_stock: Number(json.maximum_stock),
-        minimum_stock: Number(json.minimum_stock),
-        stock: Number(json.stock),
-        created_at: json.created_at,
-        updated_at: json.updated_at
+        ...json,
+        maximum_stock: decimal_vo_1.DecimalVO.from(json.maximum_stock),
+        minimum_stock: decimal_vo_1.DecimalVO.from(json.minimum_stock),
+        stock: decimal_vo_1.DecimalVO.from(json.stock),
+        created_at: (json.created_at instanceof Date) ? json.created_at : new Date(json.created_at),
+        updated_at: (json.updated_at instanceof Date) ? json.updated_at : new Date(json.updated_at)
+    };
+};
+const mapInventoryCreateDomainToModel = (data) => ({
+    ...data,
+    stock: data.stock.toString(),
+    maximum_stock: data.maximum_stock.toString(),
+    minimum_stock: data.minimum_stock.toString()
+});
+const mapInventoryUpdateDomainToModel = (data) => {
+    const { maximum_stock, minimum_stock, stock, ...rest } = data;
+    return {
+        ...rest,
+        ...(minimum_stock !== undefined
+            ? { minimum_stock: minimum_stock.toString() }
+            : {}),
+        ...(stock !== undefined
+            ? { stock: stock.toString() }
+            : {}),
+        ...(maximum_stock !== undefined
+            ? { maximum_stock: maximum_stock.toString() }
+            : {}),
     };
 };
 class InventoryRepository {
     findAll = async (tx) => {
         const inventoryResponse = await inventory_orm_1.InventoryModel.findAll({ transaction: tx });
-        const inventoryFormmat = inventoryResponse.map(mapModelToDomain);
+        const inventoryFormmat = inventoryResponse.map(mapInventoryModelToDomain);
         return inventoryFormmat;
     };
     findById = async (id, tx) => {
@@ -78,14 +99,14 @@ class InventoryRepository {
         });
         if (!inventoryResponse)
             return null;
-        const inventoryFormmat = mapModelToDomain(inventoryResponse);
+        const inventoryFormmat = mapInventoryModelToDomain(inventoryResponse);
         return inventoryFormmat;
     };
     create = async (data, tx) => {
-        const created = await inventory_orm_1.InventoryModel.create(data, { transaction: tx });
+        const created = await inventory_orm_1.InventoryModel.create(mapInventoryCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear el nuevo inventario.");
-        return mapModelToDomain(created);
+        return mapInventoryModelToDomain(created);
     };
     update = async (id, data, tx) => {
         // 1. Verificar existencia
@@ -94,13 +115,16 @@ class InventoryRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "El inventario que se desea actualizar no fue posible encontrarlo.");
+        const existingDomain = mapInventoryModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
-        const [affectedCount] = await inventory_orm_1.InventoryModel.update(data, {
+        const [affectedCount] = await inventory_orm_1.InventoryModel.update(mapInventoryUpdateDomainToModel(data), {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar el inventario.");
+            return existingDomain;
         // 3. Obtener la locación actualizada
         const updated = await inventory_orm_1.InventoryModel.findByPk(id, {
             transaction: tx,
@@ -108,7 +132,7 @@ class InventoryRepository {
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el inventario.");
-        return mapModelToDomain(updated);
+        return mapInventoryModelToDomain(updated);
     };
     delete = async (id, tx) => {
         const existing = await inventory_orm_1.InventoryModel.findByPk(id, {

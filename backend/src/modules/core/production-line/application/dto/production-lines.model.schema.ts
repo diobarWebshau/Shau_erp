@@ -89,7 +89,7 @@ const productionLineResponseSchema = productionLineCreateSchema.extend({
  * - La conversión de tipos (string → number/boolean) se realiza posteriormente
  *   en el controller o en una capa de normalización.
  */
-const ProductionLineQuerySchema = z.object({
+const productionLineQuerySchema = z.object({
     filter: z.string().optional(),
 
     exclude_ids: z.union([
@@ -155,13 +155,13 @@ const ProductionLineQuerySchema = z.object({
 type ProductionLineCreateDto = z.infer<typeof productionLineCreateSchema>;
 type ProductionLineUpdateDto = z.infer<typeof productionLineUpdateSchema>;
 type ProductionLineResponseDto = z.infer<typeof productionLineResponseSchema>;
-type ProductionLineQueryDto = z.infer<typeof productionLineResponseSchema>;
+type ProductionLineQueryDto = z.infer<typeof productionLineQuerySchema>;
 
 export {
     productionLineCreateSchema,
     productionLineUpdateSchema,
     productionLineResponseSchema,
-    ProductionLineQuerySchema
+    productionLineQuerySchema
 };
 
 export type {

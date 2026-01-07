@@ -1,13 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateInventoryUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
-const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
+const decimal_vo_1 = require("@shared/domain/value-objects/decimal.vo");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -48,6 +42,21 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapInventoryDtoToDomain = (data) => {
+    const { stock, maximum_stock, minimum_stock, ...rest } = data;
+    return {
+        ...rest,
+        ...(stock !== undefined
+            ? { stock: decimal_vo_1.DecimalVO.from(stock) }
+            : {}),
+        ...(maximum_stock !== undefined
+            ? { maximum_stock: decimal_vo_1.DecimalVO.from(maximum_stock) }
+            : {}),
+        ...(minimum_stock !== undefined
+            ? { minimum_stock: decimal_vo_1.DecimalVO.from(minimum_stock) }
+            : {}),
+    };
+};
 class UpdateInventoryUseCase {
     repo;
     constructor(repo) {
@@ -55,35 +64,9 @@ class UpdateInventoryUseCase {
     }
     ;
     execute = async (id, data, tx) => {
-        const existing = await this.repo.findById(id, tx);
-        if (!existing) {
-            throw new http_error_1.default(404, "El inventario que se desea actualizar no fue posible encontrarlo.");
-        }
-        const editableFields = [
-            "lead_time", "maximum_stock", "minimum_stock", "stock"
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody, };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["lead_time", "maximum_stock", "minimum_stock", "stock"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["lead_time", "maximum_stock", "minimum_stock", "stock"]);
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) {
-            const responseExistingFormatted = {
-                ...existing,
-                updated_at: existing.updated_at.toISOString(),
-                created_at: existing.created_at.toISOString()
-            };
-            return responseExistingFormatted;
-        }
-        const responseUpdate = await this.repo.update(id, updateValues, tx);
-        if (!responseUpdate)
-            throw new http_error_1.default(500, "No fue posible actualizar el inventario.");
-        const responseUpdateFormatted = {
-            ...responseUpdate,
-            updated_at: responseUpdate.updated_at.toISOString(),
-            created_at: responseUpdate.created_at.toISOString()
-        };
-        return responseUpdateFormatted;
+        const updateData = mapInventoryDtoToDomain(data);
+        const responseUpdate = await this.repo.update(id, updateData, tx);
+        return responseUpdate;
     };
 }
 exports.UpdateInventoryUseCase = UpdateInventoryUseCase;

@@ -4,8 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateLocationProductionLineUseCase = void 0;
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -56,15 +54,9 @@ class UpdateLocationProductionLineUseCase {
         const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla.");
-        const editableFields = [
-            "location_id", "production_line_id"
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(existing, merged);
-        if (!Object.keys(updateValues).length)
+        if (!Object.keys(data).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues, tx);
+        const updated = await this.repo.update(id, data, tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignacion de la línea de producción a la ubicación.");
         return updated;

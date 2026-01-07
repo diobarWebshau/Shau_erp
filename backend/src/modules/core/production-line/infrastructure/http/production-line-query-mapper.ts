@@ -1,6 +1,6 @@
 import { normalizeToArray, normalizeToBoolean, normalizeToNumberArray } from "@shared/query-reqyest/query-request-normalizer";
-import { GetAllProductionLinesSchema } from "./../../application/dto/production-lines.endpoint.schema"
 import type { ProductionLineSearchCriteria } from "../../domain/production-line.types";
+import { ProductionLineQueryDto } from "../../application/dto/production-lines.model.schema";
 
 /**
  * Query → Criteria Mapper
@@ -48,7 +48,7 @@ import type { ProductionLineSearchCriteria } from "../../domain/production-line.
  * - UseCases: consumen criterios tipados para ejecutar operaciones de negocio.
  */
 
-export const mapProductionLineQueryToCriteria = (query: GetAllProductionLinesSchema["query"]): ProductionLineSearchCriteria => {
+export const mapProductionLineQueryDtoToDomain = (query: ProductionLineQueryDto): ProductionLineSearchCriteria => {
     return {
         name: normalizeToArray(query?.name),
         custom_id: normalizeToArray(query?.custom_id),

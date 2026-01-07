@@ -58,9 +58,9 @@ declare const inputCreateSchema: z.ZodObject<{
     photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     input_types_id: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-    unit_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-    is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
-    is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+    unit_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>;
+    is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>;
 }, z.core.$strip>;
 /**
  * UpdateSchema
@@ -86,9 +86,9 @@ declare const inputUpdateSchema: z.ZodObject<{
     photo: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     supplier: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     input_types_id: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>>;
-    unit_cost: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>>;
-    is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
-    is_draft: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
+    unit_cost: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
+    is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>>;
+    is_draft: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>>;
 }, z.core.$strip>;
 /**
  * ResponseSchema
@@ -113,9 +113,9 @@ declare const inputResponseSchema: z.ZodObject<{
     photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     supplier: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     input_types_id: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-    unit_cost: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-    is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
-    is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
+    unit_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>;
+    is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodBoolean>;
     id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;
@@ -193,6 +193,6 @@ declare const inputQuerySchema: z.ZodObject<{
 type InputCreateDto = z.infer<typeof inputCreateSchema>;
 type InputUpdateDto = z.infer<typeof inputUpdateSchema>;
 type InputResponseDto = z.infer<typeof inputResponseSchema>;
-type InputQueryDto = z.infer<typeof inputResponseSchema>;
+type InputQueryDto = z.infer<typeof inputQuerySchema>;
 export { inputCreateSchema, inputUpdateSchema, inputResponseSchema, inputQuerySchema };
 export type { InputCreateDto, InputUpdateDto, InputResponseDto, InputQueryDto };

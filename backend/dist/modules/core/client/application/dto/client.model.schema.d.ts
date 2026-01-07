@@ -59,7 +59,7 @@ declare const clientCreateSchema: z.ZodObject<{
     neighborhood: z.ZodString;
     payment_terms: z.ZodNullable<z.ZodString>;
     zip_code: z.ZodNumber;
-    credit_limit: z.ZodNullable<z.ZodNumber>;
+    credit_limit: z.ZodNullable<z.ZodString>;
     tax_regimen: z.ZodNullable<z.ZodString>;
     cfdi: z.ZodString;
     payment_method: z.ZodNullable<z.ZodString>;
@@ -90,7 +90,7 @@ declare const clientUpdateSchema: z.ZodObject<{
     neighborhood: z.ZodOptional<z.ZodString>;
     payment_terms: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     zip_code: z.ZodOptional<z.ZodNumber>;
-    credit_limit: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    credit_limit: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     tax_regimen: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     cfdi: z.ZodOptional<z.ZodString>;
     payment_method: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -120,7 +120,7 @@ declare const clientResponseSchema: z.ZodObject<{
     neighborhood: z.ZodString;
     payment_terms: z.ZodNullable<z.ZodString>;
     zip_code: z.ZodNumber;
-    credit_limit: z.ZodNullable<z.ZodNumber>;
+    credit_limit: z.ZodNullable<z.ZodString>;
     tax_regimen: z.ZodNullable<z.ZodString>;
     cfdi: z.ZodString;
     payment_method: z.ZodNullable<z.ZodString>;
@@ -148,7 +148,6 @@ declare const clientQuerySchema: z.ZodObject<{
     company_name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     tax_id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     email: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-    phone: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     city: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     state: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     country: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
@@ -157,7 +156,7 @@ declare const clientQuerySchema: z.ZodObject<{
     tax_regimen: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     payment_terms: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     cfdi: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
-    is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>>;
+    is_active: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 /**
  * Data Transfer Objects (DTO)
@@ -206,6 +205,6 @@ declare const clientQuerySchema: z.ZodObject<{
 type ClientCreateDto = z.infer<typeof clientCreateSchema>;
 type ClientUpdateDto = z.infer<typeof clientUpdateSchema>;
 type ClientResponseDto = z.infer<typeof clientResponseSchema>;
-type ClientQueryDto = z.infer<typeof clientResponseSchema>;
+type ClientQueryDto = z.infer<typeof clientQuerySchema>;
 export { clientCreateSchema, clientUpdateSchema, clientResponseSchema, clientQuerySchema };
 export type { ClientCreateDto, ClientUpdateDto, ClientResponseDto, ClientQueryDto };

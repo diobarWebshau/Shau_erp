@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientRepository = void 0;
+const clients_orm_1 = require("../orm/clients.orm");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const sequelize_1 = require("sequelize");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
-const clients_orm_1 = require("../orm/clients.orm");
 /**
  * Repository (Infrastructure)
  * ------------------------------------------------------------------
@@ -54,34 +55,31 @@ const clients_orm_1 = require("../orm/clients.orm");
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapClientModelToDomain = (model) => {
+    const data = model.toJSON();
     return {
-        id: json.id,
-        cfdi: json.cfdi,
-        city: json.city,
-        company_name: json.company_name,
-        country: json.country,
-        created_at: json.created_at,
-        credit_limit: Number(json.credit_limit),
-        email: json.email,
-        is_active: json.is_active,
-        neighborhood: json.neighborhood,
-        payment_method: json.payment_method,
-        payment_terms: json.payment_terms,
-        phone: json.phone,
-        state: json.state,
-        street: json.street,
-        street_number: json.street_number,
-        tax_id: json.tax_id,
-        tax_regimen: json.tax_regimen,
-        updated_at: json.updated_at,
-        zip_code: json.zip_code
+        ...data,
+        credit_limit: (data.credit_limit) ? decimal_vo_1.DecimalVO.from(data.credit_limit) : null,
+        created_at: (data.created_at instanceof Date) ? data.created_at : new Date(data.created_at),
+        updated_at: (data.updated_at instanceof Date) ? data.updated_at : new Date(data.updated_at)
+    };
+};
+const mapClientCreateDomainToModel = (data) => ({
+    ...data,
+    credit_limit: data.credit_limit ? data.credit_limit.toString() : null,
+});
+const mapClientUpdateDomainToModel = (data) => {
+    const { credit_limit, ...rest } = data;
+    return {
+        ...rest,
+        ...(credit_limit !== undefined
+            ? { credit_limit: credit_limit === null ? null : credit_limit.toString() }
+            : {}),
     };
 };
 class ClientRepository {
     // ================================================================
-    // SELECTS
+    // | SELECTS                                                      |
     // ================================================================
     findAll = async (query, tx) => {
         const { filter, exclude_ids, is_active, ...rest } = query;
@@ -108,83 +106,81 @@ class ClientRepository {
                 : {}),
         };
         const rows = await clients_orm_1.ClientModel.findAll({
-            where,
-            attributes: clients_orm_1.ClientModel.getAllFields(),
-            transaction: tx,
+            where, transaction: tx,
         });
-        return rows.map(pl => mapModelToDomain(pl));
+        return rows.map(pl => mapClientModelToDomain(pl));
     };
     findById = async (id, tx) => {
         const row = await clients_orm_1.ClientModel.findByPk(id, {
             attributes: clients_orm_1.ClientModel.getAllFields(),
             transaction: tx,
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     };
     findByCompanyName = async (company_name, tx) => {
         const row = await clients_orm_1.ClientModel.findOne({
             where: { company_name },
             transaction: tx,
-            attributes: clients_orm_1.ClientModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     };
     findByCfdi = async (cfdi, tx) => {
         const row = await clients_orm_1.ClientModel.findOne({
             where: { cfdi: cfdi },
             transaction: tx,
-            attributes: clients_orm_1.ClientModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     };
     findByTaxId = async (tax_id, tx) => {
         const row = await clients_orm_1.ClientModel.findOne({
             where: { tax_id: tax_id },
             transaction: tx,
-            attributes: clients_orm_1.ClientModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientModelToDomain(row) : null;
     };
     // ================================================================
-    // CREATE
+    // | CREATE                                                       |
     // ================================================================
     create = async (data, tx) => {
-        const created = await clients_orm_1.ClientModel.create(data, { transaction: tx });
+        const created = await clients_orm_1.ClientModel.create(mapClientCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear el nuevo cliente.");
-        return mapModelToDomain(created);
+        return mapClientModelToDomain(created);
     };
     // ================================================================
-    // UPDATE
+    // | UPDATE                                                       |
     // ================================================================
     update = async (id, data, tx) => {
-        // 1. Verificar existencia
-        const existing = await clients_orm_1.ClientModel.findByPk(id);
+        const existing = await clients_orm_1.ClientModel.findByPk(id, {
+            transaction: tx,
+        });
         if (!existing)
             throw new http_error_1.default(404, "El cliente que se desea actualizar no fue posible encontrarlo.");
-        // 2. Aplicar UPDATE
-        const [affectedCount] = await clients_orm_1.ClientModel.update(data, {
+        const existingDomain = mapClientModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
+        const [affectedCount] = await clients_orm_1.ClientModel.update(mapClientUpdateDomainToModel(data), {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar el cliente.");
-        // 3. Obtener la locación actualizada
+            return existingDomain;
         const updated = await clients_orm_1.ClientModel.findByPk(id, {
-            attributes: clients_orm_1.ClientModel.getAllFields(),
             transaction: tx,
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el cliente.");
-        return mapModelToDomain(updated);
+        return mapClientModelToDomain(updated);
     };
     // ================================================================
-    // DELETE
+    // | DELETE                                                       |
     // ================================================================
     delete = async (id, tx) => {
-        const existing = await clients_orm_1.ClientModel.findByPk(id);
+        const existing = await clients_orm_1.ClientModel.findByPk(id, {
+            transaction: tx
+        });
         if (!existing)
-            throw new http_error_1.default(404, "No se encontro la línea de producción que se pretende eliminar.");
+            throw new http_error_1.default(404, "No se encontro el cliente que se pretende eliminar.");
         const deleted = await clients_orm_1.ClientModel.destroy({
             where: { id },
             transaction: tx

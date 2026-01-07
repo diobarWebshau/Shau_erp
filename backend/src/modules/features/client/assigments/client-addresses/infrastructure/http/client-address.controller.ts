@@ -4,6 +4,7 @@ import { GetAllClientAddressesUseCase } from "../../application/use-cases/get-al
 import { CreateClientAddressUseCase } from "../../application/use-cases/create-client-address.usecase";
 import { DeleteClientAddressUseCase } from "../../application/use-cases/delete-client-address.usecase";
 import { UpdateClientAddressUseCase } from "../../application/use-cases/update-client-address.usecase";
+import { ClientRepository } from "@modules/core/client/infrastructure/repository/client.repository";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { ClientAddressResponseDto } from "../../application/dto/client-address.model.schema";
 import { ClientAddressRepository } from "../repository/client-address.repository";
@@ -13,8 +14,14 @@ import {
     UpdateClientAddressSchema, DeleteClientAddressSchema,
     GetByClientIdClientAddressSchema, GetByIdClientAddressSchema
 } from "../../application/dto/client-address.endpoint.schema";
-import { ClientRepository } from "@modules/core/client/infrastructure/repository/client.repository";
 
+const mapClientAddressDomainToDto = (clientAddress: ClientAddressProps): ClientAddressResponseDto => {
+    return {
+        ...clientAddress,
+        created_at: clientAddress.created_at.toISOString(),
+        updated_at: clientAddress.updated_at.toISOString()
+    };
+};
 
 export class ClientAddressController {
 
@@ -39,24 +46,11 @@ export class ClientAddressController {
     }
 
     // ============================================================
-    // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
-    // ============================================================
-
-    /** Formatea un Location para convertir fechas a ISO */
-    private formatResponse(clientAddress: ClientAddressProps): ClientAddressResponseDto {
-        return {
-            ...clientAddress,
-            created_at: clientAddress.created_at.toISOString(),
-            updated_at: clientAddress.updated_at.toISOString()
-        };
-    };
-
-    // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (_req: ApiRequest<GetAllClientAddresssSchema>, res: ApiResponse<GetAllClientAddresssSchema>) => {
         const result: ClientAddressProps[] = await this.getAllUseCase.execute();
-        const formatted: ClientAddressResponseDto[] = result.map(l => this.formatResponse(l));
+        const formatted: ClientAddressResponseDto[] = result.map(l => mapClientAddressDomainToDto(l));
         return res.status(200).send(formatted);
     };
 
@@ -67,7 +61,7 @@ export class ClientAddressController {
         const { id }: GetByIdClientAddressSchema["params"] = req.params
         const result: ClientAddressProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ClientAddressResponseDto = this.formatResponse(result)
+        const formatted: ClientAddressResponseDto = mapClientAddressDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -78,7 +72,7 @@ export class ClientAddressController {
         const { client_id }: GetByClientIdClientAddressSchema["params"] = req.params
         const result: ClientAddressProps | null = await this.getByClientIdUseCase.execute(client_id);
         if (!result) return res.status(204).send(null);
-        const formatted: ClientAddressResponseDto = this.formatResponse(result)
+        const formatted: ClientAddressResponseDto = mapClientAddressDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -88,7 +82,7 @@ export class ClientAddressController {
     create = async (req: ApiRequest<CreateClientAddressSchema>, res: ApiResponse<CreateClientAddressSchema>) => {
         const body: CreateClientAddressSchema["body"] = req.body;
         const created: ClientAddressProps = await this.createUseCase.execute(body);
-        const formatted: ClientAddressResponseDto = this.formatResponse(created);
+        const formatted: ClientAddressResponseDto = mapClientAddressDomainToDto(created);
         return res.status(201).send(formatted);
     };
 
@@ -99,7 +93,7 @@ export class ClientAddressController {
         const { id }: UpdateClientAddressSchema["params"] = req.params;
         const body: UpdateClientAddressSchema["body"] = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted: ClientAddressResponseDto = this.formatResponse(updated);
+        const formatted: ClientAddressResponseDto = mapClientAddressDomainToDto(updated);
         return res.status(200).send(formatted);
     };
 

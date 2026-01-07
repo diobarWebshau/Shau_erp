@@ -4,9 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProductDiscountClientUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -48,6 +46,15 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductDiscountClientDtoToDomain = (data) => {
+    const { discount_percentage, ...rest } = data;
+    return {
+        ...rest,
+        ...(discount_percentage !== undefined
+            ? { discount_percentage: decimal_vo_1.DecimalVO.from(discount_percentage) }
+            : {}),
+    };
+};
 class UpdateProductDiscountClientUseCase {
     repo;
     constructor(repo) {
@@ -57,17 +64,9 @@ class UpdateProductDiscountClientUseCase {
         const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación del descuento del producto para el cliente que se desea actualizar no fue posible encontrarla.");
-        const editableFields = [
-            "product_id", "discount_percentage", "product_id"
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["discount_percentage"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["discount_percentage"]);
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length)
+        if (!Object.keys(data).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues, tx);
+        const updated = await this.repo.update(id, mapProductDiscountClientDtoToDomain(data), tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el descuento del producto para el cliente.");
         return updated;

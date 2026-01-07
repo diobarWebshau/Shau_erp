@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllProcessesUseCase = void 0;
+const process_query_mapper_1 = require("./../../infrastructure/http/process-query-mapper");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -47,7 +48,7 @@ class GetAllProcessesUseCase {
         this.repo = repo;
     }
     async execute(query, tx) {
-        const result = await this.repo.findAll(query, tx);
+        const result = await this.repo.findAll((0, process_query_mapper_1.mapProcessQueryToCriteria)(query), tx);
         return result;
     }
 }

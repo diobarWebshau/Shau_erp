@@ -3,9 +3,9 @@ import { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateProps 
 import { ProductDiscountClientResponseDto } from "../../assigments/product-discount-client/application/dto/product-discount-client.model.schema";
 import { ClientAddressResponseDto } from "../../assigments/client-addresses/application/dto/client-address.model.schema";
 import { ClientCreateProps, ClientProps, ClientUpdateProps } from "@modules/core/client/domain/client.types";
+import { ProductResponseDto } from "@modules/core/product/application/dto/product.model.schema";
 import { ClientResponseDto } from "@modules/core/client/application/dto/client.model.schema";
 import { ProductProps } from "@modules/core/product/domain/product.types";
-import { ProductResponseDto } from "@modules/core/product/application/dto/product.model.schema";
 
 // =========================================================================================
 // |                                 HELPERS TYPED                                         |
@@ -22,14 +22,14 @@ type UpdateById<TPatch> = { id: number } & TPatch;
 // |                         ORCHESTRATOR — BASE (CANÓNICO)                                |
 // =========================================================================================
 
-type ClientOrchestratorBase = ClientProps & {
+type ClientOrchestratorProps = ClientProps & {
     addresses?: ClientAddressProps[]
     discounts?: ProductDiscountClientProps[]
 };
 
-type ClientAddressOrchestratorBase = ClientAddressProps;
+type ClientAddressOrchestratorProps = ClientAddressProps;
 
-type ProductDiscountClientOrchestratorBase = ProductDiscountClientProps & {
+type ProductDiscountClientOrchestratorProps = ProductDiscountClientProps & {
     product: ProductProps
 };
 
@@ -103,8 +103,8 @@ interface ClientUpdateOrchestrator {
 
 interface ClientOrchestrator {
     client: ClientProps,
-    addresses: Array<ClientAddressOrchestratorBase>,
-    discounts: Array<ProductDiscountClientOrchestratorBase>
+    addresses: Array<ClientAddressOrchestratorProps>,
+    discounts: Array<ProductDiscountClientOrchestratorProps>
 }
 
 type ProductDiscountClientResponseOrchestrator = ProductDiscountClientResponseDto & {
@@ -118,11 +118,11 @@ interface ClientResponseOrchestrator {
 };
 
 export {
-    // *******************  BASE (CANÓNICO) ******************
+    // *******************  Props (CANÓNICO) ******************
 
-    ClientAddressOrchestratorBase,
-    ClientOrchestratorBase,
-    ProductDiscountClientOrchestratorBase,
+    ClientAddressOrchestratorProps,
+    ClientOrchestratorProps,
+    ProductDiscountClientOrchestratorProps,
 
     // ******************* CREATE (REQUEST) *******************
 

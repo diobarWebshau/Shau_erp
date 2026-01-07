@@ -4,22 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientAddressRepository = void 0;
-const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 const client_address_orm_1 = require("../orm/client-address.orm");
-const mapModelToDomain = (model) => {
+const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
+const mapClientAddressModelToDomain = (model) => {
     const json = model.toJSON();
     return {
-        id: json.id,
-        city: json.city,
-        country: json.country,
-        created_at: json.created_at,
-        neighborhood: json.neighborhood,
-        state: json.state,
-        street: json.street,
-        street_number: json.street_number,
-        updated_at: json.updated_at,
-        zip_code: json.zip_code,
-        client_id: json.client_id
+        ...json,
+        updated_at: (json.updated_at instanceof Date) ? json.updated_at : new Date(json.updated_at),
+        created_at: (json.created_at instanceof Date) ? json.created_at : new Date(json.created_at)
     };
 };
 class ClientAddressRepository {
@@ -28,26 +20,23 @@ class ClientAddressRepository {
     // ================================================================
     findAll = async (tx) => {
         const rows = await client_address_orm_1.ClientAddressModel.findAll({
-            transaction: tx,
-            attributes: client_address_orm_1.ClientAddressModel.getAllFields()
+            transaction: tx
         });
-        const rowsMap = rows.map((pl) => mapModelToDomain(pl));
+        const rowsMap = rows.map((pl) => mapClientAddressModelToDomain(pl));
         return rowsMap;
     };
     findById = async (id, tx) => {
         const row = await client_address_orm_1.ClientAddressModel.findByPk(id, {
-            transaction: tx,
-            attributes: client_address_orm_1.ClientAddressModel.getAllFields()
+            transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientAddressModelToDomain(row) : null;
     };
     findByClientId = async (client_id, tx) => {
         const row = await client_address_orm_1.ClientAddressModel.findOne({
             transaction: tx,
-            where: { client_id },
-            attributes: client_address_orm_1.ClientAddressModel.getAllFields()
+            where: { client_id }
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapClientAddressModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
@@ -56,7 +45,7 @@ class ClientAddressRepository {
         const created = await client_address_orm_1.ClientAddressModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la nueva dirección del cliente.");
-        return mapModelToDomain(created);
+        return mapClientAddressModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -68,21 +57,23 @@ class ClientAddressRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La dirección del cliente que se desea actualizar no fue posible encontrarlo.");
+        const existingDomain = mapClientAddressModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
         const [affectedCount] = await client_address_orm_1.ClientAddressModel.update(data, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la dirección del cliente.");
+            return existing;
         // 3. Obtener la locación actualizada
         const updated = await client_address_orm_1.ClientAddressModel.findByPk(id, {
             transaction: tx,
-            attributes: client_address_orm_1.ClientAddressModel.getAllFields(),
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la dirección del cliente.");
-        return mapModelToDomain(updated);
+        return mapClientAddressModelToDomain(updated);
     };
     // ================================================================
     // DELETE

@@ -1,9 +1,7 @@
-import { ProductDiscountClientResponseOrchestratorDto } from "@modules/features/client/orchestration/application/dto/client-orchestrator.model.schema";
-import { ClientAddressResponseDto } from "@modules/features/client/assigments/client-addresses/application/dto/client-address.model.schema";
-import type { ClientFullQueryResult, ClientFullQueryResultDto, ClientSearchCriteria } from "../../domain/client-query.type";
-import { ClientResponseDto } from "@modules/core/client/application/dto/client.model.schema";
+import { mapClientQueryDtoToDomain } from "@src/modules/core/client/infrastructure/http/map-client-query-dto-to-domain";
+import { ClientQueryDto } from "@src/modules/core/client/application/dto/client.model.schema";
 import { IClientQueryRepository } from "../../domain/client-query.repository";
-import ImageHandler from "@helpers/imageHandlerClass";
+import type { ClientFullQueryResult } from "../../domain/client-query.type";
 import { Transaction } from "sequelize";
 
 /**
@@ -47,41 +45,13 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+
+
+
 export class GetAllClientFullQueryUseCase {
     constructor(private readonly repo: IClientQueryRepository) { }
-    async execute(query: ClientSearchCriteria, tx?: Transaction): Promise<ClientFullQueryResultDto[]> {
-        const clients: ClientFullQueryResult[] = await this.repo.getAllClientFullQuery(query, tx);
-        const clientResultOrchestrator: ClientFullQueryResultDto[] = [];
-        for (const c of clients) {
-            const { addresses, discounts, ...client }: ClientFullQueryResult = c;
-            const dataClient: ClientResponseDto = {
-                ...client,
-                created_at: client.created_at.toISOString(),
-                updated_at: client.updated_at.toISOString(),
-            }
-            const dataDiscounts: ProductDiscountClientResponseOrchestratorDto[] = discounts.length ? await Promise.all(discounts.map(async (disc) => ({
-                ...disc,
-                created_at: disc.created_at.toISOString(),
-                updated_at: disc.updated_at.toISOString(),
-                product: {
-                    ...disc.product,
-                    created_at: disc.product.created_at.toISOString(),
-                    updated_at: disc.product.updated_at.toISOString(),
-                    photo: disc.product.photo ? await ImageHandler.convertToBase64(disc.product.photo) : null
-                }
-            }))) : [];
-            const dataAddresses: ClientAddressResponseDto[] = addresses.length ? await Promise.all(addresses.map(async (addr) => ({
-                ...addr,
-                created_at: addr.created_at.toISOString(),
-                updated_at: addr.updated_at.toISOString(),
-            }))) : [];
-            const clientFullResult: ClientFullQueryResultDto = {
-                ...dataClient,
-                addresses: dataAddresses,
-                discounts: dataDiscounts
-            }
-            clientResultOrchestrator.push(clientFullResult);
-        }
-        return clientResultOrchestrator;
+    async execute(query: ClientQueryDto, tx?: Transaction): Promise<ClientFullQueryResult[]> {
+        const results: ClientFullQueryResult[] = await this.repo.getAllClientFullQuery(mapClientQueryDtoToDomain(query), tx);
+        return results;
     }
 };

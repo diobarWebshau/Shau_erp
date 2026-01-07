@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize";
 import type { ILocationRepository } from "../../domain/location.repository.interface";
-import type { LocationCreateProps, LocationProps } from "../../domain/location.types";
+import type { LocationProps } from "../../domain/location.types";
 import HttpError from "@shared/errors/http/http-error";
 import { LocationCreateDto } from "../dto/location.model.schema";
 

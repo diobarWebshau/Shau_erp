@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountClientUpdateSchema = exports.ProductDiscountClientReponseSchema = exports.ProductDiscountClientCreateSchema = void 0;
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -46,7 +47,7 @@ const zod_1 = require("zod");
 const ProductDiscountClientCreateSchema = zod_1.z.object({
     product_id: zod_1.z.number().int(),
     client_id: zod_1.z.number().int(),
-    discount_percentage: zod_1.z.number(),
+    discount_percentage: decimal_schema_1.decimalString,
 });
 exports.ProductDiscountClientCreateSchema = ProductDiscountClientCreateSchema;
 /**

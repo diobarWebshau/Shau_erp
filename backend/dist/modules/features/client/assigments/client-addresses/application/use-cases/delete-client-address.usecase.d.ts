@@ -1,5 +1,5 @@
-import { Transaction } from "sequelize";
 import type { IClientAddressRepository } from "../../domain/client-address.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------

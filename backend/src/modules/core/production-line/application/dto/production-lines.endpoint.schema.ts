@@ -1,4 +1,4 @@
-import { productionLineCreateSchema, ProductionLineQuerySchema, productionLineResponseSchema, productionLineUpdateSchema } from "./production-lines.model.schema";
+import { productionLineCreateSchema, productionLineQuerySchema, productionLineResponseSchema, productionLineUpdateSchema } from "./production-lines.model.schema";
 import type { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 
@@ -22,7 +22,7 @@ import { z } from "zod";
  */
 const getAllProductionLinesSchema = z.object({
     params: z.object({}).strict(),
-    query: ProductionLineQuerySchema,
+    query: productionLineQuerySchema,
     body: z.object({}).strict(),
     response: z.array(productionLineResponseSchema)
 })

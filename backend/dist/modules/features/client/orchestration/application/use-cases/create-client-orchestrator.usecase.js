@@ -4,10 +4,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateClientOrchestratorUseCase = void 0;
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
+const sequelize_1 = require("sequelize");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
-const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
-const sequelize_1 = require("@config/mysql/sequelize");
-const sequelize_2 = require("sequelize");
+const sequelize_2 = require("@config/mysql/sequelize");
+;
+const mapClientOrchestratorCreateDtoToDomain = (data) => ({
+    client: {
+        ...data.client,
+        credit_limit: data.client.credit_limit
+            ? decimal_vo_1.DecimalVO.from(data.client.credit_limit)
+            : null,
+    },
+    addresses: data.addresses,
+    discounts: data.discounts.map((dsc) => ({
+        ...dsc,
+        discount_percentage: decimal_vo_1.DecimalVO.from(dsc.discount_percentage)
+    })),
+});
 class CreateClientOrchestratorUseCase {
     productDiscountClientRepo;
     clientAddressRepo;
@@ -21,11 +35,12 @@ class CreateClientOrchestratorUseCase {
     }
     ;
     execute = async (data) => {
-        const tx = await sequelize_1.sequelize.transaction({
-            isolationLevel: sequelize_2.Transaction.ISOLATION_LEVELS.REPEATABLE_READ
+        const tx = await sequelize_2.sequelize.transaction({
+            isolationLevel: sequelize_1.Transaction.ISOLATION_LEVELS.REPEATABLE_READ
         });
         try {
-            const { client, addresses, discounts } = data;
+            const createData = mapClientOrchestratorCreateDtoToDomain(data);
+            const { client, addresses, discounts } = createData;
             const clientCreateResponse = await this.clientRepo.create(client, tx);
             if (addresses && addresses.length) {
                 for (const addr of addresses) {
@@ -47,35 +62,15 @@ class CreateClientOrchestratorUseCase {
                 }
                 ;
             }
+            ;
             const clientQueryResponse = await this.clientQueryRepo.getByIdClientFullQuery(clientCreateResponse.id, tx);
             if (!clientQueryResponse)
                 throw new http_error_1.default(500, "No se pudo acceder el cliente despues de haber sido creado.");
-            const { addresses: addrs, discounts: discs, ...clt } = clientQueryResponse;
-            const dataClient = {
-                ...clt,
-                created_at: clt.created_at.toISOString(),
-                updated_at: clt.updated_at.toISOString(),
-            };
-            const dataDiscounts = discs.length ? await Promise.all(discs.map(async (disc) => ({
-                ...disc,
-                created_at: disc.created_at.toISOString(),
-                updated_at: disc.updated_at.toISOString(),
-                product: {
-                    ...disc.product,
-                    created_at: disc.product.created_at.toISOString(),
-                    updated_at: disc.product.updated_at.toISOString(),
-                    photo: disc.product.photo ? await imageHandlerClass_1.default.convertToBase64(disc.product.photo) : null
-                }
-            }))) : [];
-            const dataAddresses = addrs.length ? await Promise.all(addrs.map(async (addr) => ({
-                ...addr,
-                created_at: addr.created_at.toISOString(),
-                updated_at: addr.updated_at.toISOString(),
-            }))) : [];
+            const { addresses: addresses_query, discounts: discounts_query, ...client_query } = clientQueryResponse;
             const clientFullResult = {
-                client: dataClient,
-                addresses: dataAddresses,
-                discounts: dataDiscounts
+                client: client_query,
+                addresses: addresses_query,
+                discounts: discounts_query
             };
             await tx.commit();
             return clientFullResult;

@@ -1,3 +1,4 @@
+import { decimalString } from "@src/shared/application/decimal.schema";
 import { z } from "zod";
 
 /**
@@ -46,7 +47,7 @@ import { z } from "zod";
 const ProductDiscountClientCreateSchema = z.object({
     product_id: z.number().int(),
     client_id: z.number().int(),
-    discount_percentage: z.number(),
+    discount_percentage: decimalString,
 });
 
 /**

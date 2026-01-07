@@ -1,4 +1,4 @@
-import { ClientOrchestratorResponseDto } from "@src/modules/features/client/orchestration/application/dto/client-orchestrator.model.schema";
+import { ClientOrchestrator } from "@src/modules/features/client/orchestration/domain/client-orchestrator.types";
 import { IClientQueryRepository } from "../../domain/client-query.repository";
 import { Transaction } from "sequelize";
 /**
@@ -44,5 +44,5 @@ import { Transaction } from "sequelize";
 export declare class GetByIdClientsQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: IClientQueryRepository);
-    execute(id: number, tx?: Transaction): Promise<ClientOrchestratorResponseDto | null>;
+    execute(id: number, tx?: Transaction): Promise<ClientOrchestrator | null>;
 }

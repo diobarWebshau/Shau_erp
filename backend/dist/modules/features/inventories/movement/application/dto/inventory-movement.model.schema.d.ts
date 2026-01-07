@@ -8,7 +8,7 @@ declare const inventoryMovementCreateSchema: z.ZodObject<{
         product: "product";
     }>;
     item_name: z.ZodString;
-    qty: z.ZodNumber;
+    qty: z.ZodString;
     movement_type: z.ZodEnum<{
         out: "out";
         in: "in";
@@ -36,7 +36,7 @@ declare const inventoryMovementUpdateSchema: z.ZodObject<{
         product: "product";
     }>>;
     item_name: z.ZodOptional<z.ZodString>;
-    qty: z.ZodOptional<z.ZodNumber>;
+    qty: z.ZodOptional<z.ZodString>;
     movement_type: z.ZodOptional<z.ZodEnum<{
         out: "out";
         in: "in";
@@ -64,7 +64,7 @@ declare const inventoryMovementResponseSchema: z.ZodObject<{
         product: "product";
     }>;
     item_name: z.ZodString;
-    qty: z.ZodNumber;
+    qty: z.ZodString;
     movement_type: z.ZodEnum<{
         out: "out";
         in: "in";
@@ -85,8 +85,8 @@ declare const inventoryMovementResponseSchema: z.ZodObject<{
     id: z.ZodNumber;
     created_at: z.ZodString;
 }, z.core.$strip>;
-type InventoryMovementUpdateSchemaDto = z.infer<typeof inventoryMovementUpdateSchema>;
-type InventoryMovementCreateSchemaDto = z.infer<typeof inventoryMovementCreateSchema>;
-type InventoryMovementResponseSchemaDto = z.infer<typeof inventoryMovementResponseSchema>;
-export type { InventoryMovementCreateSchemaDto, InventoryMovementResponseSchemaDto, InventoryMovementUpdateSchemaDto };
+type InventoryMovementUpdateDto = z.infer<typeof inventoryMovementUpdateSchema>;
+type InventoryMovementCreateDto = z.infer<typeof inventoryMovementCreateSchema>;
+type InventoryMovementResponseDto = z.infer<typeof inventoryMovementResponseSchema>;
+export type { InventoryMovementCreateDto, InventoryMovementResponseDto, InventoryMovementUpdateDto };
 export { inventoryMovementCreateSchema, inventoryMovementResponseSchema, inventoryMovementUpdateSchema };

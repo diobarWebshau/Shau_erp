@@ -7,7 +7,7 @@ import { GetAllProductionLinesUseCase } from "../../application/use-cases/get-al
 import { CreateProductionLineUseCase } from "../../application/use-cases/create-production-line.usecase";
 import { DeleteProductionLineUseCase } from "../../application/use-cases/delete-production-line.usecase";
 import { UpdateProductionLineUseCase } from "../../application/use-cases/update-production-line.usecase";
-import { ProductionLineProps, ProductionLineSearchCriteria } from "../../domain/production-line.types"
+import { ProductionLineProps } from "../../domain/production-line.types"
 import { GetByIdProductionLineSchema } from "../../application/dto/production-lines.endpoint.schema";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { ProductionLineRepository } from "../repository/production-line.repository";
@@ -15,7 +15,6 @@ import {
     GetByNameProducionLineSchema, GetByCustomIdProducionLineSchema, GetAllProductionLinesSchema,
     CreateProducionLineSchema, UpdateProducionLineSchema, DeleteProducionLineSchema
 } from "../../application/dto/production-lines.endpoint.schema";
-import { mapProductionLineQueryToCriteria } from "./production-line-query-mapper";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -67,6 +66,15 @@ import { mapProductionLineQueryToCriteria } from "./production-line-query-mapper
  *   de forma coherente hacia clientes externos.
  */
 
+/** Formatea un Location para convertir fechas a ISO */
+const mapProductionLineDomainToDto = (production_line: ProductionLineProps): ProductionLineResponseDto => {
+    return {
+        ...production_line,
+        created_at: production_line.created_at.toISOString(),
+        updated_at: production_line.updated_at.toISOString()
+    };
+};
+
 export class ProductionLineController {
 
     private readonly repo: ProductionLineRepository;
@@ -93,23 +101,15 @@ export class ProductionLineController {
     // 🔧 HELPERS PRIVADOS (evita repetir la misma lógica en 7 endpoints)
     // ============================================================
 
-    /** Formatea un Location para convertir fechas a ISO */
-    private formatResponse(production_line: ProductionLineProps): ProductionLineResponseDto {
-        return {
-            ...production_line,
-            created_at: production_line.created_at.toISOString(),
-            updated_at: production_line.updated_at.toISOString()
-        };
-    };
+
 
     // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (req: ApiRequest<GetAllProductionLinesSchema>, res: ApiResponse<GetAllProductionLinesSchema>) => {
-        const queryRequest: GetAllProductionLinesSchema["query"] = req.query;
-        const query: ProductionLineSearchCriteria = mapProductionLineQueryToCriteria(queryRequest);
+        const query: GetAllProductionLinesSchema["query"] = req.query;
         const result: ProductionLineProps[] = await this.getAllUseCase.execute(query);
-        const formatted: ProductionLineResponseDto[] = result.map(l => this.formatResponse(l));
+        const formatted: ProductionLineResponseDto[] = result.map(l => mapProductionLineDomainToDto(l));
         return res.status(200).send(formatted);
     };
 
@@ -120,7 +120,7 @@ export class ProductionLineController {
         const { id }: GetByIdProductionLineSchema["params"] = req.params
         const result: ProductionLineProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ProductionLineResponseDto = this.formatResponse(result)
+        const formatted: ProductionLineResponseDto = mapProductionLineDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -131,7 +131,7 @@ export class ProductionLineController {
         const { name }: GetByNameProducionLineSchema["params"] = req.params
         const result: ProductionLineProps | null = await this.getByNameUseCase.execute(name);
         if (!result) return res.status(204).send(null);
-        const formatted: ProductionLineResponseDto = this.formatResponse(result)
+        const formatted: ProductionLineResponseDto = mapProductionLineDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -142,7 +142,7 @@ export class ProductionLineController {
         const { custom_id }: GetByCustomIdProducionLineSchema["params"] = req.params
         const result: ProductionLineProps | null = await this.getByCustomIdUseCase.execute(custom_id);
         if (!result) return res.status(204).send(null);
-        const formatted: ProductionLineResponseDto = this.formatResponse(result)
+        const formatted: ProductionLineResponseDto = mapProductionLineDomainToDto(result)
         return res.status(200).send(formatted);
     };
 
@@ -152,7 +152,7 @@ export class ProductionLineController {
     create = async (req: ApiRequest<CreateProducionLineSchema>, res: ApiResponse<CreateProducionLineSchema>) => {
         const body: ProductionLineCreateDto = req.body;
         const created: ProductionLineProps = await this.createUseCase.execute(body);
-        const formatted: ProductionLineResponseDto = this.formatResponse(created);
+        const formatted: ProductionLineResponseDto = mapProductionLineDomainToDto(created);
         return res.status(201).send(formatted);
     };
 
@@ -163,7 +163,7 @@ export class ProductionLineController {
         const { id }: UpdateProducionLineSchema["params"] = req.params;
         const body: ProductionLineUpdateDto = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted: ProductionLineResponseDto = this.formatResponse(updated);
+        const formatted: ProductionLineResponseDto = mapProductionLineDomainToDto(updated);
         return res.status(200).send(formatted);
     };
 

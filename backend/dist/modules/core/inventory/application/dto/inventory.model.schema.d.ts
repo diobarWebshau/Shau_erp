@@ -1,20 +1,20 @@
 import z from "zod";
 declare const inventoryCreateSchema: z.ZodObject<{
-    stock: z.ZodNumber;
-    minimum_stock: z.ZodNumber;
-    maximum_stock: z.ZodNumber;
+    stock: z.ZodString;
+    minimum_stock: z.ZodString;
+    maximum_stock: z.ZodString;
     lead_time: z.ZodNumber;
 }, z.core.$strip>;
 declare const inventoryUpdateSchema: z.ZodObject<{
-    stock: z.ZodOptional<z.ZodNumber>;
-    minimum_stock: z.ZodOptional<z.ZodNumber>;
-    maximum_stock: z.ZodOptional<z.ZodNumber>;
+    stock: z.ZodOptional<z.ZodString>;
+    minimum_stock: z.ZodOptional<z.ZodString>;
+    maximum_stock: z.ZodOptional<z.ZodString>;
     lead_time: z.ZodOptional<z.ZodNumber>;
 }, z.core.$strip>;
 declare const inventoryResponseSchema: z.ZodObject<{
-    stock: z.ZodNumber;
-    minimum_stock: z.ZodNumber;
-    maximum_stock: z.ZodNumber;
+    stock: z.ZodString;
+    minimum_stock: z.ZodString;
+    maximum_stock: z.ZodString;
     lead_time: z.ZodNumber;
     id: z.ZodNumber;
     created_at: z.ZodString;

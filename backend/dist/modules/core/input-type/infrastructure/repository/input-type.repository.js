@@ -53,42 +53,40 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-function mapModelToDomain(model) {
-    const json = model.toJSON();
+function mapInputTypeModelToDomain(model) {
+    const inputTypeAttributes = model.toJSON();
     return {
-        id: json.id,
-        name: json.name,
-        created_at: json.created_at,
-        updated_at: json.updated_at,
+        id: inputTypeAttributes.id,
+        name: inputTypeAttributes.name,
+        created_at: inputTypeAttributes.created_at,
+        updated_at: inputTypeAttributes.updated_at,
     };
 }
+;
 class InputTypeRepository {
     // ================================================================
     // SELECTS
     // ================================================================
     async findAll(tx) {
         const rows = await input_type_orm_1.InputTypeModel.findAll({
-            attributes: input_type_orm_1.InputTypeModel.getAllFields(),
             transaction: tx
         });
-        return rows.map(mapModelToDomain);
+        return rows.map(mapInputTypeModelToDomain);
     }
     ;
     async findById(id, tx) {
         const row = await input_type_orm_1.InputTypeModel.findByPk(id, {
-            attributes: input_type_orm_1.InputTypeModel.getAllFields(),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputTypeModelToDomain(row) : null;
     }
     ;
     async findByName(name, tx) {
         const row = await input_type_orm_1.InputTypeModel.findOne({
             where: { name },
-            attributes: input_type_orm_1.InputTypeModel.getAllFields(),
             transaction: tx
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapInputTypeModelToDomain(row) : null;
     }
     ;
     // ================================================================
@@ -98,7 +96,7 @@ class InputTypeRepository {
         const created = await input_type_orm_1.InputTypeModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear el tipo de insumo.");
-        return mapModelToDomain(created);
+        return mapInputTypeModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -110,21 +108,23 @@ class InputTypeRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "El tipo de insumo que se desea actualizar no fue posible encontrarla.");
+        const existingDomain = mapInputTypeModelToDomain(existing);
+        if (!Object.keys(data).length)
+            return existingDomain;
         // 2. Aplicar UPDATE
         const [affectedCount] = await input_type_orm_1.InputTypeModel.update(data, {
             where: { id },
             transaction: tx
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar el tipo de insumo.");
+            return existingDomain;
         // 3. Obtener la insumo actualizada
         const updated = await input_type_orm_1.InputTypeModel.findByPk(id, {
-            attributes: input_type_orm_1.InputTypeModel.getAllFields(),
             transaction: tx
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar el tipo de insumo.");
-        return mapModelToDomain(updated);
+        return mapInputTypeModelToDomain(updated);
     }
     // ================================================================
     // DELETE

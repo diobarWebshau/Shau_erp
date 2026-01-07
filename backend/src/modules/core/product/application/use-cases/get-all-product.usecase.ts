@@ -1,6 +1,8 @@
-import { Transaction } from "sequelize";
+import { mapProductQueryToDomain } from "../../infrastructure/http/product-query-mapper";
 import type { IProductRepository } from "../../domain/product.repository.interface";
-import type { ProductProps, ProductSearchCriteria } from "../../domain/product.types";
+import type { ProductProps } from "../../domain/product.types";
+import { ProductQueryDto } from "../dto/product.model.schema";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -45,7 +47,7 @@ import type { ProductProps, ProductSearchCriteria } from "../../domain/product.t
 
 export class GetAllProductsUseCase {
     constructor(private readonly repo: IProductRepository) { }
-    async execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductProps[]> {
-        return await this.repo.findAll(query, tx);
+    async execute(query: ProductQueryDto, tx?: Transaction): Promise<ProductProps[]> {
+        return await this.repo.findAll(mapProductQueryToDomain(query), tx);
     }
 };

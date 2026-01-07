@@ -1,5 +1,7 @@
 import { GetByCfdiClientSchema, GetByCompanyNameClientSchema, GetByIdClientSchema } from "../../application/dto/client.endpoint.schema";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
+import { ClientResponseDto } from "../../application/dto/client.model.schema";
+import { ClientProps } from "../../domain/client.types";
 import { GetAllClientsSchema, CreateClientSchema, UpdateClientSchema, DeleteClientSchema } from "../../application/dto/client.endpoint.schema";
 /**
  * Controller (Infrastructure / HTTP)
@@ -50,6 +52,7 @@ import { GetAllClientsSchema, CreateClientSchema, UpdateClientSchema, DeleteClie
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
+export declare const mapClientDtotoDomain: (client: ClientProps) => ClientResponseDto;
 export declare class ClientController {
     private readonly repo;
     private readonly getAllUseCase;
@@ -61,7 +64,6 @@ export declare class ClientController {
     private readonly deleteUseCase;
     constructor();
     /** Formatea un Location para convertir fechas a ISO */
-    private formatResponse;
     getAll: (req: ApiRequest<GetAllClientsSchema>, res: ApiResponse<GetAllClientsSchema>) => Promise<ApiResponse<GetAllClientsSchema>>;
     getById: (req: ApiRequest<GetByIdClientSchema>, res: ApiResponse<GetByIdClientSchema>) => Promise<ApiResponse<GetByIdClientSchema>>;
     getByCfdi: (req: ApiRequest<GetByIdClientSchema>, res: ApiResponse<GetByIdClientSchema>) => Promise<ApiResponse<GetByIdClientSchema>>;

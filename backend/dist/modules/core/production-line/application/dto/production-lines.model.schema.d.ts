@@ -83,7 +83,7 @@ declare const productionLineResponseSchema: z.ZodObject<{
  * - La conversión de tipos (string → number/boolean) se realiza posteriormente
  *   en el controller o en una capa de normalización.
  */
-declare const ProductionLineQuerySchema: z.ZodObject<{
+declare const productionLineQuerySchema: z.ZodObject<{
     filter: z.ZodOptional<z.ZodString>;
     exclude_ids: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
     name: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>>;
@@ -133,6 +133,6 @@ declare const ProductionLineQuerySchema: z.ZodObject<{
 type ProductionLineCreateDto = z.infer<typeof productionLineCreateSchema>;
 type ProductionLineUpdateDto = z.infer<typeof productionLineUpdateSchema>;
 type ProductionLineResponseDto = z.infer<typeof productionLineResponseSchema>;
-type ProductionLineQueryDto = z.infer<typeof productionLineResponseSchema>;
-export { productionLineCreateSchema, productionLineUpdateSchema, productionLineResponseSchema, ProductionLineQuerySchema };
+type ProductionLineQueryDto = z.infer<typeof productionLineQuerySchema>;
+export { productionLineCreateSchema, productionLineUpdateSchema, productionLineResponseSchema, productionLineQuerySchema };
 export type { ProductionLineCreateDto, ProductionLineUpdateDto, ProductionLineResponseDto, ProductionLineQueryDto };

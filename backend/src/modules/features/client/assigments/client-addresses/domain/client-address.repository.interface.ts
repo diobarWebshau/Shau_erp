@@ -1,5 +1,5 @@
-import { Transaction } from "sequelize";
 import { ClientAddressCreateProps, ClientAddressProps, ClientAddressUpdateProps } from "./client-address.types";
+import { Transaction } from "sequelize";
 
 /**
  * IRepository

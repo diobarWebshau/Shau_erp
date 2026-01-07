@@ -1,26 +1,35 @@
-import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { IInventoryMovementRepository } from "../../domain/inventory-movement.repository.interface";
-import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
-import { ILocationRepository } from "@modules/core/location/domain/location.repository.interface";
-import { InventoryMovementRepository } from "../repository/inventory-movement.repository";
-import { InputRepository } from "@modules/core/input/infrastructure/repository/input.repository";
-import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
-import { LocationRepository } from "@modules/core/location/infrastructure/repository/location.repository";
-import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
-import {
-    CreateInventoryMovementSchema, DeleteInventoryMovementSchema, GetAllInventoryMovementSchema,
-    GetByIdInventoryMovementSchema, UpdateInventoryMovementSchema
-} from "./../../application/dto/inventory-movement.endpoint.schema";
+import { InventoryLocationItemRepository } from "../../../posicition/infrastructure/repository/inventory-location-item.repository";
+import { InventoryQueryRepository } from "@src/modules/query/inventory/infrastructure/repository/inventory-query.repository";
+import { IInventoryLocationItemRepository } from "../../../posicition/domain/inventory-location-item.repository.interface";
+import { IInventoryQueryRepository } from "@src/modules/query/inventory/domain/inventory-query.repository.interface";
+import { GetByIdInventoryMovementUseCase } from "../../application/use-cases/get-by-id-inventory-movement.usecase";
 import { CreateInventoryMovementUseCase } from "../../application/use-cases/create-inventory-movement.usecase";
 import { DeleteInventoryMovementUseCase } from "../../application/use-cases/delete-inventory-movement.usecase";
 import { UpdateInventoryMovementUseCase } from "../../application/use-cases/update-inventory-movement.usecase";
 import { GetAllInventoryMovementUseCase } from "../../application/use-cases/get-all-inventory-movement.usecase";
-import { GetByIdInventoryMovementUseCase } from "../../application/use-cases/get-by-id-inventory-movement.usecase";
-import { InventoryMovementResponseSchemaDto } from "../../application/dto/inventory-movement.model.schema";
-import { IInventoryQueryRepository } from "@src/modules/query/inventory/domain/inventory-query.repository.interface";
-import { InventoryLocationItemRepository } from "../../../posicition/infrastructure/repository/inventory-location-item.repository";
-import { InventoryQueryRepository } from "@src/modules/query/inventory/infrastructure/repository/inventory-query.repository";
-import { IInventoryLocationItemRepository } from "../../../posicition/domain/inventory-location-item.repository.interface";
+import { LocationRepository } from "@modules/core/location/infrastructure/repository/location.repository";
+import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
+import { IInventoryMovementRepository } from "../../domain/inventory-movement.repository.interface";
+import { InventoryMovementResponseDto } from "../../application/dto/inventory-movement.model.schema";
+import { ILocationRepository } from "@modules/core/location/domain/location.repository.interface";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
+import { InputRepository } from "@modules/core/input/infrastructure/repository/input.repository";
+import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
+import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
+import { InventoryMovementRepository } from "../repository/inventory-movement.repository";
+import { InventoryMovementProps } from "../../domain/inventory-movement.types";
+import {
+    CreateInventoryMovementSchema, DeleteInventoryMovementSchema, GetAllInventoryMovementSchema,
+    GetByIdInventoryMovementSchema, UpdateInventoryMovementSchema
+} from "./../../application/dto/inventory-movement.endpoint.schema";
+
+
+
+const mapInventoryMovementDomainToDto = (data: InventoryMovementProps): InventoryMovementResponseDto => ({
+    ...data,
+    qty: data.qty.toString(),
+    created_at: data.created_at.toISOString()
+});
 
 
 export class InventoryMovementController {
@@ -62,26 +71,27 @@ export class InventoryMovementController {
     };
 
     getAll = async (_req: ApiRequest<GetAllInventoryMovementSchema>, res: ApiResponse<GetAllInventoryMovementSchema>) => {
-        const inventoryMovementResponse: InventoryMovementResponseSchemaDto[] =
+        const inventoryMovementResponse: InventoryMovementProps[] =
             await this.getAllInventoryMovementUseCase.execute();
-        return res.status(200).json(inventoryMovementResponse);
+        const inventoryMovementResult: InventoryMovementResponseDto[] = inventoryMovementResponse.map(mapInventoryMovementDomainToDto);
+        return res.status(200).json(inventoryMovementResult);
     }
     getById = async (req: ApiRequest<GetByIdInventoryMovementSchema>, res: ApiResponse<GetByIdInventoryMovementSchema>) => {
         const { id }: GetByIdInventoryMovementSchema["params"] = req.params;
-        const inventoryMovementResponse: InventoryMovementResponseSchemaDto | null =
+        const inventoryMovementResponse: InventoryMovementProps | null =
             await this.getByIdInventoryMovementSchema.execute(Number(id));
-        return res.status(200).json(inventoryMovementResponse);
+        return res.status(200).json(inventoryMovementResponse ? mapInventoryMovementDomainToDto(inventoryMovementResponse) : null);
     }
     create = async (req: ApiRequest<CreateInventoryMovementSchema>, res: ApiResponse<CreateInventoryMovementSchema>) => {
         const body: CreateInventoryMovementSchema["body"] = req.body;
-        const inventoryMovementResponse: InventoryMovementResponseSchemaDto = await this.createInventoryMovementUseCase.execute(body);
-        return res.status(201).json(inventoryMovementResponse);
+        const inventoryMovementResponse: InventoryMovementProps = await this.createInventoryMovementUseCase.execute(body);
+        return res.status(201).json(mapInventoryMovementDomainToDto(inventoryMovementResponse));
     }
     update = async (req: ApiRequest<UpdateInventoryMovementSchema>, res: ApiResponse<UpdateInventoryMovementSchema>) => {
         const body: UpdateInventoryMovementSchema["body"] = req.body;
         const { id }: UpdateInventoryMovementSchema["params"] = req.params;
-        const inventoryMovementResponse: InventoryMovementResponseSchemaDto = await this.updateInventoryMovementUseCase.execute(Number(id), body);
-        return res.status(200).json(inventoryMovementResponse);
+        const inventoryMovementResponse: InventoryMovementProps = await this.updateInventoryMovementUseCase.execute(Number(id), body);
+        return res.status(200).json(mapInventoryMovementDomainToDto(inventoryMovementResponse));
     }
     delete = async (req: ApiRequest<DeleteInventoryMovementSchema>, res: ApiResponse<DeleteInventoryMovementSchema>) => {
         const { id }: DeleteInventoryMovementSchema["params"] = req.params;

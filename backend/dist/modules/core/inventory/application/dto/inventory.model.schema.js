@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.inventoryCreateSchema = exports.inventoryUpdateSchema = exports.inventoryResponseSchema = void 0;
 const zod_1 = __importDefault(require("zod"));
 const inventoryCreateSchema = zod_1.default.object({
-    stock: zod_1.default.number(),
-    minimum_stock: zod_1.default.number(),
-    maximum_stock: zod_1.default.number(),
+    stock: zod_1.default.string(),
+    minimum_stock: zod_1.default.string(),
+    maximum_stock: zod_1.default.string(),
     lead_time: zod_1.default.number()
 });
 exports.inventoryCreateSchema = inventoryCreateSchema;

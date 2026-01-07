@@ -47,4 +47,4 @@ type PurchasedOrderResponseOrchestratorProps = {
     client_address: ClientAddressResponseDto;
     client: ClientResponseDto;
 };
-export type { PurchasedOrderProductCreateOrchestratorProps, PurchasedOrderCreateOrchestratorProps, PurchasedOrderUpdateOrchestratorProps, PurchasedOrderProductManager, PurchasedOrderOrchestrator, PurchasedOrderResponseOrchestratorProps };
+export type { PurchasedOrderProductCreateOrchestratorProps, PurchasedOrderCreateOrchestratorProps, PurchasedOrderUpdateOrchestratorProps, PurchasedOrderProductUpdateOrchestratorProps, PurchasedOrderProductManager, PurchasedOrderOrchestrator, PurchasedOrderResponseOrchestratorProps };

@@ -1,5 +1,6 @@
-import type { ProductionLineProps, ProductionLineUpdateProps } from "../../domain/production-line.types";
 import type { IProductionLineRepository } from "../../domain/production-line.repository.interface";
+import { ProductionLineUpdateDto } from "../dto/production-lines.model.schema";
+import type { ProductionLineProps } from "../../domain/production-line.types";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class UpdateProductionLineUseCase {
     private readonly repo;
     constructor(repo: IProductionLineRepository);
-    execute(id: number, data: ProductionLineUpdateProps, tx?: Transaction): Promise<ProductionLineProps>;
+    execute(id: number, data: ProductionLineUpdateDto, tx?: Transaction): Promise<ProductionLineProps>;
 }

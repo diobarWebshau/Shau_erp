@@ -1,6 +1,7 @@
-import { Transaction } from "sequelize";
 import type { IProcessRepository } from "../../domain/process.repository";
-import type { ProcessProps, ProcessSearchCriteria } from "../../domain/process.types";
+import type { ProcessProps } from "../../domain/process.types";
+import { ProcessQueryDto } from "../dto/process.model.schema";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +45,5 @@ import type { ProcessProps, ProcessSearchCriteria } from "../../domain/process.t
 export declare class GetAllProcessesUseCase {
     private readonly repo;
     constructor(repo: IProcessRepository);
-    execute(query: ProcessSearchCriteria, tx?: Transaction): Promise<ProcessProps[]>;
+    execute(query: ProcessQueryDto, tx?: Transaction): Promise<ProcessProps[]>;
 }

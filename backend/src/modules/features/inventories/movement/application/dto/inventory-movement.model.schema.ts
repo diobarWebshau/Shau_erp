@@ -1,4 +1,5 @@
 import { toBoolean } from "@shared/http/input/normalizers/form-data.normalizers";
+import { decimalString } from "@src/shared/application/decimal.schema";
 import { z } from "zod";
 
 const inventoryMovementCreateSchema = z.object({
@@ -7,7 +8,7 @@ const inventoryMovementCreateSchema = z.object({
     item_id: z.number(),
     item_type: z.enum(["product", "input"]),
     item_name: z.string(),
-    qty: z.number(),
+    qty: decimalString,
     movement_type: z.enum(["in", "out", "allocate"]),
     reference_id: z.number().nullable(),
     reference_type: z.enum(["Production Order", "Order", "Transfer", "Purchased", "Scrap", "Internal Production Order"]),
@@ -25,14 +26,14 @@ const inventoryMovementResponseSchema = inventoryMovementCreateSchema.extend({
     created_at: z.string()
 });
 
-type InventoryMovementUpdateSchemaDto = z.infer<typeof inventoryMovementUpdateSchema>;
-type InventoryMovementCreateSchemaDto = z.infer<typeof inventoryMovementCreateSchema>;
-type InventoryMovementResponseSchemaDto = z.infer<typeof inventoryMovementResponseSchema>;
+type InventoryMovementUpdateDto = z.infer<typeof inventoryMovementUpdateSchema>;
+type InventoryMovementCreateDto = z.infer<typeof inventoryMovementCreateSchema>;
+type InventoryMovementResponseDto = z.infer<typeof inventoryMovementResponseSchema>;
 
 export type {
-    InventoryMovementCreateSchemaDto,
-    InventoryMovementResponseSchemaDto,
-    InventoryMovementUpdateSchemaDto
+    InventoryMovementCreateDto,
+    InventoryMovementResponseDto,
+    InventoryMovementUpdateDto
 };
 
 export {

@@ -93,7 +93,7 @@ export class CreateClientOrchestratorUseCase {
 
             await tx.commit();
             return clientFullResult;
-        
+    
         } catch (error: unknown) {
             await tx.rollback();
             throw error;

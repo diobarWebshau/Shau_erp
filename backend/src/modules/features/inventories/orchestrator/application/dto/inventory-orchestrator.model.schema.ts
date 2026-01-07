@@ -1,39 +1,66 @@
+import { inventoryTransferCreateSchema, InventoryTransferCreateDto, inventoryTransferResponseSchema, InventoryTransferResponseDto } from "@modules/features/inventories/transfers/application/dto/inventory-tranfer.model.schema";
 import { inventoryLocationItemResponseSchema, inventoryLocationnItemCreateSchema } from "../../../posicition/application/dto/inventory-location-item.model.schema";
-import { inventoryCreateSchema, inventoryResponseSchema } from "@src/modules/core/inventory/application/dto/inventory.model.schema";
-import { inventoryTransferCreateSchema, InventoryTransferCreateSchemaDto, inventoryTransferResponseSchema, InventoryTransferResponseSchemaDto} from "@src/modules/features/inventories/transfers/application/dto/inventory-tranfer.model.schema";
+import { inventoryCreateSchema, inventoryResponseSchema } from "@modules/core/inventory/application/dto/inventory.model.schema";
 import { z } from "zod";
 
-const inventoryLocationItemOrchestratorCreate = inventoryLocationnItemCreateSchema
+// ========================================================
+// |  CREATE REQUEST                                      |
+// ========================================================
+
+const inventoryLocationItemOrchestratorCreateSchema = inventoryLocationnItemCreateSchema
     .omit({ inventory_id: true }).extend({
         inventory_id: z.undefined().optional()
     }).strict();
 
-const inventoryOrchestratorCreateSchema = z.array(z.object({
-    inventory: inventoryCreateSchema,
-    inventory_location_item: inventoryLocationItemOrchestratorCreate
-}));
 
-const inventoryOrchestratorResponseSchema = z.array(z.object({
+const inventoryOrchestratorCreateSchema = z.object({
+    inventory: inventoryCreateSchema,
+    inventory_location_item: inventoryLocationItemOrchestratorCreateSchema
+});
+
+const inventoryOrchestratorCreateBatchSchema = z.array(inventoryOrchestratorCreateSchema);
+
+// ========================================================
+// |   ORCHESTRATOR - RESPONSE                            |
+// ========================================================
+
+const inventoryOrchestratorResponseSchema = z.object({
     inventory: inventoryResponseSchema,
     inventory_location_item: inventoryLocationItemResponseSchema
-}));
+});
 
-type InventoryLocationItemOrchestratorCreateDto = z.infer<typeof inventoryLocationItemOrchestratorCreate>;
-type InventoryOrchestratorCreateSchemaDto = z.infer<typeof inventoryOrchestratorCreateSchema>;
-type InventoryOrchestratorResponseSchemaDto = z.infer<typeof inventoryOrchestratorResponseSchema>;
+const inventoryOrchestratorResponseBatchSchema = z.array(inventoryOrchestratorResponseSchema);
+
+// ========================================================
+// |   ORCHESTRATOR — DTO                                 |
+// ========================================================
+
+type InventoryLocationItemOrchestratorCreateDto = z.infer<typeof inventoryLocationItemOrchestratorCreateSchema>;
+type InventoryOrchestratorCreateDto = z.infer<typeof inventoryOrchestratorCreateSchema>;
+type InventoryOrchestratorCreateBatchDto = z.infer<typeof inventoryOrchestratorCreateBatchSchema>;
+type InventoryOrchestratorResponseDto = z.infer<typeof inventoryOrchestratorResponseSchema>;
+type InventoryOrchestratorResponseBatchSchema = z.infer<typeof inventoryOrchestratorResponseBatchSchema>;
+
+// ========================================================
+// |   EXPORTS                                            |
+// ========================================================
 
 export {
-    inventoryLocationItemOrchestratorCreate,
+    inventoryLocationItemOrchestratorCreateSchema,
     inventoryOrchestratorCreateSchema,
+    inventoryOrchestratorCreateBatchSchema,
     inventoryOrchestratorResponseSchema,
+    inventoryOrchestratorResponseBatchSchema,
     inventoryTransferCreateSchema,
     inventoryTransferResponseSchema
 }
 
 export type {
     InventoryLocationItemOrchestratorCreateDto,
-    InventoryOrchestratorCreateSchemaDto,
-    InventoryOrchestratorResponseSchemaDto,
-    InventoryTransferCreateSchemaDto,
-    InventoryTransferResponseSchemaDto
+    InventoryOrchestratorCreateDto,
+    InventoryOrchestratorCreateBatchDto,
+    InventoryOrchestratorResponseDto,
+    InventoryOrchestratorResponseBatchSchema,
+    InventoryTransferCreateDto,
+    InventoryTransferResponseDto
 }

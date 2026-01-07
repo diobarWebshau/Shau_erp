@@ -2,11 +2,12 @@ import { InventoryTransferCreateProps, InventoryTransferProps } from "../../doma
 import { IInventoryTransferRepository } from "../../domain/inventory-tranfer.repository.interface";
 import { ILocationRepository } from "@modules/core/location/domain/location.repository.interface";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { InventoryTransferResponseSchemaDto } from "../dto/inventory-tranfer.model.schema";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
-import { ProductProps } from "@src/modules/core/product/domain/product.types";
+import { InventoryTransferCreateDto } from "../dto/inventory-tranfer.model.schema";
+import { ProductProps } from "@modules/core/product/domain/product.types";
 import { LocationProps } from "@modules/core/location/domain/location.types";
-import { InputProps } from "@src/modules/core/input/domain/input.types";
+import { DecimalVO } from "@shared/domain/value-objects/decimal.vo";
+import { InputProps } from "@modules/core/input/domain/input.types";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -15,6 +16,14 @@ interface ICreateInventoryTransferUseCase {
     locationRepo: ILocationRepository,
     productRepo: IProductRepository,
     inputRepo: IInputRepository
+};
+
+
+const mapInventoryTransferUpdateDtoToDomain = (data: InventoryTransferCreateDto): InventoryTransferCreateProps => {
+    return {
+        ...data,
+        qty: DecimalVO.from(data.qty)
+    }
 };
 
 export class CreateInventoryTransferUseCase {
@@ -31,25 +40,21 @@ export class CreateInventoryTransferUseCase {
         this.locationRepo = locationRepo;
     };
 
-    execute = async (data: InventoryTransferCreateProps, tx?: Transaction): Promise<InventoryTransferResponseSchemaDto> => {
-        const validateSourceLocation: LocationProps | null = await this.locationRepo.findById(data.source_location_id, tx);
-        const validateDestinationLocation: LocationProps | null = await this.locationRepo.findById(data.destination_location_id, tx);
+    execute = async (data: InventoryTransferCreateDto, tx?: Transaction): Promise<InventoryTransferProps> => {
+        const createData = mapInventoryTransferUpdateDtoToDomain(data);
+        const validateSourceLocation: LocationProps | null = await this.locationRepo.findById(createData.source_location_id, tx);
+        const validateDestinationLocation: LocationProps | null = await this.locationRepo.findById(createData.destination_location_id, tx);
         if (!validateDestinationLocation) throw new HttpError(404, "La locacion de destino no existe.");
         if (!validateSourceLocation) throw new HttpError(404, "La locacion de origen no existe.");
-        if (data.item_type === "product") {
-            const validateProduct: ProductProps | null = await this.productRepo.findById(data.item_id, tx);
+        if (createData.item_type === "product") {
+            const validateProduct: ProductProps | null = await this.productRepo.findById(createData.item_id, tx);
             if (!validateProduct) throw new HttpError(404, 'El producto que se desea transferir no existe');
         } else {
-            const validateInput: InputProps | null = await this.inputRepo.findById(data.item_id, tx);
+            const validateInput: InputProps | null = await this.inputRepo.findById(createData.item_id, tx);
             if (!validateInput) throw new HttpError(404, 'El insumo que se desea transferir no existe');
         }
-        const inventoryTransferResponse: InventoryTransferProps = await this.inventoryTransferRepo.create(data, tx);
-        const inventoryTransferReposponseFormatted: InventoryTransferResponseSchemaDto = {
-            ...inventoryTransferResponse,
-            created_at: inventoryTransferResponse.created_at.toISOString(),
-            updated_at: inventoryTransferResponse.updated_at.toISOString(),
-        }
-        return inventoryTransferReposponseFormatted;
+        const inventoryTransferResponse: InventoryTransferProps = await this.inventoryTransferRepo.create(createData, tx);
+        return inventoryTransferResponse;
     };
 
 }

@@ -1,12 +1,12 @@
-import { inventoryOrchestratorCreateSchema, inventoryOrchestratorResponseSchema, inventoryTransferCreateSchema, inventoryTransferResponseSchema } from "./inventory-orchestrator.model.schema";
+import { inventoryOrchestratorCreateBatchSchema, inventoryOrchestratorResponseBatchSchema, inventoryTransferCreateSchema, inventoryTransferResponseSchema } from "./inventory-orchestrator.model.schema";
 import { EndpointSchema } from "@src/shared/typed-request-endpoint/endpoint.interface";
 import z from "zod";
 
 const createInventoryOrchestratorSchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
-    body: inventoryOrchestratorCreateSchema,
-    response: inventoryOrchestratorResponseSchema,
+    body: inventoryOrchestratorCreateBatchSchema,
+    response: inventoryOrchestratorResponseBatchSchema,
 });
 
 const createTransferInventoryOrchestratorSchema = z.object({
@@ -30,6 +30,12 @@ type CreateTransferInventoryOrchestratorSchema = EndpointSchema<
     z.infer<typeof createTransferInventoryOrchestratorSchema>["response"]
 >;
 
-export { createInventoryOrchestratorSchema, createTransferInventoryOrchestratorSchema };
-export type { CreateInventoryOrchestratorSchema, CreateTransferInventoryOrchestratorSchema };
+export {
+    createInventoryOrchestratorSchema,
+    createTransferInventoryOrchestratorSchema
+};
+export type {
+    CreateInventoryOrchestratorSchema,
+    CreateTransferInventoryOrchestratorSchema
+};
 

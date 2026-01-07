@@ -6,7 +6,7 @@ interface InventoryTransferAttributes {
     item_type: "product" | "input",
     item_id: number,
     item_name: string,
-    qty: number,
+    qty: string,
     reason: string | null,
     status: "completed" | "canceled",
     source_location_id: number,
@@ -19,6 +19,19 @@ type InventoryTransferCreateAttributes = Omit<InventoryTransferAttributes, "id" 
 type InventoryTransferUpdateAttributes = Partial<InventoryTransferCreateAttributes>;
 
 class InventoryTransferModel extends Model<InventoryTransferAttributes, InventoryTransferCreateAttributes> {
+
+    declare id: number;
+    declare item_type: "product" | "input";
+    declare item_id: number;
+    declare item_name: string;
+    declare qty: string;
+    declare reason: string | null;
+    declare status: "completed" | "canceled";
+    declare source_location_id: number;
+    declare destination_location_id: number;
+    declare created_at: Date;
+    declare updated_at: Date;
+
     static getAllFields(): (keyof InventoryTransferAttributes)[] {
         return [
             "id", "item_type", "item_id", "qty",
@@ -94,7 +107,8 @@ InventoryTransferModel.init(
 
 export type {
     InventoryTransferAttributes,
-    InventoryTransferUpdateAttributes
+    InventoryTransferUpdateAttributes,
+    InventoryTransferCreateAttributes
 }
 
 export { InventoryTransferModel };

@@ -1,7 +1,18 @@
 import { InventoryTransferProps, InventoryTransferUpdateProps } from "../../domain/inventory-tranfer.types";
 import { IInventoryTransferRepository } from "../../domain/inventory-tranfer.repository.interface";
-import { InventoryTransferResponseSchemaDto } from "../dto/inventory-tranfer.model.schema";
+import { InventoryTransferUpdateDto } from "../dto/inventory-tranfer.model.schema";
+import { DecimalVO } from "@shared/domain/value-objects/decimal.vo";
 import { Transaction } from "sequelize";
+
+const mapInventoryTransferUpdateDtoToDomain = (data: InventoryTransferUpdateDto): InventoryTransferUpdateProps => {
+    const { qty, reason, ...rest } = data;
+    return {
+        ...rest,
+        ...(
+            qty !== undefined ? { qty: DecimalVO.from(qty) } : {}
+        ),
+    }
+}
 
 export class UpdateInventoryTransferUseCase {
 
@@ -11,13 +22,10 @@ export class UpdateInventoryTransferUseCase {
         this.inventoryTransferRepo = inventoryTransferRepo;
     };
 
-    execute = async (id: number, data: InventoryTransferUpdateProps, tx?: Transaction) => {
-        const inventoryTransferResponse: InventoryTransferProps = await this.inventoryTransferRepo.update(id, data, tx);
-        const inventoryTransfer: InventoryTransferResponseSchemaDto = {
-            ...inventoryTransferResponse,
-            created_at: inventoryTransferResponse.created_at.toISOString(),
-            updated_at: inventoryTransferResponse.updated_at.toISOString()
-        };
-        return inventoryTransfer;
+    execute = async (id: number, data: InventoryTransferUpdateDto, tx?: Transaction) => {
+        const updateData = mapInventoryTransferUpdateDtoToDomain(data);
+        const inventoryTransferResponse: InventoryTransferProps =
+            await this.inventoryTransferRepo.update(id, updateData, tx);
+        return inventoryTransferResponse;
     };
 }

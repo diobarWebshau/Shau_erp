@@ -6,11 +6,12 @@ import { IInventoryTransferRepository } from "../../../transfers/domain/inventor
 import { IInventoryRepository } from "@src/modules/core/inventory/domain/inventory.repository.interface";
 import { InventoryCreateProps, InventoryProps } from "@src/modules/core/inventory/domain/inventory.types";
 import { InventoryQueryProps } from "@src/modules/query/inventory/domain/inventory-query.types";
-import { InventoryTransferResponseSchemaDto } from "../dto/inventory-orchestrator.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@src/shared/errors/http/http-error";
 import { sequelize } from "@src/config/mysql/sequelize";
 import { Transaction as SequelizeTx } from "sequelize";
 import type { Transaction } from "sequelize";
+import { InventoryTransferCreateDto } from "../dto/inventory-orchestrator.model.schema";
 
 interface ICreateInventoryOrchestratorUseCase {
     inventoryRepo: IInventoryRepository,
@@ -18,6 +19,14 @@ interface ICreateInventoryOrchestratorUseCase {
     inventoryQueryRepo: IInventoryQueryRepository,
     inventoryTransferRepo: IInventoryTransferRepository
 };
+
+
+const mapInventoryTransferOrchestratorCreateDtoToDomain = (data: InventoryTransferCreateDto): InventoryTransferCreateProps => {
+    return {
+        ...data,
+        qty: DecimalVO.from(data.qty)
+    }
+}
 
 export class CreateTransferInventoryOrchestratorUseCase {
     private readonly inventoryLocationItemRepo: IInventoryLocationItemRepository;
@@ -32,27 +41,30 @@ export class CreateTransferInventoryOrchestratorUseCase {
         this.inventoryTransferRepo = inventoryTransferRepo
     }
 
-    create = async (data: InventoryTransferCreateProps): Promise<InventoryTransferResponseSchemaDto> => {
+    create = async (data: InventoryTransferCreateDto): Promise<InventoryTransferProps> => {
         const tx: Transaction = await sequelize.transaction({
             isolationLevel: SequelizeTx.ISOLATION_LEVELS.REPEATABLE_READ,
         });
 
         try {
+
+            const createData = mapInventoryTransferOrchestratorCreateDtoToDomain(data)
+
             // 1) Reglas mínimas puras
-            if (!Number.isFinite(data.qty) || data.qty <= 0) {
+            if (!Number.isFinite(createData.qty) || createData.qty.lte(0)) {
                 throw new HttpError(400, "La cantidad debe ser mayor que 0");
             }
 
-            if (data.source_location_id === data.destination_location_id) {
+            if (createData.source_location_id === createData.destination_location_id) {
                 throw new HttpError(409, "La locación de origen y destino no pueden ser la misma");
             }
 
             // 2) Resolver relación (slot) de ORIGEN
             const originRel: InventoryLocationItemProps | null =
                 await this.inventoryLocationItemRepo.findByLocationItem(
-                    data.source_location_id,
-                    data.item_id,
-                    data.item_type,
+                    createData.source_location_id,
+                    createData.item_id,
+                    createData.item_type,
                     tx
                 );
 
@@ -69,16 +81,16 @@ export class CreateTransferInventoryOrchestratorUseCase {
             }
 
             // 4) Validar stock suficiente
-            if (data.qty > originSlot.stock) {
+            if (createData.qty.gt(originSlot.stock)) {
                 throw new HttpError(409, "Inventario insuficiente en la locación de origen");
             }
 
             // 5) Asegurar relación (slot) en DESTINO
             let destinationRel: InventoryLocationItemProps | null =
                 await this.inventoryLocationItemRepo.findByLocationItem(
-                    data.destination_location_id,
-                    data.item_id,
-                    data.item_type,
+                    createData.destination_location_id,
+                    createData.item_id,
+                    createData.item_type,
                     tx
                 );
 
@@ -88,31 +100,25 @@ export class CreateTransferInventoryOrchestratorUseCase {
                 // Si tu create requiere más campos, aquí es donde va.
                 const newInventory: InventoryCreateProps = {
                     lead_time: 100,
-                    maximum_stock: 10000,
-                    minimum_stock: 100,
-                    stock: 0
+                    maximum_stock: DecimalVO.from(10000),
+                    minimum_stock: DecimalVO.from(100),
+                    stock: DecimalVO.from(0)
                 }
                 const createdInventory: InventoryProps = await this.inventoryRepo.create(newInventory, tx);
 
                 const link: InventoryLocationItemCreateProps = {
                     inventory_id: createdInventory.id,
-                    location_id: data.destination_location_id,
-                    item_type: data.item_type,
-                    item_id: data.item_id,
+                    location_id: createData.destination_location_id,
+                    item_type: createData.item_type,
+                    item_id: createData.item_id,
                 };
 
                 destinationRel = await this.inventoryLocationItemRepo.create(link, tx);
             }
 
-            const createTransferResponse: InventoryTransferProps = await this.inventoryTransferRepo.create(data, tx);
-
-            const inventoryTransferResult: InventoryTransferResponseSchemaDto = {
-                ...createTransferResponse,
-                created_at: createTransferResponse.created_at.toISOString(),
-                updated_at: createTransferResponse.updated_at.toISOString(),
-            }
+            const createTransferResponse: InventoryTransferProps = await this.inventoryTransferRepo.create(createData, tx);
             await tx.commit();
-            return inventoryTransferResult;
+            return createTransferResponse;
         } catch (error) {
             await tx.rollback();
             throw error;

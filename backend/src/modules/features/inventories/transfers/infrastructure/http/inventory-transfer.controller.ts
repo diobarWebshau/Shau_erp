@@ -5,18 +5,29 @@ import { DeleteInventoryTransferUseCase } from "../../application/use-cases/dele
 import { CreateInventoryTransferUseCase } from "../../application/use-cases/create-inventory-transfer.usecase";
 import { LocationRepository } from "@modules/core/location/infrastructure/repository/location.repository";
 import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
-import { InventoryTransferResponseSchemaDto } from "../../application/dto/inventory-tranfer.model.schema";
+import { InventoryTransferResponseDto } from "../../application/dto/inventory-tranfer.model.schema";
+import { IInventoryTransferRepository } from "../../domain/inventory-tranfer.repository.interface";
 import { ILocationRepository } from "@modules/core/location/domain/location.repository.interface";
 import { InputRepository } from "@modules/core/input/infrastructure/repository/input.repository";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { IInventoryTransferRepository } from "../../domain/inventory-tranfer.repository.interface";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { InventoryTransferRepository } from "../repository/inventory-transfer.repository";
 import {
     CreateInventoryTransferSchema, DeleteInventoryTransferSchema, GetAllInventoryTransferSchema,
     GetByIdInventoryTransferSchema, UpdateInventoryTransferSchema
 } from "./../../application/dto/inventory-tranfer.endpoint.schema"
+import { InventoryTransferProps } from "../../domain/inventory-tranfer.types";
+
+const mapInventoryTransferDomainToDto = (data: InventoryTransferProps): InventoryTransferResponseDto => {
+    const { qty, created_at, updated_at, ...rest } = data;
+    return {
+        ...rest,
+        created_at: created_at.toISOString(),
+        updated_at: updated_at.toISOString(),
+        qty: qty.toString()
+    }
+};
 
 export class InventoryTransferController {
 
@@ -49,24 +60,25 @@ export class InventoryTransferController {
     };
 
     getAll = async (_req: ApiRequest<GetAllInventoryTransferSchema>, res: ApiResponse<GetAllInventoryTransferSchema>) => {
-        const inventoryTransferResponses: InventoryTransferResponseSchemaDto[] = await this.getAllInventoryTransferUseCase.execute();
-        return res.status(200).json(inventoryTransferResponses);
+        const inventoryTransferResponses: InventoryTransferProps[] = await this.getAllInventoryTransferUseCase.execute();
+        const inventoryTransferResult = inventoryTransferResponses.map(mapInventoryTransferDomainToDto);
+        return res.status(200).json(inventoryTransferResult);
     }
     getById = async (req: ApiRequest<GetByIdInventoryTransferSchema>, res: ApiResponse<GetByIdInventoryTransferSchema>) => {
         const { id }: GetByIdInventoryTransferSchema["params"] = req.params;
-        const inventoryTransferResponse: InventoryTransferResponseSchemaDto | null = await this.getByIdInventoryTransferUseCase.execute(Number(id));
-        return res.status(200).json(inventoryTransferResponse);
+        const inventoryTransferResponse: InventoryTransferProps | null = await this.getByIdInventoryTransferUseCase.execute(Number(id));
+        return res.status(200).json(inventoryTransferResponse ? mapInventoryTransferDomainToDto(inventoryTransferResponse) : null);
     }
     create = async (req: ApiRequest<CreateInventoryTransferSchema>, res: ApiResponse<CreateInventoryTransferSchema>) => {
         const body: CreateInventoryTransferSchema["body"] = req.body;
-        const inventoryTransferResponse: InventoryTransferResponseSchemaDto = await this.createInventoryTransferUseCase.execute(body);
-        return res.status(201).json(inventoryTransferResponse);
+        const inventoryTransferResponse: InventoryTransferProps = await this.createInventoryTransferUseCase.execute(body);
+        return res.status(201).json(mapInventoryTransferDomainToDto(inventoryTransferResponse));
     }
     update = async (req: ApiRequest<UpdateInventoryTransferSchema>, res: ApiResponse<UpdateInventoryTransferSchema>) => {
         const body: UpdateInventoryTransferSchema["body"] = req.body;
         const { id }: UpdateInventoryTransferSchema["params"] = req.params;
-        const inventoryTransferResponse: InventoryTransferResponseSchemaDto = await this.updateInventoryTransferUseCase.execute(Number(id), body);
-        return res.status(200).json(inventoryTransferResponse);
+        const inventoryTransferResponse: InventoryTransferProps = await this.updateInventoryTransferUseCase.execute(Number(id), body);
+        return res.status(200).json(mapInventoryTransferDomainToDto(inventoryTransferResponse));
     }
     delete = async (req: ApiRequest<DeleteInventoryTransferSchema>, res: ApiResponse<DeleteInventoryTransferSchema>) => {
         const { id }: DeleteInventoryTransferSchema["params"] = req.params;

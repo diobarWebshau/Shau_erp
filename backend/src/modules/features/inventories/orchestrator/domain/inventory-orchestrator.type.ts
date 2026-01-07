@@ -1,25 +1,46 @@
-import { InventoryLocationItemResponseSchemaDto } from "../../posicition/application/dto/inventory-location-item.model.schema";
-import { inventoryResponseDto } from "@src/modules/core/inventory/application/dto/inventory.model.schema";
-import { InventoryLocationItemCreateProps } from "../../posicition/domain/inventory-location-item.types";
-import { InventoryCreateProps } from "@modules/core/inventory/domain/inventory.types";
-import { InventoryTransferCreateProps } from "@src/modules/features/inventories/transfers/domain/inventory-tranfer.types";
+import { InventoryLocationItemCreateProps, InventoryLocationItemProps } from "../../posicition/domain/inventory-location-item.types";
+import { InventoryLocationItemResponseDto } from "../../posicition/application/dto/inventory-location-item.model.schema";
+import { InventoryTransferCreateProps } from "@modules/features/inventories/transfers/domain/inventory-tranfer.types";
+import { inventoryResponseDto } from "@modules/core/inventory/application/dto/inventory.model.schema";
+import { InventoryCreateProps, InventoryProps } from "@modules/core/inventory/domain/inventory.types";
 
 type NoInventoryId = { inventory_id?: never };
 
+// ========================================================
+// |  CREATE REQUEST                                      |
+// ========================================================
+
 type InventoryLocationItemOrchestratorCreateProps = NoInventoryId & Omit<InventoryLocationItemCreateProps, "inventory_id">;
 
-interface inventoryOrchestratorCreateProps {
+interface InventoryOrchestratorCreateProps {
     inventory: InventoryCreateProps,
     inventory_location_item: InventoryLocationItemOrchestratorCreateProps
 };
 
-interface inventoryOrchestratorResponseProps {
+type InventoryOrchestratorCreateBatchProps = InventoryOrchestratorCreateProps[];
+
+// ========================================================
+// |   ORCHESTRATOR - RESPONSE                            |
+// ========================================================
+
+
+interface InventoryOrchestrator {
+    inventory: InventoryProps,
+    inventory_location_item: InventoryLocationItemProps
+}
+
+interface InventoryOrchestratorResponseProps {
     inventory: inventoryResponseDto,
-    inventory_location_item: InventoryLocationItemResponseSchemaDto
+    inventory_location_item: InventoryLocationItemResponseDto
 };
 
+type InventoryOrchestratorResponseBatchProps = InventoryOrchestratorResponseProps[];
+
 export {
-    inventoryOrchestratorCreateProps,
-    inventoryOrchestratorResponseProps,
+    InventoryOrchestratorCreateProps,
+    InventoryOrchestrator,
+    InventoryOrchestratorResponseBatchProps,
+    InventoryOrchestratorCreateBatchProps,
+    InventoryOrchestratorResponseProps,
     InventoryTransferCreateProps
 }

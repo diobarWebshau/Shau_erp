@@ -46,6 +46,4 @@ import { ProductFullQueryResult, ProductSearchCriteria } from "../domain/product
 export interface IProductQueryRepository {
     getAllProductFullQueryResult(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResult[]>,
     getByIdProductFullQueryResult(id: number, tx?: Transaction): Promise<ProductFullQueryResult | null>,
-    getAllProductOrchestratorResult(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResult[]>,
-    getByIdProductOrchestratorResult(id: number, tx?: Transaction): Promise<ProductFullQueryResult | null>,
 };

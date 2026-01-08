@@ -1,5 +1,6 @@
-import type { ProductFullQueryResultDto, ProductSearchCriteria } from "../../domain/product-query.type";
+import { ProductQueryDto } from "@modules/core/product/application/dto/product.model.schema";
 import { IProductQueryRepository } from "../../domain/product-query.repository";
+import type { ProductFullQueryResult } from "../../domain/product-query.type";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class GetAllProductsFullQueryUseCase {
     private readonly repo;
     constructor(repo: IProductQueryRepository);
-    execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResultDto[]>;
+    execute(query: ProductQueryDto, tx?: Transaction): Promise<ProductFullQueryResult[]>;
 }

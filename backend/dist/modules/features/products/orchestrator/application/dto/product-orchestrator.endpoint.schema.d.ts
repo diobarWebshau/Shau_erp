@@ -30,7 +30,7 @@ declare const createProductOrchestratorSchema: z.ZodObject<{
                 sort_order: z.ZodNumber;
                 process_id: z.ZodNumber;
                 product_input_process: z.ZodDefault<z.ZodArray<z.ZodObject<{
-                    qty: z.ZodNumber;
+                    qty: z.ZodString;
                     product_input: z.ZodObject<{
                         input_id: z.ZodNumber;
                         equivalence: z.ZodString;
@@ -45,7 +45,7 @@ declare const createProductOrchestratorSchema: z.ZodObject<{
                 }, z.core.$strip>;
                 process_id: z.ZodOptional<z.ZodUndefined>;
                 product_input_process: z.ZodDefault<z.ZodArray<z.ZodObject<{
-                    qty: z.ZodNumber;
+                    qty: z.ZodString;
                     product_input: z.ZodObject<{
                         input_id: z.ZodNumber;
                         equivalence: z.ZodString;
@@ -160,7 +160,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
                     sort_order: z.ZodNumber;
                     process_id: z.ZodNumber;
                     product_input_process: z.ZodDefault<z.ZodArray<z.ZodObject<{
-                        qty: z.ZodNumber;
+                        qty: z.ZodString;
                         product_input: z.ZodObject<{
                             input_id: z.ZodNumber;
                             equivalence: z.ZodString;
@@ -175,7 +175,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
                     }, z.core.$strip>;
                     process_id: z.ZodOptional<z.ZodUndefined>;
                     product_input_process: z.ZodDefault<z.ZodArray<z.ZodObject<{
-                        qty: z.ZodNumber;
+                        qty: z.ZodString;
                         product_input: z.ZodObject<{
                             input_id: z.ZodNumber;
                             equivalence: z.ZodString;
@@ -190,7 +190,7 @@ declare const updateProductOrchestratorSchema: z.ZodObject<{
                     id: z.ZodNumber;
                     product_input_process_updated: z.ZodOptional<z.ZodObject<{
                         added: z.ZodArray<z.ZodObject<{
-                            qty: z.ZodNumber;
+                            qty: z.ZodString;
                             product_input: z.ZodObject<{
                                 input_id: z.ZodNumber;
                                 equivalence: z.ZodString;

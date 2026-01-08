@@ -9,6 +9,9 @@ import type { ProductCreateProps, ProductUpdateProps, ProductProps } from "@modu
 import { ProductInputResponseDto } from "../../assigments/product-input/application/dto/product-input.model.schema";
 import { ProductResponseDto } from "@src/modules/core/product/application/dto/product.model.schema";
 import type { InputProps } from "@modules/core/input/domain/input.types";
+import { InputResponseDto } from "@src/modules/core/input/application/dto/input.model.schema";
+import { ProcessResponseDto } from "@src/modules/core/process/application/dto/process.model.schema";
+import { ProductInputProcessResponseDto } from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
 
 // =========================================================================================
 // |                                 HELPERS TYPED                                         |
@@ -28,27 +31,27 @@ type UpdateById<TPatch> = { id: number } & TPatch;
 // * Nota: aquí rompemos el ciclo de tipos con una versión Lean de ProductProcess.
 
 type ProductInputOrchestratorProps = ProductInputProps & {
-    input?: InputProps;
-    product?: ProductProps;
+    input: InputProps;
+    product: ProductProps;
 };
 
 type ProductProcessOrchestratorPropsLean = ProductProcessProps & {
-    process?: ProcessProps;
-    product?: ProductProps;
+    process: ProcessProps;
+    product: ProductProps;
 };
 
 type ProductInputProcessOrchestratorProps = ProductInputProcessProps & {
-    product?: ProductProps;
-    product_input?: ProductInputOrchestratorProps;
-    product_process?: ProductProcessOrchestratorPropsLean;
+    product: ProductProps;
+    product_input: ProductInputOrchestratorProps;
+    product_process: ProductProcessOrchestratorPropsLean;
 };
 
 type ProductProcessOrchestratorProps = ProductProcessOrchestratorPropsLean & {
-    product_input_process?: ProductInputProcessOrchestratorProps[];
+    product_input_process: ProductInputProcessOrchestratorProps[];
 };
 
 type ProductDiscountRangeOrchestratorProps = ProductDiscountRangeProps & {
-    product?: ProductProps;
+    product: ProductProps;
 };
 
 // =========================================================================================
@@ -64,7 +67,7 @@ type ProductInputOrchestratorCreateProps =
     NoProductId &
     Omit<ProductInputCreateProps, "product_id"> & {
         // opcional: si quieres que el payload pueda venir “poblado”
-        input?: InputProps;
+        input: InputProps;
         product?: ProductProps;
     };
 
@@ -203,24 +206,24 @@ interface ProductOrchestrator {
 
 // * pero permite relaciones opcionales si el backend hace include
 type ProductInputOrchestratorResponseProp = ProductInputResponseDto & {
-    input?: InputProps;
-    product?: ProductProps;
+    input: InputResponseDto;
+    product: ProductResponseDto;
 };
 
-type ProductProcessOrchestrator = ProductProcessResponseDto & {
-    process?: ProcessProps;
-    product?: ProductProps;
-    product_input_process?: ProductInputProcessProps[];
+type ProductProcessOrchestratorResponseProps = ProductProcessResponseDto & {
+    process: ProcessResponseDto;
+    product: ProductResponseDto;
+    product_input_process: ProductInputProcessResponseDto[];
 };
 
 type ProductDiscountRangeOrchestratorResponseProps = ProductDiscountRangeResponseDto & {
-    product?: ProductProps;
+    product: ProductResponseDto;
 };
 
 interface ProductOrchestratorResponseProps {
     product: ProductResponseDto;
     products_inputs: ProductInputOrchestratorResponseProp[];
-    product_processes: ProductProcessOrchestrator[];
+    product_processes: ProductProcessOrchestratorResponseProps[];
     product_discount_ranges: ProductDiscountRangeOrchestratorResponseProps[];
 }
 
@@ -245,7 +248,7 @@ export type {
     ProductProcessOrchestratorCreateProps,
     ProductDiscountRangeOrchestratorCreateProps,
     ProductOrchestratorCreateProps,
-    ProductProcessOrchestrator,
+    ProductProcessOrchestratorResponseProps,
 
     // ******************* UPDATE (REQUEST) ******************
     // ? managers

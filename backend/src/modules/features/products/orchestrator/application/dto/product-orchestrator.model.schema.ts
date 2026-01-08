@@ -5,6 +5,7 @@ import { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdate
 import { productCreateSchema, productResponseSchema, productUpdateSchema, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema";
 import { processCreateSchema } from "@modules/core/process/application/dto/process.model.schema";
 import { z } from "zod";
+import { decimalString } from "@src/shared/application/decimal.schema";
 
 // =========================================================================================
 // |                     ORCHESTRATOR — CREATE (REQUEST)                                   |
@@ -37,7 +38,7 @@ const productInputProcessOrchestratorCreateSchema = productInputProcessCreateSch
         product_id: true,
         product_input_id: true,
         product_process_id: true,
-    }).extend({ qty: z.number(), product_input: productInputOrchestratorCreateSchema });
+    }).extend({ qty: decimalString, product_input: productInputOrchestratorCreateSchema });
 
 // --------------------------------------------------
 // 🔹 PRODUCT-PROCESS                               |

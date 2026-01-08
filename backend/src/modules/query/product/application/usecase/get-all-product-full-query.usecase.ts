@@ -1,9 +1,7 @@
-import { ProductDiscountRangeResponseDto } from "@modules/features/products/assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
-import type { ProductFullQueryResult, ProductFullQueryResultDto, ProductSearchCriteria } from "../../domain/product-query.type";
-import { ProductDiscountRangeProps } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
-import { ProductResponseDto } from "@modules/core/product/application/dto/product.model.schema";
+import { ProductQueryDto } from "@modules/core/product/application/dto/product.model.schema";
+import { mapProductQueryToCriteria } from "../../infrastructure/mapProductQueryToCriteria";
 import { IProductQueryRepository } from "../../domain/product-query.repository";
-import ImageHandler from "@helpers/imageHandlerClass";
+import type { ProductFullQueryResult } from "../../domain/product-query.type";
 import { Transaction } from "sequelize";
 
 /**
@@ -47,34 +45,11 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+
 export class GetAllProductsFullQueryUseCase {
     constructor(private readonly repo: IProductQueryRepository) { }
-    async execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductFullQueryResultDto[]> {
-        const productResponses: ProductFullQueryResult[] = await this.repo.getAllProductFullQueryResult(query, tx);
-        const productsFullResultArray: ProductFullQueryResultDto[] = [];
-        for (const p of productResponses) {
-            const { products_inputs, product_processes, product_discount_ranges, ...rest } = p;
-            const dataProduct: ProductResponseDto = {
-                ...rest,
-                photo: rest.photo ? await ImageHandler.convertToBase64(rest.photo) : null,
-                created_at: rest?.created_at.toISOString(),
-                updated_at: rest?.created_at.toISOString()
-            }
-            const dataDiscounts: ProductDiscountRangeResponseDto[] = product_discount_ranges.map(
-                (pdr: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => ({
-                    ...pdr,
-                    created_at: pdr?.created_at.toISOString(),
-                    updated_at: pdr?.created_at.toISOString()
-                })
-            ) ?? [];
-            const productFullResult: ProductFullQueryResultDto = {
-                ...dataProduct,
-                products_inputs: products_inputs ?? [],
-                product_discount_ranges: dataDiscounts ?? [],
-                product_processes: product_processes ?? []
-            };
-            productsFullResultArray.push(productFullResult);
-        };
-        return productsFullResultArray;
+    async execute(query: ProductQueryDto, tx?: Transaction): Promise<ProductFullQueryResult[]> {
+        const productResponses: ProductFullQueryResult[] = await this.repo.getAllProductFullQueryResult(mapProductQueryToCriteria(query), tx);
+        return productResponses;
     }
 };

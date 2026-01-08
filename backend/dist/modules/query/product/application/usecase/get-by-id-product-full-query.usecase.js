@@ -1,10 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetByIdProductsFullQueryUseCase = void 0;
-const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -54,25 +50,7 @@ class GetByIdProductsFullQueryUseCase {
         const productRecord = await this.repo.getByIdProductFullQueryResult(id, tx);
         if (!productRecord)
             return null;
-        const { products_inputs, product_processes, product_discount_ranges, ...rest } = productRecord;
-        const dataProduct = {
-            ...rest,
-            photo: rest.photo ? await imageHandlerClass_1.default.convertToBase64(rest.photo) : null,
-            created_at: rest?.created_at.toISOString(),
-            updated_at: rest?.created_at.toISOString()
-        };
-        const dataDiscounts = product_discount_ranges.map((pdr) => ({
-            ...pdr,
-            created_at: pdr?.created_at.toISOString(),
-            updated_at: pdr?.created_at.toISOString()
-        })) ?? [];
-        const productFullResult = {
-            ...dataProduct,
-            products_inputs: products_inputs ?? [],
-            product_discount_ranges: dataDiscounts ?? [],
-            product_processes: product_processes ?? []
-        };
-        return productFullResult;
+        return productRecord;
     }
 }
 exports.GetByIdProductsFullQueryUseCase = GetByIdProductsFullQueryUseCase;

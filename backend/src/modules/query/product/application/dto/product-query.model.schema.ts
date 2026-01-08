@@ -1,8 +1,8 @@
 import { ProductDiscountRangeReponseSchema } from "@modules/features/products/assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema"
 import { ProductProcessReponseSchema } from "@modules/features/products/assigments/product-process/application/dto/product-process.model.schema"
 import { ProductInputReponseSchema } from "@modules/features/products/assigments/product-input/application/dto/product-input.model.schema"
-import { productOrchestratorResponseSchema } from "@modules/features/products/orchestrator/application/product-orchestrator.model.schema"
-import { productResponseSchema, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema"
+import { productOrchestratorResponseSchema } from "@modules/features/products/orchestrator/application/dto/product-orchestrator.model.schema"
+import { productResponseSchema, ProductQueryDto, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema"
 import z from "zod"
 
 const productQueryOrchestratorSchema = productOrchestratorResponseSchema;
@@ -18,7 +18,8 @@ type ProductQueryOrchestorResponseDTO = z.infer<typeof productOrchestratorRespon
 
 export type {
     ProductQueryFullResponseDTO,
-    ProductQueryOrchestorResponseDTO
+    ProductQueryOrchestorResponseDTO,
+    ProductQueryDto
 };
 
 export {

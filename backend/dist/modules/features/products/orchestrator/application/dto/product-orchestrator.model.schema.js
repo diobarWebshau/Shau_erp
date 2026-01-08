@@ -9,6 +9,7 @@ const product_model_schema_1 = require("@modules/core/product/application/dto/pr
 Object.defineProperty(exports, "productQuerySchema", { enumerable: true, get: function () { return product_model_schema_1.productQuerySchema; } });
 const process_model_schema_1 = require("@modules/core/process/application/dto/process.model.schema");
 const zod_1 = require("zod");
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
 // =========================================================================================
 // |                     ORCHESTRATOR — CREATE (REQUEST)                                   |
 // =========================================================================================
@@ -35,7 +36,7 @@ const productInputProcessOrchestratorCreateSchema = product_input_process_model_
     product_id: true,
     product_input_id: true,
     product_process_id: true,
-}).extend({ qty: zod_1.z.number(), product_input: productInputOrchestratorCreateSchema });
+}).extend({ qty: decimal_schema_1.decimalString, product_input: productInputOrchestratorCreateSchema });
 // --------------------------------------------------
 // 🔹 PRODUCT-PROCESS                               |
 // --------------------------------------------------    

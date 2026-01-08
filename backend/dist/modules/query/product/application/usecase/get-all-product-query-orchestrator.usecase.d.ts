@@ -1,7 +1,7 @@
-import type { ProductQueryRepository } from "../../infrastructure/product-query.repository";
+import { ProductOrchestrator } from "@src/modules/features/products/orchestrator/domain/product-orchestrator.types";
+import type { ProductQueryRepository } from "../../infrastructure/repository/product-query.repository";
 import type { ProductSearchCriteria } from "../../domain/product-query.type";
 import { Transaction } from "sequelize";
-import { ProductOrchestratorResponse } from "@src/modules/features/products/orchestrator/domain/product-orchestrator.types";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -45,5 +45,5 @@ import { ProductOrchestratorResponse } from "@src/modules/features/products/orch
 export declare class GetAllProductsQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: ProductQueryRepository);
-    execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestratorResponse[]>;
+    execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestrator[]>;
 }

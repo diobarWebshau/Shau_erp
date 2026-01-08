@@ -202,34 +202,36 @@ class UpdateProductOrchestratorUseCase {
                 const deleted = product_processes_manager?.deleted ?? [];
                 const uptated = product_processes_manager?.updated ?? [];
                 if (adds.length) {
-                    const productProcessForAssign = adds.filter((pp) => ("process_id" in pp) && typeof pp.process_id === "number");
-                    const productProcessForCreate = adds.filter((pp) => !("process_id" in pp && typeof pp.process_id === "number") && ("process" in pp));
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // |🔸 ASIGNAR PROCESO EXISTENTE                    |
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    const isAssignExistingPPDto = (pp) => "process_id" in pp && typeof pp.process_id === "number";
+                    const isCreateNewPPDto = (pp) => !("process_id" in pp) &&
+                        "process" in pp &&
+                        pp.process !== null &&
+                        typeof pp.process === "object" &&
+                        "name" in pp.process;
+                    const addsTyped = adds;
+                    const productProcessForAssign = addsTyped.filter(isAssignExistingPPDto);
+                    const productProcessForCreate = addsTyped.filter(isCreateNewPPDto);
                     for (const pp of productProcessForAssign) {
-                        const { product_input_process, process, product: _p, ...ppFlat } = pp;
-                        const productProcessCreateResponse = await this.createProductProcessUseCase.execute({
-                            ...ppFlat,
-                            product_id: productId,
-                        }, tx);
+                        const { product_input_process, ...ppFlat } = pp;
+                        const productProcessCreateResponse = await this.createProductProcessUseCase.execute({ ...ppFlat, product_id: productId }, tx);
                         if (product_input_process?.length) {
                             for (const pip of product_input_process) {
                                 const productInputResponse = await this.getProductInputByProductInputUseCase.execute(productId, pip.product_input.input_id, tx);
-                                if (!productInputResponse)
+                                if (!productInputResponse) {
                                     throw new http_error_1.default(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productId}.`);
+                                }
                                 await this.createProductInputProcess.execute({
-                                    qty: pip.qty, product_input_id: productInputResponse.id,
-                                    product_process_id: productProcessCreateResponse.id, product_id: productId
+                                    qty: pip.qty, // o DecimalVO.from(pip.qty) si tu UC lo espera
+                                    product_input_id: productInputResponse.id,
+                                    product_process_id: productProcessCreateResponse.id,
+                                    product_id: productId,
                                 }, tx);
                             }
                         }
                     }
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // |🔸 CREAR UN NUEVO PROCESO                       |
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     for (const pp of productProcessForCreate) {
                         const { product_input_process, process, sort_order } = pp;
+                        // ✅ sin any: 'process' existe por el Extract
                         const processCreateResponse = await this.createProcessUseCase.execute(process, tx);
                         const productProcessCreateResponse = await this.createProductProcessUseCase.execute({
                             process_id: processCreateResponse.id,
@@ -239,10 +241,11 @@ class UpdateProductOrchestratorUseCase {
                         if (product_input_process?.length) {
                             for (const pip of product_input_process) {
                                 const productInputResponse = await this.getProductInputByProductInputUseCase.execute(productId, pip.product_input.input_id, tx);
-                                if (!productInputResponse)
+                                if (!productInputResponse) {
                                     throw new http_error_1.default(404, `El insumo con ID ${pip.product_input.input_id} no está asignado al producto con ID ${productId}.`);
+                                }
                                 await this.createProductInputProcess.execute({
-                                    qty: pip.qty,
+                                    qty: pip.qty, // o DecimalVO.from(pip.qty)
                                     product_input_id: productInputResponse.id,
                                     product_process_id: productProcessCreateResponse.id,
                                     product_id: productId,

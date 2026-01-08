@@ -1,5 +1,5 @@
-import { ProductOrchestratorResponse } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
-import type { ProductQueryRepository } from "../../infrastructure/product-query.repository";
+import { ProductOrchestrator } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
+import type { ProductQueryRepository } from "../../infrastructure/repository/product-query.repository";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +44,5 @@ import { Transaction } from "sequelize";
 export declare class GetByIdProductsQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: ProductQueryRepository);
-    execute(id: number, tx?: Transaction): Promise<ProductOrchestratorResponse | null>;
+    execute(id: number, tx?: Transaction): Promise<ProductOrchestrator | null>;
 }

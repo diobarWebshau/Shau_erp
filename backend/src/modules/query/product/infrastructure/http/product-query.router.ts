@@ -1,4 +1,4 @@
-import { ProductQueryController } from "./produt-query.controller";
+import { ProductQueryController } from "../http/produt-query.controller";
 import { Router } from "express";
 
 export const ProductQueryRouter = (): Router => {

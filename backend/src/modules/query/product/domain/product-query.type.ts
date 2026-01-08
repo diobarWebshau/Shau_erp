@@ -1,5 +1,5 @@
+import type { ProductOrchestratorResponseProps, ProductOrchestrator, ProductProcessOrchestratorResponseProps } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
 import { ProductDiscountRangeResponseDto } from "@modules/features/products/assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
-import type { ProductOrchestratorResponse, ProductOrchestrator, ProductProcessResponseOrchestrator } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
 import type { ProductDiscountRangeProps } from "@modules/features/products/assigments/product-discounts-ranges/domain/product-discount-range.types";
 import { ProductInputResponseDto } from "@modules/features/products/assigments/product-input/application/dto/product-input.model.schema";
 import type { ProductProcessProps } from "@modules/features/products/assigments/product-process/domain/product-process.types";
@@ -7,7 +7,7 @@ import type { ProductInputProps } from "@modules/features/products/assigments/pr
 import type { ProductProps, ProductSearchCriteria } from "@modules/core/product/domain/product.types";
 import { ProductResponseDto } from "@modules/core/product/application/dto/product.model.schema";
 
-type ProductOrchestratorResult = ProductOrchestratorResponse;
+type ProductOrchestratorResult = ProductOrchestratorResponseProps;
 type ProductOrchestratorQuery = ProductOrchestrator;
 
 interface ProductFullQueryResult extends ProductProps {
@@ -18,7 +18,7 @@ interface ProductFullQueryResult extends ProductProps {
 
 interface ProductFullQueryResultDto extends ProductResponseDto {
     products_inputs: ProductInputResponseDto[],
-    product_processes: ProductProcessResponseOrchestrator[],
+    product_processes: ProductProcessOrchestratorResponseProps[],
     product_discount_ranges: ProductDiscountRangeResponseDto[]
 };
 
@@ -27,5 +27,5 @@ export type {
     ProductFullQueryResult,
     ProductFullQueryResultDto,
     ProductOrchestratorQuery,
-    ProductSearchCriteria
+    ProductSearchCriteria,
 };

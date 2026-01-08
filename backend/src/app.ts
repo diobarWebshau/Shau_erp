@@ -25,7 +25,7 @@ import { LocationTypeRouter } from "@modules/core/location-type/infrastructure/h
 import { LocationQueryRouter } from "./modules/query/location/infastructure/http/location-query.router";
 import { ClientQueryRouter } from "@modules/query/client/infrastructure/http/client-query.router";
 import { InputTypeRouter } from "@modules/core/input-type/infrastructure/http/input-type.router";
-import { ProductQueryRouter } from "@modules/query/product/infrastructure/product-query.router";
+import { ProductQueryRouter } from "@src/modules/query/product/infrastructure/http/product-query.router";
 import { InventoryRouter } from "./modules/core/inventory/infrastructure/http/inventory.router";
 import { ItemQueryRouter } from "./modules/query/item/infrastructure/http/item-query.router";
 import { locationRouter } from "@modules/core/location/infrastructure/http/location.router";

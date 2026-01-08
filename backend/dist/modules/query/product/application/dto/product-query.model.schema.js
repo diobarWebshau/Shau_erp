@@ -7,7 +7,7 @@ exports.productQuerySchema = exports.productQueryOrchestratorSchema = exports.pr
 const product_discount_range_model_schema_1 = require("@modules/features/products/assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema");
 const product_process_model_schema_1 = require("@modules/features/products/assigments/product-process/application/dto/product-process.model.schema");
 const product_input_model_schema_1 = require("@modules/features/products/assigments/product-input/application/dto/product-input.model.schema");
-const product_orchestrator_model_schema_1 = require("@modules/features/products/orchestrator/application/product-orchestrator.model.schema");
+const product_orchestrator_model_schema_1 = require("@modules/features/products/orchestrator/application/dto/product-orchestrator.model.schema");
 const product_model_schema_1 = require("@modules/core/product/application/dto/product.model.schema");
 Object.defineProperty(exports, "productQuerySchema", { enumerable: true, get: function () { return product_model_schema_1.productQuerySchema; } });
 const zod_1 = __importDefault(require("zod"));

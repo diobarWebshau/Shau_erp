@@ -1,3 +1,4 @@
+import { stringOrStringArray } from "@src/shared/application/string-or-string-array.schema";
 import { z } from "zod";
 
 /**
@@ -91,14 +92,9 @@ const productionLineResponseSchema = productionLineCreateSchema.extend({
  */
 const productionLineQuerySchema = z.object({
     filter: z.string().optional(),
-
-    exclude_ids: z.union([
-        z.string(),
-        z.array(z.string())
-    ]).optional(),
-
-    name: z.union([z.string(), z.array(z.string())]).optional(),
-    custom_id: z.union([z.string(), z.array(z.string())]).optional(),
+    exclude_ids: stringOrStringArray.optional(),
+    name: stringOrStringArray.optional(),
+    custom_id: stringOrStringArray.optional(),
     is_active: z.preprocess(
         (val) => {
             if (typeof val === "boolean") return val;

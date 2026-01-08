@@ -1,5 +1,5 @@
-import type { ProductProcessCreateDto, ProductProcessResponseDto, ProductProcessUpdateDto } from "../../application/dto/product-process.model.schema";
 import { GetProductProcessByIdProductProcessUseCase } from "../../application/use-cases/get-product-process-by-id-product-process.usecase";
+import type { ProductProcessCreateDto, ProductProcessUpdateDto } from "../../application/dto/product-process.model.schema";
 import { GetProductProcessByIdUseCase } from "../../application/use-cases/get-product-process-by-id.usecase";
 import { GetAllProductProcessUseCase } from "../../application/use-cases/get-all-product-process.usecase";
 import { CreateProductProcessUseCase } from "../../application/use-cases/create-product-process.usecase";
@@ -9,6 +9,7 @@ import { ProductRepository } from "@modules/core/product/infrastructure/reposito
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import ProcessRepository from "@modules/core/process/infrastructure/repository/process.repository";
 import { ProductProcessRepository } from "../repository/product-process.repository";
+import { ProductProcessProps } from "../../domain/product-process.types";
 import {
     CreateProductProcessSchema, DeleteProductProcessSchema,
     GetAllProductProcesssSchema, GetByIdProductProcessSchema,
@@ -93,7 +94,7 @@ export class ProductProcessController {
     // GET ALL
     // ============================================================
     getAll = async (_req: ApiRequest<GetAllProductProcesssSchema>, res: ApiResponse<GetAllProductProcesssSchema>) => {
-        const result: ProductProcessResponseDto[] = await this.getAllUseCase.execute();
+        const result: ProductProcessProps[] = await this.getAllUseCase.execute();
         return res.status(200).send(result);
     };
 
@@ -102,7 +103,7 @@ export class ProductProcessController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdProductProcessSchema>, res: ApiResponse<GetByIdProductProcessSchema>) => {
         const { id }: GetByIdProductProcessSchema["params"] = req.params
-        const result: ProductProcessResponseDto | null = await this.getByIdUseCase.execute(Number(id));
+        const result: ProductProcessProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
         return res.status(200).send(result);
     };
@@ -112,7 +113,7 @@ export class ProductProcessController {
     // ============================================================
     getByIdProductProcess = async (req: ApiRequest<GetByIdProductProcessProductProcesSchema>, res: ApiResponse<GetByIdProductProcessProductProcesSchema>) => {
         const { process_id, product_id }: GetByIdProductProcessProductProcesSchema["params"] = req.params
-        const result: ProductProcessResponseDto | null = await this.getByIdProductProcessUseCase.execute(Number(product_id), Number(process_id));
+        const result: ProductProcessProps | null = await this.getByIdProductProcessUseCase.execute(Number(product_id), Number(process_id));
         if (!result) return res.status(204).send(null);
         return res.status(200).send(result);
     };
@@ -122,7 +123,7 @@ export class ProductProcessController {
     // ============================================================
     create = async (req: ApiRequest<CreateProductProcessSchema>, res: ApiResponse<CreateProductProcessSchema>) => {
         const body: ProductProcessCreateDto = req.body;
-        const created: ProductProcessResponseDto = await this.createUseCase.execute(body);
+        const created: ProductProcessProps = await this.createUseCase.execute(body);
         return res.status(201).send(created);
     };
 
@@ -132,7 +133,7 @@ export class ProductProcessController {
     update = async (req: ApiRequest<UpdateProductProcessSchema>, res: ApiResponse<UpdateProductProcessSchema>) => {
         const { id }: UpdateProductProcessSchema["params"] = req.params;
         const body: ProductProcessUpdateDto = req.body;
-        const updated: ProductProcessResponseDto = await this.updateUseCase.execute(Number(id), body);
+        const updated: ProductProcessProps = await this.updateUseCase.execute(Number(id), body);
         return res.status(200).send(updated);
     };
 

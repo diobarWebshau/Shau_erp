@@ -1,9 +1,12 @@
 import type { LocationLocationTypeCreateDto, LocationLocationTypeResponseDto, LocationLocationTypeUpdateDto } from "../../application/dto/location-location-type.model.schema";
+import { GetByLocationIdLocationTypeIdLocationLocationTypeUseCase } from "../../application/use-cases/get-by-location-Id-Location-type-Id-location-location-type.usecase";
 import { GetLocationLocationTypeByIdUseCase } from "../../application/use-cases/get-location-location-type-by-id.usecase";
+import LocationTypeRepository from "@src/modules/core/location-type/infrastructure/repository/location-type.repository";
 import { CreateLocationLocationTypeUseCase } from "../../application/use-cases/create-location-location-type.usecase";
 import { UpdateLocationLocationTypeUseCase } from "../../application/use-cases/update-location-location-type.usecase";
 import { GetAllLocationLocationTypeUseCase } from "../../application/use-cases/get-all-location-location-type.usecase";
 import { DeleteLocationLocationTypeUseCase } from "../../application/use-cases/delete-location-location-type.usecase";
+import { LocationRepository } from "@src/modules/core/location/infrastructure/repository/location.repository";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { LocationLocationTypeRepository } from "../repository/location-location-type.repository";
 import {
@@ -11,9 +14,6 @@ import {
     GetAllLocationLocationTypesSchema, GetByIdLocationLocationTypeSchema,
     UpdateLocationLocationTypeSchema, GetByLocationIdLocationTypeIdLocationLocationTypeSchema
 } from "./../../application/dto/location-location-type.endpoint.schema"
-import { LocationRepository } from "@src/modules/core/location/infrastructure/repository/location.repository";
-import LocationTypeRepository from "@src/modules/core/location-type/infrastructure/repository/location-type.repository";
-import { GetByLocationIdLocationTypeIdLocationLocationTypeUseCase } from "../../application/use-cases/get-by-location-Id-Location-type-Id-location-location-type.usecase";
 
 /**
  * Controller (Infrastructure / HTTP)

@@ -1,9 +1,9 @@
-import { InventoryTransferCreateProps } from "@src/modules/features/inventories/transfers/domain/inventory-tranfer.types";
+import { InventoryTransferProps } from "@src/modules/features/inventories/transfers/domain/inventory-tranfer.types";
 import { IInventoryLocationItemRepository } from "../../../posicition/domain/inventory-location-item.repository.interface";
 import { IInventoryQueryRepository } from "@src/modules/query/inventory/domain/inventory-query.repository.interface";
 import { IInventoryTransferRepository } from "../../../transfers/domain/inventory-tranfer.repository.interface";
 import { IInventoryRepository } from "@src/modules/core/inventory/domain/inventory.repository.interface";
-import { InventoryTransferResponseSchemaDto } from "../dto/inventory-orchestrator.model.schema";
+import { InventoryTransferCreateDto } from "../dto/inventory-orchestrator.model.schema";
 interface ICreateInventoryOrchestratorUseCase {
     inventoryRepo: IInventoryRepository;
     inventoryLocationItemRepo: IInventoryLocationItemRepository;
@@ -16,6 +16,6 @@ export declare class CreateTransferInventoryOrchestratorUseCase {
     private readonly inventoryQueryRepo;
     private readonly inventoryTransferRepo;
     constructor({ inventoryRepo, inventoryLocationItemRepo, inventoryQueryRepo, inventoryTransferRepo }: ICreateInventoryOrchestratorUseCase);
-    create: (data: InventoryTransferCreateProps) => Promise<InventoryTransferResponseSchemaDto>;
+    create: (data: InventoryTransferCreateDto) => Promise<InventoryTransferProps>;
 }
 export {};

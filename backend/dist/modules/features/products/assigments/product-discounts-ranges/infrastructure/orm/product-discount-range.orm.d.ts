@@ -45,9 +45,9 @@ import { Model } from "sequelize";
 interface ProductDiscountRangeAttributes {
     id: number;
     product_id: number;
-    unit_price: number;
-    min_qty: number;
-    max_qty: number;
+    unit_price: string;
+    min_qty: string;
+    max_qty: string;
     created_at: Date;
     updated_at: Date;
 }
@@ -56,13 +56,13 @@ type ProductDiscountRangeUpdateAttributes = Partial<ProductDiscountRangeCreateAt
 declare class ProductDiscountRangeModel extends Model<ProductDiscountRangeAttributes, ProductDiscountRangeCreateAttributes> {
     id: number;
     product_id: number;
-    unit_price: number;
-    min_qty: number;
-    max_qty: number;
+    unit_price: string;
+    min_qty: string;
+    max_qty: string;
     created_at: number;
     updated_at: number;
     static getEditableFields: () => readonly (keyof ProductDiscountRangeUpdateAttributes)[];
     static getAllFields: () => readonly (keyof ProductDiscountRangeAttributes)[];
 }
 export { ProductDiscountRangeModel };
-export type { ProductDiscountRangeAttributes, ProductDiscountRangeCreateAttributes };
+export type { ProductDiscountRangeAttributes, ProductDiscountRangeCreateAttributes, ProductDiscountRangeUpdateAttributes };

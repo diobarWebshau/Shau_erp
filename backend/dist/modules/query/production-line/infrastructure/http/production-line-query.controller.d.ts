@@ -1,5 +1,10 @@
+import { ProductionLineOrchestrator } from "@src/modules/features/production-line/orchestrator/domain/production-line-orchestrator.types";
+import { ProductionLineFullQueryResult, ProductionLineQueryResultResponseDto } from "../../domain/production-line-query.types";
+import { ProductionLineQueryFullOrchestratorResponseDto } from "../../application/dto/production-line-query.model.schema";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { GetAllProductionLineOrchestratorSchema, GetAllProductionLinetFullQuerySchema, GetByIdProductionLineOrchestratorSchema, GetByIdProductionLinetFullQuerySchema } from "../../application/dto/production-line-query.endpoint.schema";
+export declare const mapProductionLineFullQueryDomainToDto: (data: ProductionLineFullQueryResult) => Promise<ProductionLineQueryResultResponseDto>;
+export declare const mapProductionLineOrchestratorDomainToDto: (data: ProductionLineOrchestrator) => Promise<ProductionLineQueryFullOrchestratorResponseDto>;
 export declare class ProductionLineQueryController {
     private readonly repo;
     private readonly getAllProductionLineOrchestratorUseCase;

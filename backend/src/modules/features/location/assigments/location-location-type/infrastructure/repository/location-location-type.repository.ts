@@ -110,13 +110,13 @@ export class LocationLocationTypeRepository implements ILocationLocationTypeRepo
         if (!existing) throw new HttpError(404,
             "La asignación del tipo de locación a la locación que se desea actualizar no fue posible encontrarla."
         );
+        if (!Object.keys(data).length) return existing;
         // 2. Aplicar UPDATE
         const [affectedCount]: [affectedCount: number] = await LocationLocationTypeModel.update(data, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la asignación del tipo de locación a la locación.");
+        if (!affectedCount) return existing;
         // 3. Obtener la locación actualizada
         const updated: LocationLocationTypeModel | null = await LocationLocationTypeModel.findByPk(id, {
             transaction: tx,

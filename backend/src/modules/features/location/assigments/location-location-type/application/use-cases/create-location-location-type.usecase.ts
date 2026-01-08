@@ -1,9 +1,10 @@
-import { Transaction } from "sequelize";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
-import type { LocationLocationTypeProps, LocationLocationTypeCreateProps } from "../../domain/location-location-type.types";
-import HttpError from "@shared/errors/http/http-error";
 import { ILocationTypeRepository } from "@src/modules/core/location-type/domain/location-type.repository";
 import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
+import type { LocationLocationTypeProps } from "../../domain/location-location-type.types";
+import { LocationLocationTypeCreateDto } from "../dto/location-location-type.model.schema";
+import HttpError from "@shared/errors/http/http-error";
+import { Transaction } from "sequelize";
 
 /**
  * UseCase
@@ -52,7 +53,7 @@ export class CreateLocationLocationTypeUseCase {
         private readonly repoLocation: ILocationRepository,
         private readonly repoLocationType: ILocationTypeRepository
     ) { }
-    async execute(data: LocationLocationTypeCreateProps, tx?: Transaction): Promise<LocationLocationTypeProps> {
+    async execute(data: LocationLocationTypeCreateDto, tx?: Transaction): Promise<LocationLocationTypeProps> {
         const validLocation = await this.repoLocation.findById(data.location_id, tx);
         if (!validLocation) throw new HttpError(404,
             "La locación seleccionada no existe."

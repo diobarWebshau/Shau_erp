@@ -1,5 +1,5 @@
-import { Transaction } from "sequelize";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------

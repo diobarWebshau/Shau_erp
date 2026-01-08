@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductInputUseCase = void 0;
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -45,6 +46,12 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductInputDtoToDomain = (data) => {
+    return ({
+        ...data,
+        equivalence: decimal_vo_1.DecimalVO.from(data.equivalence)
+    });
+};
 class CreateProductInputUseCase {
     repo;
     repoProduct;
@@ -58,13 +65,14 @@ class CreateProductInputUseCase {
         const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct)
             throw new http_error_1.default(404, "El producto seleccionado al que se desea asignar un insumono existe.");
-        const validateInput = await this.repoInput.findById(data.input_id, tx);
+        const createData = mapProductInputDtoToDomain(data);
+        const validateInput = await this.repoInput.findById(createData.input_id, tx);
         if (!validateInput)
             throw new http_error_1.default(404, "El insumo que se desea asignar al producto no existe.");
-        const validateDuplicate = await this.repo.findByIdProductInput(data.product_id, data.input_id, tx);
+        const validateDuplicate = await this.repo.findByIdProductInput(createData.product_id, createData.input_id, tx);
         if (validateDuplicate)
             throw new http_error_1.default(409, "El producto ya tiene asignado el mismo seleccionado.");
-        const created = await this.repo.create(data, tx);
+        const created = await this.repo.create(createData, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del insumo al producto.");
         return created;

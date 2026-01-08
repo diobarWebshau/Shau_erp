@@ -1,8 +1,7 @@
 import type { ProductInputUpdateProps, ProductInputProps } from "../../domain/product-input.types";
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
+import { ProductInputUpdateDto } from "../dto/product-input.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -47,23 +46,26 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapProductInputUpdateDtoToDomain = (data: ProductInputUpdateDto): ProductInputUpdateProps => {
+    const { equivalence, ...rest } = data;
+    return ({
+        ...rest,
+        ...(
+            equivalence !== undefined
+                ? { equivalence: DecimalVO.from(equivalence) }
+                : {}
+        )
+    });
+};
+
 export class UpdateProductInputUseCase {
     constructor(private readonly repo: IProductInputRepository) { }
-    async execute(id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps> {
+    async execute(id: number, data: ProductInputUpdateDto, tx?: Transaction): Promise<ProductInputProps> {
         const existing: ProductInputProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof ProductInputUpdateProps)[] = [
-            "input_id", "product_id", "equivalence"
-        ];
-        const filteredBody: ProductInputUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ProductInputProps = { ...existing, ...filteredBody };
-        const normalizedExisting: ProductInputUpdateProps =
-            deepNormalizeDecimals<ProductInputUpdateProps>(existing, ["equivalence"]);
-        const normalizedMerged: ProductInputUpdateProps =
-            deepNormalizeDecimals<ProductInputUpdateProps>(merged, ["equivalence"]);
-        const updateValues: ProductInputUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
+        const updateValues = mapProductInputUpdateDtoToDomain(data);
         if (!Object.keys(updateValues).length) return existing;
         const updated: ProductInputProps = await this.repo.update(id, updateValues, tx);
         if (!updated) throw new HttpError(500,

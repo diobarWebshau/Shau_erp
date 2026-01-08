@@ -1,38 +1,38 @@
 import {
-    ProductDiscountRangeCreateOrchestrator, ProductDiscountRangeUpdateOrchestrator, ProductInputCreateOrchestrator,
-    ProductInputUpdateOrchestrator, ProductProcessCreateOrchestrator, ProductProcessUpdateOrchestrator, ProductProcessOrchestratorAssignExisting,
-    ProductProcessOrchestratorCreateNew, ProductInputProcessProps, ProductInputProcessCreateOrchestrator, ProductInputProcessUpdateOrchestrator,
-    ProductOrchestratorResponse
-} from "../domain/product-orchestrator.types";
+    ProductDiscountRangeOrchestratorCreateProps, ProductDiscountRangeOrchestratorUpdateProps, ProductInputOrchestratorCreateProps,
+    ProductInputOrchestratorUpdateProps, ProductProcessOrchestratorCreateProps, ProductProcessOrchestratorUpdateProps, ProductProcessOrchestratorAssignExistingProps,
+    ProductProcessOrchestratorCreateNewProps, ProductInputProcessProps, ProductInputProcessOrchestratorCreateProps, ProductInputProcessOrchestratorUpdateProps,
+    ProductOrchestratorResponseProps
+} from "../../domain/product-orchestrator.types";
 import { CreateProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/create-product-discount-range.usecase";
 import { DeleteProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/delete-product-discount-range.usecase";
 import { UpdateProductDiscountRangeUseCase } from "@modules/features/products/assigments/product-discounts-ranges/application/use-cases/update-product-discount-range.usecase";
-import { GetProductInputByIdProductInputUseCase } from "../../assigments/product-input/application/use-cases/get-product-input-by-id-product-input.usecase";
+import { GetProductInputByIdProductInputUseCase } from "../../../assigments/product-input/application/use-cases/get-product-input-by-id-product-input.usecase";
 import { CreateProductProcessUseCase } from "@modules/features/products/assigments/product-process/application/use-cases/create-product-process.usecase";
 import { UpdateProductProcessUseCase } from "@modules/features/products/assigments/product-process/application/use-cases/update-product-process.usecase";
 import { DeleteProductProcessUseCase } from "@modules/features/products/assigments/product-process/application/use-cases/delete-product-process.usecase";
-import { CreateProductInputProcessUseCase } from "../../assigments/product-input-process/application/use-cases/create-product-input-process.usecase";
-import { UpdateProductInputProcessUseCase } from "../../assigments/product-input-process/application/use-cases/update-product-input-process.usecase";
-import { DeleteProductInputProcessUseCase } from "../../assigments/product-input-process/application/use-cases/delete-product-input-process.usecase";
+import { CreateProductInputProcessUseCase } from "../../../assigments/product-input-process/application/use-cases/create-product-input-process.usecase";
+import { UpdateProductInputProcessUseCase } from "../../../assigments/product-input-process/application/use-cases/update-product-input-process.usecase";
+import { DeleteProductInputProcessUseCase } from "../../../assigments/product-input-process/application/use-cases/delete-product-input-process.usecase";
 import { DeleteProductInputUseCase } from "@modules/features/products/assigments/product-input/application/use-cases/delete-product-input.usecase";
 import { CreateProductInputUseCase } from "@modules/features/products/assigments/product-input/application/use-cases/create-product-input.usecase";
 import { UpdateProductInputUseCase } from "@modules/features/products/assigments/product-input/application/use-cases/update-product-input.usecase";
-import { ProductDiscountRangeResponseDto } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
-import { IProductDiscountRangeRepository } from "../../assigments/product-discounts-ranges/domain/product-discount-range.repository.interface";
-import { IProductInputProcessRepository } from "../../assigments/product-input-process/domain/product-input-process.repository.interface";
+import { ProductDiscountRangeResponseDto } from "../../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
+import { IProductDiscountRangeRepository } from "../../../assigments/product-discounts-ranges/domain/product-discount-range.repository.interface";
+import { IProductInputProcessRepository } from "../../../assigments/product-input-process/domain/product-input-process.repository.interface";
 import { GetByIdProductsQueryOrchestratorUseCase } from "@modules/query/product/application/usecase/get-by-id-product-query-orchestrator.usecase";
-import { IProductProcessRepository } from "../../assigments/product-process/domain/product-process.repository.interface";
-import { ProductInputCreateProps, ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
-import { IProductInputRepository } from "../../assigments/product-input/domain/product-input.repository.interface";
+import { IProductProcessRepository } from "../../../assigments/product-process/domain/product-process.repository.interface";
+import { ProductInputCreateProps, ProductInputProps } from "../../../assigments/product-input/domain/product-input.types";
+import { IProductInputRepository } from "../../../assigments/product-input/domain/product-input.repository.interface";
 import { CreateProcessUseCase } from "@modules/core/process/application/use-cases/create-process.usecase";
 import { UpdateProductUseCase } from "@modules/core/product/application/use-cases/update-product.usecase";
-import { ProductProcessProps } from "../../assigments/product-process/domain/product-process.types";
+import { ProductProcessProps } from "../../../assigments/product-process/domain/product-process.types";
 import { IProductQueryRepository } from "@modules/query/product/domain/product-query.repository";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
 import { ProductProps, ProductUpdateProps } from "@modules/core/product/domain/product.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
-import { ProductOrchestratorUpdateDto } from "./product-orchestrator.model.schema";
+import { ProductOrchestratorUpdateDto } from "../dto/product-orchestrator.model.schema";
 import { ProcessProps } from "@modules/core/process/domain/process.types";
 import { IFileCleanupPort } from "@shared/files/file-cleanup.port";
 import HttpError from "@shared/errors/http/http-error";
@@ -120,7 +120,7 @@ export class UpdateProductOrchestratorUseCase {
 
     };
 
-    async execute(productId: number, data: ProductOrchestratorUpdateDto): Promise<ProductOrchestratorResponse> {
+    async execute(productId: number, data: ProductOrchestratorUpdateDto): Promise<ProductOrchestratorResponseProps> {
 
         const tx: Transaction = await sequelize.transaction({ isolationLevel: Transaction.ISOLATION_LEVELS.REPEATABLE_READ });
 
@@ -194,9 +194,9 @@ export class UpdateProductOrchestratorUseCase {
             // |🔹 PRODUCT-DISCOUNT-RANGE                       |
             // --------------------------------------------------
             if (isChangeProductDiscountRange) {
-                const adds: ProductDiscountRangeCreateOrchestrator[] = product_discount_ranges_manager?.added ?? [];
+                const adds: ProductDiscountRangeOrchestratorCreateProps[] = product_discount_ranges_manager?.added ?? [];
                 const deletes: ProductDiscountRangeResponseDto[] = product_discount_ranges_manager?.deleted ?? [];
-                const updated: ProductDiscountRangeUpdateOrchestrator[] = product_discount_ranges_manager?.updated ?? [];
+                const updated: ProductDiscountRangeOrchestratorUpdateProps[] = product_discount_ranges_manager?.updated ?? [];
 
                 if (adds.length) {
                     const newProductDiscountRange = adds.map((pdr) => ({
@@ -224,11 +224,11 @@ export class UpdateProductOrchestratorUseCase {
             // |🔹 PRODUCT-INPUT                                |
             // --------------------------------------------------
             if (isChangeProductInput) {
-                const adds: ProductInputCreateOrchestrator[] = products_inputs_manager?.added ?? [];
+                const adds: ProductInputOrchestratorCreateProps[] = products_inputs_manager?.added ?? [];
                 const deletes: ProductInputProps[] = products_inputs_manager?.deleted ?? [];
-                const updated: ProductInputUpdateOrchestrator[] = products_inputs_manager?.updated ?? [];
+                const updated: ProductInputOrchestratorUpdateProps[] = products_inputs_manager?.updated ?? [];
                 if (adds.length) {
-                    const newProductInput: ProductInputCreateProps[] = adds.map((pi: ProductInputCreateOrchestrator) => ({
+                    const newProductInput: ProductInputCreateProps[] = adds.map((pi: ProductInputOrchestratorCreateProps) => ({
                         ...pi,
                         product_id: productUpdateResponse.id
                     }));
@@ -252,15 +252,15 @@ export class UpdateProductOrchestratorUseCase {
             // |🔹 PRODUCT-PROCESS                              |
             // --------------------------------------------------
             if (isChangeProductProcess) {
-                const adds: ProductProcessCreateOrchestrator[] = product_processes_manager?.added ?? [];
+                const adds: ProductProcessOrchestratorCreateProps[] = product_processes_manager?.added ?? [];
                 const deleted: ProductProcessProps[] = product_processes_manager?.deleted ?? [];
-                const uptated: ProductProcessUpdateOrchestrator[] = product_processes_manager?.updated ?? [];
+                const uptated: ProductProcessOrchestratorUpdateProps[] = product_processes_manager?.updated ?? [];
                 if (adds.length) {
 
-                    const productProcessForAssign: ProductProcessOrchestratorAssignExisting[] = adds.filter((pp: ProductProcessCreateOrchestrator): pp is ProductProcessOrchestratorAssignExisting =>
+                    const productProcessForAssign: ProductProcessOrchestratorAssignExistingProps[] = adds.filter((pp: ProductProcessOrchestratorCreateProps): pp is ProductProcessOrchestratorAssignExistingProps =>
                         ("process_id" in pp) && typeof pp.process_id === "number"
                     );
-                    const productProcessForCreate = adds.filter((pp): pp is ProductProcessOrchestratorCreateNew =>
+                    const productProcessForCreate = adds.filter((pp): pp is ProductProcessOrchestratorCreateNewProps =>
                         !("process_id" in pp && typeof pp.process_id === "number") && ("process" in pp)
                     );
                     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -325,9 +325,9 @@ export class UpdateProductOrchestratorUseCase {
                             ((product_input_process_updated?.deleted ?? []).length) > 0;
 
                         if (isChangeProductInputProcess) {
-                            const addsPip: ProductInputProcessCreateOrchestrator[] = product_input_process_updated?.added ?? [];
+                            const addsPip: ProductInputProcessOrchestratorCreateProps[] = product_input_process_updated?.added ?? [];
                             const deletedPip: ProductInputProcessProps[] = product_input_process_updated?.deleted ?? [];
-                            const updatedPip: ProductInputProcessUpdateOrchestrator[] = product_input_process_updated?.updated ?? [];
+                            const updatedPip: ProductInputProcessOrchestratorUpdateProps[] = product_input_process_updated?.updated ?? [];
                             if (addsPip.length) {
                                 for (const pip of addsPip) {
                                     const productInputResponse: ProductInputProps | null = await this.getProductInputByProductInputUseCase.execute(productId, pip.product_input.input_id, tx);
@@ -392,7 +392,7 @@ export class UpdateProductOrchestratorUseCase {
             // --------------------------------------------------
             // |🔹 COMMIT + RESPONSE                            |
             // --------------------------------------------------
-            const productOrchestrator: ProductOrchestratorResponse | null = await this.getProductOrchestrator.execute(productUpdateResponse.id, tx);
+            const productOrchestrator: ProductOrchestratorResponseProps | null = await this.getProductOrchestrator.execute(productUpdateResponse.id, tx);
             if (!productOrchestrator)
                 throw new HttpError(500, "No se pudo acceder al producto despues de haber sido actualizado.");
 

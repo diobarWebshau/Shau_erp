@@ -1,5 +1,5 @@
-import { LocationQueryResultDto } from "../../domain/location-query.types";
 import { ILocationQueryRepository } from "../../domain/location-query.repository.interface";
+import { LocationFullQueryResult } from "../../domain/location-query.types";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +44,5 @@ import { Transaction } from "sequelize";
 export declare class GetByIdLocationFullQueryUseCase {
     private readonly repo;
     constructor(repo: ILocationQueryRepository);
-    execute(id: number, tx?: Transaction): Promise<LocationQueryResultDto | null>;
+    execute(id: number, tx?: Transaction): Promise<LocationFullQueryResult | null>;
 }

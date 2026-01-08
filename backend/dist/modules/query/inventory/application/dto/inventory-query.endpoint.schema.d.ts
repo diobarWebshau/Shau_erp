@@ -18,22 +18,22 @@ declare const getAllInventoryQuerySchema: z.ZodObject<{
     query: z.ZodObject<{}, z.core.$strict>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
-        stock: z.ZodNumber;
-        item_id: z.ZodNumber;
-        available: z.ZodNumber;
-        commited: z.ZodNumber;
-        item_name: z.ZodString;
+        qty: z.ZodNumber;
+        location_id: z.ZodNumber;
+        inventory_id: z.ZodNumber;
         item_type: z.ZodEnum<{
             input: "input";
             product: "product";
         }>;
-        location_id: z.ZodNumber;
-        inventory_id: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        item_id: z.ZodNumber;
         lead_time: z.ZodNumber;
+        item_name: z.ZodString;
         location_name: z.ZodString;
-        qty: z.ZodNumber;
+        available: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
+        stock: z.ZodString;
+        commited: z.ZodString;
     }, z.core.$strip>>;
 }, z.core.$strip>;
 declare const getAllLikeToInventoryQuerySchema: z.ZodObject<{
@@ -43,22 +43,22 @@ declare const getAllLikeToInventoryQuerySchema: z.ZodObject<{
     }, z.core.$strip>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodArray<z.ZodObject<{
-        stock: z.ZodNumber;
-        item_id: z.ZodNumber;
-        available: z.ZodNumber;
-        commited: z.ZodNumber;
-        item_name: z.ZodString;
+        qty: z.ZodNumber;
+        location_id: z.ZodNumber;
+        inventory_id: z.ZodNumber;
         item_type: z.ZodEnum<{
             input: "input";
             product: "product";
         }>;
-        location_id: z.ZodNumber;
-        inventory_id: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        item_id: z.ZodNumber;
         lead_time: z.ZodNumber;
+        item_name: z.ZodString;
         location_name: z.ZodString;
-        qty: z.ZodNumber;
+        available: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
+        stock: z.ZodString;
+        commited: z.ZodString;
     }, z.core.$strip>>;
 }, z.core.$strip>;
 declare const getByIdInventoryQuerySchema: z.ZodObject<{
@@ -70,22 +70,22 @@ declare const getByIdInventoryQuerySchema: z.ZodObject<{
     }, z.core.$strip>;
     body: z.ZodObject<{}, z.core.$strict>;
     response: z.ZodNullable<z.ZodObject<{
-        stock: z.ZodNumber;
-        item_id: z.ZodNumber;
-        available: z.ZodNumber;
-        commited: z.ZodNumber;
-        item_name: z.ZodString;
+        qty: z.ZodNumber;
+        location_id: z.ZodNumber;
+        inventory_id: z.ZodNumber;
         item_type: z.ZodEnum<{
             input: "input";
             product: "product";
         }>;
-        location_id: z.ZodNumber;
-        inventory_id: z.ZodNumber;
-        minimum_stock: z.ZodNumber;
-        maximum_stock: z.ZodNumber;
+        item_id: z.ZodNumber;
         lead_time: z.ZodNumber;
+        item_name: z.ZodString;
         location_name: z.ZodString;
-        qty: z.ZodNumber;
+        available: z.ZodString;
+        minimum_stock: z.ZodString;
+        maximum_stock: z.ZodString;
+        stock: z.ZodString;
+        commited: z.ZodString;
     }, z.core.$strip>>;
 }, z.core.$strip>;
 /**

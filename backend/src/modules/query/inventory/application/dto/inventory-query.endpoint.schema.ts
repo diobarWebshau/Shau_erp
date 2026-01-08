@@ -1,4 +1,4 @@
-import { inventoryQuerySchema, inventorySearchQuerySchema } from "./inventory-query.model.schema"
+import { inventoryQueryResponseSchema, inventorySearchQuerySchema } from "./inventory-query.model.schema"
 import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import z from "zod"
 
@@ -21,21 +21,21 @@ const getAllInventoryQuerySchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
     body: z.object({}).strict(),
-    response: z.array(inventoryQuerySchema)
+    response: z.array(inventoryQueryResponseSchema)
 });
 
 const getAllLikeToInventoryQuerySchema = z.object({
     params: z.object({}).strict(),
     query: inventorySearchQuerySchema,
     body: z.object({}).strict(),
-    response: z.array(inventoryQuerySchema)
+    response: z.array(inventoryQueryResponseSchema)
 });
 
 const getByIdInventoryQuerySchema = z.object({
     params: z.object({ inventory_id: z.string() }).strict(),
     query: inventorySearchQuerySchema,
     body: z.object({}).strict(),
-    response: inventoryQuerySchema.nullable()
+    response: inventoryQueryResponseSchema.nullable()
 });
 
 // const getByIdInventoryQuerySchema = z.object({

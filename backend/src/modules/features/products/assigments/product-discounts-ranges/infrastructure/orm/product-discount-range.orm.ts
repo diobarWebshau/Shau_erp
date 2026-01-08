@@ -1,5 +1,5 @@
-import { DataTypes, Model } from "sequelize";
 import { sequelize } from "@config/mysql/sequelize";
+import { DataTypes, Model } from "sequelize";
 
 /**
  * Infrastructure Model (Sequelize)
@@ -61,9 +61,9 @@ import { sequelize } from "@config/mysql/sequelize";
 interface ProductDiscountRangeAttributes {
     id: number;
     product_id: number,
-    unit_price: number,
-    min_qty: number,
-    max_qty: number,
+    unit_price: string,
+    min_qty: string,
+    max_qty: string,
     created_at: Date,
     updated_at: Date
 };
@@ -75,9 +75,9 @@ class ProductDiscountRangeModel extends Model<ProductDiscountRangeAttributes, Pr
 
     declare id: number;
     declare product_id: number;
-    declare unit_price: number;
-    declare min_qty: number;
-    declare max_qty: number;
+    declare unit_price: string;
+    declare min_qty: string;
+    declare max_qty: string;
     declare created_at: number;
     declare updated_at: number;
 
@@ -102,11 +102,11 @@ ProductDiscountRangeModel.init({
         allowNull: false
     },
     min_qty: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(14, 4),
         allowNull: false
     },
     max_qty: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(14, 4),
         allowNull: false
     },
     unit_price: {
@@ -132,5 +132,6 @@ ProductDiscountRangeModel.init({
 export { ProductDiscountRangeModel };
 export type {
     ProductDiscountRangeAttributes,
-    ProductDiscountRangeCreateAttributes
+    ProductDiscountRangeCreateAttributes,
+    ProductDiscountRangeUpdateAttributes
 }

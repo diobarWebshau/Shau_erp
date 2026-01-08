@@ -1,42 +1,47 @@
 import { ProductionLineProductCreateProps, ProductionLineProductProps, ProductionLineProductUpdateProps } from "../../assigments/production-line-product/domain/production-line-product.types";
-import { ProductionLineCreateProps, ProductionLineProps } from "@modules/core/production-line/domain/production-line.types";
 import { ProductionLineProductResponseDto } from "../../assigments/production-line-product/application/dto/production-line-product.model.schema";
+import { ProductionLineCreateProps, ProductionLineProps } from "@modules/core/production-line/domain/production-line.types";
 import { ProductionLineResponseDto } from "@modules/core/production-line/application/dto/production-lines.model.schema";
 import { ProductProps } from "@modules/core/product/domain/product.types";
+import { ProductResponseDto } from "@src/modules/core/product/application/dto/product.model.schema";
 type NoProductionLineId = {
     production_line_id?: never;
 };
 type UpdateById<TPatch> = {
     id: number;
 } & TPatch;
-type ProductionLineOrchestratorBase = ProductionLineProps & {
+type ProductionLineOrchestratorProps = ProductionLineProps & {
     production_line_products: ProductionLineProductProps[];
 };
-type ProductionLineProductOrchestratorBase = ProductionLineProductProps & {
+type ProductionLineProductOrchestratorProps = ProductionLineProductProps & {
     product: ProductProps;
     production_line: ProductionLineProps;
 };
-type ProductionLineProductCreateOrchestrator = NoProductionLineId & Omit<ProductionLineProductCreateProps, "production_line_id">;
-interface ProductionLineCreateOrchestrator {
+type ProductionLineProductOrchestratorCreateProps = NoProductionLineId & Omit<ProductionLineProductCreateProps, "production_line_id">;
+interface ProductionLineOrchestratorCreateProps {
     production_line: ProductionLineCreateProps;
-    production_line_products: ProductionLineProductCreateOrchestrator[];
+    production_line_products: Array<ProductionLineProductOrchestratorCreateProps>;
 }
-type ProductionLineProductUpdateOrchestrator = UpdateById<ProductionLineProductUpdateProps>;
+type ProductionLineProductOrchestratorUpdateProps = UpdateById<ProductionLineProductUpdateProps>;
 interface ProductionLineProductManager {
-    added: Array<ProductionLineProductCreateOrchestrator>;
-    updated: Array<ProductionLineProductUpdateOrchestrator>;
+    added: Array<ProductionLineProductOrchestratorCreateProps>;
+    updated: Array<ProductionLineProductOrchestratorUpdateProps>;
     deleted: Array<ProductionLineProductResponseDto>;
 }
-interface ProductionLineUpdateOrchestrator {
+interface ProductionLineOrchestratorUpdateProps {
     production_line: ProductionLineCreateProps;
     production_line_products_manager: ProductionLineProductManager;
 }
+type ProductionLineProductOrchestratorResponseProps = ProductionLineProductResponseDto & {
+    product: ProductResponseDto;
+    production_line: ProductionLineResponseDto;
+};
 interface ProductionLineOrchestrator {
     production_line: ProductionLineProps;
-    production_line_products: ProductionLineProductOrchestratorBase[];
+    production_line_products: ProductionLineProductOrchestratorProps[];
 }
-interface ProductionLineOrchestratorResponse {
+interface ProductionLineOrchestratorResponseProps {
     production_line: ProductionLineResponseDto;
-    production_line_products: ProductionLineProductResponseDto;
+    production_line_products: Array<ProductionLineProductOrchestratorResponseProps>;
 }
-export type { ProductionLineOrchestratorBase, ProductionLineProductOrchestratorBase, ProductionLineProductCreateOrchestrator, ProductionLineCreateOrchestrator, ProductionLineProductUpdateOrchestrator, ProductionLineUpdateOrchestrator, ProductionLineOrchestrator, ProductionLineOrchestratorResponse };
+export type { ProductionLineOrchestratorProps, ProductionLineProductOrchestratorProps, ProductionLineProductOrchestratorCreateProps, ProductionLineOrchestratorCreateProps, ProductionLineProductOrchestratorUpdateProps, ProductionLineOrchestratorUpdateProps, ProductionLineOrchestrator, ProductionLineOrchestratorResponseProps };

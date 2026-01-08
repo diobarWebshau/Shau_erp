@@ -1,8 +1,9 @@
 import { ProductionLineProductCreateProps, ProductionLineProductProps, ProductionLineProductUpdateProps } from "../../assigments/production-line-product/domain/production-line-product.types";
-import { ProductionLineCreateProps, ProductionLineProps} from "@modules/core/production-line/domain/production-line.types";
 import { ProductionLineProductResponseDto } from "../../assigments/production-line-product/application/dto/production-line-product.model.schema";
+import { ProductionLineCreateProps, ProductionLineProps } from "@modules/core/production-line/domain/production-line.types";
 import { ProductionLineResponseDto } from "@modules/core/production-line/application/dto/production-lines.model.schema";
 import { ProductProps } from "@modules/core/product/domain/product.types";
+import { ProductResponseDto } from "@src/modules/core/product/application/dto/product.model.schema";
 
 
 // =========================================================================================
@@ -19,11 +20,11 @@ type UpdateById<TPatch> = { id: number } & TPatch;
 // |                         ORCHESTRATOR — BASE (CANÓNICO)                                |
 // =========================================================================================
 
-type ProductionLineOrchestratorBase = ProductionLineProps & {
+type ProductionLineOrchestratorProps = ProductionLineProps & {
     production_line_products: ProductionLineProductProps[]
 };
 
-type ProductionLineProductOrchestratorBase = ProductionLineProductProps & {
+type ProductionLineProductOrchestratorProps = ProductionLineProductProps & {
     product: ProductProps,
     production_line: ProductionLineProps
 };
@@ -36,16 +37,16 @@ type ProductionLineProductOrchestratorBase = ProductionLineProductProps & {
 // |🔹 PRODUCTION-LINE-PRODUCT                      |
 // --------------------------------------------------
 
-type ProductionLineProductCreateOrchestrator = NoProductionLineId &
+type ProductionLineProductOrchestratorCreateProps = NoProductionLineId &
     Omit<ProductionLineProductCreateProps, "production_line_id">;
 
 // --------------------------------------------------
 // 🔹 OBJECT PRODUCTION LINE ORCHESTRATOR CREATE    |
 // --------------------------------------------------
 
-interface ProductionLineCreateOrchestrator {
+interface ProductionLineOrchestratorCreateProps {
     production_line: ProductionLineCreateProps,
-    production_line_products: ProductionLineProductCreateOrchestrator[]
+    production_line_products: Array<ProductionLineProductOrchestratorCreateProps>
 };
 
 // =========================================================================================
@@ -56,11 +57,11 @@ interface ProductionLineCreateOrchestrator {
 // |🔹 PRODUCTION-LINE-PRODUCT                      |
 // --------------------------------------------------
 
-type ProductionLineProductUpdateOrchestrator = UpdateById<ProductionLineProductUpdateProps>;
+type ProductionLineProductOrchestratorUpdateProps = UpdateById<ProductionLineProductUpdateProps>;
 
 interface ProductionLineProductManager {
-    added: Array<ProductionLineProductCreateOrchestrator>,
-    updated: Array<ProductionLineProductUpdateOrchestrator>,
+    added: Array<ProductionLineProductOrchestratorCreateProps>,
+    updated: Array<ProductionLineProductOrchestratorUpdateProps>,
     deleted: Array<ProductionLineProductResponseDto>
 }
 
@@ -68,7 +69,7 @@ interface ProductionLineProductManager {
 // 🔹 OBJECT PRODUCTION LINE ORCHESTRATOR UPDATE    |
 // --------------------------------------------------
 
-interface ProductionLineUpdateOrchestrator {
+interface ProductionLineOrchestratorUpdateProps {
     production_line: ProductionLineCreateProps,
     production_line_products_manager: ProductionLineProductManager
 };
@@ -79,14 +80,19 @@ interface ProductionLineUpdateOrchestrator {
 // =========================================================================================
 
 
-interface ProductionLineOrchestrator {
-    production_line: ProductionLineProps,
-    production_line_products: ProductionLineProductOrchestratorBase[]
+type ProductionLineProductOrchestratorResponseProps = ProductionLineProductResponseDto & {
+    product: ProductResponseDto,
+    production_line: ProductionLineResponseDto
 };
 
-interface ProductionLineOrchestratorResponse {
+interface ProductionLineOrchestrator {
+    production_line: ProductionLineProps,
+    production_line_products: ProductionLineProductOrchestratorProps[]
+};
+
+interface ProductionLineOrchestratorResponseProps {
     production_line: ProductionLineResponseDto,
-    production_line_products: ProductionLineProductResponseDto
+    production_line_products: Array<ProductionLineProductOrchestratorResponseProps>
 };
 
 // =========================================================================================
@@ -94,20 +100,20 @@ interface ProductionLineOrchestratorResponse {
 // =========================================================================================
 
 export type {
-    // *******************  BASE (CANÓNICO) ******************
-    ProductionLineOrchestratorBase,
-    ProductionLineProductOrchestratorBase,
+    // *******************  Props (CANÓNICO) ******************
+    ProductionLineOrchestratorProps,
+    ProductionLineProductOrchestratorProps,
 
     // ******************* CREATE (REQUEST) ******************
-    ProductionLineProductCreateOrchestrator,
-    ProductionLineCreateOrchestrator,
+    ProductionLineProductOrchestratorCreateProps,
+    ProductionLineOrchestratorCreateProps,
 
     // ******************* UPDATE (REQUEST) ******************
-    ProductionLineProductUpdateOrchestrator,
-    ProductionLineUpdateOrchestrator,
+    ProductionLineProductOrchestratorUpdateProps,
+    ProductionLineOrchestratorUpdateProps,
 
     // ******************* RESPONSE ******************
     ProductionLineOrchestrator,
-    ProductionLineOrchestratorResponse
+    ProductionLineOrchestratorResponseProps
 }
 

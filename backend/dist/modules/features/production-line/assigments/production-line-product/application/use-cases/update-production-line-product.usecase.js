@@ -4,9 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProductionLineProductUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -57,17 +54,9 @@ class UpdateProductionLineProductUseCase {
         const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación del producto a la línea de producción que se desea actualizar no fue posible encontrarla.");
-        const editableFields = [
-            "product_id", "production_line_id"
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["product_id", "production_line_id"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["product_id", "production_line_id"]);
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length)
+        if (!Object.keys(data).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues, tx);
+        const updated = await this.repo.update(id, data, tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignacion del producto a la línea de producción.");
         return updated;

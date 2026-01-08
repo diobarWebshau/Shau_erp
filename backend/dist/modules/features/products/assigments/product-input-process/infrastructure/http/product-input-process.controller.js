@@ -8,9 +8,9 @@ const update_product_input_process_usecase_1 = require("../../application/use-ca
 const get_all_product_input_process_usecase_1 = require("../../application/use-cases/get-all-product-input-process.usecase");
 const get_by_product_input_process_usecase_1 = require("../../application/use-cases/get-by-product-input-process.usecase");
 const delete_product_input_process_usecase_1 = require("../../application/use-cases/delete-product-input-process.usecase");
-const product_input_process_repository_1 = require("../repository/product-input-process.repository");
-const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
 const product_input_repository_1 = require("../../../product-input/infrastructure/repository/product-input.repository");
+const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
+const product_input_process_repository_1 = require("../repository/product-input-process.repository");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -60,6 +60,10 @@ const product_input_repository_1 = require("../../../product-input/infrastructur
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
+const mapProductInputProcessDomainToDto = (data) => ({
+    ...data,
+    qty: data.qty.toString()
+});
 class ProductInputProcessController {
     repo;
     repoProduct;
@@ -88,28 +92,29 @@ class ProductInputProcessController {
     // GET ALL
     // ============================================================
     getAll = async (_req, res) => {
-        const result = await this.getAllUseCase.execute();
-        return res.status(200).send(result);
+        const productInputProcessResponse = await this.getAllUseCase.execute();
+        const productInputProcessResult = productInputProcessResponse.map(mapProductInputProcessDomainToDto);
+        return res.status(200).send(productInputProcessResult);
     };
     // ============================================================
     // GET BY ID
     // ============================================================
     getById = async (req, res) => {
         const { id } = req.params;
-        const result = await this.getByIdUseCase.execute(Number(id));
-        if (!result)
+        const productInputProcessResponse = await this.getByIdUseCase.execute(Number(id));
+        if (!productInputProcessResponse)
             return res.status(204).send(null);
-        return res.status(200).send(result);
+        return res.status(200).send(mapProductInputProcessDomainToDto(productInputProcessResponse));
     };
     // ============================================================
     // GET BY ID
     // ============================================================
     getByProductInputProcess = async (req, res) => {
         const { product_id, product_input_id, product_process_id } = req.params;
-        const result = await this.getByProductInputProcessId.execute(Number(product_id), Number(product_input_id), Number(product_process_id));
-        if (!result)
+        const productInputProcessResponse = await this.getByProductInputProcessId.execute(Number(product_id), Number(product_input_id), Number(product_process_id));
+        if (!productInputProcessResponse)
             return res.status(204).send(null);
-        return res.status(200).send(result);
+        return res.status(200).send(mapProductInputProcessDomainToDto(productInputProcessResponse));
     };
     // ============================================================
     // CREATE
@@ -117,7 +122,7 @@ class ProductInputProcessController {
     create = async (req, res) => {
         const body = req.body;
         const created = await this.createUseCase.execute(body);
-        return res.status(201).send(created);
+        return res.status(201).send(mapProductInputProcessDomainToDto(created));
     };
     // ============================================================
     // UPDATE
@@ -126,7 +131,7 @@ class ProductInputProcessController {
         const { id } = req.params;
         const body = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        return res.status(200).send(updated);
+        return res.status(200).send(mapProductInputProcessDomainToDto(updated));
     };
     // ============================================================
     // DELETE

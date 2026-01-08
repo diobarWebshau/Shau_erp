@@ -1,9 +1,9 @@
 import z from "zod";
-declare const productionLineProductCreateOrchestratorSchema: z.ZodObject<{
+declare const productionLineProductOrchestratorCreateSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     production_line_id: z.ZodOptional<z.ZodUndefined>;
 }, z.core.$strict>;
-declare const productionLineCreateOrchestratorSchema: z.ZodObject<{
+declare const productionLineOrchestratorCreateSchema: z.ZodObject<{
     production_line: z.ZodObject<{
         name: z.ZodString;
         custom_id: z.ZodString;
@@ -14,10 +14,10 @@ declare const productionLineCreateOrchestratorSchema: z.ZodObject<{
         production_line_id: z.ZodOptional<z.ZodUndefined>;
     }, z.core.$strict>>;
 }, z.core.$strip>;
-declare const productionLineCreateRequestOrchestratorSchema: z.ZodObject<{
+declare const productionLineOrchestratorCreateRequestSchema: z.ZodObject<{
     payload: z.ZodPipe<z.ZodString, z.ZodTransform<any, string>>;
 }, z.core.$strip>;
-declare const productionLineProductUpdateOrchestratorSchema: z.ZodObject<{
+declare const productionLineProductOrchestratorUpdateSchema: z.ZodObject<{
     product_id: z.ZodOptional<z.ZodNumber>;
     production_line_id: z.ZodOptional<z.ZodNumber>;
     id: z.ZodNumber;
@@ -38,10 +38,10 @@ declare const productionLineProductManagerSchema: z.ZodObject<{
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-declare const productionLineUpdateRequestOrchestratorSchema: z.ZodObject<{
+declare const productionLineOrchestratorUpdateRequestSchema: z.ZodObject<{
     payload: z.ZodPipe<z.ZodString, z.ZodTransform<any, string>>;
 }, z.core.$strip>;
-declare const productionLineProductResponseOrchestratorSchema: z.ZodObject<{
+declare const productionLineProductOrchestratorResponseSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     production_line_id: z.ZodNumber;
     id: z.ZodNumber;
@@ -73,7 +73,7 @@ declare const productionLineProductResponseOrchestratorSchema: z.ZodObject<{
         updated_at: z.ZodString;
     }, z.core.$strip>;
 }, z.core.$strip>;
-declare const productionLineResponseOrchestratorSchema: z.ZodObject<{
+declare const productionLineOrchestratorResponseSchema: z.ZodObject<{
     production_line: z.ZodObject<{
         name: z.ZodString;
         custom_id: z.ZodString;
@@ -115,13 +115,13 @@ declare const productionLineResponseOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-type ProductionLineProductCreateOrchestratorDto = z.infer<typeof productionLineProductCreateOrchestratorSchema>;
-type ProductionLineCreateOrchestratorDto = z.infer<typeof productionLineCreateOrchestratorSchema>;
-type ProductionLineCreateRequestOrchestratorDto = z.infer<typeof productionLineCreateRequestOrchestratorSchema>;
-type ProductionLineProductUpdateOrchestratorDto = z.infer<typeof productionLineProductUpdateOrchestratorSchema>;
+type ProductionLineProductOrchestratorCreateDto = z.infer<typeof productionLineProductOrchestratorCreateSchema>;
+type ProductionLineOrchestratorCreateDto = z.infer<typeof productionLineOrchestratorCreateSchema>;
+type ProductionLineOrchestratorCreateRequestDto = z.infer<typeof productionLineOrchestratorCreateRequestSchema>;
+type ProductionLineProductOrchestratorUpdateDto = z.infer<typeof productionLineProductOrchestratorUpdateSchema>;
 type ProductionLineProductManagerSchemaDto = z.infer<typeof productionLineProductManagerSchema>;
-type ProductionLineUpdateRequestOrchestratorDto = z.infer<typeof productionLineUpdateRequestOrchestratorSchema>;
-type ProductionLineProductResponseOrchestratorDto = z.infer<typeof productionLineProductResponseOrchestratorSchema>;
-type ProductionLineResponseOrchestratorDto = z.infer<typeof productionLineResponseOrchestratorSchema>;
-export { productionLineProductCreateOrchestratorSchema, productionLineCreateOrchestratorSchema, productionLineCreateRequestOrchestratorSchema, productionLineProductUpdateOrchestratorSchema, productionLineProductManagerSchema, productionLineUpdateRequestOrchestratorSchema, productionLineProductResponseOrchestratorSchema, productionLineResponseOrchestratorSchema };
-export type { ProductionLineProductCreateOrchestratorDto, ProductionLineCreateOrchestratorDto, ProductionLineCreateRequestOrchestratorDto, ProductionLineProductUpdateOrchestratorDto, ProductionLineProductManagerSchemaDto, ProductionLineUpdateRequestOrchestratorDto, ProductionLineProductResponseOrchestratorDto, ProductionLineResponseOrchestratorDto };
+type ProductionLineOrchestratorUpdateRequestDto = z.infer<typeof productionLineOrchestratorUpdateRequestSchema>;
+type ProductionLineProductOrchestratorResponseDto = z.infer<typeof productionLineProductOrchestratorResponseSchema>;
+type ProductionLineOrchestratorResponseDto = z.infer<typeof productionLineOrchestratorResponseSchema>;
+export { productionLineProductOrchestratorCreateSchema, productionLineOrchestratorCreateSchema, productionLineOrchestratorCreateRequestSchema, productionLineProductOrchestratorUpdateSchema, productionLineProductManagerSchema, productionLineOrchestratorUpdateRequestSchema, productionLineProductOrchestratorResponseSchema, productionLineOrchestratorResponseSchema };
+export type { ProductionLineProductOrchestratorCreateDto, ProductionLineOrchestratorCreateDto, ProductionLineOrchestratorCreateRequestDto, ProductionLineProductOrchestratorUpdateDto, ProductionLineProductManagerSchemaDto, ProductionLineOrchestratorUpdateRequestDto, ProductionLineProductOrchestratorResponseDto, ProductionLineOrchestratorResponseDto };

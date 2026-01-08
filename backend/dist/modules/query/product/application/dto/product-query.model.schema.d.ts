@@ -1,55 +1,7 @@
 import { productOrchestratorResponseSchema } from "@modules/features/products/orchestrator/application/product-orchestrator.model.schema";
 import { productQuerySchema } from "@modules/core/product/application/dto/product.model.schema";
 import z from "zod";
-declare const productQueryOrchestratorSchema: z.ZodObject<{
-    product: z.ZodObject<{
-        name: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        type: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        description: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        presentation: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        unit_of_measure: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        storage_conditions: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        barcode: z.ZodOptional<z.ZodNullable<z.ZodPipe<z.ZodTransform<number | null, unknown>, z.ZodNumber>>>;
-        sku: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        photo: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        sale_price: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        production_cost: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
-        is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
-        id: z.ZodNumber;
-        created_at: z.ZodString;
-        updated_at: z.ZodString;
-    }, z.core.$strip>;
-    products_inputs: z.ZodArray<z.ZodObject<{
-        product_id: z.ZodNumber;
-        input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
-        id: z.ZodNumber;
-    }, z.core.$strip>>;
-    product_processes: z.ZodArray<z.ZodObject<{
-        product_id: z.ZodNumber;
-        process_id: z.ZodNumber;
-        sort_order: z.ZodNumber;
-        id: z.ZodNumber;
-        product_input_process: z.ZodOptional<z.ZodArray<z.ZodObject<{
-            product_id: z.ZodNumber;
-            product_input_id: z.ZodNumber;
-            product_process_id: z.ZodNumber;
-            qty: z.ZodNumber;
-            id: z.ZodNumber;
-        }, z.core.$strip>>>;
-    }, z.core.$strip>>;
-    product_discount_ranges: z.ZodArray<z.ZodObject<{
-        product_id: z.ZodNumber;
-        unit_price: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
-        id: z.ZodNumber;
-        created_at: z.ZodString;
-        updated_at: z.ZodString;
-    }, z.core.$strip>>;
-}, z.core.$strip>;
+declare const productQueryOrchestratorSchema: any;
 declare const productQueryFullResponseSchema: z.ZodObject<{
     name: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     custom_id: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -71,7 +23,7 @@ declare const productQueryFullResponseSchema: z.ZodObject<{
     products_inputs: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        equivalence: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>>;
     product_processes: z.ZodArray<z.ZodObject<{
@@ -82,9 +34,9 @@ declare const productQueryFullResponseSchema: z.ZodObject<{
     }, z.core.$strip>>;
     product_discount_ranges: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
-        unit_price: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_price: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;

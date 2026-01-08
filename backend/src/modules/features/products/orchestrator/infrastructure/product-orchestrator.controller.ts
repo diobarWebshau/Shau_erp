@@ -1,16 +1,16 @@
 import { ProductDiscountRangeRepository } from "../../assigments/product-discounts-ranges/infrastructure/repository/product-discount-range.repository";
 import { ProductInputProcessRepository } from "../../assigments/product-input-process/infrastructure/repository/product-input-process.repository";
-import { CreateProductOrchestratorSchema, UpdateProductOrchestratorSchema } from "../application/product-orchestrator.endpoint.schema";
+import { CreateProductOrchestratorSchema, UpdateProductOrchestratorSchema } from "../application/dto/product-orchestrator.endpoint.schema";
 import { ProductProcessRepository } from "../../assigments/product-process/infrastructure/repository/product-process.repository";
 import { ProductInputRepository } from "../../assigments/product-input/infrastructure/repository/product-input.repository";
 import { ProductQueryRepository } from "../../../../query/product/infrastructure/product-query.repository";
 import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
-import { UpdateProductOrchestratorUseCase } from "../application/update-product-orchestrator.usecase";
+import { UpdateProductOrchestratorUseCase } from "../application/use-cases/update-product-orchestrator.usecase";
 import { CreateProductOrchestratorUseCase } from "../application/create-product-orchestrator.usecase";
 import ProcessRepository from "@modules/core/process/infrastructure/repository/process.repository";
 import { InputRepository } from "@modules/core/input/infrastructure/repository/input.repository";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
-import { ProductOrchestratorResponse } from "../domain/product-orchestrator.types";
+import { ProductOrchestratorResponseProps } from "../domain/product-orchestrator.types";
 import { LocalFileCleanupService } from "@shared/files/local-file-cleanup.service";
 
 export class ProductOrchestratorController {

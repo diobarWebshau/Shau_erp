@@ -9,14 +9,7 @@ class GetAllInventoryTransferUseCase {
     ;
     execute = async (tx) => {
         const inventoryTransactionResponses = await this.inventoryTransferRepo.findAll(tx);
-        if (!inventoryTransactionResponses.length)
-            return [];
-        const inventoryTransactionResponsesFormatted = inventoryTransactionResponses.map((it) => ({
-            ...it,
-            created_at: it.created_at.toISOString(),
-            updated_at: it.updated_at.toISOString()
-        }));
-        return inventoryTransactionResponsesFormatted;
+        return inventoryTransactionResponses;
     };
 }
 exports.GetAllInventoryTransferUseCase = GetAllInventoryTransferUseCase;

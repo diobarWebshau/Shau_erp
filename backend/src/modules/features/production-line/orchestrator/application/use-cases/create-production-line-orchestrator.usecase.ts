@@ -1,17 +1,14 @@
-import { ProductionLineProductResponseOrchestratorDto, ProductionLineResponseOrchestratorDto } from "../dto/production-line-orchestrator.model.schema";
 import { IProductionLineProductRepository } from "../../../assigments/production-line-product/domain/production-line.repository.interface";
+import { ProductionLineOrchestrator, ProductionLineOrchestratorCreateProps } from "../../domain/production-line-orchestrator.types";
 import { ProductionLineProductCreateProps } from "../../../assigments/production-line-product/domain/production-line-product.types";
 import { IProductionLineQueryRepository } from "@modules/query/production-line/domain/production-line-query.respository.interface";
-import { ProductionLineResponseDto } from "@modules/core/production-line/application/dto/production-lines.model.schema";
 import { IProductionLineRepository } from "@modules/core/production-line/domain/production-line.repository.interface";
 import { ProductionLineFullQueryResult } from "@modules/query/production-line/domain/production-line-query.types";
-import { ProductionLineCreateOrchestrator } from "../../domain/production-line-orchestrator.types";
 import { ProductionLineProps } from "@modules/core/production-line/domain/production-line.types";
+import HttpError from "@src/shared/errors/http/http-error";
 import { Transaction as SequelizeTx } from "sequelize";
-import ImageHandler from "@helpers/imageHandlerClass";
 import { sequelize } from "@config/mysql/sequelize";
 import type { Transaction } from "sequelize";
-import HttpError from "@src/shared/errors/http/http-error";
 
 interface ICreateProductionLineOrchestratorUseCase {
     productionLineRepo: IProductionLineRepository,
@@ -30,12 +27,12 @@ export class CreateProductionLineOrchestratorUseCase {
         this.productionLineQueryRepo = productionLineQueryRepo;
     }
 
-    execute = async (data: ProductionLineCreateOrchestrator): Promise<ProductionLineResponseOrchestratorDto> => {
+    execute = async (data: ProductionLineOrchestratorCreateProps): Promise<ProductionLineOrchestrator> => {
         const tx: Transaction = await sequelize.transaction({
             isolationLevel: SequelizeTx.ISOLATION_LEVELS.REPEATABLE_READ
         });
         try {
-            const { production_line, production_line_products }: ProductionLineCreateOrchestrator = data;
+            const { production_line, production_line_products }: ProductionLineOrchestratorCreateProps = data;
             const productionLineResponse: ProductionLineProps =
                 await this.productionLineRepo.create(production_line, tx);
             if (production_line_products && production_line_products.length) {
@@ -47,32 +44,12 @@ export class CreateProductionLineOrchestratorUseCase {
                     await this.productionLineProductRepo.create(plpNew, tx);
                 };
             }
-            const productionLineQueryResponse: ProductionLineFullQueryResult | null =
-                await this.productionLineQueryRepo.getByIdProductionLineFullQuery(productionLineResponse.id, tx);
+            const productionLineQueryResponse: ProductionLineFullQueryResult | null = await this.productionLineQueryRepo.getByIdProductionLineFullQuery(productionLineResponse.id, tx);
             if (!productionLineQueryResponse) throw new HttpError(500, "No se pudo acceder a la línea de producción despues de haber sido creada.");
-            const { production_line_products: plps, ...rest }: ProductionLineFullQueryResult = productionLineQueryResponse;
-            const dataProductionLine: ProductionLineResponseDto = {
-                ...rest,
-                created_at: rest.created_at.toISOString(),
-                updated_at: rest.updated_at.toISOString(),
-            };
-            const dataProductionLineProducts: ProductionLineProductResponseOrchestratorDto[] = (plps && plps.length) ? await Promise.all(plps.map(async (plp) => ({
-                ...plp,
-                product: {
-                    ...plp.product,
-                    photo: plp.product.photo ? await ImageHandler.convertToBase64(plp.product.photo) : null,
-                    created_at: plp.product.created_at.toISOString(),
-                    updated_at: plp.product.updated_at.toISOString(),
-                },
-                production_line: {
-                    ...plp.production_line,
-                    created_at: plp.product.created_at.toISOString(),
-                    updated_at: plp.product.updated_at.toISOString(),
-                }
-            }))) : [];
-            const productionLineFullResult: ProductionLineResponseOrchestratorDto = {
-                production_line: dataProductionLine,
-                production_line_products: dataProductionLineProducts
+            const { production_line_products: plp_query, ...pl_query } = productionLineQueryResponse;
+            const productionLineFullResult: ProductionLineOrchestrator = {
+                production_line: pl_query,
+                production_line_products: plp_query
             }
             await tx.commit();
             return productionLineFullResult;

@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProductionLineOrchestratorUseCase = void 0;
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
-const imageHandlerClass_1 = __importDefault(require("@helpers/imageHandlerClass"));
 const sequelize_1 = require("sequelize");
 const sequelize_2 = require("@config/mysql/sequelize");
 ;
@@ -57,30 +56,11 @@ class UpdateProductionLineOrchestratorUseCase {
             }
             const productionLineQueryResponse = await this.productionLineQueryRepo.getByIdProductionLineFullQuery(productionLineUpdateResponse.id, tx);
             if (!productionLineQueryResponse)
-                throw new http_error_1.default(500, "No se pudo acceder a la línea de producción despues de haber sido actualizada.");
-            const { production_line_products: plps, ...rest } = productionLineQueryResponse;
-            const dataProductionLine = {
-                ...rest,
-                created_at: rest.created_at.toISOString(),
-                updated_at: rest.updated_at.toISOString(),
-            };
-            const dataProductionLineProducts = (plps && plps.length) ? await Promise.all(plps.map(async (plp) => ({
-                ...plp,
-                product: {
-                    ...plp.product,
-                    photo: plp.product.photo ? await imageHandlerClass_1.default.convertToBase64(plp.product.photo) : null,
-                    created_at: plp.product.created_at.toISOString(),
-                    updated_at: plp.product.updated_at.toISOString(),
-                },
-                production_line: {
-                    ...plp.production_line,
-                    created_at: plp.product.created_at.toISOString(),
-                    updated_at: plp.product.updated_at.toISOString(),
-                }
-            }))) : [];
+                throw new http_error_1.default(500, "No se pudo acceder a la línea de producción despues de haber sido creada.");
+            const { production_line_products: plp_query, ...pl_query } = productionLineQueryResponse;
             const productionLineFullResult = {
-                production_line: dataProductionLine,
-                production_line_products: dataProductionLineProducts
+                production_line: pl_query,
+                production_line_products: plp_query
             };
             await tx.commit();
             return productionLineFullResult;

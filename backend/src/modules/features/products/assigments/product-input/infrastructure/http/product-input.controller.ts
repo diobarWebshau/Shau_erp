@@ -1,19 +1,20 @@
 import type { ProductInputCreateDto, ProductInputResponseDto, ProductInputUpdateDto } from "../../application/dto/product-input.model.schema";
+import { GetProductInputByIdProductInputUseCase } from "../../application/use-cases/get-product-input-by-id-product-input.usecase";
+import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
 import { GetProductInputByIdUseCase } from "../../application/use-cases/get-product-input-by-id.usecase";
 import { CreateProductInputUseCase } from "../../application/use-cases/create-product-input.usecase";
 import { UpdateProductInputUseCase } from "../../application/use-cases/update-product-input.usecase";
 import { GetAllProductInputUseCase } from "../../application/use-cases/get-all-product-input.usecase";
 import { DeleteProductInputUseCase } from "../../application/use-cases/delete-product-input.usecase";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
+import { InputRepository } from "@src/modules/core/input/infrastructure/repository/input.repository";
 import { ProductInputRepository } from "../repository/product-input.repository";
+import { ProductInputProps } from "../../domain/product-input.types";
 import {
     CreateProductInputSchema, DeleteProductInputSchema,
     GetAllProductInputsSchema, GetByIdProductInputProductInputSchema, GetByIdProductInputSchema,
     UpdateProductInputSchema
 } from "../../application/dto/product-input.endpoint.schema"
-import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
-import { InputRepository } from "@src/modules/core/input/infrastructure/repository/input.repository";
-import { GetProductInputByIdProductInputUseCase } from "../../application/use-cases/get-product-input-by-id-product-input.usecase";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -65,6 +66,14 @@ import { GetProductInputByIdProductInputUseCase } from "../../application/use-ca
  *   de forma coherente hacia clientes externos.
  */
 
+const mapProductInputDomainToDto = (data: ProductInputProps): ProductInputResponseDto => {
+    return ({
+        ...data,
+        equivalence: data.equivalence.toString()
+    })
+}
+
+
 export class ProductInputController {
 
     private readonly repo: ProductInputRepository;
@@ -93,8 +102,9 @@ export class ProductInputController {
     // GET ALL
     // ============================================================
     getAll = async (_req: ApiRequest<GetAllProductInputsSchema>, res: ApiResponse<GetAllProductInputsSchema>) => {
-        const result: ProductInputResponseDto[] = await this.getAllUseCase.execute();
-        return res.status(200).send(result);
+        const productInputResponse: ProductInputProps[] = await this.getAllUseCase.execute();
+        const productInputResult = productInputResponse.map(mapProductInputDomainToDto);
+        return res.status(200).send(productInputResult);
     };
 
     // ============================================================
@@ -102,9 +112,9 @@ export class ProductInputController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdProductInputSchema>, res: ApiResponse<GetByIdProductInputSchema>) => {
         const { id }: GetByIdProductInputSchema["params"] = req.params
-        const result: ProductInputResponseDto | null = await this.getByIdUseCase.execute(Number(id));
-        if (!result) return res.status(204).send(null);
-        return res.status(200).send(result);
+        const productInputResponse: ProductInputProps | null = await this.getByIdUseCase.execute(Number(id));
+        if (!productInputResponse) return res.status(204).send(null);
+        return res.status(200).send(mapProductInputDomainToDto(productInputResponse));
     };
 
     // ============================================================
@@ -112,9 +122,9 @@ export class ProductInputController {
     // ============================================================
     getByIdProductInput = async (req: ApiRequest<GetByIdProductInputProductInputSchema>, res: ApiResponse<GetByIdProductInputProductInputSchema>) => {
         const { input_id, product_id }: GetByIdProductInputProductInputSchema["params"] = req.params
-        const result: ProductInputResponseDto | null = await this.getByIdProductInputUseCase.execute(Number(product_id), Number(input_id));
-        if (!result) return res.status(204).send(null);
-        return res.status(200).send(result);
+        const productInputResponse: ProductInputProps | null = await this.getByIdProductInputUseCase.execute(Number(product_id), Number(input_id));
+        if (!productInputResponse) return res.status(204).send(null);
+        return res.status(200).send(mapProductInputDomainToDto(productInputResponse));
     };
 
     // ============================================================
@@ -122,8 +132,8 @@ export class ProductInputController {
     // ============================================================
     create = async (req: ApiRequest<CreateProductInputSchema>, res: ApiResponse<CreateProductInputSchema>) => {
         const body: ProductInputCreateDto = req.body;
-        const created: ProductInputResponseDto = await this.createUseCase.execute(body);
-        return res.status(201).send(created);
+        const created: ProductInputProps = await this.createUseCase.execute(body);
+        return res.status(201).send(mapProductInputDomainToDto(created));
     };
 
     // ============================================================
@@ -132,8 +142,8 @@ export class ProductInputController {
     update = async (req: ApiRequest<UpdateProductInputSchema>, res: ApiResponse<UpdateProductInputSchema>) => {
         const { id }: UpdateProductInputSchema["params"] = req.params;
         const body: ProductInputUpdateDto = req.body;
-        const updated: ProductInputResponseDto = await this.updateUseCase.execute(Number(id), body);
-        return res.status(200).send(updated);
+        const updated: ProductInputProps = await this.updateUseCase.execute(Number(id), body);
+        return res.status(200).send(mapProductInputDomainToDto(updated));
     };
 
     // ============================================================

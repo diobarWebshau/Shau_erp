@@ -1,4 +1,4 @@
-import { LocationResponseOrchestratorDto } from "@modules/features/location/orchestration/application/dto/location-orchestrator.model.schema";
+import { LocationOrchestrator } from "@src/modules/features/location/orchestration/domain/location-orchestrator.types";
 import { ILocationQueryRepository } from "../../domain/location-query.repository.interface";
 import { Transaction } from "sequelize";
 /**
@@ -44,5 +44,5 @@ import { Transaction } from "sequelize";
 export declare class GetByIdLocationQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: ILocationQueryRepository);
-    execute(id: number, tx?: Transaction): Promise<LocationResponseOrchestratorDto | null>;
+    execute(id: number, tx?: Transaction): Promise<LocationOrchestrator | null>;
 }

@@ -1,5 +1,5 @@
-import { Transaction } from "sequelize";
 import type { ProductProcessProps, ProductProcessCreateProps, ProductProcessUpdateProps } from "./product-process.types";
+import { Transaction } from "sequelize";
 
 /**
  * IRepository

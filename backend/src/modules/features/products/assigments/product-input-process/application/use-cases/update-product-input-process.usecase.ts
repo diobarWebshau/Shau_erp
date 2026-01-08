@@ -1,8 +1,7 @@
 import type { ProductInputProcessUpdateProps, ProductInputProcessProps } from "../../domain/product-input-process.types";
 import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
+import { ProductInputProcessUpdateDto } from "../dto/product-input-process.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -47,23 +46,24 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapProductInputProcessUpdateDtoToDomain = (data: ProductInputProcessUpdateDto): ProductInputProcessUpdateProps => {
+    const { qty, ...rest } = data;
+    return ({
+        ...rest,
+        ...(qty !== undefined ? { qty: DecimalVO.from(qty) } : {})
+    });
+};
+
 export class UpdateProductInputProcessUseCase {
     constructor(private readonly repo: IProductInputProcessRepository) { }
-    async execute(id: number, data: ProductInputProcessUpdateProps, tx?: Transaction): Promise<ProductInputProcessProps> {
+    async execute(id: number, data: ProductInputProcessUpdateDto, tx?: Transaction): Promise<ProductInputProcessProps> {
         const existing: ProductInputProcessProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación de la cantidad de insumos consumidos para este proceso del producto que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof ProductInputProcessUpdateProps)[] = [
-            "product_input_id", "product_id", "product_process_id", "qty"
-        ];
-        const filteredBody: ProductInputProcessUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ProductInputProcessProps = { ...existing, ...filteredBody };
-        const normalizedExisting: ProductInputProcessUpdateProps = deepNormalizeDecimals<ProductInputProcessUpdateProps>(existing, ["qty"]);
-        const normalizedMerged: ProductInputProcessUpdateProps = deepNormalizeDecimals<ProductInputProcessUpdateProps>(merged, ["qty"]);
-        const updateValues: ProductInputProcessUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: ProductInputProcessProps = await this.repo.update(id, updateValues, tx);
+        const updateData = mapProductInputProcessUpdateDtoToDomain(data);
+        if (!Object.keys(updateData).length) return existing;
+        const updated: ProductInputProcessProps = await this.repo.update(id, updateData, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignación de la cantidad de insumos consumidos para este proceso del producto."
         );

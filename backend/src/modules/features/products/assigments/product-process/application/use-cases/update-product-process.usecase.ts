@@ -1,7 +1,6 @@
-import type { ProductProcessUpdateProps, ProductProcessProps } from "../../domain/product-process.types";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
+import type { ProductProcessProps } from "../../domain/product-process.types";
+import { ProductProcessUpdateDto } from "../dto/product-process.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -48,19 +47,13 @@ import { Transaction } from "sequelize";
 
 export class UpdateProductProcessUseCase {
     constructor(private readonly repo: IProductProcessRepository) { }
-    async execute(id: number, data: ProductProcessUpdateProps, tx?: Transaction): Promise<ProductProcessProps> {
+    async execute(id: number, data: ProductProcessUpdateDto, tx?: Transaction): Promise<ProductProcessProps> {
         const existing: ProductProcessProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof ProductProcessUpdateProps)[] = [
-            "process_id", "product_id", "sort_order"
-        ];
-        const filteredBody: ProductProcessUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ProductProcessProps = { ...existing, ...filteredBody };
-        const updateValues: ProductProcessUpdateProps = await diffObjects(existing, merged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: ProductProcessProps = await this.repo.update(id, updateValues, tx);
+        if (!Object.keys(data).length) return existing;
+        const updated: ProductProcessProps = await this.repo.update(id, data, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion del proceso al producto."
         );

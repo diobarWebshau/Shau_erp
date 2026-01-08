@@ -1,8 +1,5 @@
 import type { ProductionLineProductUpdateProps, ProductionLineProductProps } from "../../domain/production-line-product.types";
 import type { IProductionLineProductRepository } from "../../domain/production-line.repository.interface";
-import { deepNormalizeDecimals } from "@helpers/decimal-normalization-and-cleaning.utils";
-import { diffObjects } from "@helpers/validation-diff-engine-backend";
-import { pickEditableFields } from "@helpers/pickEditableFields";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -54,18 +51,8 @@ export class UpdateProductionLineProductUseCase {
         if (!existing) throw new HttpError(404,
             "La asignación del producto a la línea de producción que se desea actualizar no fue posible encontrarla."
         );
-        const editableFields: (keyof ProductionLineProductUpdateProps)[] = [
-            "product_id", "production_line_id"
-        ];
-        const filteredBody: ProductionLineProductUpdateProps = pickEditableFields(data, editableFields);
-        const merged: ProductionLineProductProps = { ...existing, ...filteredBody };
-        const normalizedExisting: ProductionLineProductUpdateProps =
-            deepNormalizeDecimals<ProductionLineProductUpdateProps>(existing, ["product_id", "production_line_id"]);
-        const normalizedMerged: ProductionLineProductUpdateProps =
-            deepNormalizeDecimals<ProductionLineProductUpdateProps>(merged, ["product_id", "production_line_id"]);
-        const updateValues: ProductionLineProductUpdateProps = await diffObjects(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length) return existing;
-        const updated: ProductionLineProductProps = await this.repo.update(id, updateValues, tx);
+        if (!Object.keys(data).length) return existing;
+        const updated: ProductionLineProductProps = await this.repo.update(id, data, tx);
         if (!updated) throw new HttpError(500,
             "No fue posible actualizar la asignacion del producto a la línea de producción."
         );

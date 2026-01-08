@@ -25,7 +25,7 @@ declare const getAllProductInputProcessSchema: z.ZodObject<{
         product_id: z.ZodNumber;
         product_input_id: z.ZodNumber;
         product_process_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -43,7 +43,7 @@ declare const getByIdProductInputProcessSchema: z.ZodObject<{
         product_id: z.ZodNumber;
         product_input_id: z.ZodNumber;
         product_process_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -59,7 +59,7 @@ declare const getByProductInputProcessSchema: z.ZodObject<{
         product_id: z.ZodNumber;
         product_input_id: z.ZodNumber;
         product_process_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -74,13 +74,13 @@ declare const createProductInputProcessSchema: z.ZodObject<{
         product_id: z.ZodNumber;
         product_input_id: z.ZodNumber;
         product_process_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
         product_input_id: z.ZodNumber;
         product_process_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>;
 }, z.core.$strip>;
@@ -97,13 +97,13 @@ declare const updateProductInputProcessSchema: z.ZodObject<{
         product_id: z.ZodOptional<z.ZodNumber>;
         product_input_id: z.ZodOptional<z.ZodNumber>;
         product_process_id: z.ZodOptional<z.ZodNumber>;
-        qty: z.ZodOptional<z.ZodNumber>;
+        qty: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
         product_input_id: z.ZodNumber;
         product_process_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>;
 }, z.core.$strip>;

@@ -44,7 +44,7 @@ declare const productInputProcessCreateSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     product_input_id: z.ZodNumber;
     product_process_id: z.ZodNumber;
-    qty: z.ZodNumber;
+    qty: z.ZodString;
 }, z.core.$strip>;
 /**
  * UpdateSchema
@@ -56,7 +56,7 @@ declare const productInputProcessUpdateSchema: z.ZodObject<{
     product_id: z.ZodOptional<z.ZodNumber>;
     product_input_id: z.ZodOptional<z.ZodNumber>;
     product_process_id: z.ZodOptional<z.ZodNumber>;
-    qty: z.ZodOptional<z.ZodNumber>;
+    qty: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 /**
  * ResponseSchema
@@ -68,7 +68,7 @@ declare const productInputProcessReponseSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     product_input_id: z.ZodNumber;
     product_process_id: z.ZodNumber;
-    qty: z.ZodNumber;
+    qty: z.ZodString;
     id: z.ZodNumber;
 }, z.core.$strip>;
 /**

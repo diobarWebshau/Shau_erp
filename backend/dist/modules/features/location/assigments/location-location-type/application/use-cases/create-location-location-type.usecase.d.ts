@@ -1,8 +1,9 @@
-import { Transaction } from "sequelize";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
-import type { LocationLocationTypeProps, LocationLocationTypeCreateProps } from "../../domain/location-location-type.types";
 import { ILocationTypeRepository } from "@src/modules/core/location-type/domain/location-type.repository";
 import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
+import type { LocationLocationTypeProps } from "../../domain/location-location-type.types";
+import { LocationLocationTypeCreateDto } from "../dto/location-location-type.model.schema";
+import { Transaction } from "sequelize";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -48,5 +49,5 @@ export declare class CreateLocationLocationTypeUseCase {
     private readonly repoLocation;
     private readonly repoLocationType;
     constructor(repo: ILocationLocationTypeRepository, repoLocation: ILocationRepository, repoLocationType: ILocationTypeRepository);
-    execute(data: LocationLocationTypeCreateProps, tx?: Transaction): Promise<LocationLocationTypeProps>;
+    execute(data: LocationLocationTypeCreateDto, tx?: Transaction): Promise<LocationLocationTypeProps>;
 }

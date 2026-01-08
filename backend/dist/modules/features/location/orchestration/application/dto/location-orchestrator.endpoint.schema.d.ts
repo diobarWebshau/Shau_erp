@@ -1,4 +1,4 @@
-import { EndpointSchema } from "@src/shared/typed-request-endpoint/endpoint.interface";
+import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 declare const createLocationOrchestratorSchema: z.ZodObject<{
     params: z.ZodObject<{}, z.core.$strict>;
@@ -83,7 +83,7 @@ declare const createLocationOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>>;
         location_production_lines: z.ZodArray<z.ZodObject<{
             location_id: z.ZodNumber;
-            location_type_id: z.ZodNumber;
+            production_line_id: z.ZodNumber;
             id: z.ZodNumber;
             location: z.ZodObject<{
                 name: z.ZodNullable<z.ZodString>;
@@ -224,7 +224,7 @@ declare const updateLocationOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>>;
         location_production_lines: z.ZodArray<z.ZodObject<{
             location_id: z.ZodNumber;
-            location_type_id: z.ZodNumber;
+            production_line_id: z.ZodNumber;
             id: z.ZodNumber;
             location: z.ZodObject<{
                 name: z.ZodNullable<z.ZodString>;

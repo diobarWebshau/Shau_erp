@@ -63,18 +63,18 @@ interface ProductInputAttributes {
     id: number;
     product_id: number,
     input_id: number,
-    equivalence: number
+    equivalence: string
 };
 
-type ProductInputCreateAttributes = Partial<Omit<ProductInputAttributes, "id">>;
-type ProductInputUpdateAttributes = ProductInputCreateAttributes;
+type ProductInputCreateAttributes = Omit<ProductInputAttributes, "id">;
+type ProductInputUpdateAttributes = Partial<ProductInputCreateAttributes>;
 
 class ProductInputModel extends Model<ProductInputAttributes, ProductInputCreateAttributes> {
 
     declare id: number;
     declare product_id: number;
     declare input_id: number;
-    declare equivalence: number;
+    declare equivalence: string;
 
     static getEditableFields = (): readonly (keyof ProductInputUpdateAttributes)[] => [
         "input_id", "product_id", "equivalence"
@@ -112,5 +112,6 @@ ProductInputModel.init({
 export { ProductInputModel };
 export type {
     ProductInputAttributes,
-    ProductInputCreateAttributes
+    ProductInputCreateAttributes,
+    ProductInputUpdateAttributes
 }

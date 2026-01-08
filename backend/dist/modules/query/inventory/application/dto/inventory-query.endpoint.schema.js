@@ -23,20 +23,20 @@ const getAllInventoryQuerySchema = zod_1.default.object({
     params: zod_1.default.object({}).strict(),
     query: zod_1.default.object({}).strict(),
     body: zod_1.default.object({}).strict(),
-    response: zod_1.default.array(inventory_query_model_schema_1.inventoryQuerySchema)
+    response: zod_1.default.array(inventory_query_model_schema_1.inventoryQueryResponseSchema)
 });
 exports.getAllInventoryQuerySchema = getAllInventoryQuerySchema;
 const getAllLikeToInventoryQuerySchema = zod_1.default.object({
     params: zod_1.default.object({}).strict(),
     query: inventory_query_model_schema_1.inventorySearchQuerySchema,
     body: zod_1.default.object({}).strict(),
-    response: zod_1.default.array(inventory_query_model_schema_1.inventoryQuerySchema)
+    response: zod_1.default.array(inventory_query_model_schema_1.inventoryQueryResponseSchema)
 });
 exports.getAllLikeToInventoryQuerySchema = getAllLikeToInventoryQuerySchema;
 const getByIdInventoryQuerySchema = zod_1.default.object({
     params: zod_1.default.object({ inventory_id: zod_1.default.string() }).strict(),
     query: inventory_query_model_schema_1.inventorySearchQuerySchema,
     body: zod_1.default.object({}).strict(),
-    response: inventory_query_model_schema_1.inventoryQuerySchema.nullable()
+    response: inventory_query_model_schema_1.inventoryQueryResponseSchema.nullable()
 });
 exports.getByIdInventoryQuerySchema = getByIdInventoryQuerySchema;

@@ -42,9 +42,9 @@ import { z } from "zod";
  */
 declare const ProductDiscountRangeCreateSchema: z.ZodObject<{
     product_id: z.ZodNumber;
-    unit_price: z.ZodNumber;
-    min_qty: z.ZodNumber;
-    max_qty: z.ZodNumber;
+    unit_price: z.ZodString;
+    min_qty: z.ZodString;
+    max_qty: z.ZodString;
 }, z.core.$strip>;
 /**
  * UpdateSchema
@@ -54,9 +54,9 @@ declare const ProductDiscountRangeCreateSchema: z.ZodObject<{
  */
 declare const ProductDiscountRangeUpdateSchema: z.ZodObject<{
     product_id: z.ZodOptional<z.ZodNumber>;
-    unit_price: z.ZodOptional<z.ZodNumber>;
-    min_qty: z.ZodOptional<z.ZodNumber>;
-    max_qty: z.ZodOptional<z.ZodNumber>;
+    unit_price: z.ZodOptional<z.ZodString>;
+    min_qty: z.ZodOptional<z.ZodString>;
+    max_qty: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 /**
  * ResponseSchema
@@ -66,9 +66,9 @@ declare const ProductDiscountRangeUpdateSchema: z.ZodObject<{
  */
 declare const ProductDiscountRangeReponseSchema: z.ZodObject<{
     product_id: z.ZodNumber;
-    unit_price: z.ZodNumber;
-    min_qty: z.ZodNumber;
-    max_qty: z.ZodNumber;
+    unit_price: z.ZodString;
+    min_qty: z.ZodString;
+    max_qty: z.ZodString;
     id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;

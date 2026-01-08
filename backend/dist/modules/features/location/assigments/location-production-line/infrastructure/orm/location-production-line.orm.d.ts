@@ -47,7 +47,8 @@ interface LocationProductionLineAttributes {
     location_id: number;
     production_line_id: number;
 }
-type LocationProductionLineCreateAttributes = Partial<Omit<LocationProductionLineAttributes, "id">>;
+type LocationProductionLineCreateAttributes = Omit<LocationProductionLineAttributes, "id">;
+type LocationProductionLineUpdateAttributes = Partial<LocationProductionLineAttributes>;
 declare class LocationProductionLineModel extends Model<LocationProductionLineAttributes, LocationProductionLineCreateAttributes> {
     id: number;
     location_id: number;
@@ -56,4 +57,4 @@ declare class LocationProductionLineModel extends Model<LocationProductionLineAt
     static getAllFields: () => readonly (keyof LocationProductionLineAttributes)[];
 }
 export { LocationProductionLineModel };
-export type { LocationProductionLineAttributes, LocationProductionLineCreateAttributes };
+export type { LocationProductionLineAttributes, LocationProductionLineCreateAttributes, LocationProductionLineUpdateAttributes };

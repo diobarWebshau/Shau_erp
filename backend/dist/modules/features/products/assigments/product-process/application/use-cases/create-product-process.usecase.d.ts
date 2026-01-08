@@ -1,7 +1,8 @@
-import { IProcessRepository } from "@src/modules/core/process/domain/process.repository";
-import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
-import type { ProductProcessProps, ProductProcessCreateProps } from "../../domain/product-process.types";
 import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
+import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
+import { IProcessRepository } from "@src/modules/core/process/domain/process.repository";
+import { ProductProcessCreateDto } from "../dto/product-process.model.schema";
+import type { ProductProcessProps } from "../../domain/product-process.types";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -48,5 +49,5 @@ export declare class CreateProductProcessUseCase {
     private readonly repoProduct;
     private readonly repoProcess;
     constructor(repo: IProductProcessRepository, repoProduct: IProductRepository, repoProcess: IProcessRepository);
-    execute(data: ProductProcessCreateProps, tx?: Transaction): Promise<ProductProcessProps>;
+    execute(data: ProductProcessCreateDto, tx?: Transaction): Promise<ProductProcessProps>;
 }

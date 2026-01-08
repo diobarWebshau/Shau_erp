@@ -1,3 +1,4 @@
+import { decimalString } from "@src/shared/application/decimal.schema";
 import { z } from "zod";
 
 /**
@@ -45,7 +46,7 @@ import { z } from "zod";
 const ProductInputCreateSchema = z.object({
     product_id: z.number().int(),
     input_id: z.number().int(),
-    equivalence: z.number().int()
+    equivalence: decimalString
 });
 
 /**

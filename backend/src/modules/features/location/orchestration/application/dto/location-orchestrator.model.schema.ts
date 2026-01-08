@@ -1,8 +1,8 @@
-import { locationLocationTypeCreateSchema, locationLocationTypeReponseSchema, locationLocationTypeUpdateSchema } from "../../../assigments/location-location-type/application/dto/location-location-type.model.schema";
 import { locationProductionLineCreateSchema, locationProductionLineReponseSchema, locationProductionLineUpdateSchema } from "../../../assigments/location-production-line/application/dto/location-production-line.model.schema";
-import { locationCreateSchema, locationResponseSchema } from "@src/modules/core/location/application/dto/location.model.schema";
-import { locationTypeResponseSchema } from "@src/modules/core/location-type/application/dto/location-type.model.schema";
-import { productionLineResponseSchema } from "@src/modules/core/production-line/application/dto/production-lines.model.schema";
+import { locationLocationTypeCreateSchema, locationLocationTypeReponseSchema, locationLocationTypeUpdateSchema } from "../../../assigments/location-location-type/application/dto/location-location-type.model.schema";
+import { locationCreateSchema, locationResponseSchema } from "@modules/core/location/application/dto/location.model.schema";
+import { productionLineResponseSchema } from "@modules/core/production-line/application/dto/production-lines.model.schema";
+import { locationTypeResponseSchema } from "@modules/core/location-type/application/dto/location-type.model.schema";
 import z from "zod";
 
 // =========================================================================================
@@ -13,7 +13,7 @@ import z from "zod";
 // |🔹 Location-Location-type                       |
 // --------------------------------------------------
 
-const locationLocationTypeCreateOrchestratorSchema = locationLocationTypeCreateSchema.omit({
+const locationLocationTypeOrchestratorCreateSchema = locationLocationTypeCreateSchema.omit({
     location_id: true
 }).extend({ location_id: z.undefined().optional() }).strict();
 
@@ -21,7 +21,7 @@ const locationLocationTypeCreateOrchestratorSchema = locationLocationTypeCreateS
 // |🔹 Location-Production-Line                     |
 // --------------------------------------------------
 
-const locationProductionLineCreateOrchestratorSchema = locationProductionLineCreateSchema.omit({
+const locationProductionLineOrchestratorCreateSchema = locationProductionLineCreateSchema.omit({
     location_id: true
 }).extend({ location_id: z.undefined().optional() }).strict();
 
@@ -29,14 +29,14 @@ const locationProductionLineCreateOrchestratorSchema = locationProductionLineCre
 // 🔹 OBJECT LOCATION ORCHESTRATOR CREATE           |
 // --------------------------------------------------
 
-const locationCreateOrchestratorSchema = z.object({
+const locationOrchestratorCreateSchema = z.object({
     location: locationCreateSchema,
-    location_location_types: z.array(locationLocationTypeCreateOrchestratorSchema),
-    location_production_lines: z.array(locationProductionLineCreateOrchestratorSchema)
+    location_location_types: z.array(locationLocationTypeOrchestratorCreateSchema),
+    location_production_lines: z.array(locationProductionLineOrchestratorCreateSchema)
 });
 
-const locationCreateRequestOrchestratorSchema = z.object({
-    payload: z.string().transform((val) => JSON.parse(val)).pipe(locationCreateOrchestratorSchema),
+const locationOrchestratorCreateRequestSchema = z.object({
+    payload: z.string().transform((val) => JSON.parse(val)).pipe(locationOrchestratorCreateSchema),
 });
 
 
@@ -48,13 +48,13 @@ const locationCreateRequestOrchestratorSchema = z.object({
 // |🔹 Location-Location-type                       |
 // --------------------------------------------------
 
-const LocationLocationTypeUpdateOrchestratorSchema = locationLocationTypeUpdateSchema.extend({
+const LocationLocationTypeOrchestratorUpdateSchema = locationLocationTypeUpdateSchema.extend({
     id: z.number().int()
 })
 
 const locationLocationTypeManagerSchema = z.object({
-    added: z.array(locationLocationTypeCreateOrchestratorSchema),
-    updated: z.array(LocationLocationTypeUpdateOrchestratorSchema),
+    added: z.array(locationLocationTypeOrchestratorCreateSchema),
+    updated: z.array(LocationLocationTypeOrchestratorUpdateSchema),
     deleted: z.array(locationLocationTypeReponseSchema),
 })
 
@@ -62,13 +62,13 @@ const locationLocationTypeManagerSchema = z.object({
 // |🔹 Location-Production-Line                     |
 // --------------------------------------------------
 
-const LocationProductionLineUpdateOrchestratorSchema = locationProductionLineUpdateSchema.extend({
+const locationProductionLineOrchestratorUpdateSchema = locationProductionLineUpdateSchema.extend({
     id: z.number().int()
 })
 
 const locationProductionLineManagerSchema = z.object({
-    added: z.array(locationProductionLineCreateOrchestratorSchema),
-    updated: z.array(LocationProductionLineUpdateOrchestratorSchema),
+    added: z.array(locationProductionLineOrchestratorCreateSchema),
+    updated: z.array(locationProductionLineOrchestratorUpdateSchema),
     deleted: z.array(locationProductionLineReponseSchema),
 })
 
@@ -76,68 +76,68 @@ const locationProductionLineManagerSchema = z.object({
 // 🔹 OBJECT LOCATION ORCHESTRATOR UPDATE           |
 // --------------------------------------------------
 
-const locationUpdateOrchestratorSchema = z.object({
+const locationOrchestratorUpdateSchema = z.object({
     location: locationCreateSchema,
     location_location_types_manager: locationLocationTypeManagerSchema,
     location_production_lines_manager: locationProductionLineManagerSchema
 });
 
-const locationUpdateRequestOrchestratorSchema = z.object({
-    payload: z.string().transform((val) => JSON.parse(val)).pipe(locationUpdateOrchestratorSchema),
+const locationOrchestratorUpdateRequestSchema = z.object({
+    payload: z.string().transform((val) => JSON.parse(val)).pipe(locationOrchestratorUpdateSchema),
 });
 
 // =========================================================================================
 // |                        ORCHESTRATOR — RESPONSE                                        |
 // =========================================================================================
 
-const LocationLocationTypeResponseOrchestratorSchema = locationLocationTypeReponseSchema.extend({
+const locationLocationTypeOrchestratorResponseSchema = locationLocationTypeReponseSchema.extend({
     location: locationResponseSchema,
     location_type: locationTypeResponseSchema
 });
 
-const LocationProductionLineResponseOrchestratorSchema = locationLocationTypeReponseSchema.extend({
+const locationProductionLineOrchestratorResponseSchema = locationProductionLineReponseSchema.extend({
     location: locationResponseSchema,
     production_line: productionLineResponseSchema
 });
 
-const locationResponseOrchestratorSchema = z.object({
+const locationOrchestratorResponseSchema = z.object({
     location: locationResponseSchema,
-    location_location_types: z.array(LocationLocationTypeResponseOrchestratorSchema),
-    location_production_lines: z.array(LocationProductionLineResponseOrchestratorSchema)
+    location_location_types: z.array(locationLocationTypeOrchestratorResponseSchema),
+    location_production_lines: z.array(locationProductionLineOrchestratorResponseSchema)
 });
 
 // =========================================================================================
 // |                        ORCHESTRATOR — DTO                                             |
 // =========================================================================================
 
-type LocationCreateOrchestratorDto = z.infer<typeof locationCreateOrchestratorSchema>;
-type LocationCreateRequestOrchestratorDto = z.infer<typeof locationCreateRequestOrchestratorSchema>;
-type LocationUpdateOrchestratorDto = z.infer<typeof locationUpdateOrchestratorSchema>;
-type LocationUpdateRequestOrchestratorDto = z.infer<typeof locationUpdateRequestOrchestratorSchema>;
-type LocationLocationTypeResponseOrchestratorDto = z.infer<typeof LocationLocationTypeResponseOrchestratorSchema>;
-type LocationProductionLineResponseOrchestratorDto = z.infer<typeof LocationProductionLineResponseOrchestratorSchema>;
-type LocationResponseOrchestratorDto = z.infer<typeof locationResponseOrchestratorSchema>;
+type LocationOrchestratorCreateDto = z.infer<typeof locationOrchestratorCreateSchema>;
+type LocationOrchestratorCreateRequestDto = z.infer<typeof locationOrchestratorCreateRequestSchema>;
+type LocationOrchestratorUpdateDto = z.infer<typeof locationOrchestratorUpdateSchema>;
+type LocationUpdateRequestOrchestratorDto = z.infer<typeof locationOrchestratorUpdateRequestSchema>;
+type LocationLocationTypeOrchestratorResponseDto = z.infer<typeof locationLocationTypeOrchestratorResponseSchema>;
+type LocationProductionLineOrchestratorResponseDto = z.infer<typeof locationProductionLineOrchestratorResponseSchema>;
+type LocationOrchestratorResponseDto = z.infer<typeof locationOrchestratorResponseSchema>;
 
 // =========================================================================================
 // |                                 EXPORTS                                               |
 // =========================================================================================
 
 export type {
-    LocationCreateOrchestratorDto,
-    LocationCreateRequestOrchestratorDto,
-    LocationUpdateOrchestratorDto,
+    LocationOrchestratorCreateDto,
+    LocationOrchestratorCreateRequestDto,
+    LocationOrchestratorUpdateDto,
     LocationUpdateRequestOrchestratorDto,
-    LocationLocationTypeResponseOrchestratorDto,
-    LocationProductionLineResponseOrchestratorDto,
-    LocationResponseOrchestratorDto,
+    LocationLocationTypeOrchestratorResponseDto,
+    LocationProductionLineOrchestratorResponseDto,
+    LocationOrchestratorResponseDto,
 };
 
 export {
-    locationCreateOrchestratorSchema,
-    locationCreateRequestOrchestratorSchema,
-    locationUpdateOrchestratorSchema,
-    locationUpdateRequestOrchestratorSchema,
-    LocationLocationTypeResponseOrchestratorSchema,
-    LocationProductionLineResponseOrchestratorSchema,
-    locationResponseOrchestratorSchema,
+    locationOrchestratorCreateSchema,
+    locationOrchestratorCreateRequestSchema,
+    locationOrchestratorUpdateSchema,
+    locationOrchestratorUpdateRequestSchema,
+    locationLocationTypeOrchestratorResponseSchema,
+    locationProductionLineOrchestratorResponseSchema,
+    locationOrchestratorResponseSchema,
 }

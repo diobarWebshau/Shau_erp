@@ -6,7 +6,7 @@ declare const inventoryTransferCreateSchema: z.ZodObject<{
     }>;
     item_id: z.ZodNumber;
     item_name: z.ZodString;
-    qty: z.ZodNumber;
+    qty: z.ZodString;
     reason: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<{
         completed: "completed";
@@ -22,7 +22,7 @@ declare const inventoryTransferUpdateSchema: z.ZodObject<{
     }>>;
     item_id: z.ZodOptional<z.ZodNumber>;
     item_name: z.ZodOptional<z.ZodString>;
-    qty: z.ZodOptional<z.ZodNumber>;
+    qty: z.ZodOptional<z.ZodString>;
     reason: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     status: z.ZodOptional<z.ZodEnum<{
         completed: "completed";
@@ -38,7 +38,7 @@ declare const inventoryTransferResponseSchema: z.ZodObject<{
     }>;
     item_id: z.ZodNumber;
     item_name: z.ZodString;
-    qty: z.ZodNumber;
+    qty: z.ZodString;
     reason: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<{
         completed: "completed";
@@ -50,8 +50,8 @@ declare const inventoryTransferResponseSchema: z.ZodObject<{
     created_at: z.ZodString;
     updated_at: z.ZodString;
 }, z.core.$strip>;
-type InventoryTransferCreateSchemaDto = z.infer<typeof inventoryTransferCreateSchema>;
-type InventoryTransferUpdateSchemaDto = z.infer<typeof inventoryTransferUpdateSchema>;
-type InventoryTransferResponseSchemaDto = z.infer<typeof inventoryTransferResponseSchema>;
-export type { InventoryTransferCreateSchemaDto, InventoryTransferUpdateSchemaDto, InventoryTransferResponseSchemaDto };
+type InventoryTransferCreateDto = z.infer<typeof inventoryTransferCreateSchema>;
+type InventoryTransferUpdateDto = z.infer<typeof inventoryTransferUpdateSchema>;
+type InventoryTransferResponseDto = z.infer<typeof inventoryTransferResponseSchema>;
+export type { InventoryTransferCreateDto, InventoryTransferUpdateDto, InventoryTransferResponseDto };
 export { inventoryTransferCreateSchema, inventoryTransferUpdateSchema, inventoryTransferResponseSchema };

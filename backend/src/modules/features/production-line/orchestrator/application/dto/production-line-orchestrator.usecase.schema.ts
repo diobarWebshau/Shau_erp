@@ -1,18 +1,18 @@
-import { productionLineUpdateRequestOrchestratorSchema, productionLineCreateRequestOrchestratorSchema, productionLineResponseOrchestratorSchema } from "./production-line-orchestrator.model.schema";
+import { productionLineOrchestratorUpdateRequestSchema, productionLineOrchestratorCreateRequestSchema, productionLineOrchestratorResponseSchema } from "./production-line-orchestrator.model.schema";
 import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import { z } from "zod";
 
 const createProductionLineOrchestratorSchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
-    body: productionLineCreateRequestOrchestratorSchema,
-    response: productionLineResponseOrchestratorSchema
+    body: productionLineOrchestratorCreateRequestSchema,
+    response: productionLineOrchestratorResponseSchema
 });
 const updateProductionLineOrchestratorSchema = z.object({
     params: z.object({ id: z.string() }).strict(),
     query: z.object({}).strict(),
-    body: productionLineUpdateRequestOrchestratorSchema,
-    response: productionLineResponseOrchestratorSchema
+    body: productionLineOrchestratorUpdateRequestSchema,
+    response: productionLineOrchestratorResponseSchema
 });
 
 type CreateProductionLineOrchestratorSchema = EndpointSchema<

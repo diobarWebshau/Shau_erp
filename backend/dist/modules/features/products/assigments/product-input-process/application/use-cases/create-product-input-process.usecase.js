@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductInputProcessUseCase = void 0;
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -45,6 +46,12 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductinputProcessDtoToDomain = (data) => {
+    return ({
+        ...data,
+        qty: decimal_vo_1.DecimalVO.from(data.qty)
+    });
+};
 class CreateProductInputProcessUseCase {
     repo;
     repoProduct;
@@ -57,16 +64,17 @@ class CreateProductInputProcessUseCase {
         this.repoProductProcess = repoProductProcess;
     }
     async execute(data, tx) {
-        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
+        const createData = mapProductinputProcessDtoToDomain(data);
+        const validateProduct = await this.repoProduct.findById(createData.product_id, tx);
         if (!validateProduct)
             throw new http_error_1.default(404, "El producto que se desea asignar un consumo de insumos para un proceso, no existe");
-        const validateProductInput = await this.repoProductInput.findById(data.product_input_id, tx);
+        const validateProductInput = await this.repoProductInput.findById(createData.product_input_id, tx);
         if (!validateProductInput)
             throw new http_error_1.default(404, "La asignación del insumo al producto que se desea asignar a un proceso, no existe");
-        const validateProductProcess = await this.repoProductProcess.findById(data.product_process_id, tx);
+        const validateProductProcess = await this.repoProductProcess.findById(createData.product_process_id, tx);
         if (!validateProductProcess)
             throw new http_error_1.default(404, "La asignacion del proceso al producto que se le desea asignar el consumo de un insumo, no existe");
-        const created = await this.repo.create(data, tx);
+        const created = await this.repo.create(createData, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación de la cantidad de insumos consumidos para este proceso del producto.");
         return created;

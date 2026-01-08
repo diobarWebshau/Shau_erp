@@ -1,4 +1,4 @@
-import { CreateProductOrchestratorSchema, UpdateProductOrchestratorSchema } from "../application/product-orchestrator.endpoint.schema";
+import { CreateProductOrchestratorSchema, UpdateProductOrchestratorSchema } from "../application/dto/product-orchestrator.endpoint.schema";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 export declare class ProductOrchestratorController {
     private readonly createProductOrchestrator;

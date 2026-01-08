@@ -1,6 +1,7 @@
+import { ProductInputProcessAttributes, ProductInputProcessCreateAttributes, ProductInputProcessModel, ProductInputProcessUpdateAttributes } from "../orm/product-input-process.orm";
 import type { ProductInputProcessCreateProps, ProductInputProcessProps, ProductInputProcessUpdateProps } from "../../domain/product-input-process.types";
 import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
-import { ProductInputProcessModel } from "../orm/product-input-process.orm";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -52,16 +53,29 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductInputProcessModel): ProductInputProcessProps => {
-    const json: ProductInputProcessProps = model.toJSON();
+const mapProductInputProcessModelToDomain = (model: ProductInputProcessModel): ProductInputProcessProps => {
+    const pipAttr: ProductInputProcessAttributes = model.toJSON();
     return {
-        id: json.id,
-        product_input_id: json.product_input_id,
-        product_process_id: json.product_process_id,
-        product_id: json.product_id,
-        qty: json.qty
+        ...pipAttr,
+        qty: DecimalVO.from(pipAttr.qty)
     };
 };
+
+const mapProductInputProcessCreateDomainToModel = (data: ProductInputProcessCreateProps): ProductInputProcessCreateAttributes => ({
+    ...data,
+    qty: data.qty.toString()
+})
+
+const mapProductInputProcessUpdateDomainToModel = (data: ProductInputProcessUpdateProps): ProductInputProcessUpdateAttributes => {
+    const { qty, ...rest } = data;
+    return {
+        ...rest,
+        ...(
+            qty !== undefined ? { qty: qty.toString() } : {}
+        )
+    };
+};
+
 
 export class ProductInputProcessRepository implements IProductInputProcessRepository {
     // ================================================================
@@ -70,17 +84,15 @@ export class ProductInputProcessRepository implements IProductInputProcessReposi
     findAll = async (tx?: Transaction): Promise<ProductInputProcessProps[]> => {
         const rows: ProductInputProcessModel[] = await ProductInputProcessModel.findAll({
             transaction: tx,
-            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
         });
-        const rowsMap: ProductInputProcessProps[] = rows.map((r) => mapModelToDomain(r));
+        const rowsMap: ProductInputProcessProps[] = rows.map((r) => mapProductInputProcessModelToDomain(r));
         return rowsMap;
     }
     findById = async (id: number, tx?: Transaction): Promise<ProductInputProcessProps | null> => {
         const row: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputProcessModelToDomain(row) : null;
     }
 
     findByProductInputProcess = async (product_id: number, product_input_id: number, product_process_id: number, tx?: Transaction): Promise<ProductInputProcessProps | null> => {
@@ -91,17 +103,16 @@ export class ProductInputProcessRepository implements IProductInputProcessReposi
                 product_input_id: product_input_id,
                 product_process_id: product_process_id
             },
-            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputProcessModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data: ProductInputProcessCreateProps, tx?: Transaction): Promise<ProductInputProcessProps> => {
-        const created: ProductInputProcessModel = await ProductInputProcessModel.create(data, { transaction: tx });
+        const created: ProductInputProcessModel = await ProductInputProcessModel.create(mapProductInputProcessCreateDomainToModel(data), { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible asignar la cantidad de insumos consumidos para este proceso del producto.");
-        return mapModelToDomain(created);
+        return mapProductInputProcessModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -114,20 +125,19 @@ export class ProductInputProcessRepository implements IProductInputProcessReposi
         if (!existing) throw new HttpError(404,
             "La asignación de la cantidad de insumos consumidos en un proceso del producto, no fue posible encontrarla."
         );
-        // 2. Aplicar UPDATE
-        const [affectedCount]: [affectedCount: number] = await ProductInputProcessModel.update(data, {
+        const updateData = mapProductInputProcessUpdateDomainToModel(data);
+        const existingDomain = mapProductInputProcessModelToDomain(existing);
+        if (!Object.keys(updateData).length) return existingDomain;
+        const [affectedCount] = await ProductInputProcessModel.update(updateData, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
-        // 3. Obtener la producto actualizada
+        if (!affectedCount) return existingDomain;
         const updated: ProductInputProcessModel | null = await ProductInputProcessModel.findByPk(id, {
-            transaction: tx,
-            attributes: ProductInputProcessModel.getAllFields() as ((keyof ProductInputProcessProps)[]),
+            transaction: tx
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
-        return mapModelToDomain(updated);
+        return mapProductInputProcessModelToDomain(updated);
     }
     // ================================================================
     // DELETE

@@ -93,9 +93,9 @@ declare const purchasedOrderQueryOrchestrator: z.ZodObject<{
             updated_at: z.ZodString;
             product_discount_range: z.ZodObject<{
                 product_id: z.ZodNumber;
-                unit_price: z.ZodNumber;
-                min_qty: z.ZodNumber;
-                max_qty: z.ZodNumber;
+                unit_price: z.ZodString;
+                min_qty: z.ZodString;
+                max_qty: z.ZodString;
                 id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;
@@ -231,9 +231,9 @@ declare const purchasedOrderQueryFullResonseSchema: z.ZodObject<{
             updated_at: z.ZodString;
             product_discount_range: z.ZodObject<{
                 product_id: z.ZodNumber;
-                unit_price: z.ZodNumber;
-                min_qty: z.ZodNumber;
-                max_qty: z.ZodNumber;
+                unit_price: z.ZodString;
+                min_qty: z.ZodString;
+                max_qty: z.ZodString;
                 id: z.ZodNumber;
                 created_at: z.ZodString;
                 updated_at: z.ZodString;

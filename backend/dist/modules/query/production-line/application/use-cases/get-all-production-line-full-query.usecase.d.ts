@@ -1,8 +1,9 @@
-import { ProductionLineQueryResultDto, ProductionLineSearchCriteria } from "../../domain/production-line-query.types";
+import { ProductionLineFullQueryResult } from "../../domain/production-line-query.types";
+import { ProductionLineQueryDto } from "../../application/dto/production-line-query.model.schema";
 import { IProductionLineQueryRepository } from "../../domain/production-line-query.respository.interface";
 import { Transaction } from "sequelize";
 export declare class GetAllProductionLineFullQueryUseCase {
     private readonly repo;
     constructor(repo: IProductionLineQueryRepository);
-    execute(query: ProductionLineSearchCriteria, tx?: Transaction): Promise<ProductionLineQueryResultDto[]>;
+    execute(query: ProductionLineQueryDto, tx?: Transaction): Promise<ProductionLineFullQueryResult[]>;
 }

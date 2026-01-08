@@ -7,8 +7,8 @@ const update_product_discount_range_usecase_1 = require("../../application/use-c
 const get_product_discount_range_by_id_usecase_1 = require("../../application/use-cases/get-product-discount-range-by-id.usecase");
 const get_all_product_discount_range_usecase_1 = require("../../application/use-cases/get-all-product-discount-range.usecase");
 const delete_product_discount_range_usecase_1 = require("../../application/use-cases/delete-product-discount-range.usecase");
-const product_discount_range_repository_1 = require("../repository/product-discount-range.repository");
 const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
+const product_discount_range_repository_1 = require("../repository/product-discount-range.repository");
 /**
  * Controller (Infrastructure / HTTP)
  * ------------------------------------------------------------------
@@ -58,6 +58,16 @@ const producto_repository_1 = require("@src/modules/core/product/infrastructure/
  * - Orchestrators: pueden agrupar controladores y exponer endpoints
  *   de forma coherente hacia clientes externos.
  */
+const mapProductDiscountRangeDomainToDto = (productDiscountRange) => {
+    return {
+        ...productDiscountRange,
+        max_qty: productDiscountRange.max_qty.toString(),
+        min_qty: productDiscountRange.min_qty.toString(),
+        unit_price: productDiscountRange.unit_price.toString(),
+        created_at: productDiscountRange.created_at.toISOString(),
+        updated_at: productDiscountRange.updated_at.toISOString()
+    };
+};
 class ProductDiscountRangeController {
     repo;
     repoProduct;
@@ -78,21 +88,12 @@ class ProductDiscountRangeController {
         this.getByProductUseCase = new get_product_discount_range_by_product_usecase_1.GetProductDiscountRangeByProductUseCase(this.repo);
     }
     ;
-    /** Formatea un Location para convertir fechas a ISO */
-    async formatResponse(productDiscountRange) {
-        return {
-            ...productDiscountRange,
-            created_at: productDiscountRange.created_at.toISOString(),
-            updated_at: productDiscountRange.updated_at.toISOString()
-        };
-    }
-    ;
     // ============================================================
     // GET ALL
     // ============================================================
     getAll = async (_req, res) => {
         const result = await this.getAllUseCase.execute();
-        const formatted = await Promise.all(result.map(p => this.formatResponse(p)));
+        const formatted = await Promise.all(result.map(p => mapProductDiscountRangeDomainToDto(p)));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -101,7 +102,7 @@ class ProductDiscountRangeController {
     getByProductId = async (req, res) => {
         const { product_id } = req.params;
         const result = await this.getByProductUseCase.execute(Number(product_id));
-        const formatted = await Promise.all(result.map(p => this.formatResponse(p)));
+        const formatted = await Promise.all(result.map(p => mapProductDiscountRangeDomainToDto(p)));
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -112,7 +113,7 @@ class ProductDiscountRangeController {
         const result = await this.getByIdUseCase.execute(Number(id));
         if (!result)
             return res.status(204).send(null);
-        const formatted = await this.formatResponse(result);
+        const formatted = await mapProductDiscountRangeDomainToDto(result);
         return res.status(200).send(formatted);
     };
     // ============================================================
@@ -121,7 +122,7 @@ class ProductDiscountRangeController {
     create = async (req, res) => {
         const body = req.body;
         const created = await this.createUseCase.execute(body);
-        const formatted = await this.formatResponse(created);
+        const formatted = await mapProductDiscountRangeDomainToDto(created);
         return res.status(201).send(formatted);
     };
     // ============================================================
@@ -131,7 +132,7 @@ class ProductDiscountRangeController {
         const { id } = req.params;
         const body = req.body;
         const updated = await this.updateUseCase.execute(Number(id), body);
-        const formatted = await this.formatResponse(updated);
+        const formatted = await mapProductDiscountRangeDomainToDto(updated);
         return res.status(200).send(formatted);
     };
     // ============================================================

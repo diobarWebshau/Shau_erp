@@ -5,6 +5,7 @@ import { UpdateProductDiscountRangeUseCase } from "../../application/use-cases/u
 import { GetProductDiscountRangeByIdUseCase } from "../../application/use-cases/get-product-discount-range-by-id.usecase";
 import { GetAllProductDiscountRangeUseCase } from "../../application/use-cases/get-all-product-discount-range.usecase";
 import { DeleteProductDiscountRangeUseCase } from "../../application/use-cases/delete-product-discount-range.usecase";
+import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { ProductDiscountRangeRepository } from "../repository/product-discount-range.repository";
 import {
@@ -13,7 +14,6 @@ import {
     UpdateProductDiscountRangeSchema, GetByProductIdProductDiscountRangeSchema
 } from "../../application/dto/product_discount-range.endpoint.schema"
 import { ProductDiscountRangeProps } from "../../domain/product-discount-range.types";
-import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -65,6 +65,19 @@ import { ProductRepository } from "@src/modules/core/product/infrastructure/repo
  *   de forma coherente hacia clientes externos.
  */
 
+
+const mapProductDiscountRangeDomainToDto = (productDiscountRange: ProductDiscountRangeProps): ProductDiscountRangeResponseDto => {
+    return {
+        ...productDiscountRange,
+        max_qty: productDiscountRange.max_qty.toString(),
+        min_qty: productDiscountRange.min_qty.toString(),
+        unit_price: productDiscountRange.unit_price.toString(),
+        created_at: productDiscountRange.created_at.toISOString(),
+        updated_at: productDiscountRange.updated_at.toISOString()
+    };
+};
+
+
 export class ProductDiscountRangeController {
 
     private readonly repo: ProductDiscountRangeRepository;
@@ -87,14 +100,7 @@ export class ProductDiscountRangeController {
         this.getByProductUseCase = new GetProductDiscountRangeByProductUseCase(this.repo);
     };
 
-    /** Formatea un Location para convertir fechas a ISO */
-    private async formatResponse(productDiscountRange: ProductDiscountRangeProps): Promise<ProductDiscountRangeResponseDto> {
-        return {
-            ...productDiscountRange,
-            created_at: productDiscountRange.created_at.toISOString(),
-            updated_at: productDiscountRange.updated_at.toISOString()
-        };
-    };
+
 
     // ============================================================
     // GET ALL
@@ -102,7 +108,7 @@ export class ProductDiscountRangeController {
     getAll = async (_req: ApiRequest<GetAllProductDiscountRangesSchema>, res: ApiResponse<GetAllProductDiscountRangesSchema>) => {
         const result: ProductDiscountRangeProps[] = await this.getAllUseCase.execute();
         const formatted: ProductDiscountRangeResponseDto[] = await Promise.all(
-            result.map(p => this.formatResponse(p))
+            result.map(p => mapProductDiscountRangeDomainToDto(p))
         );
         return res.status(200).send(formatted);
     };
@@ -115,7 +121,7 @@ export class ProductDiscountRangeController {
         const { product_id }: GetByProductIdProductDiscountRangeSchema["params"] = req.params
         const result: ProductDiscountRangeProps[] = await this.getByProductUseCase.execute(Number(product_id));
         const formatted: ProductDiscountRangeResponseDto[] = await Promise.all(
-            result.map(p => this.formatResponse(p))
+            result.map(p => mapProductDiscountRangeDomainToDto(p))
         );
         return res.status(200).send(formatted);
     };
@@ -127,7 +133,7 @@ export class ProductDiscountRangeController {
         const { id }: GetByIdProductDiscountRangeSchema["params"] = req.params
         const result: ProductDiscountRangeProps | null = await this.getByIdUseCase.execute(Number(id));
         if (!result) return res.status(204).send(null);
-        const formatted: ProductDiscountRangeResponseDto = await this.formatResponse(result);
+        const formatted: ProductDiscountRangeResponseDto = await mapProductDiscountRangeDomainToDto(result);
         return res.status(200).send(formatted);
     };
 
@@ -137,7 +143,7 @@ export class ProductDiscountRangeController {
     create = async (req: ApiRequest<CreateProductDiscountRangeSchema>, res: ApiResponse<CreateProductDiscountRangeSchema>) => {
         const body: ProductDiscountRangeCreateDto = req.body;
         const created: ProductDiscountRangeProps = await this.createUseCase.execute(body);
-        const formatted: ProductDiscountRangeResponseDto = await this.formatResponse(created);
+        const formatted: ProductDiscountRangeResponseDto = await mapProductDiscountRangeDomainToDto(created);
         return res.status(201).send(formatted);
     };
 
@@ -148,7 +154,7 @@ export class ProductDiscountRangeController {
         const { id }: UpdateProductDiscountRangeSchema["params"] = req.params;
         const body: ProductDiscountRangeUpdateDto = req.body;
         const updated: ProductDiscountRangeProps = await this.updateUseCase.execute(Number(id), body);
-        const formatted: ProductDiscountRangeResponseDto = await this.formatResponse(updated);
+        const formatted: ProductDiscountRangeResponseDto = await mapProductDiscountRangeDomainToDto(updated);
         return res.status(200).send(formatted);
     };
 

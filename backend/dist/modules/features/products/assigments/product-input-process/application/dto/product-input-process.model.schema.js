@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productInputProcessUpdateSchema = exports.productInputProcessReponseSchema = exports.productInputProcessCreateSchema = void 0;
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -47,7 +48,7 @@ const productInputProcessCreateSchema = zod_1.z.object({
     product_id: zod_1.z.number().int(),
     product_input_id: zod_1.z.number().int(),
     product_process_id: zod_1.z.number().int(),
-    qty: zod_1.z.number()
+    qty: decimal_schema_1.decimalString
 });
 exports.productInputProcessCreateSchema = productInputProcessCreateSchema;
 /**

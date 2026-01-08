@@ -24,19 +24,19 @@ type UpdateById<TPatch> = { id: number } & TPatch;
 // |                         ORCHESTRATOR — BASE (CANÓNICO)                                |
 // =========================================================================================
 
-type LocationLocationTypesOrchestratorBase = LocationLocationTypeProps & {
+type LocationLocationTypesOrchestratorProps = LocationLocationTypeProps & {
     location: LocationProps,
     location_type: LocationTypeProps
 };
 
-type LocationProductionLineOrchestratorBase = LocationLocationTypeProps & {
+type LocationProductionLineOrchestratorProps = LocationProductionLineProps & {
     location: LocationProps,
     production_line: ProductionLineProps
 };
 
-type LocationOrchestratorBase = LocationProps & {
-    location_production_lines: LocationProductionLineOrchestratorBase[]
-    location_location_types: LocationLocationTypesOrchestratorBase[]
+type LocationOrchestratorProps = LocationProps & {
+    location_production_lines: LocationProductionLineOrchestratorProps[]
+    location_location_types: LocationLocationTypesOrchestratorProps[]
 };
 
 // =========================================================================================
@@ -47,24 +47,24 @@ type LocationOrchestratorBase = LocationProps & {
 // |🔹 LOCATION-LOCATION-TYPE                       |
 // --------------------------------------------------
 
-type LocationLocationTypeCreateOrchestrator = NoLocationId &
+type LocationLocationTypeOrchestratorCreateProps = NoLocationId &
     Omit<LocationLocationTypeCreateProps, "location_id">;
 
 // --------------------------------------------------
 // |🔹 LOCATION-PRODUCTION-LINE                     |
 // --------------------------------------------------
 
-type LocationProductionLineCreateOrchestrator =
+type LocationProductionLineOrchestratorCreateProps =
     NoLocationId & Omit<LocationProductionLineCreateProps, "location_id">;
 
 // --------------------------------------------------
 // |🔹 OBJECT LOCATION ORCHESTRATOR CREATE          |
 // --------------------------------------------------
 
-type LocationCreateOrchestrator = {
+type LocationOrchestratorCreateProps = {
     location: LocationCreateProps,
-    location_location_types: Array<LocationLocationTypeCreateOrchestrator>,
-    location_production_lines: Array<LocationProductionLineCreateOrchestrator>
+    location_location_types: Array<LocationLocationTypeOrchestratorCreateProps>,
+    location_production_lines: Array<LocationProductionLineOrchestratorCreateProps>
 };
 
 // =========================================================================================
@@ -75,11 +75,11 @@ type LocationCreateOrchestrator = {
 // |🔹 LOCATION-LOCATION-TYPE                       |
 // --------------------------------------------------
 
-type LocationLocationTypeUpdateOrchestrator = UpdateById<LocationLocationTypeUpdateProps>;
+type LocationLocationTypeOrchestratorUpdateProps = UpdateById<LocationLocationTypeUpdateProps>;
 
 interface LocationLocationTypeManager {
-    added: Array<LocationLocationTypeCreateOrchestrator>
-    updated: Array<LocationLocationTypeUpdateOrchestrator>
+    added: Array<LocationLocationTypeOrchestratorCreateProps>
+    updated: Array<LocationLocationTypeOrchestratorUpdateProps>
     deleted: Array<LocationLocationTypeResponseDto>
 };
 
@@ -87,11 +87,11 @@ interface LocationLocationTypeManager {
 // |🔹 LOCATION-PRODUCTION-LINE                     |
 // --------------------------------------------------
 
-type LocationProductionLineUpdateOrchestrator = UpdateById<LocationProductionLineUpdateProps>;
+type LocationProductionLineOrchestratorUpdateProps = UpdateById<LocationProductionLineUpdateProps>;
 
 interface LocationProductionLineManager {
-    added: Array<LocationProductionLineCreateOrchestrator>
-    updated: Array<LocationProductionLineUpdateOrchestrator>
+    added: Array<LocationProductionLineOrchestratorCreateProps>
+    updated: Array<LocationProductionLineOrchestratorUpdateProps>
     deleted: Array<LocationProductionLineResponseDto>
 };
 
@@ -99,7 +99,7 @@ interface LocationProductionLineManager {
 // |🔹 OBJECT LOCATION ORCHESTRATOR UPDATE            |
 // --------------------------------------------------
 
-interface LocationUpdateOrchestrator {
+interface LocationOrchestratorUpdateProps {
     location: LocationUpdateProps,
     location_location_types_manager: LocationLocationTypeManager,
     location_production_lines_manager: LocationProductionLineManager
@@ -111,49 +111,49 @@ interface LocationUpdateOrchestrator {
 
 interface LocationOrchestrator {
     location: LocationProps,
-    location_location_types: Array<LocationLocationTypeProps>,
-    location_production_lines: Array<LocationProductionLineProps>
+    location_location_types: Array<LocationLocationTypesOrchestratorProps>,
+    location_production_lines: Array<LocationProductionLineOrchestratorProps>
 };
 
-type LocationLocationTypeResponseOrchestrator = LocationLocationTypeResponseDto & {
+type LocationLocationTypeOrchestratorResponseProps = LocationLocationTypeResponseDto & {
     location: LocationResponseDto
     locationType: LocationTypeResponseDto
 };
 
-type LocationProductionLineResponseOrchestrator = LocationProductionLineResponseDto & {
+type LocationProductionLineOrchestratorResponseProps = LocationProductionLineResponseDto & {
     location: LocationResponseDto,
     production_line: ProductionLineResponseDto
 };
 
-interface LocationResponseOrchestrator {
+interface LocationOrchestratorResponseProps {
     location: LocationResponseDto,
     location_location_types: Array<LocationLocationTypeResponseDto>,
     location_production_lines: Array<LocationProductionLineResponseDto>
 };
 
 export {
-    // *******************  BASE (CANÓNICO) ******************
-    LocationLocationTypesOrchestratorBase,
-    LocationProductionLineOrchestratorBase,
-    LocationOrchestratorBase,
+    // *******************  Props (CANÓNICO) ******************
+    LocationLocationTypesOrchestratorProps,
+    LocationProductionLineOrchestratorProps,
+    LocationOrchestratorProps,
 
     // ******************* CREATE (REQUEST) *******************
-    LocationLocationTypeCreateOrchestrator,
-    LocationProductionLineCreateOrchestrator,
-    LocationCreateOrchestrator,
+    LocationLocationTypeOrchestratorCreateProps,
+    LocationProductionLineOrchestratorCreateProps,
+    LocationOrchestratorCreateProps,
 
     // ******************* UPDATE (REQUEST) *******************
-    LocationLocationTypeUpdateOrchestrator,
+    LocationLocationTypeOrchestratorUpdateProps,
     LocationLocationTypeManager,
-    LocationProductionLineUpdateOrchestrator,
+    LocationProductionLineOrchestratorUpdateProps,
     LocationProductionLineManager,
-    LocationUpdateOrchestrator,
+    LocationOrchestratorUpdateProps,
 
     // ******************* RESPONSE *******************
     LocationOrchestrator,
-    LocationLocationTypeResponseOrchestrator,
-    LocationProductionLineResponseOrchestrator,
-    LocationResponseOrchestrator
+    LocationLocationTypeOrchestratorResponseProps,
+    LocationProductionLineOrchestratorResponseProps,
+    LocationOrchestratorResponseProps
 
 }
 

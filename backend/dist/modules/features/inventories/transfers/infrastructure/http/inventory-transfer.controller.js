@@ -10,6 +10,15 @@ const location_repository_1 = require("@modules/core/location/infrastructure/rep
 const producto_repository_1 = require("@modules/core/product/infrastructure/repository/producto.repository");
 const input_repository_1 = require("@modules/core/input/infrastructure/repository/input.repository");
 const inventory_transfer_repository_1 = require("../repository/inventory-transfer.repository");
+const mapInventoryTransferDomainToDto = (data) => {
+    const { qty, created_at, updated_at, ...rest } = data;
+    return {
+        ...rest,
+        created_at: created_at.toISOString(),
+        updated_at: updated_at.toISOString(),
+        qty: qty.toString()
+    };
+};
 class InventoryTransferController {
     inventoryTransferRepo;
     locationRepo;
@@ -39,23 +48,24 @@ class InventoryTransferController {
     ;
     getAll = async (_req, res) => {
         const inventoryTransferResponses = await this.getAllInventoryTransferUseCase.execute();
-        return res.status(200).json(inventoryTransferResponses);
+        const inventoryTransferResult = inventoryTransferResponses.map(mapInventoryTransferDomainToDto);
+        return res.status(200).json(inventoryTransferResult);
     };
     getById = async (req, res) => {
         const { id } = req.params;
         const inventoryTransferResponse = await this.getByIdInventoryTransferUseCase.execute(Number(id));
-        return res.status(200).json(inventoryTransferResponse);
+        return res.status(200).json(inventoryTransferResponse ? mapInventoryTransferDomainToDto(inventoryTransferResponse) : null);
     };
     create = async (req, res) => {
         const body = req.body;
         const inventoryTransferResponse = await this.createInventoryTransferUseCase.execute(body);
-        return res.status(201).json(inventoryTransferResponse);
+        return res.status(201).json(mapInventoryTransferDomainToDto(inventoryTransferResponse));
     };
     update = async (req, res) => {
         const body = req.body;
         const { id } = req.params;
         const inventoryTransferResponse = await this.updateInventoryTransferUseCase.execute(Number(id), body);
-        return res.status(200).json(inventoryTransferResponse);
+        return res.status(200).json(mapInventoryTransferDomainToDto(inventoryTransferResponse));
     };
     delete = async (req, res) => {
         const { id } = req.params;

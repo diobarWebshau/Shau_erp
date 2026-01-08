@@ -46,12 +46,14 @@
  *   derivados de estos tipos.
  */
 
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+
 interface ProductInputProcessProps {
     id: number;
     product_id: number,
     product_input_id: number,
     product_process_id: number,
-    qty: number
+    qty: DecimalVO
 };
 
 type ProductInputProcessCreateProps = Omit<ProductInputProcessProps, "id">;

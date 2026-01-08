@@ -5,7 +5,29 @@ import { ProductionLineModel } from "@modules/core/production-line/infrastructur
 import { IProductionLineQueryRepository } from "../../domain/production-line-query.respository.interface";
 import { ProductionLineProps } from "@modules/core/production-line/domain/production-line.types";
 import { ProductModel } from "@modules/core/product/infrastructure/orm/product.orm";
+import { ProductionLineQueryAttributes } from "../orm/production-line-types.orm";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import { Op, Transaction, WhereOptions } from "sequelize";
+
+const mapProductionLineQueryModelToDomain = (model: ProductionLineModel): ProductionLineFullQueryResult => {
+    const productionlineQueryAttributes: ProductionLineQueryAttributes = model.toJSON();
+    const { production_line_products: plp, ...pl } = productionlineQueryAttributes;
+    return ({
+        ...pl,
+        created_at: pl.created_at instanceof Date ? pl.created_at : new Date(pl.created_at),
+        updated_at: pl.updated_at instanceof Date ? pl.updated_at : new Date(pl.updated_at),
+        production_line_products: plp.map((plp) => ({
+            ...plp,
+            product: {
+                ...plp.product,
+                created_at: plp.product.created_at instanceof Date ? plp.product.created_at : new Date(plp.product.created_at),
+                updated_at: plp.product.updated_at instanceof Date ? plp.product.updated_at : new Date(plp.product.updated_at),
+                sale_price: plp.product.sale_price ? DecimalVO.from(plp.product.sale_price) : null,
+                production_cost: plp.product.production_cost ? DecimalVO.from(plp.product.production_cost) : null
+            }
+        }))
+    });
+}
 
 export class ProductionLineQueryRepository implements IProductionLineQueryRepository {
 
@@ -53,7 +75,7 @@ export class ProductionLineQueryRepository implements IProductionLineQueryReposi
             ]
         });
         if (!results.length) return [];
-        const ProductionLines: ProductionLineFullQueryResult[] = results.map(p => p.toJSON());
+        const ProductionLines: ProductionLineFullQueryResult[] = results.map(mapProductionLineQueryModelToDomain);
         return ProductionLines;
     };
 
@@ -75,7 +97,7 @@ export class ProductionLineQueryRepository implements IProductionLineQueryReposi
             ]
         });
         if (!result) return null;
-        const ProductionLine: ProductionLineFullQueryResult = result.toJSON();
+        const ProductionLine: ProductionLineFullQueryResult = mapProductionLineQueryModelToDomain(result);
         return ProductionLine;
     };
 }

@@ -1,6 +1,6 @@
-import { validateRequest } from "@src/middlewares/zod/zod.middleware";
-import { LocationOrchestratorController } from "./location-orchestrator.controller";
 import { createLocationOrchestratorSchema, updateLocationOrchestratorSchema } from "./../application/dto/location-orchestrator.endpoint.schema"
+import { LocationOrchestratorController } from "./location-orchestrator.controller";
+import { validateRequest } from "@src/middlewares/zod/zod.middleware";
 import { Router } from "express"
 
 export const locationOrchestratorRouter = (): Router => {

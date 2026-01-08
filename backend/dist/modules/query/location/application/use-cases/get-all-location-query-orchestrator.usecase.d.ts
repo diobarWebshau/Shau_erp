@@ -1,4 +1,4 @@
-import { LocationResponseOrchestratorDto } from "@modules/features/location/orchestration/application/dto/location-orchestrator.model.schema";
+import { LocationOrchestrator } from "@src/modules/features/location/orchestration/domain/location-orchestrator.types";
 import { LocationSearchCriteria } from "../../domain/location-query.types";
 import { ILocationQueryRepository } from "../../domain/location-query.repository.interface";
 import { Transaction } from "sequelize";
@@ -45,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class GetAllLocationQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: ILocationQueryRepository);
-    execute(query: LocationSearchCriteria, tx?: Transaction): Promise<LocationResponseOrchestratorDto[]>;
+    execute(query: LocationSearchCriteria, tx?: Transaction): Promise<LocationOrchestrator[]>;
 }

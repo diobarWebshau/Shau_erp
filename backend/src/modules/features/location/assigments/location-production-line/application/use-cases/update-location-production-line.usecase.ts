@@ -1,7 +1,8 @@
-import type { LocationProductionLineUpdateProps, LocationProductionLineProps } from "../../domain/location-production-line.types";
+import type { LocationProductionLineProps } from "../../domain/location-production-line.types";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
+import { LocationProductionLineUpdateDto } from "../dto/location-production-line.model.schema";
 
 /**
  * UseCase
@@ -46,7 +47,7 @@ import { Transaction } from "sequelize";
 
 export class UpdateLocationProductionLineUseCase {
     constructor(private readonly repo: ILocationProductionLineRepository) { }
-    async execute(id: number, data: LocationProductionLineUpdateProps, tx?: Transaction): Promise<LocationProductionLineProps> {
+    async execute(id: number, data: LocationProductionLineUpdateDto, tx?: Transaction): Promise<LocationProductionLineProps> {
         const existing: LocationProductionLineProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."

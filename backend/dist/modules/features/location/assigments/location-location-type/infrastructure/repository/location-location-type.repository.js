@@ -110,13 +110,15 @@ class LocationLocationTypeRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del tipo de locación a la locación que se desea actualizar no fue posible encontrarla.");
+        if (!Object.keys(data).length)
+            return existing;
         // 2. Aplicar UPDATE
         const [affectedCount] = await location_location_type_orm_1.LocationLocationTypeModel.update(data, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la asignación del tipo de locación a la locación.");
+            return existing;
         // 3. Obtener la locación actualizada
         const updated = await location_location_type_orm_1.LocationLocationTypeModel.findByPk(id, {
             transaction: tx,

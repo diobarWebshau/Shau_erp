@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountRangeUpdateSchema = exports.ProductDiscountRangeReponseSchema = exports.ProductDiscountRangeCreateSchema = void 0;
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
 const zod_1 = require("zod");
 /**
  * Schemas
@@ -45,9 +46,9 @@ const zod_1 = require("zod");
  */
 const ProductDiscountRangeCreateSchema = zod_1.z.object({
     product_id: zod_1.z.number().int(),
-    unit_price: zod_1.z.number(),
-    min_qty: zod_1.z.number(),
-    max_qty: zod_1.z.number(),
+    unit_price: decimal_schema_1.decimalString,
+    min_qty: decimal_schema_1.decimalString,
+    max_qty: decimal_schema_1.decimalString,
 });
 exports.ProductDiscountRangeCreateSchema = ProductDiscountRangeCreateSchema;
 /**

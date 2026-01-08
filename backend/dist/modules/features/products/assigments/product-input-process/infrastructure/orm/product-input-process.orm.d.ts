@@ -47,7 +47,7 @@ interface ProductInputProcessAttributes {
     product_id: number;
     product_input_id: number;
     product_process_id: number;
-    qty: number;
+    qty: string;
 }
 type ProductInputProcessCreateAttributes = Omit<ProductInputProcessAttributes, "id">;
 type ProductInputProcessUpdateAttributes = Partial<ProductInputProcessCreateAttributes>;
@@ -56,9 +56,9 @@ declare class ProductInputProcessModel extends Model<ProductInputProcessAttribut
     product_id: number;
     product_input_id: number;
     product_process_id: number;
-    qty: number;
+    qty: string;
     static getEditableFields: () => readonly (keyof ProductInputProcessUpdateAttributes)[];
     static getAllFields: () => readonly (keyof ProductInputProcessAttributes)[];
 }
 export { ProductInputProcessModel };
-export type { ProductInputProcessAttributes, ProductInputProcessCreateAttributes };
+export type { ProductInputProcessAttributes, ProductInputProcessUpdateAttributes, ProductInputProcessCreateAttributes };

@@ -1,4 +1,5 @@
-import { ProductionLineQuerySchema } from "@modules/core/production-line/application/dto/production-lines.model.schema";
+import { productionLineQuerySchema } from "@modules/core/production-line/application/dto/production-lines.model.schema";
+import { ProductionLineQueryDto } from "@modules/core/production-line/application/dto/production-lines.model.schema";
 import z from "zod";
 declare const productionLineQueryOrchestratorSchema: z.ZodObject<{
     production_line: z.ZodObject<{
@@ -42,7 +43,7 @@ declare const productionLineQueryOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-declare const productionLinQueryResponseSchema: z.ZodObject<{
+declare const productionLinQueryFullResponseSchema: z.ZodObject<{
     name: z.ZodString;
     custom_id: z.ZodString;
     is_active: z.ZodPipe<z.ZodTransform<unknown, unknown>, z.ZodBoolean>;
@@ -82,7 +83,7 @@ declare const productionLinQueryResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-type ProductionLineQueryFullResponseDto = z.infer<typeof productionLineQueryOrchestratorSchema>;
-type ProductionLineQueryFullOrchestratorDto = z.infer<typeof productionLinQueryResponseSchema>;
-export type { ProductionLineQueryFullResponseDto, ProductionLineQueryFullOrchestratorDto };
-export { productionLineQueryOrchestratorSchema, productionLinQueryResponseSchema, ProductionLineQuerySchema };
+type ProductionLineQueryFullOrchestratorResponseDto = z.infer<typeof productionLineQueryOrchestratorSchema>;
+type ProductionLineQueryFullResponseDto = z.infer<typeof productionLinQueryFullResponseSchema>;
+export type { ProductionLineQueryFullOrchestratorResponseDto, ProductionLineQueryFullResponseDto, ProductionLineQueryDto };
+export { productionLineQueryOrchestratorSchema, productionLinQueryFullResponseSchema, productionLineQuerySchema };

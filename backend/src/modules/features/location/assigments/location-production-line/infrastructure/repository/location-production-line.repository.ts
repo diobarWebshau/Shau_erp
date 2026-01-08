@@ -1,6 +1,6 @@
 import type { LocationProductionLineCreateProps, LocationProductionLineProps, LocationProductionLineUpdateProps } from "../../domain/location-production-line.types";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
-import { LocationProductionLineModel } from "../orm/location-production-line.orm";
+import { LocationProductionLineAttributes, LocationProductionLineModel } from "../orm/location-production-line.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -53,12 +53,8 @@ import { Transaction } from "sequelize";
  */
 
 const mapModelToDomain = (model: LocationProductionLineModel): LocationProductionLineProps => {
-    const json: LocationProductionLineProps = model.toJSON();
-    return {
-        id: json.id,
-        location_id: json.location_id,
-        production_line_id: json.production_line_id
-    };
+    const lplAttributes: LocationProductionLineAttributes = model.toJSON();
+    return lplAttributes;
 }
 
 export class LocationProductionLineRepository implements ILocationProductionLineRepository {
@@ -110,6 +106,7 @@ export class LocationProductionLineRepository implements ILocationProductionLine
         if (!existing) throw new HttpError(404,
             "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla."
         );
+        if (!Object.keys(data).length) return existing;
         // 2. Aplicar UPDATE
         const [affectedCount]: [affectedCount: number] = await LocationProductionLineModel.update(data, {
             where: { id },

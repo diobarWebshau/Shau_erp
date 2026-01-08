@@ -1,10 +1,10 @@
-import { productionLineQueryOrchestratorSchema, ProductionLineQuerySchema, productionLinQueryResponseSchema } from "./production-line-query.model.schema";
+import { productionLineQueryOrchestratorSchema, productionLineQuerySchema, productionLinQueryFullResponseSchema } from "./production-line-query.model.schema";
 import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import z from "zod";
 
 const getAllProductionLineOrchestratorSchema = z.object({
     params: z.object({}).strict(),
-    query: ProductionLineQuerySchema,
+    query: productionLineQuerySchema,
     body: z.object({}).strict(),
     response: z.array(productionLineQueryOrchestratorSchema)
 });
@@ -18,16 +18,16 @@ const getByIdProductionLineOrchestratorSchema = z.object({
 
 const getAllProductionLinetFullQuerySchema = z.object({
     params: z.object({}),
-    query: ProductionLineQuerySchema,
+    query: productionLineQuerySchema,
     body: z.object({}).strict(),
-    response: z.array(productionLinQueryResponseSchema)
+    response: z.array(productionLinQueryFullResponseSchema)
 });
 
 const getByIdProductionLinetFullQuerySchema = z.object({
     params: z.object({ id: z.string() }).strict(),
     query: z.object({}).strict(),
     body: z.object({}).strict(),
-    response: productionLinQueryResponseSchema.nullable()
+    response: productionLinQueryFullResponseSchema.nullable()
 });
 
 type GetAllProductionLineOrchestratorSchema = EndpointSchema<

@@ -88,46 +88,15 @@ class UpdateLocationOrchestratorUseCase {
             ;
             const locationQueryResponse = await this.locationQueryRepo.getByIdLocationFullQuery(locationResponse.id, tx);
             if (!locationQueryResponse)
-                throw new http_error_1.default(500, "No se pudo acceder a la locación despues de haber sido creada.");
-            const { location_location_types: lltQuery, location_production_lines: lplQuery, ...rest } = locationQueryResponse;
-            const dataLocation = {
-                ...rest,
-                created_at: rest.created_at.toISOString(),
-                updated_at: rest.updated_at.toISOString(),
-            };
-            const dataLocationLocationType = lltQuery.map((llt) => ({
-                ...llt,
-                location: {
-                    ...llt.location,
-                    created_at: llt.location.created_at.toISOString(),
-                    updated_at: llt.location.updated_at.toISOString(),
-                },
-                location_type: {
-                    ...llt.location_type,
-                    created_at: llt.location_type.created_at.toISOString(),
-                    updated_at: llt.location_type.updated_at.toISOString(),
-                }
-            }));
-            const dataLocationProductionLine = lplQuery.map((lpl) => ({
-                ...lpl,
-                location: {
-                    ...lpl.location,
-                    created_at: lpl.location.created_at.toISOString(),
-                    updated_at: lpl.location.updated_at.toISOString(),
-                },
-                production_line: {
-                    ...lpl.production_line,
-                    created_at: lpl.production_line.created_at.toISOString(),
-                    updated_at: lpl.production_line.updated_at.toISOString(),
-                }
-            }));
-            const locationFullResul = {
-                location: dataLocation,
-                location_location_types: dataLocationLocationType,
-                location_production_lines: dataLocationProductionLine
+                throw new http_error_1.default(500, "No se pudo acceder a la locación despues de haber sido actualizada.");
+            const { location_location_types: llt_query, location_production_lines: lpl_query, ...location_query } = locationQueryResponse;
+            const locationFullResult = {
+                location: location_query,
+                location_location_types: llt_query,
+                location_production_lines: lpl_query
             };
             await tx.commit();
-            return locationFullResul;
+            return locationFullResult;
         }
         catch (error) {
             await tx.rollback();

@@ -1,5 +1,10 @@
 import { GetAllLocationOrchestratorSchema, GetAllLocationtFullQuerySchema, GetByIdLocationOrchestratorSchema, GetByIdLocationtFullQuerySchema } from "../../application/dto/location-query.endpoint.schema";
+import { LocationOrchestratorResponseDto } from "@modules/features/location/orchestration/application/dto/location-orchestrator.model.schema";
+import { LocationFullQueryResult, LocationFullQueryResultDto } from "../../domain/location-query.types";
+import { LocationOrchestrator } from "@src/modules/features/location/orchestration/domain/location-orchestrator.types";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
+export declare const mapLocationOrchestratorDomainToDto: (data: LocationOrchestrator) => LocationOrchestratorResponseDto;
+export declare const mapLocationFullQueryDomainToDto: (data: LocationFullQueryResult) => LocationFullQueryResultDto;
 export declare class LocationQueryController {
     private readonly repo;
     private readonly getAllLocationOrchestratorUseCase;

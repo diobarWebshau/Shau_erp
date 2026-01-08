@@ -1,4 +1,5 @@
-import { ProductionLineSearchCriteria } from "../../domain/production-line-query.types";
+import { ProductionLineOrchestrator } from "@src/modules/features/production-line/orchestrator/domain/production-line-orchestrator.types";
+import { ProductionLineQueryDto } from "@src/modules/core/production-line/application/dto/production-lines.model.schema";
 import { IProductionLineQueryRepository } from "../../domain/production-line-query.respository.interface";
 import { Transaction } from "sequelize";
 /**
@@ -44,46 +45,5 @@ import { Transaction } from "sequelize";
 export declare class GetAllProductionLineQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: IProductionLineQueryRepository);
-    execute(query: ProductionLineSearchCriteria, tx?: Transaction): Promise<{
-        production_line: {
-            name: string;
-            custom_id: string;
-            is_active: boolean;
-            id: number;
-            created_at: string;
-            updated_at: string;
-        };
-        production_line_products: {
-            product_id: number;
-            production_line_id: number;
-            id: number;
-            product: {
-                is_active: boolean;
-                is_draft: boolean;
-                id: number;
-                created_at: string;
-                updated_at: string;
-                name?: string | null | undefined;
-                custom_id?: string | null | undefined;
-                type?: string | null | undefined;
-                description?: string | null | undefined;
-                presentation?: string | null | undefined;
-                unit_of_measure?: string | null | undefined;
-                storage_conditions?: string | null | undefined;
-                barcode?: number | null | undefined;
-                sku?: string | null | undefined;
-                photo?: string | null | undefined;
-                sale_price?: string | null | undefined;
-                production_cost?: string | null | undefined;
-            };
-            production_line: {
-                name: string;
-                custom_id: string;
-                is_active: boolean;
-                id: number;
-                created_at: string;
-                updated_at: string;
-            };
-        }[];
-    }[]>;
+    execute(query: ProductionLineQueryDto, tx?: Transaction): Promise<ProductionLineOrchestrator[]>;
 }

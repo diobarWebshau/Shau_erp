@@ -24,7 +24,7 @@ declare const getAllProductInputSchema: z.ZodObject<{
     response: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        equivalence: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -41,7 +41,7 @@ declare const getByIdProductInputSchema: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        equivalence: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -59,7 +59,7 @@ declare const getByIdProductInputProductInputSchema: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        equivalence: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -73,12 +73,12 @@ declare const createProductInputSchema: z.ZodObject<{
     body: z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        equivalence: z.ZodString;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        equivalence: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>;
 }, z.core.$strip>;
@@ -94,12 +94,12 @@ declare const updateProductInputSchema: z.ZodObject<{
     body: z.ZodObject<{
         product_id: z.ZodOptional<z.ZodNumber>;
         input_id: z.ZodOptional<z.ZodNumber>;
-        equivalence: z.ZodOptional<z.ZodNumber>;
+        equivalence: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>;
     response: z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
-        equivalence: z.ZodNumber;
+        equivalence: z.ZodString;
         id: z.ZodNumber;
     }, z.core.$strip>;
 }, z.core.$strip>;

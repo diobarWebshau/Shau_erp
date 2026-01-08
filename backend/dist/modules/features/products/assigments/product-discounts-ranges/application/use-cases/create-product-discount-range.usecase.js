@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductDiscountRangeUseCase = void 0;
 const check_range_conflicts_1 = require("@helpers/check-range-conflicts");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -46,6 +47,14 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductDiscountRangeCreateDtoToDto = (data) => {
+    return ({
+        ...data,
+        min_qty: decimal_vo_1.DecimalVO.from(data.min_qty),
+        max_qty: decimal_vo_1.DecimalVO.from(data.max_qty),
+        unit_price: decimal_vo_1.DecimalVO.from(data.unit_price)
+    });
+};
 class CreateProductDiscountRangeUseCase {
     repo;
     repoProduct;
@@ -57,8 +66,9 @@ class CreateProductDiscountRangeUseCase {
         const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct)
             throw new http_error_1.default(404, "El producto seleccionado no existe.");
-        const getAll = await this.repo.findByProductId(data.product_id, tx);
-        const getAllWithNew = [...getAll, ...[data]];
+        const createDate = mapProductDiscountRangeCreateDtoToDto(data);
+        const getAll = await this.repo.findByProductId(createDate.product_id, tx);
+        const getAllWithNew = [...getAll, ...[createDate]];
         const conflictRanges = (0, check_range_conflicts_1.checkRangeConflicts)(getAllWithNew, "min_qty", "max_qty");
         if (conflictRanges === "invalid_range") {
             throw new http_error_1.default(400, "El rango del descueto es invalído.");
@@ -69,7 +79,7 @@ class CreateProductDiscountRangeUseCase {
         if (conflictRanges === "overlap") {
             throw new http_error_1.default(400, "El rango del descueto se traslapa con otro descuento ya existente para el producto.");
         }
-        const created = await this.repo.create(data, tx);
+        const created = await this.repo.create(createDate, tx);
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del descueto por rango al producto.");
         return created;

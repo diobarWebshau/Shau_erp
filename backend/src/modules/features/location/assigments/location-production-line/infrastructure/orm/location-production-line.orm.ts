@@ -64,7 +64,8 @@ interface LocationProductionLineAttributes {
     production_line_id: number
 }
 
-type LocationProductionLineCreateAttributes = Partial<Omit<LocationProductionLineAttributes, "id">>;
+type LocationProductionLineCreateAttributes = Omit<LocationProductionLineAttributes, "id">;
+type LocationProductionLineUpdateAttributes = Partial<LocationProductionLineAttributes>;
 
 class LocationProductionLineModel extends Model<LocationProductionLineAttributes, LocationProductionLineCreateAttributes> {
 
@@ -107,5 +108,6 @@ LocationProductionLineModel.init({
 export { LocationProductionLineModel };
 export type {
     LocationProductionLineAttributes,
-    LocationProductionLineCreateAttributes
+    LocationProductionLineCreateAttributes,
+    LocationProductionLineUpdateAttributes
 }

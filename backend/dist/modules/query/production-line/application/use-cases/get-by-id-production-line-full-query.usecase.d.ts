@@ -1,5 +1,5 @@
-import { ProductionLineQueryResultDto } from "../../domain/production-line-query.types";
 import { IProductionLineQueryRepository } from "../../domain/production-line-query.respository.interface";
+import { ProductionLineFullQueryResult } from "../../domain/production-line-query.types";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -44,5 +44,5 @@ import { Transaction } from "sequelize";
 export declare class GetByIdProductionLineFullQueryUseCase {
     private readonly repo;
     constructor(repo: IProductionLineQueryRepository);
-    execute(id: number, tx?: Transaction): Promise<ProductionLineQueryResultDto | null>;
+    execute(id: number, tx?: Transaction): Promise<ProductionLineFullQueryResult | null>;
 }

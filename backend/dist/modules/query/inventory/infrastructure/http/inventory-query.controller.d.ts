@@ -6,7 +6,7 @@ export declare class InventoryQueryController {
     private readonly getAllLikeToInventoryQueryUseCase;
     private readonly getByIdInventoryQueryUseCase;
     constructor();
-    getAll: (_req: ApiRequest<GetAllInventoryQuerySchema>, res: ApiResponse<GetAllInventoryQuerySchema>) => Promise<void>;
-    getAllLikeTo: (req: ApiRequest<GetAllLikeToInventoryQuerySchema>, res: ApiResponse<GetAllLikeToInventoryQuerySchema>) => Promise<void>;
-    getById: (req: ApiRequest<GetByIdInventoryQuerySchema>, res: ApiResponse<GetByIdInventoryQuerySchema>) => Promise<void>;
+    getAll: (_req: ApiRequest<GetAllInventoryQuerySchema>, res: ApiResponse<GetAllInventoryQuerySchema>) => Promise<ApiResponse<GetAllInventoryQuerySchema>>;
+    getAllLikeTo: (req: ApiRequest<GetAllLikeToInventoryQuerySchema>, res: ApiResponse<GetAllLikeToInventoryQuerySchema>) => Promise<ApiResponse<GetAllLikeToInventoryQuerySchema>>;
+    getById: (req: ApiRequest<GetByIdInventoryQuerySchema>, res: ApiResponse<GetByIdInventoryQuerySchema>) => Promise<ApiResponse<GetByIdInventoryQuerySchema>>;
 }

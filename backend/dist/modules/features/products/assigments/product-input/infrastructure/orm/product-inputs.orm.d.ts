@@ -46,17 +46,17 @@ interface ProductInputAttributes {
     id: number;
     product_id: number;
     input_id: number;
-    equivalence: number;
+    equivalence: string;
 }
-type ProductInputCreateAttributes = Partial<Omit<ProductInputAttributes, "id">>;
-type ProductInputUpdateAttributes = ProductInputCreateAttributes;
+type ProductInputCreateAttributes = Omit<ProductInputAttributes, "id">;
+type ProductInputUpdateAttributes = Partial<ProductInputCreateAttributes>;
 declare class ProductInputModel extends Model<ProductInputAttributes, ProductInputCreateAttributes> {
     id: number;
     product_id: number;
     input_id: number;
-    equivalence: number;
+    equivalence: string;
     static getEditableFields: () => readonly (keyof ProductInputUpdateAttributes)[];
     static getAllFields: () => readonly (keyof ProductInputAttributes)[];
 }
 export { ProductInputModel };
-export type { ProductInputAttributes, ProductInputCreateAttributes };
+export type { ProductInputAttributes, ProductInputCreateAttributes, ProductInputUpdateAttributes };

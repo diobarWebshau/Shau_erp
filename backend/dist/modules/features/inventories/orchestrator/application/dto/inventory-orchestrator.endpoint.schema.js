@@ -9,8 +9,8 @@ const zod_1 = __importDefault(require("zod"));
 const createInventoryOrchestratorSchema = zod_1.default.object({
     params: zod_1.default.object({}).strict(),
     query: zod_1.default.object({}).strict(),
-    body: inventory_orchestrator_model_schema_1.inventoryOrchestratorCreateSchema,
-    response: inventory_orchestrator_model_schema_1.inventoryOrchestratorResponseSchema,
+    body: inventory_orchestrator_model_schema_1.inventoryOrchestratorCreateBatchSchema,
+    response: inventory_orchestrator_model_schema_1.inventoryOrchestratorResponseBatchSchema,
 });
 exports.createInventoryOrchestratorSchema = createInventoryOrchestratorSchema;
 const createTransferInventoryOrchestratorSchema = zod_1.default.object({

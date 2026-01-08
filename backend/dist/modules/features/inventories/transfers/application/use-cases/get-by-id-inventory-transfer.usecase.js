@@ -9,14 +9,7 @@ class GetByIdInventoryTransferUseCase {
     ;
     execute = async (id, tx) => {
         const inventoryTransactionResponse = await this.inventoryTransferRepo.findById(id, tx);
-        if (!inventoryTransactionResponse)
-            return null;
-        const inventoryTransactionResponsesFormatted = {
-            ...inventoryTransactionResponse,
-            created_at: inventoryTransactionResponse.created_at.toISOString(),
-            updated_at: inventoryTransactionResponse.updated_at.toISOString()
-        };
-        return inventoryTransactionResponsesFormatted;
+        return inventoryTransactionResponse;
     };
 }
 exports.GetByIdInventoryTransferUseCase = GetByIdInventoryTransferUseCase;

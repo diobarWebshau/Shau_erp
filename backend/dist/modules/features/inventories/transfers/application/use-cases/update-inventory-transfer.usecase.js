@@ -1,6 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateInventoryTransferUseCase = void 0;
+const decimal_vo_1 = require("@shared/domain/value-objects/decimal.vo");
+const mapInventoryTransferUpdateDtoToDomain = (data) => {
+    const { qty, reason, ...rest } = data;
+    return {
+        ...rest,
+        ...(qty !== undefined ? { qty: decimal_vo_1.DecimalVO.from(qty) } : {}),
+    };
+};
 class UpdateInventoryTransferUseCase {
     inventoryTransferRepo;
     constructor(inventoryTransferRepo) {
@@ -8,13 +16,9 @@ class UpdateInventoryTransferUseCase {
     }
     ;
     execute = async (id, data, tx) => {
-        const inventoryTransferResponse = await this.inventoryTransferRepo.update(id, data, tx);
-        const inventoryTransfer = {
-            ...inventoryTransferResponse,
-            created_at: inventoryTransferResponse.created_at.toISOString(),
-            updated_at: inventoryTransferResponse.updated_at.toISOString()
-        };
-        return inventoryTransfer;
+        const updateData = mapInventoryTransferUpdateDtoToDomain(data);
+        const inventoryTransferResponse = await this.inventoryTransferRepo.update(id, updateData, tx);
+        return inventoryTransferResponse;
     };
 }
 exports.UpdateInventoryTransferUseCase = UpdateInventoryTransferUseCase;

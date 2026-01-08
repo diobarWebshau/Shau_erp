@@ -1,22 +1,23 @@
-import { EndpointSchema } from "@src/shared/typed-request-endpoint/endpoint.interface";
+import { EndpointSchema } from "@shared/typed-request-endpoint/endpoint.interface";
 import {
-    locationCreateRequestOrchestratorSchema, locationUpdateRequestOrchestratorSchema,
-    locationResponseOrchestratorSchema
+    locationOrchestratorCreateRequestSchema,
+    locationOrchestratorUpdateRequestSchema,
+    locationOrchestratorResponseSchema
 } from "./location-orchestrator.model.schema"
 import { z } from "zod";
 
 const createLocationOrchestratorSchema = z.object({
     params: z.object({}).strict(),
     query: z.object({}).strict(),
-    body: locationCreateRequestOrchestratorSchema,
-    response: locationResponseOrchestratorSchema
+    body: locationOrchestratorCreateRequestSchema,
+    response: locationOrchestratorResponseSchema
 });
 
 const updateLocationOrchestratorSchema = z.object({
     params: z.object({ id: z.string() }).strict(),
     query: z.object({}).strict(),
-    body: locationUpdateRequestOrchestratorSchema,
-    response: locationResponseOrchestratorSchema
+    body: locationOrchestratorUpdateRequestSchema,
+    response: locationOrchestratorResponseSchema
 });
 
 type CreateLocationOrchestratorSchema = EndpointSchema<

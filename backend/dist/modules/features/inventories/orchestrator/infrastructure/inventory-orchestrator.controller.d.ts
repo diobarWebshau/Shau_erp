@@ -1,5 +1,5 @@
-import { ApiRequest, ApiResponse } from "@src/shared/typed-request-endpoint/typed-request.interface";
 import { CreateInventoryOrchestratorSchema, CreateTransferInventoryOrchestratorSchema } from "./../application/dto/inventory-orchestrator.endpoint.schema";
+import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 export declare class InventoryOrchestratorController {
     private readonly inventoryRepo;
     private readonly inventoryLocationItemRepo;

@@ -46,11 +46,13 @@
  *   derivados de estos tipos.
  */
 
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+
 interface ProductInputProps {
     id: number;
     product_id: number,
     input_id: number,
-    equivalence: number
+    equivalence: DecimalVO
 };
 
 type ProductInputCreateProps = Omit<ProductInputProps, "id">;

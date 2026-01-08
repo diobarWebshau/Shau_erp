@@ -1,10 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteLocationLocationTypeUseCase = void 0;
-const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -51,9 +47,6 @@ class DeleteLocationLocationTypeUseCase {
         this.repo = repo;
     }
     async execute(id, tx) {
-        const exists = await this.repo.findById(id, tx);
-        if (!exists)
-            throw new http_error_1.default(404, "No se encontro la asignación del tipo de locación a la locación que se pretende eliminar.");
         await this.repo.delete(id, tx);
         return;
     }

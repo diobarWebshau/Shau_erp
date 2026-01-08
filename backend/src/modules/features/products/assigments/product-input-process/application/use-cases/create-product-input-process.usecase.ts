@@ -3,6 +3,8 @@ import { IProductProcessRepository } from "../../../product-process/domain/produ
 import type { IProductInputProcessRepository } from "../../domain/product-input-process.repository.interface";
 import { IProductInputRepository } from "../../../product-input/domain/product-input.repository.interface";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
+import { ProductInputProcessCreateDto } from "../dto/product-input-process.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -47,6 +49,13 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapProductinputProcessDtoToDomain = (data: ProductInputProcessCreateDto): ProductInputProcessCreateProps => {
+    return ({
+        ...data,
+        qty: DecimalVO.from(data.qty)
+    });
+};
+
 export class CreateProductInputProcessUseCase {
     constructor(
         private readonly repo: IProductInputProcessRepository,
@@ -54,20 +63,21 @@ export class CreateProductInputProcessUseCase {
         private readonly repoProductInput: IProductInputRepository,
         private readonly repoProductProcess: IProductProcessRepository,
     ) { }
-    async execute(data: ProductInputProcessCreateProps, tx?: Transaction): Promise<ProductInputProcessProps> {
-        const validateProduct = await this.repoProduct.findById(data.product_id, tx);
+    async execute(data: ProductInputProcessCreateDto, tx?: Transaction): Promise<ProductInputProcessProps> {
+        const createData = mapProductinputProcessDtoToDomain(data);
+        const validateProduct = await this.repoProduct.findById(createData.product_id, tx);
         if (!validateProduct) throw new HttpError(404,
             "El producto que se desea asignar un consumo de insumos para un proceso, no existe"
         );
-        const validateProductInput = await this.repoProductInput.findById(data.product_input_id, tx);
+        const validateProductInput = await this.repoProductInput.findById(createData.product_input_id, tx);
         if (!validateProductInput) throw new HttpError(404,
             "La asignación del insumo al producto que se desea asignar a un proceso, no existe"
         );
-        const validateProductProcess = await this.repoProductProcess.findById(data.product_process_id, tx);
+        const validateProductProcess = await this.repoProductProcess.findById(createData.product_process_id, tx);
         if (!validateProductProcess) throw new HttpError(404,
             "La asignacion del proceso al producto que se le desea asignar el consumo de un insumo, no existe"
         );
-        const created: ProductInputProcessProps = await this.repo.create(data, tx);
+        const created: ProductInputProcessProps = await this.repo.create(createData, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación de la cantidad de insumos consumidos para este proceso del producto."
         );

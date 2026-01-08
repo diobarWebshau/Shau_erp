@@ -46,12 +46,14 @@
  *   derivados de estos tipos.
  */
 
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+
 interface ProductDiscountRangeProps {
     id: number;
     product_id: number,
-    unit_price: number,
-    min_qty: number,
-    max_qty: number,
+    unit_price: DecimalVO,
+    min_qty: DecimalVO,
+    max_qty: DecimalVO,
     created_at: Date,
     updated_at: Date
 };

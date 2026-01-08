@@ -67,6 +67,8 @@ interface LocationLocationTypeAttributes {
 
 type LocationLocationTypeCreateAttributes = Partial<Omit<LocationLocationTypeAttributes, "id">>;
 
+type LocationLocationTypeUpdateAttributes = Partial<LocationLocationTypeCreateAttributes>;
+
 class LocationLocationTypeModel extends Model<LocationLocationTypeAttributes, LocationLocationTypeCreateAttributes> {
 
     declare id: number;
@@ -108,5 +110,6 @@ LocationLocationTypeModel.init({
 export { LocationLocationTypeModel };
 export type {
     LocationLocationTypeAttributes,
-    LocationLocationTypeCreateAttributes
+    LocationLocationTypeCreateAttributes,
+    LocationLocationTypeUpdateAttributes
 }

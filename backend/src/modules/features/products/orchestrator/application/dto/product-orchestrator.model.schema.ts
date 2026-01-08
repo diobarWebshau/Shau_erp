@@ -1,7 +1,7 @@
-import { ProductDiscountRangeCreateSchema, ProductDiscountRangeReponseSchema, ProductDiscountRangeUpdateSchema } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
-import { productInputProcessCreateSchema, productInputProcessReponseSchema, productInputProcessUpdateSchema } from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
-import { ProductProcessCreateSchema, ProductProcessReponseSchema, ProductProcessUpdateSchema } from "../../assigments/product-process/application/dto/product-process.model.schema";
-import { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdateSchema } from "../../assigments/product-input/application/dto/product-input.model.schema";
+import { ProductDiscountRangeCreateSchema, ProductDiscountRangeReponseSchema, ProductDiscountRangeUpdateSchema } from "../../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
+import { productInputProcessCreateSchema, productInputProcessReponseSchema, productInputProcessUpdateSchema } from "../../../assigments/product-input-process/application/dto/product-input-process.model.schema";
+import { ProductProcessCreateSchema, ProductProcessReponseSchema, ProductProcessUpdateSchema } from "../../../assigments/product-process/application/dto/product-process.model.schema";
+import { ProductInputCreateSchema, ProductInputReponseSchema, ProductInputUpdateSchema } from "../../../assigments/product-input/application/dto/product-input.model.schema";
 import { productCreateSchema, productResponseSchema, productUpdateSchema, productQuerySchema } from "@modules/core/product/application/dto/product.model.schema";
 import { processCreateSchema } from "@modules/core/process/application/dto/process.model.schema";
 import { z } from "zod";

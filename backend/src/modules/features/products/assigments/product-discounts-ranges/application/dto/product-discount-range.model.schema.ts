@@ -1,3 +1,4 @@
+import { decimalString } from "@src/shared/application/decimal.schema";
 import { z } from "zod";
 
 /**
@@ -45,9 +46,9 @@ import { z } from "zod";
 
 const ProductDiscountRangeCreateSchema = z.object({
     product_id: z.number().int(),
-    unit_price: z.number(),
-    min_qty: z.number(),
-    max_qty: z.number(),
+    unit_price: decimalString,
+    min_qty: decimalString,
+    max_qty: decimalString,
 });
 
 /**
@@ -66,8 +67,8 @@ const ProductDiscountRangeUpdateSchema = ProductDiscountRangeCreateSchema.partia
  */
 const ProductDiscountRangeReponseSchema = ProductDiscountRangeCreateSchema.extend({
     id: z.number().int(),
-    created_at: z.string(), 
-    updated_at: z.string(), 
+    created_at: z.string(),
+    updated_at: z.string(),
 });
 
 /**

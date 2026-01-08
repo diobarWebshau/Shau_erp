@@ -1,10 +1,11 @@
 
 import { IProductionLineRepository } from "@src/modules/core/production-line/domain/production-line.repository.interface";
-import { ProductionLineProductCreateProps, ProductionLineProductProps } from "../../domain/production-line-product.types";
+import { ProductionLineProductProps } from "../../domain/production-line-product.types";
 import { IProductionLineProductRepository } from "../../domain/production-line.repository.interface";
 import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 import HttpError from "@src/shared/errors/http/http-error";
 import { Transaction } from "sequelize";
+import { ProductionLineProductCreateDto } from "../dto/production-line-product.model.schema";
 
 /**
  * UseCase
@@ -64,7 +65,7 @@ export class CreateProductionLineProductUseCase {
         this.productionLineRepo = productionLineRepo;
     };
 
-    async execute(data: ProductionLineProductCreateProps, tx?: Transaction) {
+    async execute(data: ProductionLineProductCreateDto, tx?: Transaction) {
         const validateProduct = await this.productRepo.findById(data.product_id, tx);
         if (!validateProduct) throw new HttpError(500,
             "El producto que se pretende asignar a la línea de producción, no existe."

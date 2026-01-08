@@ -1,7 +1,8 @@
 import { IProductionLineRepository } from "@src/modules/core/production-line/domain/production-line.repository.interface";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
-import type { LocationProductionLineProps, LocationProductionLineCreateProps } from "../../domain/location-production-line.types";
 import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
+import type { LocationProductionLineProps } from "../../domain/location-production-line.types";
+import { LocationProductionLineCreateDto } from "../dto/location-production-line.model.schema";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -48,5 +49,5 @@ export declare class CreateLocationProductionLineUseCase {
     private readonly repoLocation;
     private readonly repoProductionLine;
     constructor(repo: ILocationProductionLineRepository, repoLocation: ILocationRepository, repoProductionLine: IProductionLineRepository);
-    execute(data: LocationProductionLineCreateProps, tx?: Transaction): Promise<LocationProductionLineProps>;
+    execute(data: LocationProductionLineCreateDto, tx?: Transaction): Promise<LocationProductionLineProps>;
 }

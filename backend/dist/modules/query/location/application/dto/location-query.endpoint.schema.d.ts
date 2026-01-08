@@ -65,7 +65,7 @@ declare const getAllLocationOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>>;
         location_production_lines: z.ZodArray<z.ZodObject<{
             location_id: z.ZodNumber;
-            location_type_id: z.ZodNumber;
+            production_line_id: z.ZodNumber;
             id: z.ZodNumber;
             location: z.ZodObject<{
                 name: z.ZodNullable<z.ZodString>;
@@ -155,7 +155,7 @@ declare const getByIdLocationOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>>;
         location_production_lines: z.ZodArray<z.ZodObject<{
             location_id: z.ZodNumber;
-            location_type_id: z.ZodNumber;
+            production_line_id: z.ZodNumber;
             id: z.ZodNumber;
             location: z.ZodObject<{
                 name: z.ZodNullable<z.ZodString>;
@@ -220,7 +220,7 @@ declare const getAllLocationtFullQuerySchema: z.ZodObject<{
         updated_at: z.ZodString;
         location_production_lines: z.ZodArray<z.ZodObject<{
             location_id: z.ZodNumber;
-            location_type_id: z.ZodNumber;
+            production_line_id: z.ZodNumber;
             id: z.ZodNumber;
             location: z.ZodObject<{
                 name: z.ZodNullable<z.ZodString>;
@@ -308,7 +308,7 @@ declare const getByIdLocationtFullQuerySchema: z.ZodObject<{
         updated_at: z.ZodString;
         location_production_lines: z.ZodArray<z.ZodObject<{
             location_id: z.ZodNumber;
-            location_type_id: z.ZodNumber;
+            production_line_id: z.ZodNumber;
             id: z.ZodNumber;
             location: z.ZodObject<{
                 name: z.ZodNullable<z.ZodString>;

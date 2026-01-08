@@ -11,7 +11,7 @@ import z from "zod";
 // |🔹 Production-Line-Product                      |
 // --------------------------------------------------
 
-const productionLineProductCreateOrchestratorSchema = productionLineProductCreateSchema.omit({
+const productionLineProductOrchestratorCreateSchema = productionLineProductCreateSchema.omit({
     production_line_id: true
 }).extend({ production_line_id: z.undefined().optional() }).strict();
 
@@ -19,13 +19,13 @@ const productionLineProductCreateOrchestratorSchema = productionLineProductCreat
 // 🔹 OBJECT PRODUCTION LINE ORCHESTRATOR CREATE    |
 // --------------------------------------------------
 
-const productionLineCreateOrchestratorSchema = z.object({
+const productionLineOrchestratorCreateSchema = z.object({
     production_line: productionLineCreateSchema,
-    production_line_products: z.array(productionLineProductCreateOrchestratorSchema)
+    production_line_products: z.array(productionLineProductOrchestratorCreateSchema)
 });
 
-const productionLineCreateRequestOrchestratorSchema = z.object({
-    payload: z.string().transform((val) => JSON.parse(val).pipe(productionLineCreateOrchestratorSchema))
+const productionLineOrchestratorCreateRequestSchema = z.object({
+    payload: z.string().transform((val) => JSON.parse(val).pipe(productionLineOrchestratorCreateSchema))
 });
 
 // =========================================================================================
@@ -36,7 +36,7 @@ const productionLineCreateRequestOrchestratorSchema = z.object({
 // |🔹 Production-Line-Product                      |
 // --------------------------------------------------
 
-const productionLineProductUpdateOrchestratorSchema = productionLineProductUpdateSchema.extend({
+const productionLineProductOrchestratorUpdateSchema = productionLineProductUpdateSchema.extend({
     id: z.number().int()
 });
 
@@ -45,12 +45,12 @@ const productionLineProductUpdateOrchestratorSchema = productionLineProductUpdat
 // --------------------------------------------------
 
 const productionLineProductManagerSchema = z.object({
-    added: z.array(productionLineProductCreateOrchestratorSchema),
-    updated: z.array(productionLineProductUpdateOrchestratorSchema),
+    added: z.array(productionLineProductOrchestratorCreateSchema),
+    updated: z.array(productionLineProductOrchestratorUpdateSchema),
     deleted: z.array(productionLineProductResponseSchema)
 });
 
-const productionLineUpdateRequestOrchestratorSchema = z.object({
+const productionLineOrchestratorUpdateRequestSchema = z.object({
     payload: z.string().transform((val) => JSON.parse(val).pipe(productionLineProductManagerSchema))
 });
 
@@ -58,53 +58,53 @@ const productionLineUpdateRequestOrchestratorSchema = z.object({
 // |                        ORCHESTRATOR — RESPONSE                                        |
 // =========================================================================================
 
-const productionLineProductResponseOrchestratorSchema = productionLineProductResponseSchema.extend({
+const productionLineProductOrchestratorResponseSchema = productionLineProductResponseSchema.extend({
     product: productResponseSchema,
     production_line: productionLineResponseSchema
 });
 
-const productionLineResponseOrchestratorSchema = z.object({
+const productionLineOrchestratorResponseSchema = z.object({
     production_line: productionLineResponseSchema,
-    production_line_products: z.array(productionLineProductResponseOrchestratorSchema)
+    production_line_products: z.array(productionLineProductOrchestratorResponseSchema)
 });
 
 // =========================================================================================
 // |                        ORCHESTRATOR — DTO                                             |
 // =========================================================================================
 
-type ProductionLineProductCreateOrchestratorDto = z.infer<typeof productionLineProductCreateOrchestratorSchema>;
-type ProductionLineCreateOrchestratorDto = z.infer<typeof productionLineCreateOrchestratorSchema>;
-type ProductionLineCreateRequestOrchestratorDto = z.infer<typeof productionLineCreateRequestOrchestratorSchema>;
-type ProductionLineProductUpdateOrchestratorDto = z.infer<typeof productionLineProductUpdateOrchestratorSchema>;
+type ProductionLineProductOrchestratorCreateDto = z.infer<typeof productionLineProductOrchestratorCreateSchema>;
+type ProductionLineOrchestratorCreateDto = z.infer<typeof productionLineOrchestratorCreateSchema>;
+type ProductionLineOrchestratorCreateRequestDto = z.infer<typeof productionLineOrchestratorCreateRequestSchema>;
+type ProductionLineProductOrchestratorUpdateDto = z.infer<typeof productionLineProductOrchestratorUpdateSchema>;
 type ProductionLineProductManagerSchemaDto = z.infer<typeof productionLineProductManagerSchema>;
-type ProductionLineUpdateRequestOrchestratorDto = z.infer<typeof productionLineUpdateRequestOrchestratorSchema>;
-type ProductionLineProductResponseOrchestratorDto = z.infer<typeof productionLineProductResponseOrchestratorSchema>;
-type ProductionLineResponseOrchestratorDto = z.infer<typeof productionLineResponseOrchestratorSchema>;
+type ProductionLineOrchestratorUpdateRequestDto = z.infer<typeof productionLineOrchestratorUpdateRequestSchema>;
+type ProductionLineProductOrchestratorResponseDto = z.infer<typeof productionLineProductOrchestratorResponseSchema>;
+type ProductionLineOrchestratorResponseDto = z.infer<typeof productionLineOrchestratorResponseSchema>;
 
 export {
     // ******************* CREATE (REQUEST) ******************
-    productionLineProductCreateOrchestratorSchema,
-    productionLineCreateOrchestratorSchema,
-    productionLineCreateRequestOrchestratorSchema,
+    productionLineProductOrchestratorCreateSchema,
+    productionLineOrchestratorCreateSchema,
+    productionLineOrchestratorCreateRequestSchema,
     // ******************* UPDATE (REQUEST) ******************
-    productionLineProductUpdateOrchestratorSchema,
+    productionLineProductOrchestratorUpdateSchema,
     productionLineProductManagerSchema,
-    productionLineUpdateRequestOrchestratorSchema,
+    productionLineOrchestratorUpdateRequestSchema,
     // ******************* RESPONSE (REQUEST) ******************
-    productionLineProductResponseOrchestratorSchema,
-    productionLineResponseOrchestratorSchema
+    productionLineProductOrchestratorResponseSchema,
+    productionLineOrchestratorResponseSchema
 }
 
 export type {
     // ******************* CREATE (REQUEST) ******************
-    ProductionLineProductCreateOrchestratorDto,
-    ProductionLineCreateOrchestratorDto,
-    ProductionLineCreateRequestOrchestratorDto,
+    ProductionLineProductOrchestratorCreateDto,
+    ProductionLineOrchestratorCreateDto,
+    ProductionLineOrchestratorCreateRequestDto,
     // ******************* UPDATE (REQUEST) ******************
-    ProductionLineProductUpdateOrchestratorDto,
+    ProductionLineProductOrchestratorUpdateDto,
     ProductionLineProductManagerSchemaDto,
-    ProductionLineUpdateRequestOrchestratorDto,
+    ProductionLineOrchestratorUpdateRequestDto,
     // ******************* RESPONSE (REQUEST) ******************
-    ProductionLineProductResponseOrchestratorDto,
-    ProductionLineResponseOrchestratorDto
+    ProductionLineProductOrchestratorResponseDto,
+    ProductionLineOrchestratorResponseDto
 };

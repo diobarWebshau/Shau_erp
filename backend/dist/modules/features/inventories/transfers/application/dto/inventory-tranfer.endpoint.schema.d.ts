@@ -11,7 +11,7 @@ declare const getAllInventoryTransferSchema: z.ZodObject<{
         }>;
         item_id: z.ZodNumber;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         reason: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<{
             completed: "completed";
@@ -37,7 +37,7 @@ declare const getByIdInventoryTransferSchema: z.ZodObject<{
         }>;
         item_id: z.ZodNumber;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         reason: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<{
             completed: "completed";
@@ -60,7 +60,7 @@ declare const createInventoryTransferSchema: z.ZodObject<{
         }>;
         item_id: z.ZodNumber;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         reason: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<{
             completed: "completed";
@@ -76,7 +76,7 @@ declare const createInventoryTransferSchema: z.ZodObject<{
         }>;
         item_id: z.ZodNumber;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         reason: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<{
             completed: "completed";
@@ -101,7 +101,7 @@ declare const updateInventoryTransferSchema: z.ZodObject<{
         }>>;
         item_id: z.ZodOptional<z.ZodNumber>;
         item_name: z.ZodOptional<z.ZodString>;
-        qty: z.ZodOptional<z.ZodNumber>;
+        qty: z.ZodOptional<z.ZodString>;
         reason: z.ZodOptional<z.ZodNullable<z.ZodString>>;
         status: z.ZodOptional<z.ZodEnum<{
             completed: "completed";
@@ -117,7 +117,7 @@ declare const updateInventoryTransferSchema: z.ZodObject<{
         }>;
         item_id: z.ZodNumber;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         reason: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<{
             completed: "completed";

@@ -1,6 +1,6 @@
 import { ProductionLineProductCreateProps, ProductionLineProductProps, ProductionLineProductUpdateProps } from "../../domain/production-line-product.types";
+import { ProductionLineProductAttributes, ProductionLineProductModel } from "../orm/production-line-product.orm";
 import { IProductionLineProductRepository } from "../../domain/production-line.repository.interface";
-import {ProductionLineProductModel} from "../orm/production-line-product.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -52,13 +52,9 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductionLineProductModel): ProductionLineProductProps => {
-    const json: ProductionLineProductProps = model.toJSON();
-    return {
-        id: json.id,
-        product_id: json.product_id,
-        production_line_id: json.production_line_id
-    };
+const mapProductionLineAModelToDomain = (model: ProductionLineProductModel): ProductionLineProductProps => {
+    const productionLineAttributes: ProductionLineProductAttributes = model.toJSON();
+    return productionLineAttributes;
 };
 
 export class ProductionLineProductRepository implements IProductionLineProductRepository {
@@ -66,7 +62,7 @@ export class ProductionLineProductRepository implements IProductionLineProductRe
         const productionLineResponses: ProductionLineProductModel[] = await ProductionLineProductModel.findAll({
             transaction: tx
         });
-        const rowsMap = productionLineResponses.map((plp) => mapModelToDomain(plp));
+        const rowsMap = productionLineResponses.map((plp) => mapProductionLineAModelToDomain(plp));
         return rowsMap;
     }
     async findById(id: number, tx?: Transaction): Promise<ProductionLineProductProps | null> {
@@ -74,7 +70,7 @@ export class ProductionLineProductRepository implements IProductionLineProductRe
             transaction: tx
         });
         if (productionLineResponse) {
-            return mapModelToDomain(productionLineResponse);
+            return mapProductionLineAModelToDomain(productionLineResponse);
         }
         return productionLineResponse;
     }
@@ -87,14 +83,14 @@ export class ProductionLineProductRepository implements IProductionLineProductRe
             transaction: tx
         });
         if (productionLineResponse) {
-            return mapModelToDomain(productionLineResponse);
+            return mapProductionLineAModelToDomain(productionLineResponse);
         }
         return productionLineResponse;
     }
     async create(data: ProductionLineProductCreateProps, tx?: Transaction): Promise<ProductionLineProductProps> {
         const created: ProductionLineProductModel = await ProductionLineProductModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear la asignación del producto a la línea de produccion.");
-        return mapModelToDomain(created);
+        return mapProductionLineAModelToDomain(created);
     }
     async update(id: number, data: ProductionLineProductUpdateProps, tx?: Transaction): Promise<ProductionLineProductProps> {
         // 1. Verificar existencia
@@ -104,7 +100,7 @@ export class ProductionLineProductRepository implements IProductionLineProductRe
         if (!existing) throw new HttpError(404,
             "La asignación del producto hacia la linea de producción que se desea actualizar no fue posible encontrarla."
         );
-        // 2. Aplicar UPDATE
+        if (Object.keys(existing).length) return existing;
         const [affectedCount]: [affectedCount: number] = await ProductionLineProductModel.update(data, {
             where: { id },
             transaction: tx,
@@ -117,7 +113,7 @@ export class ProductionLineProductRepository implements IProductionLineProductRe
             transaction: tx,
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del producto hacia la linea de producción.");
-        return mapModelToDomain(updated);
+        return mapProductionLineAModelToDomain(updated);
     }
     async delete(id: number, tx?: Transaction): Promise<void> {
         const existing: ProductionLineProductModel | null = await ProductionLineProductModel.findByPk(id, {

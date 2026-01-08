@@ -1,5 +1,4 @@
-import { LocationLocationTypeResponseOrchestratorDto, LocationProductionLineResponseOrchestratorDto, LocationResponseOrchestratorDto } from "@modules/features/location/orchestration/application/dto/location-orchestrator.model.schema";
-import { LocationResponseDto } from "@modules/core/location/application/dto/location.model.schema";
+import { LocationOrchestrator } from "@src/modules/features/location/orchestration/domain/location-orchestrator.types";
 import { ILocationQueryRepository } from "../../domain/location-query.repository.interface";
 import { LocationFullQueryResult } from "../../domain/location-query.types";
 import { Transaction } from "sequelize";
@@ -51,47 +50,14 @@ export class GetByIdLocationQueryOrchestratorUseCase {
 
     constructor(repo: ILocationQueryRepository) { this.repo = repo };
 
-    async execute(id: number, tx?: Transaction): Promise<LocationResponseOrchestratorDto | null> {
-        const LocationReponse: LocationFullQueryResult | null = await this.repo.getByIdLocationFullQuery(id, tx);
-        if (!LocationReponse) return null;
-        const { location_location_types, location_production_lines, ...rest }: LocationFullQueryResult = LocationReponse;
-        const dataLocation: LocationResponseDto = {
-            ...rest,
-            created_at: rest.created_at.toISOString(),
-            updated_at: rest.updated_at.toISOString(),
-        };
-        const dataLocationProductionLine: LocationProductionLineResponseOrchestratorDto[] = (location_production_lines && location_production_lines.length) ? await Promise.all(location_production_lines.map(async (lpl) => ({
-            ...lpl,
-            production_line: {
-                ...lpl.production_line,
-                created_at: lpl.production_line.created_at.toISOString(),
-                updated_at: lpl.production_line.updated_at.toISOString(),
-            },
-            location: {
-                ...lpl.location,
-                created_at: lpl.production_line.created_at.toISOString(),
-                updated_at: lpl.production_line.updated_at.toISOString(),
-            }
-        }))) : [];
-
-        const dataLocationLocationType: LocationLocationTypeResponseOrchestratorDto[] = (location_location_types && location_location_types.length) ? await Promise.all(location_location_types.map(async (llt) => ({
-            ...llt,
-            location: {
-                ...llt.location,
-                created_at: llt.location.created_at.toISOString(),
-                updated_at: llt.location.updated_at.toISOString(),
-            },
-            location_type: {
-                ...llt.location_type,
-                created_at: llt.location_type.created_at.toISOString(),
-                updated_at: llt.location_type.updated_at.toISOString(),
-            }
-        }))) : [];
-
-        const LocationResponseOrchstrator: LocationResponseOrchestratorDto = {
-            location: dataLocation,
-            location_production_lines: dataLocationProductionLine,
-            location_location_types: dataLocationLocationType
+    async execute(id: number, tx?: Transaction): Promise<LocationOrchestrator | null> {
+        const locationResponse: LocationFullQueryResult | null = await this.repo.getByIdLocationFullQuery(id, tx);
+        if (!locationResponse) return null;
+        const { location_location_types, location_production_lines, ...location } = locationResponse;
+        const LocationResponseOrchstrator: LocationOrchestrator = {
+            location: location,
+            location_production_lines: location_production_lines,
+            location_location_types: location_location_types
         }
         return LocationResponseOrchstrator;
     };

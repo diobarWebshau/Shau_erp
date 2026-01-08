@@ -53,20 +53,16 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
-    return {
-        id: json.id,
-        product_id: json.product_id,
-        production_line_id: json.production_line_id
-    };
+const mapProductionLineAModelToDomain = (model) => {
+    const productionLineAttributes = model.toJSON();
+    return productionLineAttributes;
 };
 class ProductionLineProductRepository {
     async findAll(tx) {
         const productionLineResponses = await production_line_product_orm_1.ProductionLineProductModel.findAll({
             transaction: tx
         });
-        const rowsMap = productionLineResponses.map((plp) => mapModelToDomain(plp));
+        const rowsMap = productionLineResponses.map((plp) => mapProductionLineAModelToDomain(plp));
         return rowsMap;
     }
     async findById(id, tx) {
@@ -74,7 +70,7 @@ class ProductionLineProductRepository {
             transaction: tx
         });
         if (productionLineResponse) {
-            return mapModelToDomain(productionLineResponse);
+            return mapProductionLineAModelToDomain(productionLineResponse);
         }
         return productionLineResponse;
     }
@@ -87,7 +83,7 @@ class ProductionLineProductRepository {
             transaction: tx
         });
         if (productionLineResponse) {
-            return mapModelToDomain(productionLineResponse);
+            return mapProductionLineAModelToDomain(productionLineResponse);
         }
         return productionLineResponse;
     }
@@ -95,7 +91,7 @@ class ProductionLineProductRepository {
         const created = await production_line_product_orm_1.ProductionLineProductModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del producto a la línea de produccion.");
-        return mapModelToDomain(created);
+        return mapProductionLineAModelToDomain(created);
     }
     async update(id, data, tx) {
         // 1. Verificar existencia
@@ -104,7 +100,8 @@ class ProductionLineProductRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del producto hacia la linea de producción que se desea actualizar no fue posible encontrarla.");
-        // 2. Aplicar UPDATE
+        if (Object.keys(existing).length)
+            return existing;
         const [affectedCount] = await production_line_product_orm_1.ProductionLineProductModel.update(data, {
             where: { id },
             transaction: tx,
@@ -118,7 +115,7 @@ class ProductionLineProductRepository {
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del producto hacia la linea de producción.");
-        return mapModelToDomain(updated);
+        return mapProductionLineAModelToDomain(updated);
     }
     async delete(id, tx) {
         const existing = await production_line_product_orm_1.ProductionLineProductModel.findByPk(id, {

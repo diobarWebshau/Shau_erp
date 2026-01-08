@@ -1,6 +1,6 @@
 import type { ProductProcessCreateProps, ProductProcessProps, ProductProcessUpdateProps } from "../../domain/product-process.types";
 import type { IProductProcessRepository } from "../../domain/product-process.repository.interface";
-import { ProductProcessModel } from "../orm/product-process.orm";
+import { ProductProcessAttributes, ProductProcessModel } from "../orm/product-process.orm";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -52,14 +52,9 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductProcessModel): ProductProcessProps => {
-    const json: ProductProcessProps = model.toJSON();
-    return {
-        id: json.id,
-        process_id: json.process_id,
-        product_id: json.product_id,
-        sort_order: json.sort_order
-    };
+const mapProductProcessModelToDomain = (model: ProductProcessModel): ProductProcessProps => {
+    const productProcessAttr: ProductProcessAttributes = model.toJSON();
+    return productProcessAttr;
 };
 
 export class ProductProcessRepository implements IProductProcessRepository {
@@ -69,17 +64,15 @@ export class ProductProcessRepository implements IProductProcessRepository {
     findAll = async (tx?: Transaction): Promise<ProductProcessProps[]> => {
         const rows: ProductProcessModel[] = await ProductProcessModel.findAll({
             transaction: tx,
-            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
         });
-        const rowsMap: ProductProcessProps[] = rows.map((r) => mapModelToDomain(r));
+        const rowsMap: ProductProcessProps[] = rows.map((r) => mapProductProcessModelToDomain(r));
         return rowsMap;
     }
     findById = async (id: number, tx?: Transaction): Promise<ProductProcessProps | null> => {
         const row: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductProcessModelToDomain(row) : null;
     }
     findByIdProductInput = async (product_id: number, process_id: number, tx?: Transaction): Promise<ProductProcessProps | null> => {
         const row: ProductProcessModel | null = await ProductProcessModel.findOne({
@@ -88,9 +81,8 @@ export class ProductProcessRepository implements IProductProcessRepository {
                 product_id: product_id,
                 process_id: process_id
             },
-            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductProcessModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
@@ -98,7 +90,7 @@ export class ProductProcessRepository implements IProductProcessRepository {
     create = async (data: ProductProcessCreateProps, tx?: Transaction): Promise<ProductProcessProps> => {
         const created: ProductProcessModel = await ProductProcessModel.create(data, { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear la asignación del proceso al producto.");
-        return mapModelToDomain(created);
+        return mapProductProcessModelToDomain(created);
     }
     // ================================================================
     // UPDATE
@@ -111,20 +103,17 @@ export class ProductProcessRepository implements IProductProcessRepository {
         if (!existing) throw new HttpError(404,
             "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla."
         );
-        // 2. Aplicar UPDATE
+        if (!Object.keys(existing).length) return existing;
         const [affectedCount]: [affectedCount: number] = await ProductProcessModel.update(data, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
-        // 3. Obtener la producto actualizada
+        if (!affectedCount) return existing;
         const updated: ProductProcessModel | null = await ProductProcessModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductProcessModel.getAllFields() as ((keyof ProductProcessProps)[]),
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del proceso al producto.");
-        return mapModelToDomain(updated);
+        return mapProductProcessModelToDomain(updated);
     }
     // ================================================================
     // DELETE

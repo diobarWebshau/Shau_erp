@@ -1,6 +1,7 @@
-import type { LocationProductionLineUpdateProps, LocationProductionLineProps } from "../../domain/location-production-line.types";
+import type { LocationProductionLineProps } from "../../domain/location-production-line.types";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
 import { Transaction } from "sequelize";
+import { LocationProductionLineUpdateDto } from "../dto/location-production-line.model.schema";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -44,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class UpdateLocationProductionLineUseCase {
     private readonly repo;
     constructor(repo: ILocationProductionLineRepository);
-    execute(id: number, data: LocationProductionLineUpdateProps, tx?: Transaction): Promise<LocationProductionLineProps>;
+    execute(id: number, data: LocationProductionLineUpdateDto, tx?: Transaction): Promise<LocationProductionLineProps>;
 }

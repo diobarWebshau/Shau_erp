@@ -14,58 +14,58 @@ type NoLocationId = {
 type UpdateById<TPatch> = {
     id: number;
 } & TPatch;
-type LocationLocationTypesOrchestratorBase = LocationLocationTypeProps & {
+type LocationLocationTypesOrchestratorProps = LocationLocationTypeProps & {
     location: LocationProps;
     location_type: LocationTypeProps;
 };
-type LocationProductionLineOrchestratorBase = LocationLocationTypeProps & {
+type LocationProductionLineOrchestratorProps = LocationProductionLineProps & {
     location: LocationProps;
     production_line: ProductionLineProps;
 };
-type LocationOrchestratorBase = LocationProps & {
-    location_production_lines: LocationProductionLineOrchestratorBase[];
-    location_location_types: LocationLocationTypesOrchestratorBase[];
+type LocationOrchestratorProps = LocationProps & {
+    location_production_lines: LocationProductionLineOrchestratorProps[];
+    location_location_types: LocationLocationTypesOrchestratorProps[];
 };
-type LocationLocationTypeCreateOrchestrator = NoLocationId & Omit<LocationLocationTypeCreateProps, "location_id">;
-type LocationProductionLineCreateOrchestrator = NoLocationId & Omit<LocationProductionLineCreateProps, "location_id">;
-type LocationCreateOrchestrator = {
+type LocationLocationTypeOrchestratorCreateProps = NoLocationId & Omit<LocationLocationTypeCreateProps, "location_id">;
+type LocationProductionLineOrchestratorCreateProps = NoLocationId & Omit<LocationProductionLineCreateProps, "location_id">;
+type LocationOrchestratorCreateProps = {
     location: LocationCreateProps;
-    location_location_types: Array<LocationLocationTypeCreateOrchestrator>;
-    location_production_lines: Array<LocationProductionLineCreateOrchestrator>;
+    location_location_types: Array<LocationLocationTypeOrchestratorCreateProps>;
+    location_production_lines: Array<LocationProductionLineOrchestratorCreateProps>;
 };
-type LocationLocationTypeUpdateOrchestrator = UpdateById<LocationLocationTypeUpdateProps>;
+type LocationLocationTypeOrchestratorUpdateProps = UpdateById<LocationLocationTypeUpdateProps>;
 interface LocationLocationTypeManager {
-    added: Array<LocationLocationTypeCreateOrchestrator>;
-    updated: Array<LocationLocationTypeUpdateOrchestrator>;
+    added: Array<LocationLocationTypeOrchestratorCreateProps>;
+    updated: Array<LocationLocationTypeOrchestratorUpdateProps>;
     deleted: Array<LocationLocationTypeResponseDto>;
 }
-type LocationProductionLineUpdateOrchestrator = UpdateById<LocationProductionLineUpdateProps>;
+type LocationProductionLineOrchestratorUpdateProps = UpdateById<LocationProductionLineUpdateProps>;
 interface LocationProductionLineManager {
-    added: Array<LocationProductionLineCreateOrchestrator>;
-    updated: Array<LocationProductionLineUpdateOrchestrator>;
+    added: Array<LocationProductionLineOrchestratorCreateProps>;
+    updated: Array<LocationProductionLineOrchestratorUpdateProps>;
     deleted: Array<LocationProductionLineResponseDto>;
 }
-interface LocationUpdateOrchestrator {
+interface LocationOrchestratorUpdateProps {
     location: LocationUpdateProps;
     location_location_types_manager: LocationLocationTypeManager;
     location_production_lines_manager: LocationProductionLineManager;
 }
 interface LocationOrchestrator {
     location: LocationProps;
-    location_location_types: Array<LocationLocationTypeProps>;
-    location_production_lines: Array<LocationProductionLineProps>;
+    location_location_types: Array<LocationLocationTypesOrchestratorProps>;
+    location_production_lines: Array<LocationProductionLineOrchestratorProps>;
 }
-type LocationLocationTypeResponseOrchestrator = LocationLocationTypeResponseDto & {
+type LocationLocationTypeOrchestratorResponseProps = LocationLocationTypeResponseDto & {
     location: LocationResponseDto;
     locationType: LocationTypeResponseDto;
 };
-type LocationProductionLineResponseOrchestrator = LocationProductionLineResponseDto & {
+type LocationProductionLineOrchestratorResponseProps = LocationProductionLineResponseDto & {
     location: LocationResponseDto;
     production_line: ProductionLineResponseDto;
 };
-interface LocationResponseOrchestrator {
+interface LocationOrchestratorResponseProps {
     location: LocationResponseDto;
     location_location_types: Array<LocationLocationTypeResponseDto>;
     location_production_lines: Array<LocationProductionLineResponseDto>;
 }
-export { LocationLocationTypesOrchestratorBase, LocationProductionLineOrchestratorBase, LocationOrchestratorBase, LocationLocationTypeCreateOrchestrator, LocationProductionLineCreateOrchestrator, LocationCreateOrchestrator, LocationLocationTypeUpdateOrchestrator, LocationLocationTypeManager, LocationProductionLineUpdateOrchestrator, LocationProductionLineManager, LocationUpdateOrchestrator, LocationOrchestrator, LocationLocationTypeResponseOrchestrator, LocationProductionLineResponseOrchestrator, LocationResponseOrchestrator };
+export { LocationLocationTypesOrchestratorProps, LocationProductionLineOrchestratorProps, LocationOrchestratorProps, LocationLocationTypeOrchestratorCreateProps, LocationProductionLineOrchestratorCreateProps, LocationOrchestratorCreateProps, LocationLocationTypeOrchestratorUpdateProps, LocationLocationTypeManager, LocationProductionLineOrchestratorUpdateProps, LocationProductionLineManager, LocationOrchestratorUpdateProps, LocationOrchestrator, LocationLocationTypeOrchestratorResponseProps, LocationProductionLineOrchestratorResponseProps, LocationOrchestratorResponseProps };

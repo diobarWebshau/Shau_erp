@@ -1,7 +1,9 @@
 import type { ProductDiscountRangeProps, ProductDiscountRangeCreateProps } from "../../domain/product-discount-range.types";
 import type { IProductDiscountRangeRepository } from "../../domain/product-discount-range.repository.interface";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
+import { ProductDiscountRangeCreateDto } from "../dto/product-discount-range.model.schema";
 import { checkRangeConflicts, type RangeConflict } from "@helpers/check-range-conflicts";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -46,18 +48,28 @@ import { Transaction } from "sequelize";
  *   para responder a las solicitudes externas.
  */
 
+const mapProductDiscountRangeCreateDtoToDto = (data: ProductDiscountRangeCreateDto): ProductDiscountRangeCreateProps => {
+    return ({
+        ...data,
+        min_qty: DecimalVO.from(data.min_qty),
+        max_qty: DecimalVO.from(data.max_qty),
+        unit_price: DecimalVO.from(data.unit_price)
+    })
+};
+
 export class CreateProductDiscountRangeUseCase {
     constructor(
         private readonly repo: IProductDiscountRangeRepository,
         private readonly repoProduct: IProductRepository
     ) { }
-    async execute(data: ProductDiscountRangeCreateProps, tx?: Transaction): Promise<ProductDiscountRangeProps> {
+    async execute(data: ProductDiscountRangeCreateDto, tx?: Transaction): Promise<ProductDiscountRangeProps> {
         const validateProduct = await this.repoProduct.findById(data.product_id, tx);
         if (!validateProduct) throw new HttpError(404,
             "El producto seleccionado no existe."
         );
-        const getAll: ProductDiscountRangeProps[] = await this.repo.findByProductId(data.product_id, tx);
-        const getAllWithNew: Pick<ProductDiscountRangeCreateProps, "min_qty" | "max_qty">[] = [...getAll, ...[data]];
+        const createDate = mapProductDiscountRangeCreateDtoToDto(data);
+        const getAll: ProductDiscountRangeProps[] = await this.repo.findByProductId(createDate.product_id, tx);
+        const getAllWithNew: Pick<ProductDiscountRangeCreateProps, "min_qty" | "max_qty">[] = [...getAll, ...[createDate]];
         const conflictRanges: RangeConflict = checkRangeConflicts(getAllWithNew, "min_qty", "max_qty");
         if (conflictRanges === "invalid_range") {
             throw new HttpError(400,
@@ -74,7 +86,7 @@ export class CreateProductDiscountRangeUseCase {
                 "El rango del descueto se traslapa con otro descuento ya existente para el producto."
             );
         }
-        const created: ProductDiscountRangeProps = await this.repo.create(data, tx);
+        const created: ProductDiscountRangeProps = await this.repo.create(createDate, tx);
         if (!created) throw new HttpError(500,
             "No fue posible crear la asignación del descueto por rango al producto."
         );

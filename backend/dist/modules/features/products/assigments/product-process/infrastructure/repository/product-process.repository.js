@@ -53,14 +53,9 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
-    return {
-        id: json.id,
-        process_id: json.process_id,
-        product_id: json.product_id,
-        sort_order: json.sort_order
-    };
+const mapProductProcessModelToDomain = (model) => {
+    const productProcessAttr = model.toJSON();
+    return productProcessAttr;
 };
 class ProductProcessRepository {
     // ================================================================
@@ -69,17 +64,15 @@ class ProductProcessRepository {
     findAll = async (tx) => {
         const rows = await product_process_orm_1.ProductProcessModel.findAll({
             transaction: tx,
-            attributes: product_process_orm_1.ProductProcessModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapProductProcessModelToDomain(r));
         return rowsMap;
     };
     findById = async (id, tx) => {
         const row = await product_process_orm_1.ProductProcessModel.findByPk(id, {
             transaction: tx,
-            attributes: product_process_orm_1.ProductProcessModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductProcessModelToDomain(row) : null;
     };
     findByIdProductInput = async (product_id, process_id, tx) => {
         const row = await product_process_orm_1.ProductProcessModel.findOne({
@@ -88,9 +81,8 @@ class ProductProcessRepository {
                 product_id: product_id,
                 process_id: process_id
             },
-            attributes: product_process_orm_1.ProductProcessModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductProcessModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
@@ -99,7 +91,7 @@ class ProductProcessRepository {
         const created = await product_process_orm_1.ProductProcessModel.create(data, { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del proceso al producto.");
-        return mapModelToDomain(created);
+        return mapProductProcessModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -111,21 +103,20 @@ class ProductProcessRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del proceso al producto que se desea actualizar no fue posible encontrarla.");
-        // 2. Aplicar UPDATE
+        if (!Object.keys(existing).length)
+            return existing;
         const [affectedCount] = await product_process_orm_1.ProductProcessModel.update(data, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la asignación del proceso al producto.");
-        // 3. Obtener la producto actualizada
+            return existing;
         const updated = await product_process_orm_1.ProductProcessModel.findByPk(id, {
             transaction: tx,
-            attributes: product_process_orm_1.ProductProcessModel.getAllFields(),
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del proceso al producto.");
-        return mapModelToDomain(updated);
+        return mapProductProcessModelToDomain(updated);
     };
     // ================================================================
     // DELETE

@@ -7,6 +7,61 @@ const production_lines_orm_1 = require("@modules/core/production-line/infrastruc
 const location_type_orm_1 = require("@modules/core/location-type/infrastructure/orm/location-type.orm");
 const location_orm_1 = require("@modules/core/location/infrastructure/orm/location.orm");
 const sequelize_1 = require("sequelize");
+const mapLocationQueryToDomain = (model) => {
+    const locationQueryAttributes = model.toJSON();
+    const { location_location_types, location_production_line, ...rest } = locationQueryAttributes;
+    return ({
+        ...rest,
+        location_production_lines: location_production_line.map((lpl) => ({
+            ...lpl,
+            production_line: {
+                ...lpl.production_line,
+                created_at: lpl.production_line.created_at instanceof Date
+                    ? lpl.production_line.created_at
+                    : new Date(lpl.production_line.created_at),
+                updated_at: lpl.production_line.updated_at instanceof Date
+                    ? lpl.production_line.updated_at
+                    : new Date(lpl.production_line.updated_at)
+            },
+            location: {
+                ...lpl.location,
+                created_at: lpl.location.created_at instanceof Date
+                    ? lpl.location.created_at
+                    : new Date(lpl.location.created_at),
+                updated_at: lpl.location.updated_at instanceof Date
+                    ? lpl.location.updated_at
+                    : new Date(lpl.location.updated_at)
+            },
+        })),
+        location_location_types: location_location_types.map((llt) => ({
+            ...llt,
+            location: {
+                ...llt.location,
+                created_at: llt.location.created_at instanceof Date
+                    ? llt.location.created_at
+                    : new Date(llt.location.created_at),
+                updated_at: llt.location.updated_at instanceof Date
+                    ? llt.location.updated_at
+                    : new Date(llt.location.updated_at)
+            },
+            location_type: {
+                ...llt.location_type,
+                created_at: llt.location_type.created_at instanceof Date
+                    ? llt.location_type.created_at
+                    : new Date(llt.location_type.created_at),
+                updated_at: llt.location_type.updated_at instanceof Date
+                    ? llt.location_type.updated_at
+                    : new Date(llt.location_type.updated_at)
+            }
+        })),
+        created_at: (rest.created_at instanceof Date)
+            ? rest.created_at
+            : new Date(rest.created_at),
+        updated_at: (rest.updated_at instanceof Date)
+            ? rest.updated_at
+            : new Date(rest.updated_at)
+    });
+};
 class LocationQueryRepository {
     // ********** SEQUELIZE **********
     getAllLocationFullQuery = async (query, tx) => {
@@ -61,8 +116,8 @@ class LocationQueryRepository {
         });
         if (!results.length)
             return [];
-        const Locations = results.map(p => p.toJSON());
-        return Locations;
+        const locationResult = results.map(mapLocationQueryToDomain);
+        return locationResult;
     };
     getByIdLocationFullQuery = async (id, tx) => {
         const result = await location_orm_1.LocationModel.findByPk(id, {
@@ -94,7 +149,7 @@ class LocationQueryRepository {
         });
         if (!result)
             return null;
-        const Location = result.toJSON();
+        const Location = mapLocationQueryToDomain(result);
         return Location;
     };
 }

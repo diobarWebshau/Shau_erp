@@ -1,22 +1,26 @@
-import { productionLineProductResponseOrchestratorSchema, productionLineResponseOrchestratorSchema } from "@modules/features/production-line/orchestrator/application/dto/production-line-orchestrator.model.schema";
-import { productionLineResponseSchema, ProductionLineQuerySchema } from "@modules/core/production-line/application/dto/production-lines.model.schema";
+import { productionLineProductOrchestratorResponseSchema, productionLineOrchestratorResponseSchema } from "@modules/features/production-line/orchestrator/application/dto/production-line-orchestrator.model.schema";
+import { productionLineResponseSchema, productionLineQuerySchema } from "@modules/core/production-line/application/dto/production-lines.model.schema";
+import { ProductionLineQueryDto } from "@modules/core/production-line/application/dto/production-lines.model.schema";
 import z from "zod";
 
-const productionLineQueryOrchestratorSchema = productionLineResponseOrchestratorSchema;
-const productionLinQueryResponseSchema = productionLineResponseSchema.extend({
-    production_line_products: z.array(productionLineProductResponseOrchestratorSchema)
+
+const productionLineQueryOrchestratorSchema = productionLineOrchestratorResponseSchema;
+
+const productionLinQueryFullResponseSchema = productionLineResponseSchema.extend({
+    production_line_products: z.array(productionLineProductOrchestratorResponseSchema)
 });
 
-type ProductionLineQueryFullResponseDto = z.infer<typeof productionLineQueryOrchestratorSchema>;
-type ProductionLineQueryFullOrchestratorDto = z.infer<typeof productionLinQueryResponseSchema>;
+type ProductionLineQueryFullOrchestratorResponseDto = z.infer<typeof productionLineQueryOrchestratorSchema>;
+type ProductionLineQueryFullResponseDto = z.infer<typeof productionLinQueryFullResponseSchema>;
 
 export type {
+    ProductionLineQueryFullOrchestratorResponseDto,
     ProductionLineQueryFullResponseDto,
-    ProductionLineQueryFullOrchestratorDto
+    ProductionLineQueryDto
 };
 
 export {
     productionLineQueryOrchestratorSchema,
-    productionLinQueryResponseSchema,
-    ProductionLineQuerySchema
+    productionLinQueryFullResponseSchema,
+    productionLineQuerySchema
 };

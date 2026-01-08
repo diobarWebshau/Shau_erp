@@ -6,6 +6,7 @@ const production_line_query_repository_1 = require("@src/modules/query/productio
 const production_line_repository_1 = require("@src/modules/core/production-line/infrastructure/repository/production-line.repository");
 const create_production_line_orchestrator_usecase_1 = require("../application/use-cases/create-production-line-orchestrator.usecase");
 const update_production_line_orchestrator_usecase_1 = require("../application/use-cases/update-production-line-orchestrator.usecase");
+const production_line_query_controller_1 = require("@modules/query/production-line/infrastructure/http/production-line-query.controller");
 class ProductionLineOrchestratorController {
     productionLineRepo;
     productionLineProductRepo;
@@ -30,14 +31,16 @@ class ProductionLineOrchestratorController {
     ;
     create = async (req, res) => {
         const { payload } = req.body;
-        const plpResponse = await this.createProductionLineOrchestratorUseCase.execute(payload);
-        res.status(200).json(plpResponse);
+        const plResponse = await this.createProductionLineOrchestratorUseCase.execute(payload);
+        const plResult = await (0, production_line_query_controller_1.mapProductionLineOrchestratorDomainToDto)(plResponse);
+        res.status(200).json(plResult);
     };
     update = async (req, res) => {
         const { id } = req.params;
         const { payload } = req.body;
-        const plpResponse = await this.updateProductionLineOrchestratorUseCase.execute(Number(id), payload);
-        res.status(200).json(plpResponse);
+        const plResponse = await this.updateProductionLineOrchestratorUseCase.execute(Number(id), payload);
+        const plResult = await (0, production_line_query_controller_1.mapProductionLineOrchestratorDomainToDto)(plResponse);
+        res.status(200).json(plResult);
     };
 }
 exports.ProductionLineOrchestratorController = ProductionLineOrchestratorController;

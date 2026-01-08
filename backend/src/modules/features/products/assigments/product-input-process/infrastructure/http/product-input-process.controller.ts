@@ -6,6 +6,8 @@ import { UpdateProductInputProcessUseCase } from "../../application/use-cases/up
 import { GetAllProductInputProcessUseCase } from "../../application/use-cases/get-all-product-input-process.usecase";
 import { GetProductInputProcessByIdUseCase } from "../../application/use-cases/get-by-product-input-process.usecase";
 import { DeleteProductInputProcessUseCase } from "../../application/use-cases/delete-product-input-process.usecase";
+import { ProductInputRepository } from "../../../product-input/infrastructure/repository/product-input.repository";
+import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
 import type { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
 import { ProductInputProcessRepository } from "../repository/product-input-process.repository";
 import {
@@ -13,8 +15,7 @@ import {
     GetAllProductInputProcessSchema, GetByIdProductInputProcessSchema,
     UpdateProductInputProcessSchema, GetByProductInputProcessSchema,
 } from "../../application/dto/product-input-process.endpoint.schema"
-import { ProductRepository } from "@src/modules/core/product/infrastructure/repository/producto.repository";
-import { ProductInputRepository } from "../../../product-input/infrastructure/repository/product-input.repository";
+import { ProductInputProcessProps } from "../../domain/product-input-process.types";
 
 /**
  * Controller (Infrastructure / HTTP)
@@ -66,6 +67,11 @@ import { ProductInputRepository } from "../../../product-input/infrastructure/re
  *   de forma coherente hacia clientes externos.
  */
 
+const mapProductInputProcessDomainToDto = (data: ProductInputProcessProps): ProductInputProcessResponseDto => ({
+    ...data,
+    qty: data.qty.toString()
+});
+
 export class ProductInputProcessController {
 
     private readonly repo: ProductInputProcessRepository;
@@ -96,8 +102,9 @@ export class ProductInputProcessController {
     // GET ALL
     // ============================================================
     getAll = async (_req: ApiRequest<GetAllProductInputProcessSchema>, res: ApiResponse<GetAllProductInputProcessSchema>) => {
-        const result: ProductInputProcessResponseDto[] = await this.getAllUseCase.execute();
-        return res.status(200).send(result);
+        const productInputProcessResponse: ProductInputProcessProps[] = await this.getAllUseCase.execute();
+        const productInputProcessResult = productInputProcessResponse.map(mapProductInputProcessDomainToDto);
+        return res.status(200).send(productInputProcessResult);
     };
 
     // ============================================================
@@ -105,9 +112,9 @@ export class ProductInputProcessController {
     // ============================================================
     getById = async (req: ApiRequest<GetByIdProductInputProcessSchema>, res: ApiResponse<GetByIdProductInputProcessSchema>) => {
         const { id }: GetByIdProductInputProcessSchema["params"] = req.params;
-        const result: ProductInputProcessResponseDto | null = await this.getByIdUseCase.execute(Number(id));
-        if (!result) return res.status(204).send(null);
-        return res.status(200).send(result);
+        const productInputProcessResponse: ProductInputProcessProps | null = await this.getByIdUseCase.execute(Number(id));
+        if (!productInputProcessResponse) return res.status(204).send(null);
+        return res.status(200).send(mapProductInputProcessDomainToDto(productInputProcessResponse));
     };
 
     // ============================================================
@@ -115,10 +122,10 @@ export class ProductInputProcessController {
     // ============================================================
     getByProductInputProcess = async (req: ApiRequest<GetByProductInputProcessSchema>, res: ApiResponse<GetByProductInputProcessSchema>) => {
         const { product_id, product_input_id, product_process_id }: GetByProductInputProcessSchema["params"] = req.params;
-        const result: ProductInputProcessResponseDto | null =
+        const productInputProcessResponse: ProductInputProcessProps | null =
             await this.getByProductInputProcessId.execute(Number(product_id), Number(product_input_id), Number(product_process_id));
-        if (!result) return res.status(204).send(null);
-        return res.status(200).send(result);
+        if (!productInputProcessResponse) return res.status(204).send(null);
+        return res.status(200).send(mapProductInputProcessDomainToDto(productInputProcessResponse));
     };
 
     // ============================================================
@@ -126,8 +133,8 @@ export class ProductInputProcessController {
     // ============================================================
     create = async (req: ApiRequest<CreateProductInputProcessSchema>, res: ApiResponse<CreateProductInputProcessSchema>) => {
         const body: ProductInputProcessCreateDto = req.body;
-        const created: ProductInputProcessResponseDto = await this.createUseCase.execute(body);
-        return res.status(201).send(created);
+        const created: ProductInputProcessProps = await this.createUseCase.execute(body);
+        return res.status(201).send(mapProductInputProcessDomainToDto(created));
     };
 
     // ============================================================
@@ -136,8 +143,8 @@ export class ProductInputProcessController {
     update = async (req: ApiRequest<UpdateProductInputProcessSchema>, res: ApiResponse<UpdateProductInputProcessSchema>) => {
         const { id }: UpdateProductInputProcessSchema["params"] = req.params;
         const body: ProductInputProcessUpdateDto = req.body;
-        const updated: ProductInputProcessResponseDto = await this.updateUseCase.execute(Number(id), body);
-        return res.status(200).send(updated);
+        const updated: ProductInputProcessProps = await this.updateUseCase.execute(Number(id), body);
+        return res.status(200).send(mapProductInputProcessDomainToDto(updated));
     };
 
     // ============================================================

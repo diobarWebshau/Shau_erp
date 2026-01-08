@@ -43,7 +43,7 @@ import { z } from "zod";
 declare const ProductInputCreateSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     input_id: z.ZodNumber;
-    equivalence: z.ZodNumber;
+    equivalence: z.ZodString;
 }, z.core.$strip>;
 /**
  * UpdateSchema
@@ -54,7 +54,7 @@ declare const ProductInputCreateSchema: z.ZodObject<{
 declare const ProductInputUpdateSchema: z.ZodObject<{
     product_id: z.ZodOptional<z.ZodNumber>;
     input_id: z.ZodOptional<z.ZodNumber>;
-    equivalence: z.ZodOptional<z.ZodNumber>;
+    equivalence: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 /**
  * ResponseSchema
@@ -65,7 +65,7 @@ declare const ProductInputUpdateSchema: z.ZodObject<{
 declare const ProductInputReponseSchema: z.ZodObject<{
     product_id: z.ZodNumber;
     input_id: z.ZodNumber;
-    equivalence: z.ZodNumber;
+    equivalence: z.ZodString;
     id: z.ZodNumber;
 }, z.core.$strip>;
 /**

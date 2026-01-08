@@ -1,5 +1,5 @@
 import z from "zod";
-declare const locationCreateOrchestratorSchema: z.ZodObject<{
+declare const locationOrchestratorCreateSchema: z.ZodObject<{
     location: z.ZodObject<{
         name: z.ZodNullable<z.ZodString>;
         description: z.ZodNullable<z.ZodString>;
@@ -25,7 +25,7 @@ declare const locationCreateOrchestratorSchema: z.ZodObject<{
         location_id: z.ZodOptional<z.ZodUndefined>;
     }, z.core.$strict>>;
 }, z.core.$strip>;
-declare const locationCreateRequestOrchestratorSchema: z.ZodObject<{
+declare const locationOrchestratorCreateRequestSchema: z.ZodObject<{
     payload: z.ZodPipe<z.ZodPipe<z.ZodString, z.ZodTransform<any, string>>, z.ZodObject<{
         location: z.ZodObject<{
             name: z.ZodNullable<z.ZodString>;
@@ -53,7 +53,7 @@ declare const locationCreateRequestOrchestratorSchema: z.ZodObject<{
         }, z.core.$strict>>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-declare const locationUpdateOrchestratorSchema: z.ZodObject<{
+declare const locationOrchestratorUpdateSchema: z.ZodObject<{
     location: z.ZodObject<{
         name: z.ZodNullable<z.ZodString>;
         description: z.ZodNullable<z.ZodString>;
@@ -103,7 +103,7 @@ declare const locationUpdateOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>>;
     }, z.core.$strip>;
 }, z.core.$strip>;
-declare const locationUpdateRequestOrchestratorSchema: z.ZodObject<{
+declare const locationOrchestratorUpdateRequestSchema: z.ZodObject<{
     payload: z.ZodPipe<z.ZodPipe<z.ZodString, z.ZodTransform<any, string>>, z.ZodObject<{
         location: z.ZodObject<{
             name: z.ZodNullable<z.ZodString>;
@@ -155,7 +155,7 @@ declare const locationUpdateRequestOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-declare const LocationLocationTypeResponseOrchestratorSchema: z.ZodObject<{
+declare const locationLocationTypeOrchestratorResponseSchema: z.ZodObject<{
     location_id: z.ZodNumber;
     location_type_id: z.ZodNumber;
     id: z.ZodNumber;
@@ -185,9 +185,9 @@ declare const LocationLocationTypeResponseOrchestratorSchema: z.ZodObject<{
         updated_at: z.ZodString;
     }, z.core.$strip>;
 }, z.core.$strip>;
-declare const LocationProductionLineResponseOrchestratorSchema: z.ZodObject<{
+declare const locationProductionLineOrchestratorResponseSchema: z.ZodObject<{
     location_id: z.ZodNumber;
-    location_type_id: z.ZodNumber;
+    production_line_id: z.ZodNumber;
     id: z.ZodNumber;
     location: z.ZodObject<{
         name: z.ZodNullable<z.ZodString>;
@@ -217,7 +217,7 @@ declare const LocationProductionLineResponseOrchestratorSchema: z.ZodObject<{
         updated_at: z.ZodString;
     }, z.core.$strip>;
 }, z.core.$strip>;
-declare const locationResponseOrchestratorSchema: z.ZodObject<{
+declare const locationOrchestratorResponseSchema: z.ZodObject<{
     location: z.ZodObject<{
         name: z.ZodNullable<z.ZodString>;
         description: z.ZodNullable<z.ZodString>;
@@ -269,7 +269,7 @@ declare const locationResponseOrchestratorSchema: z.ZodObject<{
     }, z.core.$strip>>;
     location_production_lines: z.ZodArray<z.ZodObject<{
         location_id: z.ZodNumber;
-        location_type_id: z.ZodNumber;
+        production_line_id: z.ZodNumber;
         id: z.ZodNumber;
         location: z.ZodObject<{
             name: z.ZodNullable<z.ZodString>;
@@ -300,12 +300,12 @@ declare const locationResponseOrchestratorSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
-type LocationCreateOrchestratorDto = z.infer<typeof locationCreateOrchestratorSchema>;
-type LocationCreateRequestOrchestratorDto = z.infer<typeof locationCreateRequestOrchestratorSchema>;
-type LocationUpdateOrchestratorDto = z.infer<typeof locationUpdateOrchestratorSchema>;
-type LocationUpdateRequestOrchestratorDto = z.infer<typeof locationUpdateRequestOrchestratorSchema>;
-type LocationLocationTypeResponseOrchestratorDto = z.infer<typeof LocationLocationTypeResponseOrchestratorSchema>;
-type LocationProductionLineResponseOrchestratorDto = z.infer<typeof LocationProductionLineResponseOrchestratorSchema>;
-type LocationResponseOrchestratorDto = z.infer<typeof locationResponseOrchestratorSchema>;
-export type { LocationCreateOrchestratorDto, LocationCreateRequestOrchestratorDto, LocationUpdateOrchestratorDto, LocationUpdateRequestOrchestratorDto, LocationLocationTypeResponseOrchestratorDto, LocationProductionLineResponseOrchestratorDto, LocationResponseOrchestratorDto, };
-export { locationCreateOrchestratorSchema, locationCreateRequestOrchestratorSchema, locationUpdateOrchestratorSchema, locationUpdateRequestOrchestratorSchema, LocationLocationTypeResponseOrchestratorSchema, LocationProductionLineResponseOrchestratorSchema, locationResponseOrchestratorSchema, };
+type LocationOrchestratorCreateDto = z.infer<typeof locationOrchestratorCreateSchema>;
+type LocationOrchestratorCreateRequestDto = z.infer<typeof locationOrchestratorCreateRequestSchema>;
+type LocationOrchestratorUpdateDto = z.infer<typeof locationOrchestratorUpdateSchema>;
+type LocationUpdateRequestOrchestratorDto = z.infer<typeof locationOrchestratorUpdateRequestSchema>;
+type LocationLocationTypeOrchestratorResponseDto = z.infer<typeof locationLocationTypeOrchestratorResponseSchema>;
+type LocationProductionLineOrchestratorResponseDto = z.infer<typeof locationProductionLineOrchestratorResponseSchema>;
+type LocationOrchestratorResponseDto = z.infer<typeof locationOrchestratorResponseSchema>;
+export type { LocationOrchestratorCreateDto, LocationOrchestratorCreateRequestDto, LocationOrchestratorUpdateDto, LocationUpdateRequestOrchestratorDto, LocationLocationTypeOrchestratorResponseDto, LocationProductionLineOrchestratorResponseDto, LocationOrchestratorResponseDto, };
+export { locationOrchestratorCreateSchema, locationOrchestratorCreateRequestSchema, locationOrchestratorUpdateSchema, locationOrchestratorUpdateRequestSchema, locationLocationTypeOrchestratorResponseSchema, locationProductionLineOrchestratorResponseSchema, locationOrchestratorResponseSchema, };

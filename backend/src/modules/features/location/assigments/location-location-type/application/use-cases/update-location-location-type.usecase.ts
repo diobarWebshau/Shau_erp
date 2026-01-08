@@ -1,5 +1,6 @@
-import type { LocationLocationTypeUpdateProps, LocationLocationTypeProps } from "../../domain/location-location-type.types";
 import type { ILocationLocationTypeRepository } from "../../domain/location-location-type.repository.interface";
+import type { LocationLocationTypeProps } from "../../domain/location-location-type.types";
+import { LocationLocationTypeUpdateDto } from "../dto/location-location-type.model.schema";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -46,7 +47,7 @@ import { Transaction } from "sequelize";
 
 export class UpdateLocationLocationTypeUseCase {
     constructor(private readonly repo: ILocationLocationTypeRepository) { }
-    async execute(id: number, data: LocationLocationTypeUpdateProps, tx?: Transaction): Promise<LocationLocationTypeProps> {
+    async execute(id: number, data: LocationLocationTypeUpdateDto, tx?: Transaction): Promise<LocationLocationTypeProps> {
         const existing: LocationLocationTypeProps | null = await this.repo.findById(id, tx);
         if (!existing) throw new HttpError(404,
             "La asignación del tipo de locacíon a la locación que se desea actualizar no fue posible encontrarla."

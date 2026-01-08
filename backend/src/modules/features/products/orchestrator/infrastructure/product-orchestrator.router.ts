@@ -1,4 +1,4 @@
-import { createProductOrchestratorSchema, updateProductOrchestratorSchema } from "../application/product-orchestrator.endpoint.schema";
+import { createProductOrchestratorSchema, updateProductOrchestratorSchema } from "../application/dto/product-orchestrator.endpoint.schema";
 import { ProductOrchestratorController } from "../infrastructure/product-orchestrator.controller";
 import { normalizeUploadedFiles, storageFields, withStorageContext } from "@src/storage";
 import { parseOrchestratorPayload } from "@src/storage/http/parse-payload.middleware";

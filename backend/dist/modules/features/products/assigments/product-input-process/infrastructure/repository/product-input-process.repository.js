@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductInputProcessRepository = void 0;
 const product_input_process_orm_1 = require("../orm/product-input-process.orm");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
@@ -53,14 +54,22 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapProductInputProcessModelToDomain = (model) => {
+    const pipAttr = model.toJSON();
     return {
-        id: json.id,
-        product_input_id: json.product_input_id,
-        product_process_id: json.product_process_id,
-        product_id: json.product_id,
-        qty: json.qty
+        ...pipAttr,
+        qty: decimal_vo_1.DecimalVO.from(pipAttr.qty)
+    };
+};
+const mapProductInputProcessCreateDomainToModel = (data) => ({
+    ...data,
+    qty: data.qty.toString()
+});
+const mapProductInputProcessUpdateDomainToModel = (data) => {
+    const { qty, ...rest } = data;
+    return {
+        ...rest,
+        ...(qty !== undefined ? { qty: qty.toString() } : {})
     };
 };
 class ProductInputProcessRepository {
@@ -70,17 +79,15 @@ class ProductInputProcessRepository {
     findAll = async (tx) => {
         const rows = await product_input_process_orm_1.ProductInputProcessModel.findAll({
             transaction: tx,
-            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapProductInputProcessModelToDomain(r));
         return rowsMap;
     };
     findById = async (id, tx) => {
         const row = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
             transaction: tx,
-            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputProcessModelToDomain(row) : null;
     };
     findByProductInputProcess = async (product_id, product_input_id, product_process_id, tx) => {
         const row = await product_input_process_orm_1.ProductInputProcessModel.findOne({
@@ -90,18 +97,17 @@ class ProductInputProcessRepository {
                 product_input_id: product_input_id,
                 product_process_id: product_process_id
             },
-            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputProcessModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data, tx) => {
-        const created = await product_input_process_orm_1.ProductInputProcessModel.create(data, { transaction: tx });
+        const created = await product_input_process_orm_1.ProductInputProcessModel.create(mapProductInputProcessCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible asignar la cantidad de insumos consumidos para este proceso del producto.");
-        return mapModelToDomain(created);
+        return mapProductInputProcessModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -113,21 +119,22 @@ class ProductInputProcessRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación de la cantidad de insumos consumidos en un proceso del producto, no fue posible encontrarla.");
-        // 2. Aplicar UPDATE
-        const [affectedCount] = await product_input_process_orm_1.ProductInputProcessModel.update(data, {
+        const updateData = mapProductInputProcessUpdateDomainToModel(data);
+        const existingDomain = mapProductInputProcessModelToDomain(existing);
+        if (!Object.keys(updateData).length)
+            return existingDomain;
+        const [affectedCount] = await product_input_process_orm_1.ProductInputProcessModel.update(updateData, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
-        // 3. Obtener la producto actualizada
+            return existingDomain;
         const updated = await product_input_process_orm_1.ProductInputProcessModel.findByPk(id, {
-            transaction: tx,
-            attributes: product_input_process_orm_1.ProductInputProcessModel.getAllFields(),
+            transaction: tx
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la cantidad de insumos consumidos para este proceso del producto.");
-        return mapModelToDomain(updated);
+        return mapProductInputProcessModelToDomain(updated);
     };
     // ================================================================
     // DELETE

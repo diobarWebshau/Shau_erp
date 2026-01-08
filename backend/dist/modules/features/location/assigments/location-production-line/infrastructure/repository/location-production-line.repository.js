@@ -54,12 +54,8 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 const mapModelToDomain = (model) => {
-    const json = model.toJSON();
-    return {
-        id: json.id,
-        location_id: json.location_id,
-        production_line_id: json.production_line_id
-    };
+    const lplAttributes = model.toJSON();
+    return lplAttributes;
 };
 class LocationProductionLineRepository {
     // ================================================================
@@ -110,6 +106,8 @@ class LocationProductionLineRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación de la línea de producción a la locación que se desea actualizar no fue posible encontrarla.");
+        if (!Object.keys(data).length)
+            return existing;
         // 2. Aplicar UPDATE
         const [affectedCount] = await location_production_line_orm_1.LocationProductionLineModel.update(data, {
             where: { id },

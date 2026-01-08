@@ -54,7 +54,7 @@ declare const createTransferInventoryOrchestratorSchema: z.ZodObject<{
         }>;
         item_id: z.ZodNumber;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         reason: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<{
             completed: "completed";
@@ -70,7 +70,7 @@ declare const createTransferInventoryOrchestratorSchema: z.ZodObject<{
         }>;
         item_id: z.ZodNumber;
         item_name: z.ZodString;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         reason: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<{
             completed: "completed";

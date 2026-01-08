@@ -1,6 +1,7 @@
+import { ProductInputAttributes, ProductInputCreateAttributes, ProductInputModel, ProductInputUpdateAttributes } from "../orm/product-inputs.orm";
 import type { ProductInputCreateProps, ProductInputProps, ProductInputUpdateProps } from "../../domain/product-input.types";
 import type { IProductInputRepository } from "../../domain/product-input.repository.interface";
-import { ProductInputModel } from "../orm/product-inputs.orm";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
@@ -52,15 +53,34 @@ import { Transaction } from "sequelize";
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
 
-const mapModelToDomain = (model: ProductInputModel): ProductInputProps => {
-    const json: ProductInputProps = model.toJSON();
+const mapProductInputModelToDomain = (model: ProductInputModel): ProductInputProps => {
+    const productInputAttr: ProductInputAttributes = model.toJSON();
     return {
-        id: json.id,
-        input_id: json.input_id,
-        product_id: json.product_id,
-        equivalence: json.equivalence
+        ...productInputAttr,
+        equivalence: DecimalVO.from(productInputAttr.equivalence)
     };
 };
+
+const mapProductInputUpdateDomainToModel = (data: ProductInputUpdateProps): ProductInputUpdateAttributes => {
+    const { equivalence, ...rest } = data;
+    return {
+        ...rest,
+        ...(
+            equivalence !== undefined
+                ? { equivalence: equivalence.toString() }
+                : {}
+        ),
+    };
+};
+
+const mapProductInputCreateDomainToModel = (data: ProductInputCreateProps): ProductInputCreateAttributes => {
+    return {
+        input_id: data.input_id,
+        product_id: data.product_id,
+        equivalence: data.equivalence.toString()
+    };
+};
+
 
 export class ProductInputRepository implements IProductInputRepository {
     // ================================================================
@@ -69,17 +89,15 @@ export class ProductInputRepository implements IProductInputRepository {
     findAll = async (tx?: Transaction): Promise<ProductInputProps[]> => {
         const rows: ProductInputModel[] = await ProductInputModel.findAll({
             transaction: tx,
-            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
-        const rowsMap: ProductInputProps[] = rows.map((r) => mapModelToDomain(r));
+        const rowsMap: ProductInputProps[] = rows.map((r) => mapProductInputModelToDomain(r));
         return rowsMap;
     }
     findById = async (id: number, tx?: Transaction): Promise<ProductInputProps | null> => {
         const row: ProductInputModel | null = await ProductInputModel.findByPk(id, {
             transaction: tx,
-            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputModelToDomain(row) : null;
     }
     findByIdProductInput = async (product_id: number, input_id: number, tx?: Transaction): Promise<ProductInputProps | null> => {
         const row: ProductInputModel | null = await ProductInputModel.findOne({
@@ -88,22 +106,24 @@ export class ProductInputRepository implements IProductInputRepository {
                 input_id: input_id
             },
             transaction: tx,
-            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[])
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputModelToDomain(row) : null;
     }
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data: ProductInputCreateProps, tx?: Transaction): Promise<ProductInputProps> => {
-        const created: ProductInputModel = await ProductInputModel.create(data, { transaction: tx });
+        const created: ProductInputModel = await ProductInputModel.create(mapProductInputCreateDomainToModel(data), { transaction: tx });
         if (!created) throw new HttpError(500, "No fue posible crear la asignación del insumo al producto.");
-        return mapModelToDomain(created);
+        return mapProductInputModelToDomain(created);
     }
     // ================================================================
     // UPDATE
     // ================================================================
     update = async (id: number, data: ProductInputUpdateProps, tx?: Transaction): Promise<ProductInputProps> => {
+
+        const updateData = mapProductInputUpdateDomainToModel(data);
+
         // 1. Verificar existencia
         const existing: ProductInputModel | null = await ProductInputModel.findByPk(id, {
             transaction: tx
@@ -111,20 +131,18 @@ export class ProductInputRepository implements IProductInputRepository {
         if (!existing) throw new HttpError(404,
             "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla."
         );
-        // 2. Aplicar UPDATE
-        const [affectedCount]: [affectedCount: number] = await ProductInputModel.update(data, {
+        const existingDomain = mapProductInputModelToDomain(existing);
+        if (updateData) return existingDomain;
+        const [affectedCount] = await ProductInputModel.update(updateData, {
             where: { id },
             transaction: tx,
         });
-        if (!affectedCount)
-            throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
-        // 3. Obtener la producto actualizada
+        if (!affectedCount) return existingDomain;
         const updated: ProductInputModel | null = await ProductInputModel.findByPk(id, {
-            attributes: ProductInputModel.getAllFields() as ((keyof ProductInputProps)[]),
             transaction: tx,
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar la asignación del insumo al producto.");
-        return mapModelToDomain(updated);
+        return mapProductInputModelToDomain(updated);
     }
     // ================================================================
     // DELETE

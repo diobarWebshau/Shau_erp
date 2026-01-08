@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductInputRepository = void 0;
 const product_inputs_orm_1 = require("../orm/product-inputs.orm");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
@@ -53,13 +54,27 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapProductInputModelToDomain = (model) => {
+    const productInputAttr = model.toJSON();
     return {
-        id: json.id,
-        input_id: json.input_id,
-        product_id: json.product_id,
-        equivalence: json.equivalence
+        ...productInputAttr,
+        equivalence: decimal_vo_1.DecimalVO.from(productInputAttr.equivalence)
+    };
+};
+const mapProductInputUpdateDomainToModel = (data) => {
+    const { equivalence, ...rest } = data;
+    return {
+        ...rest,
+        ...(equivalence !== undefined
+            ? { equivalence: equivalence.toString() }
+            : {}),
+    };
+};
+const mapProductInputCreateDomainToModel = (data) => {
+    return {
+        input_id: data.input_id,
+        product_id: data.product_id,
+        equivalence: data.equivalence.toString()
     };
 };
 class ProductInputRepository {
@@ -69,17 +84,15 @@ class ProductInputRepository {
     findAll = async (tx) => {
         const rows = await product_inputs_orm_1.ProductInputModel.findAll({
             transaction: tx,
-            attributes: product_inputs_orm_1.ProductInputModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapProductInputModelToDomain(r));
         return rowsMap;
     };
     findById = async (id, tx) => {
         const row = await product_inputs_orm_1.ProductInputModel.findByPk(id, {
             transaction: tx,
-            attributes: product_inputs_orm_1.ProductInputModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputModelToDomain(row) : null;
     };
     findByIdProductInput = async (product_id, input_id, tx) => {
         const row = await product_inputs_orm_1.ProductInputModel.findOne({
@@ -88,44 +101,44 @@ class ProductInputRepository {
                 input_id: input_id
             },
             transaction: tx,
-            attributes: product_inputs_orm_1.ProductInputModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductInputModelToDomain(row) : null;
     };
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data, tx) => {
-        const created = await product_inputs_orm_1.ProductInputModel.create(data, { transaction: tx });
+        const created = await product_inputs_orm_1.ProductInputModel.create(mapProductInputCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del insumo al producto.");
-        return mapModelToDomain(created);
+        return mapProductInputModelToDomain(created);
     };
     // ================================================================
     // UPDATE
     // ================================================================
     update = async (id, data, tx) => {
+        const updateData = mapProductInputUpdateDomainToModel(data);
         // 1. Verificar existencia
         const existing = await product_inputs_orm_1.ProductInputModel.findByPk(id, {
             transaction: tx
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla.");
-        // 2. Aplicar UPDATE
-        const [affectedCount] = await product_inputs_orm_1.ProductInputModel.update(data, {
+        const existingDomain = mapProductInputModelToDomain(existing);
+        if (updateData)
+            return existingDomain;
+        const [affectedCount] = await product_inputs_orm_1.ProductInputModel.update(updateData, {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la asignación del insumo al producto.");
-        // 3. Obtener la producto actualizada
+            return existingDomain;
         const updated = await product_inputs_orm_1.ProductInputModel.findByPk(id, {
-            attributes: product_inputs_orm_1.ProductInputModel.getAllFields(),
             transaction: tx,
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del insumo al producto.");
-        return mapModelToDomain(updated);
+        return mapProductInputModelToDomain(updated);
     };
     // ================================================================
     // DELETE

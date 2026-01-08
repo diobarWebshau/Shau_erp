@@ -4,9 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProductInputUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -48,6 +46,15 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductInputUpdateDtoToDomain = (data) => {
+    const { equivalence, ...rest } = data;
+    return ({
+        ...rest,
+        ...(equivalence !== undefined
+            ? { equivalence: decimal_vo_1.DecimalVO.from(equivalence) }
+            : {})
+    });
+};
 class UpdateProductInputUseCase {
     repo;
     constructor(repo) {
@@ -57,14 +64,7 @@ class UpdateProductInputUseCase {
         const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación del insumo al producto que se desea actualizar no fue posible encontrarla.");
-        const editableFields = [
-            "input_id", "product_id", "equivalence"
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["equivalence"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["equivalence"]);
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
+        const updateValues = mapProductInputUpdateDtoToDomain(data);
         if (!Object.keys(updateValues).length)
             return existing;
         const updated = await this.repo.update(id, updateValues, tx);

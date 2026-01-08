@@ -1,8 +1,9 @@
 import { IProductionLineRepository } from "@src/modules/core/production-line/domain/production-line.repository.interface";
 import type { ILocationProductionLineRepository } from "../../domain/location-production-line.repository.interface";
-import type { LocationProductionLineProps, LocationProductionLineCreateProps } from "../../domain/location-production-line.types";
-import HttpError from "@shared/errors/http/http-error";
 import { ILocationRepository } from "@src/modules/core/location/domain/location.repository.interface";
+import type { LocationProductionLineProps } from "../../domain/location-production-line.types";
+import { LocationProductionLineCreateDto } from "../dto/location-production-line.model.schema";
+import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
 /**
@@ -52,7 +53,7 @@ export class CreateLocationProductionLineUseCase {
         private readonly repoLocation: ILocationRepository,
         private readonly repoProductionLine: IProductionLineRepository
     ) { }
-    async execute(data: LocationProductionLineCreateProps, tx?: Transaction): Promise<LocationProductionLineProps> {
+    async execute(data: LocationProductionLineCreateDto, tx?: Transaction): Promise<LocationProductionLineProps> {
         const validateLocation = await this.repoLocation.findById(data.location_id, tx);
         if (!validateLocation) throw new HttpError(404,
             "La locación seleccionada no existe."

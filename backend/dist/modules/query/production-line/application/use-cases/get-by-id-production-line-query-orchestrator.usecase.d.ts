@@ -1,4 +1,4 @@
-import { ProductionLineResponseOrchestratorDto } from "@modules/features/production-line/orchestrator/application/dto/production-line-orchestrator.model.schema";
+import { ProductionLineOrchestrator } from "@modules/features/production-line/orchestrator/domain/production-line-orchestrator.types";
 import { IProductionLineQueryRepository } from "../../domain/production-line-query.respository.interface";
 import { Transaction } from "sequelize";
 /**
@@ -44,5 +44,5 @@ import { Transaction } from "sequelize";
 export declare class GetByIdProductionLineQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: IProductionLineQueryRepository);
-    execute(id: number, tx?: Transaction): Promise<ProductionLineResponseOrchestratorDto | null>;
+    execute(id: number, tx?: Transaction): Promise<ProductionLineOrchestrator | null>;
 }

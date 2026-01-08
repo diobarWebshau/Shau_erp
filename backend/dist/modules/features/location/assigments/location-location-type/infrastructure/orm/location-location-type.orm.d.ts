@@ -48,6 +48,7 @@ interface LocationLocationTypeAttributes {
     location_type_id: number;
 }
 type LocationLocationTypeCreateAttributes = Partial<Omit<LocationLocationTypeAttributes, "id">>;
+type LocationLocationTypeUpdateAttributes = Partial<LocationLocationTypeCreateAttributes>;
 declare class LocationLocationTypeModel extends Model<LocationLocationTypeAttributes, LocationLocationTypeCreateAttributes> {
     id: number;
     location_id: number;
@@ -56,4 +57,4 @@ declare class LocationLocationTypeModel extends Model<LocationLocationTypeAttrib
     static getAllFields: () => readonly (keyof LocationLocationTypeAttributes)[];
 }
 export { LocationLocationTypeModel };
-export type { LocationLocationTypeAttributes, LocationLocationTypeCreateAttributes };
+export type { LocationLocationTypeAttributes, LocationLocationTypeCreateAttributes, LocationLocationTypeUpdateAttributes };

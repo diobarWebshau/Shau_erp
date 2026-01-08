@@ -4,9 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProductInputProcessUseCase = void 0;
-const decimal_normalization_and_cleaning_utils_1 = require("@helpers/decimal-normalization-and-cleaning.utils");
-const validation_diff_engine_backend_1 = require("@helpers/validation-diff-engine-backend");
-const pickEditableFields_1 = require("@helpers/pickEditableFields");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * UseCase
@@ -48,6 +46,13 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - Orchestrators: capa superior (controladores, endpoints) que invoca los casos de uso
  *   para responder a las solicitudes externas.
  */
+const mapProductInputProcessUpdateDtoToDomain = (data) => {
+    const { qty, ...rest } = data;
+    return ({
+        ...rest,
+        ...(qty !== undefined ? { qty: decimal_vo_1.DecimalVO.from(qty) } : {})
+    });
+};
 class UpdateProductInputProcessUseCase {
     repo;
     constructor(repo) {
@@ -57,17 +62,10 @@ class UpdateProductInputProcessUseCase {
         const existing = await this.repo.findById(id, tx);
         if (!existing)
             throw new http_error_1.default(404, "La asignación de la cantidad de insumos consumidos para este proceso del producto que se desea actualizar no fue posible encontrarla.");
-        const editableFields = [
-            "product_input_id", "product_id", "product_process_id", "qty"
-        ];
-        const filteredBody = (0, pickEditableFields_1.pickEditableFields)(data, editableFields);
-        const merged = { ...existing, ...filteredBody };
-        const normalizedExisting = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(existing, ["qty"]);
-        const normalizedMerged = (0, decimal_normalization_and_cleaning_utils_1.deepNormalizeDecimals)(merged, ["qty"]);
-        const updateValues = await (0, validation_diff_engine_backend_1.diffObjects)(normalizedExisting, normalizedMerged);
-        if (!Object.keys(updateValues).length)
+        const updateData = mapProductInputProcessUpdateDtoToDomain(data);
+        if (!Object.keys(updateData).length)
             return existing;
-        const updated = await this.repo.update(id, updateValues, tx);
+        const updated = await this.repo.update(id, updateData, tx);
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación de la cantidad de insumos consumidos para este proceso del producto.");
         return updated;

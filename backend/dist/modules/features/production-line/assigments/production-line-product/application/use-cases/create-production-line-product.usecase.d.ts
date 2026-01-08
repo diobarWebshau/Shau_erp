@@ -1,8 +1,9 @@
 import { IProductionLineRepository } from "@src/modules/core/production-line/domain/production-line.repository.interface";
-import { ProductionLineProductCreateProps, ProductionLineProductProps } from "../../domain/production-line-product.types";
+import { ProductionLineProductProps } from "../../domain/production-line-product.types";
 import { IProductionLineProductRepository } from "../../domain/production-line.repository.interface";
 import { IProductRepository } from "@src/modules/core/product/domain/product.repository.interface";
 import { Transaction } from "sequelize";
+import { ProductionLineProductCreateDto } from "../dto/production-line-product.model.schema";
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -53,6 +54,6 @@ export declare class CreateProductionLineProductUseCase {
     private readonly productionLineRepo;
     private readonly productRepo;
     constructor({ productRepo, productionLineRepo, repo }: ICreateProductionLineProductUseCase);
-    execute(data: ProductionLineProductCreateProps, tx?: Transaction): Promise<ProductionLineProductProps>;
+    execute(data: ProductionLineProductCreateDto, tx?: Transaction): Promise<ProductionLineProductProps>;
 }
 export {};

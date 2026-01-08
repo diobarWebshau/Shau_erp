@@ -48,49 +48,15 @@ class GetAllLocationQueryOrchestratorUseCase {
     }
     ;
     async execute(query, tx) {
-        const LocationReponses = await this.repo.getAllLocationFullQuery(query, tx);
-        const LocationResultOrchestrator = [];
-        for (const plro of LocationReponses) {
-            const { location_location_types, location_production_lines, ...rest } = plro;
-            const dataLocation = {
-                ...rest,
-                created_at: rest.created_at.toISOString(),
-                updated_at: rest.updated_at.toISOString(),
+        const locationResponses = await this.repo.getAllLocationFullQuery(query, tx);
+        const LocationResultOrchestrator = locationResponses.map((lo) => {
+            const { location_location_types, location_production_lines, ...location } = lo;
+            return {
+                location: location,
+                location_location_types: location_location_types,
+                location_production_lines: location_production_lines
             };
-            const dataLocationProductionLine = (location_production_lines && location_production_lines.length) ? await Promise.all(location_production_lines.map(async (lpl) => ({
-                ...lpl,
-                production_line: {
-                    ...lpl.production_line,
-                    created_at: lpl.production_line.created_at.toISOString(),
-                    updated_at: lpl.production_line.updated_at.toISOString(),
-                },
-                location: {
-                    ...lpl.location,
-                    created_at: lpl.production_line.created_at.toISOString(),
-                    updated_at: lpl.production_line.updated_at.toISOString(),
-                }
-            }))) : [];
-            const dataLocationLocationType = (location_location_types && location_location_types.length) ? await Promise.all(location_location_types.map(async (llt) => ({
-                ...llt,
-                location: {
-                    ...llt.location,
-                    created_at: llt.location.created_at.toISOString(),
-                    updated_at: llt.location.updated_at.toISOString(),
-                },
-                location_type: {
-                    ...llt.location_type,
-                    created_at: llt.location_type.created_at.toISOString(),
-                    updated_at: llt.location_type.updated_at.toISOString(),
-                }
-            }))) : [];
-            const LocationResponseOrchstrator = {
-                location: dataLocation,
-                location_production_lines: dataLocationProductionLine,
-                location_location_types: dataLocationLocationType
-            };
-            LocationResultOrchestrator.push(LocationResponseOrchstrator);
-        }
-        ;
+        });
         return LocationResultOrchestrator;
     }
     ;

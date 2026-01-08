@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDiscountRangeRepository = void 0;
 const product_discount_range_orm_1 = require("../orm/product-discount-range.orm");
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
 /**
  * Repository (Infrastructure)
@@ -53,17 +54,40 @@ const http_error_1 = __importDefault(require("@shared/errors/http/http-error"));
  * - UseCases: consumen el contrato para ejecutar operaciones sobre el dominio.
  * - Orchestrators: invocan casos de uso que a su vez utilizan repositorios.
  */
-const mapModelToDomain = (model) => {
-    const json = model.toJSON();
+const mapProductDiscountRangeModelToDomain = (model) => {
+    const pdrAttributes = model.toJSON();
     return {
-        id: json.id,
-        unit_price: Number(json.unit_price),
-        product_id: json.product_id,
-        max_qty: Number(json.max_qty),
-        min_qty: Number(json.min_qty),
-        created_at: json.created_at,
-        updated_at: json.created_at
+        id: pdrAttributes.id,
+        unit_price: decimal_vo_1.DecimalVO.from(pdrAttributes.unit_price),
+        product_id: pdrAttributes.product_id,
+        max_qty: decimal_vo_1.DecimalVO.from(pdrAttributes.max_qty),
+        min_qty: decimal_vo_1.DecimalVO.from(pdrAttributes.min_qty),
+        created_at: pdrAttributes.created_at instanceof Date ? pdrAttributes.created_at : new Date(pdrAttributes.created_at),
+        updated_at: pdrAttributes.created_at instanceof Date ? pdrAttributes.created_at : new Date(pdrAttributes.created_at)
     };
+};
+const mapProductDiscountRangeCreateDomainToModel = (data) => {
+    return ({
+        ...data,
+        max_qty: data.max_qty.toString(),
+        min_qty: data.min_qty.toString(),
+        unit_price: data.unit_price.toString(),
+    });
+};
+const mapProductDiscountRangeUpdateDomainToModel = (data) => {
+    const { max_qty, min_qty, unit_price, ...rest } = data;
+    return ({
+        ...rest,
+        ...(max_qty !== undefined
+            ? { max_qty: max_qty?.toString() }
+            : {}),
+        ...(min_qty !== undefined
+            ? { min_qty: min_qty?.toString() }
+            : {}),
+        ...(unit_price !== undefined
+            ? { unit_price: unit_price?.toString() }
+            : {})
+    });
 };
 class ProductDiscountRangeRepository {
     // ================================================================
@@ -72,35 +96,32 @@ class ProductDiscountRangeRepository {
     findAll = async (tx) => {
         const rows = await product_discount_range_orm_1.ProductDiscountRangeModel.findAll({
             transaction: tx,
-            attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapProductDiscountRangeModelToDomain(r));
         return rowsMap;
     };
     findById = async (id, tx) => {
         const row = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id, {
             transaction: tx,
-            attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields()
         });
-        return row ? mapModelToDomain(row) : null;
+        return row ? mapProductDiscountRangeModelToDomain(row) : null;
     };
     findByProductId = async (product_id, tx) => {
         const rows = await product_discount_range_orm_1.ProductDiscountRangeModel.findAll({
             transaction: tx,
             where: { product_id: product_id },
-            attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields()
         });
-        const rowsMap = rows.map((r) => mapModelToDomain(r));
+        const rowsMap = rows.map((r) => mapProductDiscountRangeModelToDomain(r));
         return rowsMap;
     };
     // ================================================================
     // CREATE
     // ================================================================
     create = async (data, tx) => {
-        const created = await product_discount_range_orm_1.ProductDiscountRangeModel.create(data, { transaction: tx });
+        const created = await product_discount_range_orm_1.ProductDiscountRangeModel.create(mapProductDiscountRangeCreateDomainToModel(data), { transaction: tx });
         if (!created)
             throw new http_error_1.default(500, "No fue posible crear la asignación del descuento por rango al producto.");
-        return mapModelToDomain(created);
+        return mapProductDiscountRangeModelToDomain(created);
     };
     // ================================================================
     // UPDATE
@@ -112,21 +133,21 @@ class ProductDiscountRangeRepository {
         });
         if (!existing)
             throw new http_error_1.default(404, "La asignación del descuento por rango al producto que se desea actualizar no fue posible encontrarla.");
-        // 2. Aplicar UPDATE
-        const [affectedCount] = await product_discount_range_orm_1.ProductDiscountRangeModel.update(data, {
+        const existingDomain = mapProductDiscountRangeModelToDomain(existing);
+        if (Object.keys(existing).length)
+            return existingDomain;
+        const [affectedCount] = await product_discount_range_orm_1.ProductDiscountRangeModel.update(mapProductDiscountRangeUpdateDomainToModel(data), {
             where: { id },
             transaction: tx,
         });
         if (!affectedCount)
-            throw new http_error_1.default(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
-        // 3. Obtener la producto actualizada
+            return existingDomain;
         const updated = await product_discount_range_orm_1.ProductDiscountRangeModel.findByPk(id, {
             transaction: tx,
-            attributes: product_discount_range_orm_1.ProductDiscountRangeModel.getAllFields(),
         });
         if (!updated)
             throw new http_error_1.default(500, "No fue posible actualizar la asignación del descuento por rango al producto.");
-        return mapModelToDomain(updated);
+        return mapProductDiscountRangeModelToDomain(updated);
     };
     // ================================================================
     // DELETE

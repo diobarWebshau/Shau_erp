@@ -1,8 +1,5 @@
-import { ProductionLineProductResponseOrchestratorDto } from "@modules/features/production-line/orchestrator/application/dto/production-line-orchestrator.model.schema";
-import { ProductionLineFullQueryResult, ProductionLineQueryResultDto } from "../../domain/production-line-query.types";
-import { ProductionLineResponseDto } from "@modules/core/production-line/application/dto/production-lines.model.schema";
 import { IProductionLineQueryRepository } from "../../domain/production-line-query.respository.interface";
-import ImageHandler from "@helpers/imageHandlerClass";
+import { ProductionLineFullQueryResult } from "../../domain/production-line-query.types";
 import { Transaction } from "sequelize";
 
 /**
@@ -54,33 +51,9 @@ export class GetByIdProductionLineFullQueryUseCase {
         this.repo = repo;
     };
 
-    async execute(id: number, tx?: Transaction): Promise<ProductionLineQueryResultDto | null> {
+    async execute(id: number, tx?: Transaction): Promise<ProductionLineFullQueryResult | null> {
         const productionLineReponse: ProductionLineFullQueryResult | null = await this.repo.getByIdProductionLineFullQuery(id, tx);
         if (!productionLineReponse) return null;
-        const { production_line_products, ...rest }: ProductionLineFullQueryResult = productionLineReponse;
-        const dataProductionLine: ProductionLineResponseDto = {
-            ...rest,
-            created_at: rest.created_at.toISOString(),
-            updated_at: rest.updated_at.toISOString(),
-        };
-        const dataProductionLineProducts: ProductionLineProductResponseOrchestratorDto[] = (production_line_products && production_line_products.length) ? await Promise.all(production_line_products.map(async (plp) => ({
-            ...plp,
-            product: {
-                ...plp.product,
-                photo: plp.product.photo ? await ImageHandler.convertToBase64(plp.product.photo) : null,
-                created_at: plp.product.created_at.toISOString(),
-                updated_at: plp.product.updated_at.toISOString(),
-            },
-            production_line: {
-                ...plp.production_line,
-                created_at: plp.product.created_at.toISOString(),
-                updated_at: plp.product.updated_at.toISOString(),
-            }
-        }))) : [];
-        const productionLineFullResult: ProductionLineQueryResultDto = {
-            ...dataProductionLine,
-            production_line_products: dataProductionLineProducts
-        }
-        return productionLineFullResult;
+        return productionLineReponse;
     };
 };

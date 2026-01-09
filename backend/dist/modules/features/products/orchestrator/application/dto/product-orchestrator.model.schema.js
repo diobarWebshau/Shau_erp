@@ -80,7 +80,7 @@ const productDiscountRangeOrchestratorCreateSchema = product_discount_range_mode
 // * Esquema del payload para crear el producto
 const productOrchestratorCreateSchema = zod_1.z.object({
     product: product_model_schema_1.productCreateSchema,
-    products_inputs: zod_1.z.array(productInputOrchestratorCreateSchema),
+    product_inputs: zod_1.z.array(productInputOrchestratorCreateSchema),
     product_processes: zod_1.z.array(productProcessOrchestratorCreateSchema),
     product_discount_ranges: zod_1.z.array(productDiscountRangeOrchestratorCreateSchema),
 });
@@ -153,7 +153,7 @@ const productDiscountRangeManagerSchema = zod_1.z.object({
 // * Esquema del payload para actualizar el producto
 const productOrchestratorUpdateSchema = zod_1.z.object({
     product: product_model_schema_1.productUpdateSchema,
-    products_inputs_manager: productInputManagerSchema,
+    product_inputs_manager: productInputManagerSchema,
     product_processes_manager: productProcessManagerSchema,
     product_discount_ranges_manager: productDiscountRangeManagerSchema,
 });
@@ -173,7 +173,7 @@ const productProcessResponseOrchestratorSchema = product_process_model_schema_1.
 // * Esquema de respuesta para Product
 const productOrchestratorResponseSchema = zod_1.z.object({
     product: product_model_schema_1.productResponseSchema,
-    products_inputs: zod_1.z.array(product_input_model_schema_1.ProductInputReponseSchema),
+    product_inputs: zod_1.z.array(product_input_model_schema_1.ProductInputReponseSchema),
     product_processes: zod_1.z.array(productProcessResponseOrchestratorSchema),
     product_discount_ranges: zod_1.z.array(product_discount_range_model_schema_1.ProductDiscountRangeReponseSchema),
 });

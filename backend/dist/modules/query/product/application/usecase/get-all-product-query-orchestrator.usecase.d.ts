@@ -1,6 +1,6 @@
 import { ProductOrchestrator } from "@src/modules/features/products/orchestrator/domain/product-orchestrator.types";
 import type { ProductQueryRepository } from "../../infrastructure/repository/product-query.repository";
-import type { ProductSearchCriteria } from "../../domain/product-query.type";
+import { ProductQueryDto } from "../dto/product-query.model.schema";
 import { Transaction } from "sequelize";
 /**
  * UseCase
@@ -45,5 +45,5 @@ import { Transaction } from "sequelize";
 export declare class GetAllProductsQueryOrchestratorUseCase {
     private readonly repo;
     constructor(repo: ProductQueryRepository);
-    execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestrator[]>;
+    execute(query: ProductQueryDto, tx?: Transaction): Promise<ProductOrchestrator[]>;
 }

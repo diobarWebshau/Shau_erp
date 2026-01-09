@@ -4,6 +4,7 @@ exports.ProductQueryRepository = void 0;
 const product_discount_range_orm_1 = require("@modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm");
 const product_process_orm_1 = require("@modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm");
 const product_inputs_orm_1 = require("@modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm");
+const product_input_process_orm_1 = require("@src/modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm");
 const product_orm_1 = require("@modules/core/product/infrastructure/orm/product.orm");
 const process_orm_1 = require("@src/modules/core/process/infrastructure/orm/process.orm");
 const input_orm_1 = require("@src/modules/core/input/infrastructure/orm/input.orm");
@@ -11,7 +12,7 @@ const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
 const sequelize_1 = require("sequelize");
 const mapProductQueryModelToDomain = (model) => {
     const productQueryAttributes = model.toJSON();
-    const { product_discount_ranges, product_processes, products_inputs, ...productRest } = productQueryAttributes;
+    const { product_discount_ranges, product_processes, product_inputs, ...productRest } = productQueryAttributes;
     return {
         ...productRest,
         sale_price: productRest.sale_price ? decimal_vo_1.DecimalVO.from(productRest.sale_price) : null,
@@ -49,12 +50,32 @@ const mapProductQueryModelToDomain = (model) => {
             },
             product_input_process: pp.product_input_process.map((pip) => ({
                 ...pip,
-                qty: decimal_vo_1.DecimalVO.from(pip.qty)
+                qty: decimal_vo_1.DecimalVO.from(pip.qty),
+                product_input: {
+                    ...pip.product_input,
+                    equivalence: decimal_vo_1.DecimalVO.from(pip.product_input.equivalence)
+                },
+                product: {
+                    ...pip.product,
+                    production_cost: pip.product.production_cost ? decimal_vo_1.DecimalVO.from(pip.product.production_cost) : null,
+                    sale_price: pip.product.sale_price ? decimal_vo_1.DecimalVO.from(pip.product.sale_price) : null,
+                    created_at: (pip.product.created_at instanceof Date) ? pip.product.created_at : new Date(pip.product.created_at),
+                    updated_at: (pip.product.updated_at instanceof Date) ? pip.product.updated_at : new Date(pip.product.updated_at),
+                },
+                product_process: {
+                    ...pip.product_process,
+                }
             }))
         })),
-        products_inputs: products_inputs.map((pi) => ({
+        product_inputs: product_inputs.map((pi) => ({
             ...pi,
             equivalence: decimal_vo_1.DecimalVO.from(pi.equivalence),
+            input: {
+                ...pi.input,
+                created_at: (pi.input.created_at instanceof Date) ? pi.input.created_at : new Date(pi.input.created_at),
+                updated_at: (pi.input.updated_at instanceof Date) ? pi.input.updated_at : new Date(pi.input.updated_at),
+                unit_cost: pi.input.unit_cost ? decimal_vo_1.DecimalVO.from(pi.input.unit_cost) : null
+            },
             product: {
                 ...pi.product,
                 production_cost: pi.product.production_cost ? decimal_vo_1.DecimalVO.from(pi.product.production_cost) : null,
@@ -99,7 +120,7 @@ class ProductQueryRepository {
             include: [
                 {
                     model: product_inputs_orm_1.ProductInputModel,
-                    as: "products_inputs",
+                    as: "product_inputs",
                     include: [
                         { model: product_orm_1.ProductModel, as: "product" },
                         { model: input_orm_1.InputModel, as: "input" }
@@ -110,7 +131,22 @@ class ProductQueryRepository {
                     as: "product_processes",
                     include: [
                         { model: product_orm_1.ProductModel, as: "product" },
-                        { model: process_orm_1.ProcessModel, as: "process" }
+                        { model: process_orm_1.ProcessModel, as: "process" },
+                        {
+                            model: product_input_process_orm_1.ProductInputProcessModel,
+                            as: "product_input_process",
+                            include: [
+                                { model: product_orm_1.ProductModel, as: "product" },
+                                {
+                                    model: product_inputs_orm_1.ProductInputModel,
+                                    as: "product_input",
+                                    include: [
+                                        { model: input_orm_1.InputModel, as: "input" },
+                                    ]
+                                },
+                                { model: product_process_orm_1.ProductProcessModel, as: "product_process" },
+                            ]
+                        }
                     ]
                 },
                 {
@@ -133,7 +169,7 @@ class ProductQueryRepository {
             include: [
                 {
                     model: product_inputs_orm_1.ProductInputModel,
-                    as: "products_inputs",
+                    as: "product_inputs",
                     include: [
                         { model: product_orm_1.ProductModel, as: "product" },
                         { model: input_orm_1.InputModel, as: "input" }
@@ -144,7 +180,23 @@ class ProductQueryRepository {
                     as: "product_processes",
                     include: [
                         { model: product_orm_1.ProductModel, as: "product" },
-                        { model: process_orm_1.ProcessModel, as: "process" }
+                        { model: process_orm_1.ProcessModel, as: "process" },
+                        {
+                            model: product_input_process_orm_1.ProductInputProcessModel,
+                            as: "product_input_process",
+                            include: [
+                                { model: product_orm_1.ProductModel, as: "product" },
+                                {
+                                    model: product_inputs_orm_1.ProductInputModel,
+                                    as: "product_input",
+                                    include: [
+                                        { model: input_orm_1.InputModel, as: "input" },
+                                        { model: product_orm_1.ProductModel, as: "product" },
+                                    ]
+                                },
+                                { model: product_process_orm_1.ProductProcessModel, as: "product_process" },
+                            ]
+                        }
                     ]
                 },
                 {

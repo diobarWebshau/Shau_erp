@@ -3,13 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductQueryController = void 0;
+exports.ProductQueryController = exports.mapProductQueryFullDomainToDto = exports.mapProductQueryOrchestratorDomainToDto = void 0;
 const get_by_id_product_query_orchestrator_usecase_1 = require("../../application/usecase/get-by-id-product-query-orchestrator.usecase");
 const get_all_product_query_orchestrator_usecase_1 = require("../../application/usecase/get-all-product-query-orchestrator.usecase");
 const get_by_id_product_full_query_usecase_1 = require("../../application/usecase/get-by-id-product-full-query.usecase");
-const product_query_mapper_1 = require("@modules/core/product/infrastructure/http/product-query-mapper");
 const get_all_product_full_query_usecase_1 = require("../../application/usecase/get-all-product-full-query.usecase");
-const product_query_repository_1 = require("../product-query.repository");
+const product_query_repository_1 = require("../repository/product-query.repository");
 const imageHandlerClass_1 = __importDefault(require("@src/helpers/imageHandlerClass"));
 /**
  * Controller (Infrastructure / HTTP)
@@ -61,7 +60,7 @@ const imageHandlerClass_1 = __importDefault(require("@src/helpers/imageHandlerCl
  *   de forma coherente hacia productes externos.
  */
 const mapProductQueryOrchestratorDomainToDto = async (data) => {
-    const { product, products_inputs, product_processes, product_discount_ranges } = data;
+    const { product, product_inputs, product_processes, product_discount_ranges } = data;
     return {
         // ==================================================
         // 🔹 PRODUCT
@@ -79,7 +78,7 @@ const mapProductQueryOrchestratorDomainToDto = async (data) => {
         // ==================================================
         // 🔹 PRODUCT INPUTS
         // ==================================================
-        products_inputs: await Promise.all(products_inputs.map(async (pi) => ({
+        product_inputs: await Promise.all(product_inputs.map(async (pi) => ({
             ...pi,
             equivalence: pi.equivalence.toString(),
             product: {
@@ -148,6 +147,94 @@ const mapProductQueryOrchestratorDomainToDto = async (data) => {
         }))),
     };
 };
+exports.mapProductQueryOrchestratorDomainToDto = mapProductQueryOrchestratorDomainToDto;
+const mapProductQueryFullDomainToDto = async (data) => {
+    const { product_inputs, product_processes, product_discount_ranges, ...productRest } = data;
+    return {
+        // ==================================================
+        // 🔹 PRODUCT
+        // ==================================================
+        ...productRest,
+        sale_price: productRest.sale_price?.toString() ?? null,
+        production_cost: productRest.production_cost?.toString() ?? null,
+        created_at: productRest.created_at.toISOString(),
+        updated_at: productRest.updated_at.toISOString(),
+        photo: productRest.photo
+            ? await imageHandlerClass_1.default.convertToBase64(productRest.photo)
+            : null,
+        // ==================================================
+        // 🔹 PRODUCT INPUTS
+        // ==================================================
+        product_inputs: await Promise.all(product_inputs.map(async (pi) => ({
+            ...pi,
+            equivalence: pi.equivalence.toString(),
+            product: {
+                ...pi.product,
+                sale_price: pi.product.sale_price?.toString() ?? null,
+                production_cost: pi.product.production_cost?.toString() ?? null,
+                created_at: pi.product.created_at.toISOString(),
+                updated_at: pi.product.updated_at.toISOString(),
+                photo: pi.product.photo
+                    ? await imageHandlerClass_1.default.convertToBase64(pi.product.photo)
+                    : null,
+            },
+            input: {
+                ...pi.input,
+                unit_cost: pi.input.unit_cost?.toString() ?? null,
+                created_at: pi.input.created_at.toISOString(),
+                updated_at: pi.input.updated_at.toISOString(),
+            },
+        }))),
+        // ==================================================
+        // 🔹 PRODUCT PROCESSES
+        // ==================================================
+        product_processes: await Promise.all(product_processes.map(async (pp) => ({
+            ...pp,
+            sort_order: pp.sort_order,
+            product: {
+                ...pp.product,
+                sale_price: pp.product.sale_price?.toString() ?? null,
+                production_cost: pp.product.production_cost?.toString() ?? null,
+                created_at: pp.product.created_at.toISOString(),
+                updated_at: pp.product.updated_at.toISOString(),
+                photo: pp.product.photo
+                    ? await imageHandlerClass_1.default.convertToBase64(pp.product.photo)
+                    : null,
+            },
+            process: {
+                ...pp.process,
+                created_at: pp.process.created_at.toISOString(),
+                updated_at: pp.process.updated_at.toISOString(),
+            },
+            product_input_process: pp.product_input_process.map((pip) => ({
+                ...pip,
+                qty: pip.qty.toString(),
+            })),
+        }))),
+        // ==================================================
+        // 🔹 PRODUCT DISCOUNT RANGES
+        // ==================================================
+        product_discount_ranges: await Promise.all(product_discount_ranges.map(async (pdr) => ({
+            ...pdr,
+            max_qty: pdr.max_qty.toString(),
+            min_qty: pdr.min_qty.toString(),
+            unit_price: pdr.unit_price.toString(),
+            created_at: pdr.created_at.toISOString(),
+            updated_at: pdr.updated_at.toISOString(),
+            product: {
+                ...pdr.product,
+                sale_price: pdr.product.sale_price?.toString() ?? null,
+                production_cost: pdr.product.production_cost?.toString() ?? null,
+                created_at: pdr.product.created_at.toISOString(),
+                updated_at: pdr.product.updated_at.toISOString(),
+                photo: pdr.product.photo
+                    ? await imageHandlerClass_1.default.convertToBase64(pdr.product.photo)
+                    : null,
+            },
+        }))),
+    };
+};
+exports.mapProductQueryFullDomainToDto = mapProductQueryFullDomainToDto;
 class ProductQueryController {
     repo;
     getAllProductOrchestatorUseCase;
@@ -163,10 +250,9 @@ class ProductQueryController {
     }
     ;
     getAllProductOrchestrator = async (req, res) => {
-        const queryRequest = req.query;
-        const query = (0, product_query_mapper_1.mapProductQueryToCriteria)(queryRequest);
+        const query = req.query;
         const productQueryResponse = await this.getAllProductOrchestatorUseCase.execute(query);
-        const productQueryResult = await Promise.all(productQueryResponse.map(mapProductQueryOrchestratorDomainToDto));
+        const productQueryResult = await Promise.all(productQueryResponse.map(exports.mapProductQueryOrchestratorDomainToDto));
         return res.status(200).json(productQueryResult);
     };
     getByIdProductOrchestrator = async (req, res) => {
@@ -174,21 +260,22 @@ class ProductQueryController {
         const productQueryResponse = await this.getByIdProductOrchestratorUseCase.execute(Number(id));
         if (!productQueryResponse)
             return res.status(404).json(null);
-        const productQueryResult = await mapProductQueryOrchestratorDomainToDto(productQueryResponse);
+        const productQueryResult = await (0, exports.mapProductQueryOrchestratorDomainToDto)(productQueryResponse);
         return res.status(200).json(productQueryResult);
     };
     getAllProductFullQuery = async (req, res) => {
-        const queryRequest = req.query;
-        const query = (0, product_query_mapper_1.mapProductQueryToCriteria)(queryRequest);
+        const query = req.query;
         const productQueryResponse = await this.getAllProductFullUseCase.execute(query);
-        return res.status(200).json(productQueryResponse);
+        const productQueryResult = await Promise.all(productQueryResponse.map(exports.mapProductQueryFullDomainToDto));
+        return res.status(200).json(productQueryResult);
     };
     getByIdProductFullQuery = async (req, res) => {
         const { id } = req.params;
         const productQueryResponse = await this.GetByIdProductFullUseCase.execute(Number(id));
         if (!productQueryResponse)
             return res.status(404).json(null);
-        return res.status(200).json(product);
+        const productResult = await (0, exports.mapProductQueryFullDomainToDto)(productQueryResponse);
+        return res.status(200).json(productResult);
     };
 }
 exports.ProductQueryController = ProductQueryController;

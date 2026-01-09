@@ -91,7 +91,7 @@ const productDiscountRangeOrchestratorCreateSchema = ProductDiscountRangeCreateS
 // * Esquema del payload para crear el producto
 const productOrchestratorCreateSchema = z.object({
     product: productCreateSchema,
-    products_inputs: z.array(productInputOrchestratorCreateSchema),
+    product_inputs: z.array(productInputOrchestratorCreateSchema),
     product_processes: z.array(productProcessOrchestratorCreateSchema),
     product_discount_ranges: z.array(productDiscountRangeOrchestratorCreateSchema),
 });
@@ -178,7 +178,7 @@ const productDiscountRangeManagerSchema = z.object({
 // * Esquema del payload para actualizar el producto
 const productOrchestratorUpdateSchema = z.object({
     product: productUpdateSchema,
-    products_inputs_manager: productInputManagerSchema,
+    product_inputs_manager: productInputManagerSchema,
     product_processes_manager: productProcessManagerSchema,
     product_discount_ranges_manager: productDiscountRangeManagerSchema,
 });
@@ -200,7 +200,7 @@ const productProcessResponseOrchestratorSchema = ProductProcessReponseSchema.ext
 // * Esquema de respuesta para Product
 const productOrchestratorResponseSchema = z.object({
     product: productResponseSchema,
-    products_inputs: z.array(ProductInputReponseSchema),
+    product_inputs: z.array(ProductInputReponseSchema),
     product_processes: z.array(productProcessResponseOrchestratorSchema),
     product_discount_ranges: z.array(ProductDiscountRangeReponseSchema),
 });

@@ -7,10 +7,10 @@ declare const getAllPurchasedOrderProduct: z.ZodObject<{
     response: z.ZodArray<z.ZodObject<{
         purchase_order_id: z.ZodNumber;
         product_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         product_name: z.ZodString;
-        recorded_price: z.ZodNumber;
-        original_price: z.ZodNumber;
+        recorded_price: z.ZodString;
+        original_price: z.ZodString;
         price_edit_source: z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";
@@ -28,10 +28,10 @@ declare const getByIdPurchasedOrderProduct: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         purchase_order_id: z.ZodNumber;
         product_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         product_name: z.ZodString;
-        recorded_price: z.ZodNumber;
-        original_price: z.ZodNumber;
+        recorded_price: z.ZodString;
+        original_price: z.ZodString;
         price_edit_source: z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";
@@ -46,10 +46,10 @@ declare const createPurchasedOrderProduct: z.ZodObject<{
     body: z.ZodObject<{
         purchase_order_id: z.ZodNumber;
         product_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         product_name: z.ZodString;
-        recorded_price: z.ZodNumber;
-        original_price: z.ZodNumber;
+        recorded_price: z.ZodString;
+        original_price: z.ZodString;
         price_edit_source: z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";
@@ -59,10 +59,10 @@ declare const createPurchasedOrderProduct: z.ZodObject<{
     response: z.ZodObject<{
         purchase_order_id: z.ZodNumber;
         product_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         product_name: z.ZodString;
-        recorded_price: z.ZodNumber;
-        original_price: z.ZodNumber;
+        recorded_price: z.ZodString;
+        original_price: z.ZodString;
         price_edit_source: z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";
@@ -79,10 +79,10 @@ declare const updatePurchasedOrderProduct: z.ZodObject<{
     body: z.ZodObject<{
         purchase_order_id: z.ZodOptional<z.ZodNumber>;
         product_id: z.ZodOptional<z.ZodNumber>;
-        qty: z.ZodOptional<z.ZodNumber>;
+        qty: z.ZodOptional<z.ZodString>;
         product_name: z.ZodOptional<z.ZodString>;
-        recorded_price: z.ZodOptional<z.ZodNumber>;
-        original_price: z.ZodOptional<z.ZodNumber>;
+        recorded_price: z.ZodOptional<z.ZodString>;
+        original_price: z.ZodOptional<z.ZodString>;
         price_edit_source: z.ZodOptional<z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";
@@ -92,10 +92,10 @@ declare const updatePurchasedOrderProduct: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         purchase_order_id: z.ZodNumber;
         product_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         product_name: z.ZodString;
-        recorded_price: z.ZodNumber;
-        original_price: z.ZodNumber;
+        recorded_price: z.ZodString;
+        original_price: z.ZodString;
         price_edit_source: z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";
@@ -113,10 +113,10 @@ declare const deletePurchasedOrderProduct: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         purchase_order_id: z.ZodNumber;
         product_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         product_name: z.ZodString;
-        recorded_price: z.ZodNumber;
-        original_price: z.ZodNumber;
+        recorded_price: z.ZodString;
+        original_price: z.ZodString;
         price_edit_source: z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";
@@ -134,10 +134,10 @@ declare const getByPurchasedIdPurchasedOrderProduct: z.ZodObject<{
     response: z.ZodArray<z.ZodObject<{
         purchase_order_id: z.ZodNumber;
         product_id: z.ZodNumber;
-        qty: z.ZodNumber;
+        qty: z.ZodString;
         product_name: z.ZodString;
-        recorded_price: z.ZodNumber;
-        original_price: z.ZodNumber;
+        recorded_price: z.ZodString;
+        original_price: z.ZodString;
         price_edit_source: z.ZodNullable<z.ZodEnum<{
             manual: "manual";
             range: "range";

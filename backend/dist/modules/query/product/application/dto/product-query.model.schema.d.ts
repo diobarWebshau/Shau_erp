@@ -21,7 +21,7 @@ declare const productQueryOrchestratorSchema: z.ZodObject<{
         created_at: z.ZodString;
         updated_at: z.ZodString;
     }, z.core.$strip>;
-    products_inputs: z.ZodArray<z.ZodObject<{
+    product_inputs: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
         equivalence: z.ZodString;
@@ -68,7 +68,7 @@ declare const productQueryFullResponseSchema: z.ZodObject<{
     id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;
-    products_inputs: z.ZodArray<z.ZodObject<{
+    product_inputs: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
         equivalence: z.ZodString;

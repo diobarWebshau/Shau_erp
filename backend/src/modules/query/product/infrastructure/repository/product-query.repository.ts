@@ -2,18 +2,19 @@
 import { ProductDiscountRangeModel } from "@modules/features/products/assigments/product-discounts-ranges/infrastructure/orm/product-discount-range.orm";
 import { ProductProcessModel } from "@modules/features/products/assigments/product-process/infrastructure/orm/product-process.orm";
 import { ProductInputModel } from "@modules/features/products/assigments/product-input/infrastructure/orm/product-inputs.orm";
+import { ProductInputProcessModel } from "@src/modules/features/products/assigments/product-input-process/infrastructure/orm/product-input-process.orm";
 import { ProductAttributes, ProductModel } from "@modules/core/product/infrastructure/orm/product.orm";
 import { ProductFullQueryResult, ProductSearchCriteria } from "../../domain/product-query.type"
 import { ProcessModel } from "@src/modules/core/process/infrastructure/orm/process.orm";
 import { InputModel } from "@src/modules/core/input/infrastructure/orm/input.orm";
 import { IProductQueryRepository } from "../../domain/product-query.repository";
-import { ProductQueryAttributes } from "../orm/product-query-types.orm";
 import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+import { ProductQueryAttributes } from "../orm/product-query-types.orm";
 import { Op, Transaction, WhereOptions } from "sequelize";
 
 const mapProductQueryModelToDomain = (model: ProductModel): ProductFullQueryResult => {
     const productQueryAttributes: ProductQueryAttributes = model.toJSON();
-    const { product_discount_ranges, product_processes, products_inputs, ...productRest } = productQueryAttributes;
+    const { product_discount_ranges, product_processes, product_inputs, ...productRest } = productQueryAttributes;
     return {
         ...productRest,
         sale_price: productRest.sale_price ? DecimalVO.from(productRest.sale_price) : null,
@@ -51,12 +52,33 @@ const mapProductQueryModelToDomain = (model: ProductModel): ProductFullQueryResu
             },
             product_input_process: pp.product_input_process.map((pip) => ({
                 ...pip,
-                qty: DecimalVO.from(pip.qty)
+                qty: DecimalVO.from(pip.qty),
+                product_input: {
+                    ...pip.product_input,
+                    equivalence: DecimalVO.from(pip.product_input.equivalence)
+                },
+                product: {
+                    ...pip.product,
+                    production_cost: pip.product.production_cost ? DecimalVO.from(pip.product.production_cost) : null,
+                    sale_price: pip.product.sale_price ? DecimalVO.from(pip.product.sale_price) : null,
+                    created_at: (pip.product.created_at instanceof Date) ? pip.product.created_at : new Date(pip.product.created_at),
+                    updated_at: (pip.product.updated_at instanceof Date) ? pip.product.updated_at : new Date(pip.product.updated_at),
+
+                },
+                product_process: {
+                    ...pip.product_process,
+                }
             }))
         })),
-        products_inputs: products_inputs.map((pi) => ({
+        product_inputs: product_inputs.map((pi) => ({
             ...pi,
             equivalence: DecimalVO.from(pi.equivalence),
+            input: {
+                ...pi.input,
+                created_at: (pi.input.created_at instanceof Date) ? pi.input.created_at : new Date(pi.input.created_at),
+                updated_at: (pi.input.updated_at instanceof Date) ? pi.input.updated_at : new Date(pi.input.updated_at),
+                unit_cost: pi.input.unit_cost ? DecimalVO.from(pi.input.unit_cost) : null
+            },
             product: {
                 ...pi.product,
                 production_cost: pi.product.production_cost ? DecimalVO.from(pi.product.production_cost) : null,
@@ -109,7 +131,7 @@ export class ProductQueryRepository implements IProductQueryRepository {
             include: [
                 {
                     model: ProductInputModel,
-                    as: "products_inputs",
+                    as: "product_inputs",
                     include: [
                         { model: ProductModel, as: "product" },
                         { model: InputModel, as: "input" }
@@ -120,7 +142,22 @@ export class ProductQueryRepository implements IProductQueryRepository {
                     as: "product_processes",
                     include: [
                         { model: ProductModel, as: "product" },
-                        { model: ProcessModel, as: "process" }
+                        { model: ProcessModel, as: "process" },
+                        {
+                            model: ProductInputProcessModel,
+                            as: "product_input_process",
+                            include: [
+                                { model: ProductModel, as: "product" },
+                                {
+                                    model: ProductInputModel,
+                                    as: "product_input",
+                                    include: [
+                                        { model: InputModel, as: "input" },
+                                    ]
+                                },
+                                { model: ProductProcessModel, as: "product_process" },
+                            ]
+                        }
                     ]
                 },
                 {
@@ -143,7 +180,7 @@ export class ProductQueryRepository implements IProductQueryRepository {
             include: [
                 {
                     model: ProductInputModel,
-                    as: "products_inputs",
+                    as: "product_inputs",
                     include: [
                         { model: ProductModel, as: "product" },
                         { model: InputModel, as: "input" }
@@ -154,7 +191,23 @@ export class ProductQueryRepository implements IProductQueryRepository {
                     as: "product_processes",
                     include: [
                         { model: ProductModel, as: "product" },
-                        { model: ProcessModel, as: "process" }
+                        { model: ProcessModel, as: "process" },
+                        {
+                            model: ProductInputProcessModel,
+                            as: "product_input_process",
+                            include: [
+                                { model: ProductModel, as: "product" },
+                                {
+                                    model: ProductInputModel,
+                                    as: "product_input",
+                                    include: [
+                                        { model: InputModel, as: "input" },
+                                        { model: ProductModel, as: "product" },
+                                    ]
+                                },
+                                { model: ProductProcessModel, as: "product_process" },
+                            ]
+                        }
                     ]
                 },
                 {

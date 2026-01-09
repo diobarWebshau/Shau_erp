@@ -9,14 +9,7 @@ class GetByIdAppliedProductDiscountClientUseCase {
     ;
     execute = async (id, tx) => {
         const appliedProductDiscountClientResponse = await this.appliedProductDiscountClientRepo.findById(id, tx);
-        if (!appliedProductDiscountClientResponse)
-            return null;
-        const appliedProductDiscountClientResponseFormatted = {
-            ...appliedProductDiscountClientResponse,
-            updated_at: appliedProductDiscountClientResponse.updated_at.toISOString(),
-            created_at: appliedProductDiscountClientResponse.created_at.toISOString()
-        };
-        return appliedProductDiscountClientResponseFormatted;
+        return appliedProductDiscountClientResponse;
     };
 }
 exports.GetByIdAppliedProductDiscountClientUseCase = GetByIdAppliedProductDiscountClientUseCase;

@@ -1,8 +1,16 @@
-import { Transaction } from "sequelize";
-import { IPurchasedOrderRepository } from "../../domain/purchased-order.repository.interface";
 import { PurchasedOrderCreateProps, PurchasedOrderProps } from "../../domain/purchased-order.types";
-import { PurchasedOrderResponseschemaDto } from "../dto/purchased-order.model.schema";
+import { IPurchasedOrderRepository } from "../../domain/purchased-order.repository.interface";
+import { PurchasedOrderCreateDto } from "../dto/purchased-order.model.schema";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
+import { Transaction } from "sequelize";
 
+const mapPurchasedOrderDtoToDomain = (data: PurchasedOrderCreateDto): PurchasedOrderCreateProps => {
+    return ({
+        ...data,
+        total_price: DecimalVO.from(data.total_price),
+        delivery_date: data.delivery_date ? new Date(data.delivery_date) : null
+    })
+};
 
 export class CreatePurchasedOrderUseCase {
 
@@ -12,14 +20,8 @@ export class CreatePurchasedOrderUseCase {
         this.purchasedOrderRepo = repo;
     };
 
-    execute = async (data: PurchasedOrderCreateProps, tx?: Transaction): Promise<PurchasedOrderResponseschemaDto> => {
-        const purchasedOrderResponse: PurchasedOrderProps = await this.purchasedOrderRepo.create(data, tx);
-        const purchasedOrderResult: PurchasedOrderResponseschemaDto = {
-            ...purchasedOrderResponse,
-            delivery_date: purchasedOrderResponse.delivery_date.toISOString(),
-            created_at: purchasedOrderResponse.created_at.toISOString(),
-            updated_at: purchasedOrderResponse.updated_at.toISOString()
-        }
-        return purchasedOrderResult;
+    execute = async (data: PurchasedOrderCreateDto, tx?: Transaction): Promise<PurchasedOrderProps> => {
+        const purchasedOrderResponse: PurchasedOrderProps = await this.purchasedOrderRepo.create(mapPurchasedOrderDtoToDomain(data), tx);
+        return purchasedOrderResponse;
     };
 };

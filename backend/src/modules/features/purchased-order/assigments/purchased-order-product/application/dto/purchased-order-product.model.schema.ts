@@ -1,12 +1,13 @@
+import { decimalString } from "@src/shared/application/decimal.schema";
 import z from "zod";
 
 const purchasedOrderProductCreateSchema = z.object({
     purchase_order_id: z.number(),
     product_id: z.number(),
-    qty: z.number(),
+    qty: decimalString,
     product_name: z.string(),
-    recorded_price: z.number(),
-    original_price: z.number(),
+    recorded_price: decimalString,
+    original_price: decimalString,
     price_edit_source: z.enum(["manual", "range"]).nullable(),
     status: z.string()
 });
@@ -17,9 +18,9 @@ const purchasedOrderProductResponseSchema = purchasedOrderProductCreateSchema.ex
     id: z.number()
 })
 
-type PurchasedOrderProductSchemaDto = z.infer<typeof purchasedOrderProductCreateSchema>;
-type PurchasedOrderProductUpdateSchemaDto = z.infer<typeof purchasedOrderProductUpdateSchema>;
-type PurchasedOrderProductResponseSchemaDto = z.infer<typeof purchasedOrderProductResponseSchema>;
+type PurchasedOrderProductCreateDto = z.infer<typeof purchasedOrderProductCreateSchema>;
+type PurchasedOrderProductUpdateDto = z.infer<typeof purchasedOrderProductUpdateSchema>;
+type PurchasedOrderProductResponseDto = z.infer<typeof purchasedOrderProductResponseSchema>;
 
 
 export {
@@ -29,7 +30,7 @@ export {
 };
 
 export type {
-    PurchasedOrderProductSchemaDto,
-    PurchasedOrderProductUpdateSchemaDto,
-    PurchasedOrderProductResponseSchemaDto
+    PurchasedOrderProductCreateDto,
+    PurchasedOrderProductUpdateDto,
+    PurchasedOrderProductResponseDto
 }

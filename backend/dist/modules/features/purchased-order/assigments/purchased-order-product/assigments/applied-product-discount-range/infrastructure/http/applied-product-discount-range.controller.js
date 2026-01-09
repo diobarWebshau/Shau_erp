@@ -8,9 +8,19 @@ const create_applied_product_discount_range_usecase_1 = require("../../applicati
 const delete_applied_product_discount_range_usecase_1 = require("../../application/use-cases/delete-applied-product-discount-range.usecase");
 const update_applied_product_discount_range_usecase_1 = require("../../application/use-cases/update-applied-product-discount-range.usecase");
 const applied_product_discount_range_repository_1 = require("../repository/applied-product-discount-range.repository");
+const mapAppliedProductDiscountRangeDomainToDto = (data) => {
+    return ({
+        ...data,
+        created_at: data.created_at.toISOString(),
+        updated_at: data.updated_at.toISOString(),
+        max_qty: data.max_qty.toString(),
+        min_qty: data.min_qty.toString(),
+        unit_discount: data.unit_discount.toString(),
+    });
+};
 class AppliedProductDiscountRangeController {
     appliedProductDiscountRangeRepo;
-    createAppliedProductDiscountRangeRepo;
+    createAppliedProductDiscountRangeUse;
     deleteAppliedProductDiscountRangeUseCase;
     updateAppliedProductDiscountRangeUseCase;
     getAllAppliedProductDiscountRangeUseCase;
@@ -18,7 +28,7 @@ class AppliedProductDiscountRangeController {
     getByPopAppliedProductDiscountRangeUseCase;
     constructor() {
         this.appliedProductDiscountRangeRepo = new applied_product_discount_range_repository_1.AppliedProductDiscountRangeRepository();
-        this.createAppliedProductDiscountRangeRepo = new create_applied_product_discount_range_usecase_1.CreateAppliedProductDiscountRangeUseCase(this.appliedProductDiscountRangeRepo);
+        this.createAppliedProductDiscountRangeUse = new create_applied_product_discount_range_usecase_1.CreateAppliedProductDiscountRangeUseCase(this.appliedProductDiscountRangeRepo);
         this.deleteAppliedProductDiscountRangeUseCase = new delete_applied_product_discount_range_usecase_1.DeleteAppliedProductDiscountRangeUseCase(this.appliedProductDiscountRangeRepo);
         this.updateAppliedProductDiscountRangeUseCase = new update_applied_product_discount_range_usecase_1.UpdateAppliedProductDiscountRangeUseCase(this.appliedProductDiscountRangeRepo);
         this.getAllAppliedProductDiscountRangeUseCase = new get_all_applied_product_discount_range_usecase_1.GetAllAppliedProductDiscountRangeUseCase(this.appliedProductDiscountRangeRepo);
@@ -27,29 +37,38 @@ class AppliedProductDiscountRangeController {
     }
     ;
     getAll = async (_req, res) => {
-        const appliedProductDiscountRangeRepo = await this.getAllAppliedProductDiscountRangeUseCase.execute();
-        return res.status(201).json(appliedProductDiscountRangeRepo);
+        const appliedProductDiscountRangeResponse = await this.getAllAppliedProductDiscountRangeUseCase.execute();
+        const appliedProductDiscountRangeResult = appliedProductDiscountRangeResponse.map(mapAppliedProductDiscountRangeDomainToDto);
+        return res.status(201).json(appliedProductDiscountRangeResult);
     };
     getById = async (req, res) => {
         const { id } = req.params;
-        const appliedProductDiscountRangeRepo = await this.getByIdAppliedProductDiscountRangeUseCase.execute(Number(id));
-        return res.status(201).json(appliedProductDiscountRangeRepo);
+        const appliedProductDiscountRangeResponse = await this.getByIdAppliedProductDiscountRangeUseCase.execute(Number(id));
+        if (!appliedProductDiscountRangeResponse)
+            return res.status(404).json(null);
+        const appliedProductDiscountRangeResult = mapAppliedProductDiscountRangeDomainToDto(appliedProductDiscountRangeResponse);
+        return res.status(201).json(appliedProductDiscountRangeResult);
     };
     getByPop = async (req, res) => {
         const { purchase_order_product_id } = req.params;
-        const appliedProductDiscountRangeRepo = await this.getByPopAppliedProductDiscountRangeUseCase.execute(Number(purchase_order_product_id));
-        return res.status(201).json(appliedProductDiscountRangeRepo);
+        const appliedProductDiscountRangeResponse = await this.getByPopAppliedProductDiscountRangeUseCase.execute(Number(purchase_order_product_id));
+        if (!appliedProductDiscountRangeResponse)
+            return res.status(404).json(null);
+        const appliedProductDiscountRangeResult = mapAppliedProductDiscountRangeDomainToDto(appliedProductDiscountRangeResponse);
+        return res.status(201).json(appliedProductDiscountRangeResult);
     };
     create = async (req, res) => {
         const body = req.body;
-        const appliedProductDiscountRangeRepo = await this.createAppliedProductDiscountRangeRepo.execute(body);
-        return res.status(201).json(appliedProductDiscountRangeRepo);
+        const appliedProductDiscountRangeResponse = await this.createAppliedProductDiscountRangeUse.execute(body);
+        const appliedProductDiscountRangeResult = mapAppliedProductDiscountRangeDomainToDto(appliedProductDiscountRangeResponse);
+        return res.status(201).json(appliedProductDiscountRangeResult);
     };
     update = async (req, res) => {
         const body = req.body;
         const { id } = req.params;
-        const appliedProductDiscountRangeRepo = await this.updateAppliedProductDiscountRangeUseCase.execute(Number(id), body);
-        return res.status(200).json(appliedProductDiscountRangeRepo);
+        const appliedProductDiscountRangeResponse = await this.updateAppliedProductDiscountRangeUseCase.execute(Number(id), body);
+        const appliedProductDiscountRangeResult = mapAppliedProductDiscountRangeDomainToDto(appliedProductDiscountRangeResponse);
+        return res.status(200).json(appliedProductDiscountRangeResult);
     };
     delete = async (req, res) => {
         const { id } = req.params;

@@ -87,20 +87,20 @@ export function initAssociations() {
     // product-input
     ProductModel.hasMany(ProductInputModel, {
         foreignKey: "product_id",
-        as: "products_inputs",
+        as: "product_inputs",
     });
     InputModel.hasMany(ProductInputModel, {
         foreignKey: "input_id",
-        as: "products_inputs",
+        as: "product_inputs",
     });
     ProductInputModel.belongsTo(ProductModel, {
         foreignKey: "product_id",
-        as: "products",
+        as: "product",
         onDelete: "CASCADE"
     });
     ProductInputModel.belongsTo(InputModel, {
         foreignKey: "input_id",
-        as: "inputs",
+        as: "input",
         onDelete: "CASCADE"
     });
 

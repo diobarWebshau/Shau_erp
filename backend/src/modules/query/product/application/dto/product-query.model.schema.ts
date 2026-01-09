@@ -8,7 +8,7 @@ import z from "zod"
 const productQueryOrchestratorSchema = productOrchestratorResponseSchema;
 
 const productQueryFullResponseSchema = productResponseSchema.extend({
-    products_inputs: z.array(ProductInputReponseSchema),
+    product_inputs: z.array(ProductInputReponseSchema),
     product_processes: z.array(ProductProcessReponseSchema),
     product_discount_ranges: z.array(ProductDiscountRangeReponseSchema),
 });

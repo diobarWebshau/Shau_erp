@@ -4,36 +4,36 @@ const productDiscountRangesData = [
     // Producto 1 con dos rangos de descuento
     {
         product_id: 1,
-        unit_price: 99.99,
-        min_qty: 10,
-        max_qty: 100
+        unit_price: "99.99",
+        min_qty: "10",
+        max_qty: "100"
     },
     {
         product_id: 1,
-        unit_price: 90.00,  
-        min_qty: 101,
-        max_qty: 200
+        unit_price: "90.00",  
+        min_qty: "101",
+        max_qty: "200"
     },
 
     // Producto 2 con dos rangos de descuento
     {
         product_id: 2,
-        unit_price: 79.99,
-        min_qty: 10,
-        max_qty: 200
+        unit_price: "79.99",
+        min_qty: "10",
+        max_qty: "200"
     },
     {
         product_id: 2,
-        unit_price: 70.00,  
-        min_qty: 201,
-        max_qty: 500
+        unit_price: "70.00",  
+        min_qty: "201",
+        max_qty: "500"
     },
     // Producto 3 con un solo rango de descuento
     {
         product_id: 3,
-        unit_price: 120.50,
-        min_qty: 10,
-        max_qty: 50
+        unit_price: "120.50",
+        min_qty: "10",
+        max_qty: "50"
     }
 ];
 

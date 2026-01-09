@@ -7,7 +7,7 @@ declare const getAllPurchasedOrderSchema: z.ZodObject<{
     response: z.ZodArray<z.ZodObject<{
         order_code: z.ZodString;
         delivery_date: z.ZodNullable<z.ZodString>;
-        total_price: z.ZodNumber;
+        total_price: z.ZodString;
         status: z.ZodString;
         client_id: z.ZodNumber;
         company_name: z.ZodString;
@@ -47,7 +47,7 @@ declare const getByIdPurchasedOrderSchema: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         order_code: z.ZodString;
         delivery_date: z.ZodNullable<z.ZodString>;
-        total_price: z.ZodNumber;
+        total_price: z.ZodString;
         status: z.ZodString;
         client_id: z.ZodNumber;
         company_name: z.ZodString;
@@ -84,7 +84,7 @@ declare const createPurchasedOrderSchema: z.ZodObject<{
     body: z.ZodObject<{
         order_code: z.ZodString;
         delivery_date: z.ZodNullable<z.ZodString>;
-        total_price: z.ZodNumber;
+        total_price: z.ZodString;
         status: z.ZodString;
         client_id: z.ZodNumber;
         company_name: z.ZodString;
@@ -114,7 +114,7 @@ declare const createPurchasedOrderSchema: z.ZodObject<{
     response: z.ZodObject<{
         order_code: z.ZodString;
         delivery_date: z.ZodNullable<z.ZodString>;
-        total_price: z.ZodNumber;
+        total_price: z.ZodString;
         status: z.ZodString;
         client_id: z.ZodNumber;
         company_name: z.ZodString;
@@ -153,7 +153,7 @@ declare const updatePurchasedOrderSchema: z.ZodObject<{
     body: z.ZodObject<{
         order_code: z.ZodOptional<z.ZodString>;
         delivery_date: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-        total_price: z.ZodOptional<z.ZodNumber>;
+        total_price: z.ZodOptional<z.ZodString>;
         status: z.ZodOptional<z.ZodString>;
         client_id: z.ZodOptional<z.ZodNumber>;
         company_name: z.ZodOptional<z.ZodString>;
@@ -183,7 +183,7 @@ declare const updatePurchasedOrderSchema: z.ZodObject<{
     response: z.ZodObject<{
         order_code: z.ZodString;
         delivery_date: z.ZodNullable<z.ZodString>;
-        total_price: z.ZodNumber;
+        total_price: z.ZodString;
         status: z.ZodString;
         client_id: z.ZodNumber;
         company_name: z.ZodString;

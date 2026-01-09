@@ -1,23 +1,49 @@
+import { PurchasedOrderProductAttributes, PurchasedOrderProductCreateAttributes, PurchasedOrderProductModel, PurchasedOrderProductUpdateAttributes } from "../orm/purchased-order-product.orm";
 import { PurchasedOrderProductCreateProps, PurchasedOrderProductProps, PurchasedOrderProductUpdateProps } from "../../domain/purchased-order-product.types";
 import { IPurchasedOrderProductRepository } from "../../domain/purchased-order-product.respository.interface";
-import { PurchasedOrderProductModel } from "../orm/purchased-order-product.orm";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 import HttpError from "@shared/errors/http/http-error";
 import { Transaction } from "sequelize";
 
-const mapModelToDomain = (model: PurchasedOrderProductModel): PurchasedOrderProductProps => {
-    const json: PurchasedOrderProductProps = model.toJSON();
+const mapPopModelToDomain = (model: PurchasedOrderProductModel): PurchasedOrderProductProps => {
+    const popAttr: PurchasedOrderProductAttributes = model.toJSON();
     return {
-        ...json,
-        original_price: Number(json.original_price),
-        recorded_price: Number(json.original_price),
-        qty: Number(json.qty)
+        ...popAttr,
+        original_price: DecimalVO.from(popAttr.original_price),
+        recorded_price: DecimalVO.from(popAttr.original_price),
+        qty: DecimalVO.from(popAttr.qty)
     };
+};
+
+const mapPopCreateDomainToModel = (data: PurchasedOrderProductCreateProps): PurchasedOrderProductCreateAttributes => {
+    return ({
+        ...data,
+        original_price: data.original_price.toString(),
+        qty: data.qty.toString(),
+        recorded_price: data.recorded_price.toString(),
+    });
+};
+
+const mapPopUpdateDomainToModel = (data: PurchasedOrderProductUpdateProps): PurchasedOrderProductUpdateAttributes => {
+    const { original_price, qty, recorded_price, ...popRest } = data;
+    return ({
+        ...popRest,
+        ...(
+            original_price !== undefined ? { original_price: original_price.toString() } : {}
+        ),
+        ...(
+            qty !== undefined ? { qty: qty.toString() } : {}
+        ),
+        ...(
+            recorded_price !== undefined ? { recorded_price: recorded_price.toString() } : {}
+        )
+    });
 };
 
 export class PurchasedOrderProductRepository implements IPurchasedOrderProductRepository {
     findAll = async (tx?: Transaction): Promise<PurchasedOrderProductProps[]> => {
         const purchasedOrderProductResponses: PurchasedOrderProductModel[] = await PurchasedOrderProductModel.findAll({ transaction: tx });
-        const purchasedOrderProductResponseFormatted: PurchasedOrderProductProps[] = purchasedOrderProductResponses.map(mapModelToDomain);
+        const purchasedOrderProductResponseFormatted: PurchasedOrderProductProps[] = purchasedOrderProductResponses.map(mapPopModelToDomain);
         return purchasedOrderProductResponseFormatted;
     }
     findById = async (id: number, tx?: Transaction): Promise<PurchasedOrderProductProps | null> => {
@@ -25,7 +51,7 @@ export class PurchasedOrderProductRepository implements IPurchasedOrderProductRe
             transaction: tx
         });
         if (!purchasedOrderProductResponse) return null;
-        const purchasedOrderProductResponseFormatted: PurchasedOrderProductProps = mapModelToDomain(purchasedOrderProductResponse);
+        const purchasedOrderProductResponseFormatted: PurchasedOrderProductProps = mapPopModelToDomain(purchasedOrderProductResponse);
         return purchasedOrderProductResponseFormatted;
 
     }
@@ -36,14 +62,14 @@ export class PurchasedOrderProductRepository implements IPurchasedOrderProductRe
             },
             transaction: tx
         });
-        const purchasedOrderProductResponseFormatted: PurchasedOrderProductProps[] = purchasedOrderProductResponses.map(mapModelToDomain);
+        const purchasedOrderProductResponseFormatted: PurchasedOrderProductProps[] = purchasedOrderProductResponses.map(mapPopModelToDomain);
         return purchasedOrderProductResponseFormatted;
     }
     create = async (data: PurchasedOrderProductCreateProps, tx?: Transaction): Promise<PurchasedOrderProductProps> => {
-        const purchasedOrderProductResponse: PurchasedOrderProductModel = await PurchasedOrderProductModel.create(data, {
+        const purchasedOrderProductResponse: PurchasedOrderProductModel = await PurchasedOrderProductModel.create(mapPopCreateDomainToModel(data), {
             transaction: tx
         });
-        const purchasedOrderResponseFormatted: PurchasedOrderProductProps = mapModelToDomain(purchasedOrderProductResponse);
+        const purchasedOrderResponseFormatted: PurchasedOrderProductProps = mapPopModelToDomain(purchasedOrderProductResponse);
         return purchasedOrderResponseFormatted;
     }
     update = async (id: number, data: PurchasedOrderProductUpdateProps, tx?: Transaction): Promise<PurchasedOrderProductProps> => {
@@ -53,7 +79,10 @@ export class PurchasedOrderProductRepository implements IPurchasedOrderProductRe
         if (!existing) throw new HttpError(404,
             "El producto de la orden de compra que se desea actualizar no fue posible encontrarlo."
         );
-        await PurchasedOrderProductModel.update(data, {
+        const existingDomain = mapPopModelToDomain(existing);
+        const updateData = mapPopUpdateDomainToModel(data);
+        if (!Object.keys(updateData).length) return existingDomain;
+        await PurchasedOrderProductModel.update(updateData, {
             where: { id },
             transaction: tx,
         });
@@ -61,7 +90,7 @@ export class PurchasedOrderProductRepository implements IPurchasedOrderProductRe
             transaction: tx,
         });
         if (!updated) throw new HttpError(500, "No fue posible actualizar el producto de la orden de compra.");
-        return mapModelToDomain(updated);
+        return mapPopModelToDomain(updated);
 
     }
     delete = async (id: number, tx?: Transaction): Promise<void> => {

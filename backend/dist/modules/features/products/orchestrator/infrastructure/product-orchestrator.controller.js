@@ -8,10 +8,11 @@ const product_discount_range_repository_1 = require("../../assigments/product-di
 const product_input_process_repository_1 = require("../../assigments/product-input-process/infrastructure/repository/product-input-process.repository");
 const product_process_repository_1 = require("../../assigments/product-process/infrastructure/repository/product-process.repository");
 const product_input_repository_1 = require("../../assigments/product-input/infrastructure/repository/product-input.repository");
-const product_query_repository_1 = require("../../../../query/product/infrastructure/product-query.repository");
-const producto_repository_1 = require("@modules/core/product/infrastructure/repository/producto.repository");
+const produt_query_controller_1 = require("@modules/query/product/infrastructure/http/produt-query.controller");
+const product_query_repository_1 = require("@modules/query/product/infrastructure/repository/product-query.repository");
 const update_product_orchestrator_usecase_1 = require("../application/use-cases/update-product-orchestrator.usecase");
-const create_product_orchestrator_usecase_1 = require("../application/create-product-orchestrator.usecase");
+const create_product_orchestrator_usecase_1 = require("../application/use-cases/create-product-orchestrator.usecase");
+const producto_repository_1 = require("@modules/core/product/infrastructure/repository/producto.repository");
 const process_repository_1 = __importDefault(require("@modules/core/process/infrastructure/repository/process.repository"));
 const input_repository_1 = require("@modules/core/input/infrastructure/repository/input.repository");
 const local_file_cleanup_service_1 = require("@shared/files/local-file-cleanup.service");
@@ -72,8 +73,9 @@ class ProductOrchestratorController {
                 } : {})
             },
         };
-        const result = await this.createProductOrchestrator.execute(updatePayload);
-        return res.status(201).send(result);
+        const productOrchestratorResponse = await this.createProductOrchestrator.execute(updatePayload);
+        const productOrchestratorResult = await (0, produt_query_controller_1.mapProductQueryOrchestratorDomainToDto)(productOrchestratorResponse);
+        return res.status(201).send(productOrchestratorResult);
     };
     update = async (req, res) => {
         const { payload, photo } = req.body;
@@ -87,8 +89,9 @@ class ProductOrchestratorController {
                 } : {})
             },
         };
-        const result = await this.updateProductOrchestrator.execute(Number(id), updatePayload);
-        return res.status(201).send(result);
+        const productOrchestratorResponse = await this.updateProductOrchestrator.execute(Number(id), updatePayload);
+        const productOrchestratorResult = await (0, produt_query_controller_1.mapProductQueryOrchestratorDomainToDto)(productOrchestratorResponse);
+        return res.status(200).send(productOrchestratorResult);
     };
 }
 exports.ProductOrchestratorController = ProductOrchestratorController;

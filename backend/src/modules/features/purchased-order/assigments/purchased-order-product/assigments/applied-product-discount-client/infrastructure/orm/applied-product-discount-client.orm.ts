@@ -5,7 +5,7 @@ interface AppliedProductDiscountClientAttributes {
     id: number,
     purchase_order_product_id: number,
     product_discount_client_id: number,
-    discount_percentage: number,
+    discount_percentage: string,
     created_at: Date,
     updated_at: Date
 }
@@ -14,6 +14,14 @@ type AppliedProductDiscountClientCreateAttributes = Omit<AppliedProductDiscountC
 type AppliedProductDiscountClientUpdateAttributes = Partial<AppliedProductDiscountClientAttributes>;
 
 class AppliedProductDiscountClientModel extends Model<AppliedProductDiscountClientAttributes, AppliedProductDiscountClientCreateAttributes> {
+
+    declare id: number;
+    declare purchase_order_product_id: number;
+    declare product_discount_client_id: number;
+    declare discount_percentage: string;
+    declare created_at: Date;
+    declare updated_at: Date;
+
     static getEditableFields = (): (keyof AppliedProductDiscountClientAttributes)[] => [
         "purchase_order_product_id",
         "product_discount_client_id",

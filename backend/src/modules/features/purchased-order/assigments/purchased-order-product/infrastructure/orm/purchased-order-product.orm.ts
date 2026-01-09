@@ -5,10 +5,10 @@ interface PurchasedOrderProductAttributes {
     id: number,
     purchase_order_id: number
     product_id: number,
-    qty: number,
+    qty: string,
     product_name: string,
-    recorded_price: number,
-    original_price: number,
+    recorded_price: string,
+    original_price: string,
     price_edit_source: 'manual' | 'range' | null,
     status: string,
 };
@@ -18,6 +18,17 @@ type PurchasedOrderProductCreateAttributes = Omit<PurchasedOrderProductAttribute
 type PurchasedOrderProductUpdateAttributes = Partial<PurchasedOrderProductCreateAttributes>;
 
 class PurchasedOrderProductModel extends Model<PurchasedOrderProductAttributes, PurchasedOrderProductCreateAttributes> {
+
+    declare id: number;
+    declare purchase_order_id: number;
+    declare product_id: number;
+    declare qty: string;
+    declare product_name: string;
+    declare recorded_price: string;
+    declare original_price: string;
+    declare price_edit_source: 'manual' | 'range' | null;
+    declare status: string;
+
     static getEditableFields = (): (keyof PurchasedOrderProductAttributes)[] => [
         "purchase_order_id", "qty", "status", "recorded_price", "price_edit_source"
     ];
@@ -37,18 +48,10 @@ PurchasedOrderProductModel.init(
         },
         purchase_order_id: {
             type: DataTypes.INTEGER,
-            references: {
-                model: "purchased_orders",
-                key: "id"
-            },
             allowNull: true
         },
         product_id: {
             type: DataTypes.INTEGER,
-            references: {
-                model: "products",
-                key: "id"
-            },
             allowNull: true
         },
         qty: {

@@ -4,10 +4,10 @@ import { IProductProcessRepository } from "../../../assigments/product-process/d
 import { IProductInputRepository } from "../../../assigments/product-input/domain/product-input.repository.interface";
 import { IProductQueryRepository } from "../../../../../query/product/domain/product-query.repository";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { ProductOrchestrator } from "../../domain/product-orchestrator.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { ProductOrchestratorCreateDto } from "../dto/product-orchestrator.model.schema";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
+import { ProductOrchestrator } from "../../domain/product-orchestrator.types";
 import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
 interface CreateProductOrchestratorUseCaseProps {
     productRepo: IProductRepository;

@@ -7,27 +7,27 @@ const productsInputsProcesses = [
         product_id: 1,
         product_input_id: 1,
         product_process_id: 1,
-        qty: 1
+        qty: "1"
     },
     // process 2
     {
         product_id: 1,
         product_input_id: 2,
         product_process_id: 2,
-        qty: 2
+        qty: "2"
     },
     // process 3
     {
         product_id: 1,
         product_input_id: 1,
         product_process_id: 3,
-        qty: 1
+        qty: "1"
     },
     {
         product_id: 1,
         product_input_id: 2,
         product_process_id: 3,
-        qty: 1
+        qty: "1"
     },
     // *- Producto B
     // process 1
@@ -35,14 +35,14 @@ const productsInputsProcesses = [
         product_id: 2,
         product_input_id: 3,
         product_process_id: 4,
-        qty: 1
+        qty: "1"
     },
     // process 2
     {
         product_id: 2,
         product_input_id: 3,
         product_process_id: 5,
-        qty: 1
+        qty: "1"
     },
 ];
 

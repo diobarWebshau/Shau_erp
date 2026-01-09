@@ -24,18 +24,10 @@ PurchasedOrderProductModel.init({
     },
     purchase_order_id: {
         type: sequelize_2.DataTypes.INTEGER,
-        references: {
-            model: "purchased_orders",
-            key: "id"
-        },
         allowNull: true
     },
     product_id: {
         type: sequelize_2.DataTypes.INTEGER,
-        references: {
-            model: "products",
-            key: "id"
-        },
         allowNull: true
     },
     qty: {

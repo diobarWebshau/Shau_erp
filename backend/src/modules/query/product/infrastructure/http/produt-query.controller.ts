@@ -1,14 +1,13 @@
 
 import { GetAllProductFullQuerySchema, GetAllProductOrchestratorSchema, GetByIdProductFullQuerySchema, GetByIdProductOrchestratorSchema } from "../../application/dto/product-query.endpoint.schema";
+import { ProductOrchestrator, ProductOrchestratorResponseProps } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
 import { GetByIdProductsQueryOrchestratorUseCase } from "../../application/usecase/get-by-id-product-query-orchestrator.usecase";
 import { GetAllProductsQueryOrchestratorUseCase } from "../../application/usecase/get-all-product-query-orchestrator.usecase";
-import { ProductOrchestrator, ProductOrchestratorResponse, ProductOrchestratorResponseProps } from "@modules/features/products/orchestrator/domain/product-orchestrator.types";
 import { GetByIdProductsFullQueryUseCase } from "../../application/usecase/get-by-id-product-full-query.usecase";
-import { mapProductQueryToCriteria } from "@modules/core/product/infrastructure/http/product-query-mapper";
 import { GetAllProductsFullQueryUseCase } from "../../application/usecase/get-all-product-full-query.usecase";
+import { ProductFullQueryResult, ProductFullQueryResultDto } from "../../domain/product-query.type";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
-import { ProductFullQueryResult, ProductFullQueryResultDto, ProductSearchCriteria } from "../../domain/product-query.type";
-import { ProductQueryRepository } from "../product-query.repository";
+import { ProductQueryRepository } from "../repository/product-query.repository";
 import ImageHandler from "@src/helpers/imageHandlerClass";
 /**
  * Controller (Infrastructure / HTTP)
@@ -60,13 +59,13 @@ import ImageHandler from "@src/helpers/imageHandlerClass";
  *   de forma coherente hacia productes externos.
  */
 
-const mapProductQueryOrchestratorDomainToDto = async (
+export const mapProductQueryOrchestratorDomainToDto = async (
     data: ProductOrchestrator
 ): Promise<ProductOrchestratorResponseProps> => {
 
     const {
         product,
-        products_inputs,
+        product_inputs,
         product_processes,
         product_discount_ranges
     } = data;
@@ -89,8 +88,118 @@ const mapProductQueryOrchestratorDomainToDto = async (
         // ==================================================
         // 🔹 PRODUCT INPUTS
         // ==================================================
-        products_inputs: await Promise.all(
-            products_inputs.map(async (pi) => ({
+        product_inputs: await Promise.all(
+            product_inputs.map(async (pi) => ({
+                ...pi,
+                equivalence: pi.equivalence.toString(),
+
+                product: {
+                    ...pi.product,
+                    sale_price: pi.product.sale_price?.toString() ?? null,
+                    production_cost: pi.product.production_cost?.toString() ?? null,
+                    created_at: pi.product.created_at.toISOString(),
+                    updated_at: pi.product.updated_at.toISOString(),
+                    photo: pi.product.photo
+                        ? await ImageHandler.convertToBase64(pi.product.photo)
+                        : null,
+                },
+
+                input: {
+                    ...pi.input,
+                    unit_cost: pi.input.unit_cost?.toString() ?? null,
+                    created_at: pi.input.created_at.toISOString(),
+                    updated_at: pi.input.updated_at.toISOString(),
+                },
+            }))
+        ),
+
+        // ==================================================
+        // 🔹 PRODUCT PROCESSES
+        // ==================================================
+        product_processes: await Promise.all(
+            product_processes.map(async (pp) => ({
+                ...pp,
+                sort_order: pp.sort_order,
+
+                product: {
+                    ...pp.product,
+                    sale_price: pp.product.sale_price?.toString() ?? null,
+                    production_cost: pp.product.production_cost?.toString() ?? null,
+                    created_at: pp.product.created_at.toISOString(),
+                    updated_at: pp.product.updated_at.toISOString(),
+                    photo: pp.product.photo
+                        ? await ImageHandler.convertToBase64(pp.product.photo)
+                        : null,
+                },
+
+                process: {
+                    ...pp.process,
+                    created_at: pp.process.created_at.toISOString(),
+                    updated_at: pp.process.updated_at.toISOString(),
+                },
+
+                product_input_process: pp.product_input_process.map((pip) => ({
+                    ...pip,
+                    qty: pip.qty.toString(),
+                })),
+            }))
+        ),
+
+        // ==================================================
+        // 🔹 PRODUCT DISCOUNT RANGES
+        // ==================================================
+        product_discount_ranges: await Promise.all(
+            product_discount_ranges.map(async (pdr) => ({
+                ...pdr,
+                max_qty: pdr.max_qty.toString(),
+                min_qty: pdr.min_qty.toString(),
+                unit_price: pdr.unit_price.toString(),
+                created_at: pdr.created_at.toISOString(),
+                updated_at: pdr.updated_at.toISOString(),
+
+                product: {
+                    ...pdr.product,
+                    sale_price: pdr.product.sale_price?.toString() ?? null,
+                    production_cost: pdr.product.production_cost?.toString() ?? null,
+                    created_at: pdr.product.created_at.toISOString(),
+                    updated_at: pdr.product.updated_at.toISOString(),
+                    photo: pdr.product.photo
+                        ? await ImageHandler.convertToBase64(pdr.product.photo)
+                        : null,
+                },
+            }))
+        ),
+    };
+};
+
+
+export const mapProductQueryFullDomainToDto = async (data: ProductFullQueryResult): Promise<ProductFullQueryResultDto> => {
+
+    const {
+        product_inputs,
+        product_processes,
+        product_discount_ranges,
+        ...productRest
+    } = data;
+
+    return {
+        // ==================================================
+        // 🔹 PRODUCT
+        // ==================================================
+        ...productRest,
+        sale_price: productRest.sale_price?.toString() ?? null,
+        production_cost: productRest.production_cost?.toString() ?? null,
+        created_at: productRest.created_at.toISOString(),
+        updated_at: productRest.updated_at.toISOString(),
+        photo: productRest.photo
+            ? await ImageHandler.convertToBase64(productRest.photo)
+            : null,
+
+        // ==================================================
+        // 🔹 PRODUCT INPUTS
+        // ==================================================
+        product_inputs: await Promise.all(
+            product_inputs.map(async (pi) => ({
                 ...pi,
                 equivalence: pi.equivalence.toString(),
 
@@ -191,8 +300,7 @@ export class ProductQueryController {
     };
 
     getAllProductOrchestrator = async (req: ApiRequest<GetAllProductOrchestratorSchema>, res: ApiResponse<GetAllProductOrchestratorSchema>) => {
-        const queryRequest: GetAllProductOrchestratorSchema["query"] = req.query;
-        const query: ProductSearchCriteria = mapProductQueryToCriteria(queryRequest);
+        const query: GetAllProductOrchestratorSchema["query"] = req.query;
         const productQueryResponse: ProductOrchestrator[] = await this.getAllProductOrchestatorUseCase.execute(query);
         const productQueryResult = await Promise.all(productQueryResponse.map(mapProductQueryOrchestratorDomainToDto));
         return res.status(200).json(productQueryResult);
@@ -202,22 +310,23 @@ export class ProductQueryController {
         const { id }: GetByIdProductOrchestratorSchema["params"] = req.params;
         const productQueryResponse: ProductOrchestrator | null = await this.getByIdProductOrchestratorUseCase.execute(Number(id));
         if (!productQueryResponse) return res.status(404).json(null);
-        const productQueryResult = await mapProductQueryOrchestratorDomainToDto(productQueryResponse)
+        const productQueryResult: ProductOrchestratorResponseProps = await mapProductQueryOrchestratorDomainToDto(productQueryResponse)
         return res.status(200).json(productQueryResult);
     };
 
     getAllProductFullQuery = async (req: ApiRequest<GetAllProductFullQuerySchema>, res: ApiResponse<GetAllProductFullQuerySchema>) => {
-        const queryRequest: GetAllProductOrchestratorSchema["query"] = req.query;
-        const query: ProductSearchCriteria = mapProductQueryToCriteria(queryRequest);
+        const query: GetAllProductOrchestratorSchema["query"] = req.query;
         const productQueryResponse: ProductFullQueryResult[] = await this.getAllProductFullUseCase.execute(query);
-        return res.status(200).json(productQueryResponse);
+        const productQueryResult: ProductFullQueryResultDto[] = await Promise.all(productQueryResponse.map(mapProductQueryFullDomainToDto));
+        return res.status(200).json(productQueryResult);
     };
 
     getByIdProductFullQuery = async (req: ApiRequest<GetByIdProductFullQuerySchema>, res: ApiResponse<GetByIdProductFullQuerySchema>) => {
         const { id }: GetByIdProductFullQuerySchema["params"] = req.params;
         const productQueryResponse: ProductFullQueryResult | null = await this.GetByIdProductFullUseCase.execute(Number(id));
         if (!productQueryResponse) return res.status(404).json(null);
-        return res.status(200).json(product);
+        const productResult: ProductFullQueryResultDto = await mapProductQueryFullDomainToDto(productQueryResponse);
+        return res.status(200).json(productResult);
     };
 
 };

@@ -1,3 +1,4 @@
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 interface PurchasedOrderProps {
     id: number;
     order_code: string;
@@ -27,7 +28,7 @@ interface PurchasedOrderProps {
     shipping_state: string;
     shipping_country: string;
     shipping_zip_code: number;
-    total_price: number;
+    total_price: DecimalVO;
     updated_at: Date;
     created_at: Date;
 }

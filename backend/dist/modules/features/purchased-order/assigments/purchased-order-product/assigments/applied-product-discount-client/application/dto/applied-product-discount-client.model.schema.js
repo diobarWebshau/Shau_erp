@@ -4,11 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appliedProductDiscountClientResponseSchema = exports.appliedProductDiscountClientUpdateSchema = exports.appliedProductDiscountClientCreateSchema = void 0;
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
 const zod_1 = __importDefault(require("zod"));
 const appliedProductDiscountClientCreateSchema = zod_1.default.object({
     purchase_order_product_id: zod_1.default.number(),
     product_discount_client_id: zod_1.default.number(),
-    discount_percentage: zod_1.default.number(),
+    discount_percentage: decimal_schema_1.decimalString,
 });
 exports.appliedProductDiscountClientCreateSchema = appliedProductDiscountClientCreateSchema;
 const appliedProductDiscountClientUpdateSchema = appliedProductDiscountClientCreateSchema.partial();

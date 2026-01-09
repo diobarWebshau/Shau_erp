@@ -1,9 +1,9 @@
-import { AppliedProductDiscountRangeResponseSchemaDto } from "./../../application/dto/applied-product-discount-range.model.schema";
+import { AppliedProductDiscountRangeProps } from "./../../domain/applied-product-discount-range.types";
 import { IAppliedProductDiscountRangeRepository } from "../../domain/applied-product-discount-range.repository.interface";
-import { AppliedProductDiscountRangeCreateProps } from "./../../domain/applied-product-discount-range.types";
+import { AppliedProductDiscountRangeCreateDto } from "./../../application/dto/applied-product-discount-range.model.schema";
 import { Transaction } from "sequelize";
 export declare class CreateAppliedProductDiscountRangeUseCase {
     private readonly appliedProductDiscountRangeRepo;
     constructor(repo: IAppliedProductDiscountRangeRepository);
-    execute: (data: AppliedProductDiscountRangeCreateProps, tx?: Transaction) => Promise<AppliedProductDiscountRangeResponseSchemaDto>;
+    execute: (data: AppliedProductDiscountRangeCreateDto, tx?: Transaction) => Promise<AppliedProductDiscountRangeProps>;
 }

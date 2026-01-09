@@ -2,7 +2,7 @@ import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-re
 import { CreateAppliedProductDiscountClient, DeleteAppliedProductDiscountClient, GetAllAppliedProductDiscountClient, GetByIdAppliedProductDiscountClient, GetByPopIdAppliedProductDiscountClient, UpdateAppliedProductDiscountClient } from "./../../application/dto/applied-product-discount-client.endpoint.schema";
 export declare class AppliedProductDiscountClientController {
     private readonly appliedProductDiscountClientRepo;
-    private readonly createAppliedProductDiscountClientRepo;
+    private readonly createAppliedProductDiscountClientUseCase;
     private readonly deleteAppliedProductDiscountClientUseCase;
     private readonly updateAppliedProductDiscountClientUseCase;
     private readonly getAllAppliedProductDiscountClientUseCase;

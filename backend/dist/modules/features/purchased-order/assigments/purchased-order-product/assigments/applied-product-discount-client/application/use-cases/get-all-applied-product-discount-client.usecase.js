@@ -9,12 +9,7 @@ class GetAllAppliedProductDiscountClientUseCase {
     ;
     execute = async (tx) => {
         const appliedProductDiscountClientResponse = await this.appliedProductDiscountClientRepo.findAll(tx);
-        const appliedProductDiscountClientResponseFormatted = appliedProductDiscountClientResponse.map((apdc) => ({
-            ...apdc,
-            updated_at: apdc.updated_at.toISOString(),
-            created_at: apdc.created_at.toISOString()
-        }));
-        return appliedProductDiscountClientResponseFormatted;
+        return appliedProductDiscountClientResponse;
     };
 }
 exports.GetAllAppliedProductDiscountClientUseCase = GetAllAppliedProductDiscountClientUseCase;

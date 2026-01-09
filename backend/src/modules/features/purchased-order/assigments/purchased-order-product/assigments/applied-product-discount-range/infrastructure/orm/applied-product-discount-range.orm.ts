@@ -5,9 +5,9 @@ interface AppliedProductDiscountRangeAttributes {
     id: number,
     purchase_order_product_id: number,
     product_discount_range_id: number,
-    unit_discount: number,
-    min_qty: number,
-    max_qty: number,
+    unit_discount: string,
+    min_qty: string,
+    max_qty: string,
     created_at: Date,
     updated_at: Date
 };
@@ -16,6 +16,16 @@ type AppliedProductDiscountRangeCreateAttributes = Omit<AppliedProductDiscountRa
 type AppliedProductDiscountRangeUpdateAttributes = Partial<AppliedProductDiscountRangeCreateAttributes>;
 
 class AppliedProductDiscountRangeModel extends Model<AppliedProductDiscountRangeAttributes, AppliedProductDiscountRangeCreateAttributes> {
+
+    declare id: number;
+    declare purchase_order_product_id: number;
+    declare product_discount_range_id: number;
+    declare unit_discount: string;
+    declare min_qty: string;
+    declare max_qty: string;
+    declare created_at: Date;
+    declare updated_at: Date
+
     static getEditableFields = (): (keyof AppliedProductDiscountRangeAttributes)[] => [
         "product_discount_range_id",
         "purchase_order_product_id",

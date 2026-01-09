@@ -14,12 +14,11 @@ import { IProductQueryRepository } from "../../../../../query/product/domain/pro
 import { ProcessCreateDto } from "@src/modules/core/process/application/dto/process.model.schema";
 import { ProductInputProps } from "../../../assigments/product-input/domain/product-input.types";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { ProductOrchestrator, ProductOrchestratorResponseProps } from "../../domain/product-orchestrator.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { ProductOrchestratorCreateDto } from "../dto/product-orchestrator.model.schema";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
 import { ProductProps } from "@src/modules/core/product/domain/product.types";
-import { ProcessProps } from "@src/modules/core/process/domain/process.types";
+import { ProductOrchestrator } from "../../domain/product-orchestrator.types";
 import { IFileCleanupPort } from "@src/shared/files/file-cleanup.port";
 import { sequelize } from "@src/config/mysql/sequelize";
 import HttpError from "@shared/errors/http/http-error";
@@ -102,11 +101,11 @@ export class CreateProductOrchestratorUseCase {
         let createdProductId: number | null = null;
 
         try {
-            const { product, product_discount_ranges, product_processes, products_inputs } = data;
+            const { product, product_discount_ranges, product_processes, product_inputs } = data;
 
             // ✅ “Camino update”: tipa los arrays safe con el tipo EXACTO del DTO
-            const safeProductsInputs: NonNullable<ProductOrchestratorCreateDto["products_inputs"]> =
-                products_inputs ?? [];
+            const safeProductsInputs: NonNullable<ProductOrchestratorCreateDto["product_inputs"]> =
+                product_inputs ?? [];
 
             const safeProductProcesses: NonNullable<ProductOrchestratorCreateDto["product_processes"]> =
                 product_processes ?? [];
@@ -174,7 +173,7 @@ export class CreateProductOrchestratorUseCase {
 
                     if (product_input_process?.length) {
                         for (const pip of product_input_process) {
-                            const productInputResponse: ProductInputProps | null =
+                            const productInputResponse =
                                 await this.getProductInputByProductInputUseCase.execute(
                                     productCreateResponse.id,
                                     pip.product_input.input_id,
@@ -206,7 +205,7 @@ export class CreateProductOrchestratorUseCase {
                     const { product_input_process, process, sort_order } = pp;
 
                     // ✅ sin any: process existe por el Extract + type guard
-                    const processCreateResponse: ProcessProps = await this.createProcessUseCase.execute(process, tx);
+                    const processCreateResponse = await this.createProcessUseCase.execute(process, tx);
 
                     const productProcessCreateResponse = await this.createProductProcessUseCase.execute(
                         {
@@ -262,7 +261,7 @@ export class CreateProductOrchestratorUseCase {
             // --------------------------------------------------
             // |🔹 COMMIT + RESPONSE                            |
             // --------------------------------------------------
-            const productOrchestrator: ProductOrchestratorResponseProps | null = await this.getProductOrchestrator.execute(productCreateResponse.id, tx);
+            const productOrchestrator: ProductOrchestrator | null = await this.getProductOrchestrator.execute(productCreateResponse.id, tx);
 
             if (!productOrchestrator) {
                 throw new HttpError(500, "No se pudo acceder al producto despues de haber sido creado.");

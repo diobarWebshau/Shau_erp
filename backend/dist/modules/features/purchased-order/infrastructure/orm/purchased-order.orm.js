@@ -42,7 +42,7 @@ PurchasedOrderModel.init({
     },
     delivery_date: {
         type: sequelize_2.DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     status: {
         type: sequelize_2.DataTypes.STRING(100),

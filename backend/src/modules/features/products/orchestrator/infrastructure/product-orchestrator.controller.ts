@@ -3,15 +3,16 @@ import { ProductInputProcessRepository } from "../../assigments/product-input-pr
 import { CreateProductOrchestratorSchema, UpdateProductOrchestratorSchema } from "../application/dto/product-orchestrator.endpoint.schema";
 import { ProductProcessRepository } from "../../assigments/product-process/infrastructure/repository/product-process.repository";
 import { ProductInputRepository } from "../../assigments/product-input/infrastructure/repository/product-input.repository";
-import { ProductQueryRepository } from "../../../../query/product/infrastructure/product-query.repository";
-import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
+import { mapProductQueryOrchestratorDomainToDto } from "@modules/query/product/infrastructure/http/produt-query.controller"
+import { ProductQueryRepository } from "@modules/query/product/infrastructure/repository/product-query.repository";
 import { UpdateProductOrchestratorUseCase } from "../application/use-cases/update-product-orchestrator.usecase";
-import { CreateProductOrchestratorUseCase } from "../application/create-product-orchestrator.usecase";
+import { CreateProductOrchestratorUseCase } from "../application/use-cases/create-product-orchestrator.usecase";
+import { ProductRepository } from "@modules/core/product/infrastructure/repository/producto.repository";
 import ProcessRepository from "@modules/core/process/infrastructure/repository/process.repository";
 import { InputRepository } from "@modules/core/input/infrastructure/repository/input.repository";
 import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-request.interface";
-import { ProductOrchestratorResponseProps } from "../domain/product-orchestrator.types";
 import { LocalFileCleanupService } from "@shared/files/local-file-cleanup.service";
+import { ProductOrchestrator } from "../domain/product-orchestrator.types";
 
 export class ProductOrchestratorController {
     private readonly createProductOrchestrator: CreateProductOrchestratorUseCase;
@@ -73,8 +74,9 @@ export class ProductOrchestratorController {
                 )
             },
         }
-        const result: ProductOrchestratorResponse = await this.createProductOrchestrator.execute(updatePayload);
-        return res.status(201).send(result);
+        const productOrchestratorResponse: ProductOrchestrator = await this.createProductOrchestrator.execute(updatePayload);
+        const productOrchestratorResult = await mapProductQueryOrchestratorDomainToDto(productOrchestratorResponse);
+        return res.status(201).send(productOrchestratorResult);
     };
 
     update = async (req: ApiRequest<UpdateProductOrchestratorSchema>, res: ApiResponse<UpdateProductOrchestratorSchema>) => {
@@ -91,8 +93,9 @@ export class ProductOrchestratorController {
                 )
             },
         }
-        const result: ProductOrchestratorResponse = await this.updateProductOrchestrator.execute(Number(id), updatePayload);
-        return res.status(201).send(result);
+        const productOrchestratorResponse: ProductOrchestrator = await this.updateProductOrchestrator.execute(Number(id), updatePayload);
+        const productOrchestratorResult = await mapProductQueryOrchestratorDomainToDto(productOrchestratorResponse);
+        return res.status(200).send(productOrchestratorResult);
     }
 };
 

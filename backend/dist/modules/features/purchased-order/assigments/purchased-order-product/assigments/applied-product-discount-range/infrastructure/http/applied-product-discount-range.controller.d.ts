@@ -2,7 +2,7 @@ import { ApiRequest, ApiResponse } from "@shared/typed-request-endpoint/typed-re
 import { CreateAppliedProductDiscountRangeSchema, DeleteAppliedProductDiscountRangeSchema, GetAllAppliedProductDiscountRangeSchema, GetByIdAppliedProductDiscountRangeSchema, GetByPopAppliedProductDiscountRangeSchema, UpdateAppliedProductDiscountRangeSchema } from "./../../application/dto/applied-product-discount-range.endpoint.schema";
 export declare class AppliedProductDiscountRangeController {
     private readonly appliedProductDiscountRangeRepo;
-    private readonly createAppliedProductDiscountRangeRepo;
+    private readonly createAppliedProductDiscountRangeUse;
     private readonly deleteAppliedProductDiscountRangeUseCase;
     private readonly updateAppliedProductDiscountRangeUseCase;
     private readonly getAllAppliedProductDiscountRangeUseCase;

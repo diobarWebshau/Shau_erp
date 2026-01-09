@@ -50,12 +50,12 @@ class GetByIdProductsQueryOrchestratorUseCase {
         const productRecord = await this.repo.getByIdProductFullQueryResult(id, tx);
         if (!productRecord)
             return null;
-        const { products_inputs, product_processes, product_discount_ranges, ...rest } = productRecord;
+        const { product_inputs, product_processes, product_discount_ranges, ...rest } = productRecord;
         const productQueryOrchestrator = {
             product: rest,
             product_discount_ranges: product_discount_ranges,
             product_processes: product_processes,
-            products_inputs: products_inputs
+            product_inputs: product_inputs
         };
         return productQueryOrchestrator;
     }

@@ -5,8 +5,8 @@ import { PurchasedOrderProductQueryResponseSchemaDto } from "@src/modules/query/
 import { ClientAddressResponseDto } from "@src/modules/features/client/assigments/client-addresses/application/dto/client-address.model.schema";
 import { PurchasedOrderCreateProps, PurchasedOrderProps, PurchasedOrderUpdateProps } from "../../domain/purchased-order.types";
 import { ClientAddressProps } from "@src/modules/features/client/assigments/client-addresses/domain/client-address.types";
-import { PurchasedOrderResponseschemaDto } from "../../application/dto/purchased-order.model.schema";
 import { ClientResponseDto } from "@src/modules/core/client/application/dto/client.model.schema";
+import { PurchasedOrderResponseDto } from "../../application/dto/purchased-order.model.schema";
 import { ProductProps } from "@src/modules/core/product/domain/product.types";
 import { ClientProps } from "@src/modules/core/client/domain/client.types";
 
@@ -24,7 +24,7 @@ type UpdateById<TPatch> = { id: number } & TPatch;
 // |                         ORCHESTRATOR — BASE (CANÓNICO)                                |
 // =========================================================================================
 
-type PurchasedOrderProductOrchestratorBase = {
+type PurchasedOrderProductOrchestratorProps = {
     product: ProductProps,
     applied_product_discount_range: AppliedProductDiscountRangeProps,
     applied_product_discount_client: AppliedProductDiscountClientProps
@@ -34,26 +34,26 @@ type PurchasedOrderProductOrchestratorBase = {
 // |                     ORCHESTRATOR — CREATE (REQUEST)                                   |
 // =========================================================================================
 
-type PurchasedOrderProductCreateOrchestratorProps = NoPurchasedOrderId & Omit<PurchasedOrderProductCreateProps, "purchase_order_id">;
+type PurchasedOrderProductOrchestratorCreateProps = NoPurchasedOrderId & Omit<PurchasedOrderProductCreateProps, "purchase_order_id">;
 
 type PurchasedOrderCreateOrchestratorProps = {
     purchased_order: PurchasedOrderCreateProps,
-    purchased_order_products: Array<PurchasedOrderProductCreateOrchestratorProps>,
+    purchased_order_products: Array<PurchasedOrderProductOrchestratorCreateProps>,
 };
 
 // =========================================================================================
 // |                     ORCHESTRATOR — UPDATE (REQUEST)                                   |
 // =========================================================================================
 
-type PurchasedOrderProductUpdateOrchestratorProps = UpdateById<PurchasedOrderProductUpdateProps>;
+type PurchasedOrderProductOrchestratorUpdateProps = UpdateById<PurchasedOrderProductUpdateProps>;
 
 type PurchasedOrderProductManager = {
-    added: Array<PurchasedOrderProductCreateOrchestratorProps>,
-    updated: Array<PurchasedOrderProductUpdateOrchestratorProps>,
+    added: Array<PurchasedOrderProductOrchestratorCreateProps>,
+    updated: Array<PurchasedOrderProductOrchestratorUpdateProps>,
     deleted: Array<PurchasedOrderProductProps>
 };
 
-type PurchasedOrderUpdateOrchestratorProps = {
+type PurchasedOrderOrchestratorUpdateProps = {
     purchased_order: PurchasedOrderUpdateProps,
     purchased_order_products_manager: PurchasedOrderProductManager,
 };
@@ -64,24 +64,24 @@ type PurchasedOrderUpdateOrchestratorProps = {
 
 type PurchasedOrderOrchestrator = {
     purchased_order: PurchasedOrderProps,
-    purchased_order_products: Array<PurchasedOrderProductOrchestratorBase>
+    purchased_order_products: Array<PurchasedOrderProductOrchestratorProps>
     client_address: ClientAddressProps,
     client: ClientProps
 };
 
-type PurchasedOrderResponseOrchestratorProps = {
-    purchased_order: PurchasedOrderResponseschemaDto,
+type PurchasedOrderOrchestratorResponseProps = {
+    purchased_order: PurchasedOrderResponseDto,
     purchased_order_products: Array<PurchasedOrderProductQueryResponseSchemaDto>,
     client_address: ClientAddressResponseDto,
     client: ClientResponseDto
 };
 
 export type {
-    PurchasedOrderProductCreateOrchestratorProps,
+    PurchasedOrderProductOrchestratorCreateProps,
     PurchasedOrderCreateOrchestratorProps,
-    PurchasedOrderUpdateOrchestratorProps,
-    PurchasedOrderProductUpdateOrchestratorProps,
+    PurchasedOrderOrchestratorUpdateProps,
+    PurchasedOrderProductOrchestratorUpdateProps,
     PurchasedOrderProductManager,
     PurchasedOrderOrchestrator,
-    PurchasedOrderResponseOrchestratorProps
+    PurchasedOrderOrchestratorResponseProps
 };

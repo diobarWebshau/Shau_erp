@@ -1,8 +1,21 @@
-import { Transaction } from "sequelize";
-import { IPurchasedOrderRepository } from "../../domain/purchased-order.repository.interface";
 import { PurchasedOrderProps, PurchasedOrderUpdateProps } from "../../domain/purchased-order.types";
-import { PurchasedOrderResponseschemaDto } from "../dto/purchased-order.model.schema";
+import { IPurchasedOrderRepository } from "../../domain/purchased-order.repository.interface";
+import { PurchasedOrderUpdateDto } from "../dto/purchased-order.model.schema";
+import { Transaction } from "sequelize";
+import { DecimalVO } from "@src/shared/domain/value-objects/decimal.vo";
 
+const mapPurchasedOrderUpdateDtoToDomain = (data: PurchasedOrderUpdateDto): PurchasedOrderUpdateProps => {
+    const { delivery_date, total_price, ...poRest } = data;
+    return ({
+        ...poRest,
+        ...(
+            delivery_date !== undefined ? { delivery_date: delivery_date ? new Date(delivery_date) : null } : {}
+        ),
+        ...(
+            total_price !== undefined ? { total_price: DecimalVO.from(total_price) } : {}
+        )
+    })
+};
 
 export class UpdatePurchasedOrderUseCase {
 
@@ -12,14 +25,9 @@ export class UpdatePurchasedOrderUseCase {
         this.purchasedOrderRepo = repo;
     };
 
-    execute = async (id: number, data: PurchasedOrderUpdateProps, tx?: Transaction): Promise<PurchasedOrderResponseschemaDto> => {
-        const purchasedOrderResponse: PurchasedOrderProps = await this.purchasedOrderRepo.update(id, data, tx);
-        const purchasedOrderResult: PurchasedOrderResponseschemaDto = {
-            ...purchasedOrderResponse,
-            delivery_date: purchasedOrderResponse.delivery_date.toISOString(),
-            created_at: purchasedOrderResponse.created_at.toISOString(),
-            updated_at: purchasedOrderResponse.updated_at.toISOString()
-        }
-        return purchasedOrderResult;
+    execute = async (id: number, data: PurchasedOrderUpdateDto, tx?: Transaction): Promise<PurchasedOrderProps> => {
+        const purchasedOrderResponse: PurchasedOrderProps = await this.purchasedOrderRepo.update(id, mapPurchasedOrderUpdateDtoToDomain(data), tx);
+        return purchasedOrderResponse;
     };
 };
+

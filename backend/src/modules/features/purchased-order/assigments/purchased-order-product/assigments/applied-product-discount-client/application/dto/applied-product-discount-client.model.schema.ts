@@ -1,9 +1,10 @@
+import { decimalString } from "@src/shared/application/decimal.schema";
 import z from "zod";
 
 const appliedProductDiscountClientCreateSchema = z.object({
     purchase_order_product_id: z.number(),
     product_discount_client_id: z.number(),
-    discount_percentage: z.number(),
+    discount_percentage: decimalString,
 });
 
 const appliedProductDiscountClientUpdateSchema = appliedProductDiscountClientCreateSchema.partial();
@@ -14,9 +15,9 @@ const appliedProductDiscountClientResponseSchema = appliedProductDiscountClientC
     updated_at: z.string()
 });
 
-type AppliedProductDiscountClientCreateSchemaDto = z.infer<typeof appliedProductDiscountClientCreateSchema>
-type AppliedProductDiscountClientUpdateSchemaDto = z.infer<typeof appliedProductDiscountClientUpdateSchema>
-type AppliedProductDiscountClientResponseSchemaDto = z.infer<typeof appliedProductDiscountClientResponseSchema>
+type AppliedProductDiscountClientCreateDto = z.infer<typeof appliedProductDiscountClientCreateSchema>
+type AppliedProductDiscountClientUpdateDto = z.infer<typeof appliedProductDiscountClientUpdateSchema>
+type AppliedProductDiscountClientResponseDto = z.infer<typeof appliedProductDiscountClientResponseSchema>
 
 export {
     appliedProductDiscountClientCreateSchema,
@@ -25,7 +26,7 @@ export {
 };
 
 export type {
-    AppliedProductDiscountClientCreateSchemaDto,
-    AppliedProductDiscountClientUpdateSchemaDto,
-    AppliedProductDiscountClientResponseSchemaDto
+    AppliedProductDiscountClientCreateDto,
+    AppliedProductDiscountClientUpdateDto,
+    AppliedProductDiscountClientResponseDto
 };

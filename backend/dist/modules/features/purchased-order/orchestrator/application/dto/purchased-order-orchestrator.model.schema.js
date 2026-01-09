@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.purchasedOrderProductCreateRequestOrchestratorSchema = exports.purchasedOrderProductUpdateRequestOrchestratorSchema = exports.purchasedOrderResponseOrchestratorSchema = exports.purchasedOrderProductUpdateOrchestratorSchema = exports.purchasedOrderProductManagerOrchestratorSchema = exports.purchasedOrderUpdateOrchestratorSchema = exports.purchasedOrderCreateOrchestratorSchema = exports.purchasedOrderProductCreateOrchestratorSchema = void 0;
+exports.purchasedOrderProductOrchestratorCreateRequestSchema = exports.purchasedOrderProductRequestOrchestratorUpdateSchema = exports.purchasedOrderOrchestratorResponseSchema = exports.purchasedOrderProductOrchestratorUpdateSchema = exports.purchasedOrderProductManagerOrchestratorSchema = exports.purchasedOrderOrchestratorUpdateSchema = exports.purchasedOrderOrchestratorCreateSchema = exports.purchasedOrderProductOrchestratorCreateSchema = void 0;
 const purchased_order_product_query_model_schema_1 = require("@src/modules/query/purchased-order-product/application/dto/purchased-order-product-query.model.schema");
 const purchased_order_model_schema_1 = require("../../../application/dto/purchased-order.model.schema");
 const purchased_order_product_model_schema_1 = require("../../../assigments/purchased-order-product/application/dto/purchased-order-product.model.schema");
@@ -10,50 +10,50 @@ const zod_1 = require("zod");
 // =========================================================================================
 // |                     ORCHESTRATOR — CREATE (REQUEST)                                   |
 // =========================================================================================
-const purchasedOrderProductCreateOrchestratorSchema = purchased_order_product_model_schema_1.purchasedOrderProductCreateSchema.omit({
+const purchasedOrderProductOrchestratorCreateSchema = purchased_order_product_model_schema_1.purchasedOrderProductCreateSchema.omit({
     purchase_order_id: true
 }).extend({
     purchase_order_id: zod_1.z.undefined().optional()
 });
-exports.purchasedOrderProductCreateOrchestratorSchema = purchasedOrderProductCreateOrchestratorSchema;
-const purchasedOrderCreateOrchestratorSchema = zod_1.z.object({
+exports.purchasedOrderProductOrchestratorCreateSchema = purchasedOrderProductOrchestratorCreateSchema;
+const purchasedOrderOrchestratorCreateSchema = zod_1.z.object({
     purchased_order: purchased_order_model_schema_1.purchasedOrderCreateschema,
-    purchased_order_products: zod_1.z.array(purchasedOrderProductCreateOrchestratorSchema)
+    purchased_order_products: zod_1.z.array(purchasedOrderProductOrchestratorCreateSchema)
 });
-exports.purchasedOrderCreateOrchestratorSchema = purchasedOrderCreateOrchestratorSchema;
-const purchasedOrderProductCreateRequestOrchestratorSchema = zod_1.z.object({
-    payload: purchasedOrderCreateOrchestratorSchema
+exports.purchasedOrderOrchestratorCreateSchema = purchasedOrderOrchestratorCreateSchema;
+const purchasedOrderProductOrchestratorCreateRequestSchema = zod_1.z.object({
+    payload: purchasedOrderOrchestratorCreateSchema
 });
-exports.purchasedOrderProductCreateRequestOrchestratorSchema = purchasedOrderProductCreateRequestOrchestratorSchema;
+exports.purchasedOrderProductOrchestratorCreateRequestSchema = purchasedOrderProductOrchestratorCreateRequestSchema;
 // =========================================================================================
 // |                     ORCHESTRATOR — UPDATE (REQUEST)                                   |
 // =========================================================================================
-const purchasedOrderUpdateOrchestratorSchema = purchased_order_model_schema_1.purchasedOrderUpdateSchema.extend({
+const purchasedOrderOrchestratorUpdateSchema = purchased_order_model_schema_1.purchasedOrderUpdateSchema.extend({
     id: zod_1.z.number()
 });
-exports.purchasedOrderUpdateOrchestratorSchema = purchasedOrderUpdateOrchestratorSchema;
+exports.purchasedOrderOrchestratorUpdateSchema = purchasedOrderOrchestratorUpdateSchema;
 const purchasedOrderProductManagerOrchestratorSchema = zod_1.z.object({
-    added: zod_1.z.array(purchasedOrderCreateOrchestratorSchema),
-    updated: zod_1.z.array(purchasedOrderUpdateOrchestratorSchema),
+    added: zod_1.z.array(purchasedOrderOrchestratorCreateSchema),
+    updated: zod_1.z.array(purchasedOrderOrchestratorUpdateSchema),
     deleted: zod_1.z.array(purchased_order_model_schema_1.purchasedOrderResponseschema)
 });
 exports.purchasedOrderProductManagerOrchestratorSchema = purchasedOrderProductManagerOrchestratorSchema;
-const purchasedOrderProductUpdateOrchestratorSchema = zod_1.z.object({
+const purchasedOrderProductOrchestratorUpdateSchema = zod_1.z.object({
     purchased_order: purchased_order_model_schema_1.purchasedOrderUpdateSchema,
     purchased_order_products: purchasedOrderProductManagerOrchestratorSchema
 });
-exports.purchasedOrderProductUpdateOrchestratorSchema = purchasedOrderProductUpdateOrchestratorSchema;
-const purchasedOrderProductUpdateRequestOrchestratorSchema = zod_1.z.object({
-    payload: purchasedOrderProductUpdateOrchestratorSchema
+exports.purchasedOrderProductOrchestratorUpdateSchema = purchasedOrderProductOrchestratorUpdateSchema;
+const purchasedOrderProductRequestOrchestratorUpdateSchema = zod_1.z.object({
+    payload: purchasedOrderProductOrchestratorUpdateSchema
 });
-exports.purchasedOrderProductUpdateRequestOrchestratorSchema = purchasedOrderProductUpdateRequestOrchestratorSchema;
+exports.purchasedOrderProductRequestOrchestratorUpdateSchema = purchasedOrderProductRequestOrchestratorUpdateSchema;
 // =========================================================================================
 // |                        ORCHESTRATOR — RESPONSE                                        |
 // =========================================================================================
-const purchasedOrderResponseOrchestratorSchema = zod_1.z.object({
+const purchasedOrderOrchestratorResponseSchema = zod_1.z.object({
     purchased_order: purchased_order_model_schema_1.purchasedOrderResponseschema,
     purchased_order_products: zod_1.z.array(purchased_order_product_query_model_schema_1.purchasedOrderProductQueryResponseSchema),
     client_address: client_query_model_schema_1.clientAddressResponseSchema,
     client: client_model_schema_1.clientResponseSchema
 });
-exports.purchasedOrderResponseOrchestratorSchema = purchasedOrderResponseOrchestratorSchema;
+exports.purchasedOrderOrchestratorResponseSchema = purchasedOrderOrchestratorResponseSchema;

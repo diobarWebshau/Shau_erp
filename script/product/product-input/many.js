@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
 const productsInputs = [
-  { product_id: 1, input_id: 1, equivalence: 2 },
-  { product_id: 1, input_id: 2, equivalence: 3 },
-  { product_id: 2, input_id: 2, equivalence: 2 },
+  { product_id: 1, input_id: 1, equivalence: "2" },
+  { product_id: 1, input_id: 2, equivalence: "3" },
+  { product_id: 2, input_id: 2, equivalence: "2" },
 ];
 
 const sendProductInput = async (productInput) => {

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllProductsQueryOrchestratorUseCase = void 0;
+const mapProductQueryToCriteria_1 = require("../../infrastructure/mapProductQueryToCriteria");
 /**
  * UseCase
  * ------------------------------------------------------------------
@@ -47,14 +48,14 @@ class GetAllProductsQueryOrchestratorUseCase {
         this.repo = repo;
     }
     async execute(query, tx) {
-        const productsResponse = await this.repo.getAllProductFullQueryResult(query, tx);
+        const productsResponse = await this.repo.getAllProductFullQueryResult((0, mapProductQueryToCriteria_1.mapProductQueryToCriteria)(query), tx);
         const productQueryOrchestrators = productsResponse.map((pr) => {
-            const { products_inputs, product_processes, product_discount_ranges, ...rest } = pr;
+            const { product_inputs, product_processes, product_discount_ranges, ...rest } = pr;
             const productQueryOrchestrator = {
                 product: rest,
                 product_discount_ranges: product_discount_ranges,
                 product_processes: product_processes,
-                products_inputs: products_inputs
+                product_inputs: product_inputs
             };
             return productQueryOrchestrator;
         });

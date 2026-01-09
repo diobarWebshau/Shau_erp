@@ -9,14 +9,7 @@ class GetByIdAppliedProductDiscountRangeUseCase {
     ;
     execute = async (id, tx) => {
         const appliedProductDiscountRangeResponse = await this.appliedProductDiscountRangeRepo.findById(id, tx);
-        if (!appliedProductDiscountRangeResponse)
-            return null;
-        const appliedProductDiscountRangeResponseFormatted = {
-            ...appliedProductDiscountRangeResponse,
-            updated_at: appliedProductDiscountRangeResponse.updated_at.toISOString(),
-            created_at: appliedProductDiscountRangeResponse.created_at.toISOString()
-        };
-        return appliedProductDiscountRangeResponseFormatted;
+        return appliedProductDiscountRangeResponse;
     };
 }
 exports.GetByIdAppliedProductDiscountRangeUseCase = GetByIdAppliedProductDiscountRangeUseCase;

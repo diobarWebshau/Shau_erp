@@ -1,6 +1,8 @@
 import { ProductOrchestrator } from "@src/modules/features/products/orchestrator/domain/product-orchestrator.types";
 import type { ProductQueryRepository } from "../../infrastructure/repository/product-query.repository";
-import type { ProductFullQueryResult, ProductSearchCriteria } from "../../domain/product-query.type";
+import { mapProductQueryToCriteria } from "../../infrastructure/mapProductQueryToCriteria";
+import type { ProductFullQueryResult } from "../../domain/product-query.type";
+import { ProductQueryDto } from "../dto/product-query.model.schema";
 import { Transaction } from "sequelize";
 
 /**
@@ -46,15 +48,15 @@ import { Transaction } from "sequelize";
 
 export class GetAllProductsQueryOrchestratorUseCase {
     constructor(private readonly repo: ProductQueryRepository) { }
-    async execute(query: ProductSearchCriteria, tx?: Transaction): Promise<ProductOrchestrator[]> {
-        const productsResponse: ProductFullQueryResult[] = await this.repo.getAllProductFullQueryResult(query, tx);
+    async execute(query: ProductQueryDto, tx?: Transaction): Promise<ProductOrchestrator[]> {
+        const productsResponse: ProductFullQueryResult[] = await this.repo.getAllProductFullQueryResult(mapProductQueryToCriteria(query), tx);
         const productQueryOrchestrators = productsResponse.map((pr) => {
-            const { products_inputs, product_processes, product_discount_ranges, ...rest } = pr;
+            const { product_inputs, product_processes, product_discount_ranges, ...rest } = pr;
             const productQueryOrchestrator: ProductOrchestrator = {
                 product: rest,
                 product_discount_ranges: product_discount_ranges,
                 product_processes: product_processes,
-                products_inputs: products_inputs
+                product_inputs: product_inputs
             }
             return productQueryOrchestrator;
         })

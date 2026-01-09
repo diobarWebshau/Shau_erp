@@ -71,20 +71,20 @@ function initAssociations() {
     // product-input
     product_orm_1.ProductModel.hasMany(product_inputs_orm_1.ProductInputModel, {
         foreignKey: "product_id",
-        as: "products_inputs",
+        as: "product_inputs",
     });
     input_orm_1.InputModel.hasMany(product_inputs_orm_1.ProductInputModel, {
         foreignKey: "input_id",
-        as: "products_inputs",
+        as: "product_inputs",
     });
     product_inputs_orm_1.ProductInputModel.belongsTo(product_orm_1.ProductModel, {
         foreignKey: "product_id",
-        as: "products",
+        as: "product",
         onDelete: "CASCADE"
     });
     product_inputs_orm_1.ProductInputModel.belongsTo(input_orm_1.InputModel, {
         foreignKey: "input_id",
-        as: "inputs",
+        as: "input",
         onDelete: "CASCADE"
     });
     // input-input-type

@@ -17,7 +17,7 @@ declare const productOrchestratorCreateSchema: z.ZodObject<{
         is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
         is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
     }, z.core.$strip>;
-    products_inputs: z.ZodArray<z.ZodObject<{
+    product_inputs: z.ZodArray<z.ZodObject<{
         input_id: z.ZodNumber;
         equivalence: z.ZodString;
         product_id: z.ZodOptional<z.ZodUndefined>;
@@ -74,7 +74,7 @@ declare const productOrchestratorCreateRequestSchema: z.ZodObject<{
             is_active: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
             is_draft: z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>;
         }, z.core.$strip>;
-        products_inputs: z.ZodArray<z.ZodObject<{
+        product_inputs: z.ZodArray<z.ZodObject<{
             input_id: z.ZodNumber;
             equivalence: z.ZodString;
             product_id: z.ZodOptional<z.ZodUndefined>;
@@ -132,7 +132,7 @@ declare const productOrchestratorUpdateSchema: z.ZodObject<{
         is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
         is_draft: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
     }, z.core.$strip>;
-    products_inputs_manager: z.ZodObject<{
+    product_inputs_manager: z.ZodObject<{
         added: z.ZodArray<z.ZodObject<{
             input_id: z.ZodNumber;
             equivalence: z.ZodString;
@@ -259,7 +259,7 @@ declare const productOrchestratorUpdateRequestSchema: z.ZodObject<{
             is_active: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
             is_draft: z.ZodOptional<z.ZodPipe<z.ZodTransform<boolean | undefined, unknown>, z.ZodCoercedBoolean<unknown>>>;
         }, z.core.$strip>;
-        products_inputs_manager: z.ZodObject<{
+        product_inputs_manager: z.ZodObject<{
             added: z.ZodArray<z.ZodObject<{
                 input_id: z.ZodNumber;
                 equivalence: z.ZodString;
@@ -390,7 +390,7 @@ declare const productOrchestratorResponseSchema: z.ZodObject<{
         created_at: z.ZodString;
         updated_at: z.ZodString;
     }, z.core.$strip>;
-    products_inputs: z.ZodArray<z.ZodObject<{
+    product_inputs: z.ZodArray<z.ZodObject<{
         product_id: z.ZodNumber;
         input_id: z.ZodNumber;
         equivalence: z.ZodString;

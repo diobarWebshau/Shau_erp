@@ -14,7 +14,7 @@ const zod_1 = __importDefault(require("zod"));
 const productQueryOrchestratorSchema = product_orchestrator_model_schema_1.productOrchestratorResponseSchema;
 exports.productQueryOrchestratorSchema = productQueryOrchestratorSchema;
 const productQueryFullResponseSchema = product_model_schema_1.productResponseSchema.extend({
-    products_inputs: zod_1.default.array(product_input_model_schema_1.ProductInputReponseSchema),
+    product_inputs: zod_1.default.array(product_input_model_schema_1.ProductInputReponseSchema),
     product_processes: zod_1.default.array(product_process_model_schema_1.ProductProcessReponseSchema),
     product_discount_ranges: zod_1.default.array(product_discount_range_model_schema_1.ProductDiscountRangeReponseSchema),
 });

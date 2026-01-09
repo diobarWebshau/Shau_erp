@@ -90,7 +90,7 @@ class UpdateProductOrchestratorUseCase {
             // --------------------------------------------------
             // |🔹 DESTRUCTATION                                |
             // --------------------------------------------------
-            const { product, product_discount_ranges_manager, product_processes_manager, products_inputs_manager } = data;
+            const { product, product_discount_ranges_manager, product_processes_manager, product_inputs_manager } = data;
             // --------------------------------------------------
             // |🖼️ IMAGEN (MISMA LÓGICA QUE MÓDULO BASE)        |
             // --------------------------------------------------
@@ -126,9 +126,9 @@ class UpdateProductOrchestratorUseCase {
             const isChangeProductDiscountRange = (product_discount_ranges_manager?.added ?? []).length > 0 ||
                 (product_discount_ranges_manager?.updated ?? []).length > 0 ||
                 (product_discount_ranges_manager?.deleted ?? []).length > 0;
-            const isChangeProductInput = (products_inputs_manager?.added ?? []).length > 0 ||
-                (products_inputs_manager?.updated ?? []).length > 0 ||
-                (products_inputs_manager?.deleted ?? []).length > 0;
+            const isChangeProductInput = (product_inputs_manager?.added ?? []).length > 0 ||
+                (product_inputs_manager?.updated ?? []).length > 0 ||
+                (product_inputs_manager?.deleted ?? []).length > 0;
             const isChangeProductProcess = (product_processes_manager?.added ?? []).length > 0 ||
                 (product_processes_manager?.updated ?? []).length > 0 ||
                 (product_processes_manager?.deleted ?? []).length > 0;
@@ -167,9 +167,9 @@ class UpdateProductOrchestratorUseCase {
             // |🔹 PRODUCT-INPUT                                |
             // --------------------------------------------------
             if (isChangeProductInput) {
-                const adds = products_inputs_manager?.added ?? [];
-                const deletes = products_inputs_manager?.deleted ?? [];
-                const updated = products_inputs_manager?.updated ?? [];
+                const adds = product_inputs_manager?.added ?? [];
+                const deletes = product_inputs_manager?.deleted ?? [];
+                const updated = product_inputs_manager?.updated ?? [];
                 if (adds.length) {
                     const newProductInput = adds.map((pi) => ({
                         ...pi,

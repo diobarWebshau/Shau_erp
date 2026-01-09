@@ -7,7 +7,7 @@ declare const getAllAppliedProductDiscountClient: z.ZodObject<{
     response: z.ZodArray<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -22,7 +22,7 @@ declare const getByIdAppliedProductDiscountClient: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -37,7 +37,7 @@ declare const getByPopIdAppliedProductDiscountClient: z.ZodObject<{
     response: z.ZodNullable<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -49,12 +49,12 @@ declare const createAppliedProductDiscountClient: z.ZodObject<{
     body: z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
     }, z.core.$strip>;
     response: z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -68,12 +68,12 @@ declare const updateAppliedProductDiscountClient: z.ZodObject<{
     body: z.ZodObject<{
         purchase_order_product_id: z.ZodOptional<z.ZodNumber>;
         product_discount_client_id: z.ZodOptional<z.ZodNumber>;
-        discount_percentage: z.ZodOptional<z.ZodNumber>;
+        discount_percentage: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>;
     response: z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;

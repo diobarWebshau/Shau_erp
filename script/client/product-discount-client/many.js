@@ -4,17 +4,17 @@ const productDiscountClientData = [
     {
         product_id: 1,
         client_id: 1,
-        discount_percentage: 10,
+        discount_percentage: "10",
     },
     {
         product_id: 2,
         client_id: 2,
-        discount_percentage: 7,
+        discount_percentage: "7",
     },
     {
         product_id: 1,
         client_id: 3,
-        discount_percentage: 5,
+        discount_percentage: "5",
     },
 ];
 

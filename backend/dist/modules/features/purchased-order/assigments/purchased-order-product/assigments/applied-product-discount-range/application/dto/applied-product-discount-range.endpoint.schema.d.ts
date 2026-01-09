@@ -7,9 +7,9 @@ declare const getAllAppliedProductDiscountRangeSchema: z.ZodObject<{
     resolve: z.ZodArray<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_range_id: z.ZodNumber;
-        unit_discount: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_discount: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -24,9 +24,9 @@ declare const getByIdAppliedProductDiscountRangeSchema: z.ZodObject<{
     resolve: z.ZodNullable<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_range_id: z.ZodNumber;
-        unit_discount: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_discount: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -41,9 +41,9 @@ declare const getByPopAppliedProductDiscountRangeSchema: z.ZodObject<{
     resolve: z.ZodNullable<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_range_id: z.ZodNumber;
-        unit_discount: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_discount: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -55,16 +55,16 @@ declare const createAppliedProductDiscountRangeSchema: z.ZodObject<{
     body: z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_range_id: z.ZodNumber;
-        unit_discount: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_discount: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
     }, z.core.$strip>;
     resolve: z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_range_id: z.ZodNumber;
-        unit_discount: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_discount: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -78,16 +78,16 @@ declare const updateAppliedProductDiscountRangeSchema: z.ZodObject<{
     body: z.ZodObject<{
         purchase_order_product_id: z.ZodOptional<z.ZodNumber>;
         product_discount_range_id: z.ZodOptional<z.ZodNumber>;
-        unit_discount: z.ZodOptional<z.ZodNumber>;
-        min_qty: z.ZodOptional<z.ZodNumber>;
-        max_qty: z.ZodOptional<z.ZodNumber>;
+        unit_discount: z.ZodOptional<z.ZodString>;
+        min_qty: z.ZodOptional<z.ZodString>;
+        max_qty: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>;
     resolve: z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_range_id: z.ZodNumber;
-        unit_discount: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_discount: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;

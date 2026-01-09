@@ -10,6 +10,14 @@ const delete_purchased_order_product_usecase_1 = require("../../application/use-
 const get_all_purchased_order_product_usecase_1 = require("../../application/use-cases/get-all-purchased-order-product.usecase");
 const producto_repository_1 = require("@src/modules/core/product/infrastructure/repository/producto.repository");
 const purchased_order_product_respository_1 = require("../repository/purchased-order-product.respository");
+const mapPopDomainToDto = (data) => {
+    return ({
+        ...data,
+        original_price: data.original_price.toString(),
+        recorded_price: data.recorded_price.toString(),
+        qty: data.qty.toString(),
+    });
+};
 class PurchasedOrderProductController {
     purchasedOrderProductRepo;
     purchasedOrderRepo;
@@ -37,29 +45,36 @@ class PurchasedOrderProductController {
     }
     ;
     getAll = async (_req, res) => {
-        const purchasedOrderProductRepo = await this.getAllPurchasedOrderProductUseCase.execute();
-        return res.status(200).json(purchasedOrderProductRepo);
+        const purchasedOrderProductResponse = await this.getAllPurchasedOrderProductUseCase.execute();
+        const purchasedOrderResult = purchasedOrderProductResponse.map(mapPopDomainToDto);
+        return res.status(200).json(purchasedOrderResult);
     };
     getById = async (req, res) => {
         const { id } = req.params;
-        const purchasedOrderProductRepo = await this.getByIdPurchasedOrderProductUseCase.execute(Number(id));
-        return res.status(200).json(purchasedOrderProductRepo);
+        const purchasedOrderProductResponse = await this.getByIdPurchasedOrderProductUseCase.execute(Number(id));
+        if (!purchasedOrderProductResponse)
+            return res.status(404).json(null);
+        const purchasedOrderResult = mapPopDomainToDto(purchasedOrderProductResponse);
+        return res.status(200).json(purchasedOrderResult);
     };
     getByPurchasedOrderId = async (req, res) => {
         const { purchase_order_id } = req.params;
-        const purchasedOrderProductRepo = await this.getByPurchasedOrderIdPurchasedOrderProductUseCase.execute(Number(purchase_order_id));
-        return res.status(200).json(purchasedOrderProductRepo);
+        const purchasedOrderProductResponse = await this.getByPurchasedOrderIdPurchasedOrderProductUseCase.execute(Number(purchase_order_id));
+        const purchasedOrderResult = purchasedOrderProductResponse.map(mapPopDomainToDto);
+        return res.status(200).json(purchasedOrderResult);
     };
     create = async (req, res) => {
         const body = req.body;
-        const purchasedOrderProductRepo = await this.createPurchasedOrderProductUseCase.execute(body);
-        return res.status(201).json(purchasedOrderProductRepo);
+        const purchasedOrderProductResponse = await this.createPurchasedOrderProductUseCase.execute(body);
+        const purchasedOrderResult = mapPopDomainToDto(purchasedOrderProductResponse);
+        return res.status(201).json(purchasedOrderResult);
     };
     update = async (req, res) => {
         const { id } = req.params;
         const body = req.body;
-        const purchasedOrderProductRepo = await this.updatePurchasedOrderProductUseCase.execute(Number(id), body);
-        return res.status(200).json(purchasedOrderProductRepo);
+        const purchasedOrderProductResponse = await this.updatePurchasedOrderProductUseCase.execute(Number(id), body);
+        const purchasedOrderResult = mapPopDomainToDto(purchasedOrderProductResponse);
+        return res.status(200).json(purchasedOrderResult);
     };
     delete = async (req, res) => {
         const { id } = req.params;

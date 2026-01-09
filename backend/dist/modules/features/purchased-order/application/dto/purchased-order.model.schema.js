@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.purchasedOrderQuerySchema = exports.purchasedOrderResponseschema = exports.purchasedOrderUpdateSchema = exports.purchasedOrderCreateschema = void 0;
+const decimal_schema_1 = require("@src/shared/application/decimal.schema");
+const string_or_string_array_schema_1 = require("@src/shared/application/string-or-string-array.schema");
 const zod_1 = require("zod");
 const purchasedOrderCreateschema = zod_1.z.object({
     order_code: zod_1.z.string(),
     delivery_date: zod_1.z.string().nullable(),
-    total_price: zod_1.z.number(),
+    total_price: decimal_schema_1.decimalString,
     status: zod_1.z.string(),
     // client fields
     client_id: zod_1.z.number(),
@@ -45,14 +47,11 @@ const purchasedOrderResponseschema = purchasedOrderCreateschema.extend({
 exports.purchasedOrderResponseschema = purchasedOrderResponseschema;
 const purchasedOrderQuerySchema = zod_1.z.object({
     filter: zod_1.z.string().optional(),
-    exclude_ids: zod_1.z.union([
-        zod_1.z.string(),
-        zod_1.z.array(zod_1.z.string())
-    ]).optional(),
-    company_name: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    order_code: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    payment_method: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    payment_terms: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
-    email: zod_1.z.union([zod_1.z.string(), zod_1.z.array(zod_1.z.string())]).optional(),
+    exclude_ids: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    company_name: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    order_code: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    payment_method: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    payment_terms: string_or_string_array_schema_1.stringOrStringArray.optional(),
+    email: string_or_string_array_schema_1.stringOrStringArray.optional(),
 }).strict();
 exports.purchasedOrderQuerySchema = purchasedOrderQuerySchema;

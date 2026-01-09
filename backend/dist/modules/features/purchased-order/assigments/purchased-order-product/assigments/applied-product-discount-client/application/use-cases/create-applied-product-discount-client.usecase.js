@@ -1,6 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAppliedProductDiscountClientUseCase = void 0;
+const decimal_vo_1 = require("@src/shared/domain/value-objects/decimal.vo");
+const mapAppliedProductDiscountClientCreateDtoToDomain = (data) => {
+    return ({
+        ...data,
+        discount_percentage: decimal_vo_1.DecimalVO.from(data.discount_percentage)
+    });
+};
 class CreateAppliedProductDiscountClientUseCase {
     appliedProductDiscountClientRepo;
     constructor(repo) {
@@ -8,13 +15,8 @@ class CreateAppliedProductDiscountClientUseCase {
     }
     ;
     execute = async (data, tx) => {
-        const appliedProductDiscountClientResponse = await this.appliedProductDiscountClientRepo.create(data, tx);
-        const appliedProductDiscountClientResponseFormatted = {
-            ...appliedProductDiscountClientResponse,
-            updated_at: appliedProductDiscountClientResponse.updated_at.toISOString(),
-            created_at: appliedProductDiscountClientResponse.created_at.toISOString()
-        };
-        return appliedProductDiscountClientResponseFormatted;
+        const appliedProductDiscountClientResponse = await this.appliedProductDiscountClientRepo.create(mapAppliedProductDiscountClientCreateDtoToDomain(data), tx);
+        return appliedProductDiscountClientResponse;
     };
 }
 exports.CreateAppliedProductDiscountClientUseCase = CreateAppliedProductDiscountClientUseCase;

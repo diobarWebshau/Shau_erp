@@ -23,10 +23,10 @@ import { IProductQueryRepository } from "@modules/query/product/domain/product-q
 import { ProcessCreateDto } from "@src/modules/core/process/application/dto/process.model.schema";
 import { ProductInputProps } from "../../../assigments/product-input/domain/product-input.types";
 import { IProductRepository } from "@modules/core/product/domain/product.repository.interface";
-import { ProductOrchestrator, ProductOrchestratorResponseProps } from "../../domain/product-orchestrator.types";
 import { IInputRepository } from "@modules/core/input/domain/input.repository.interface";
 import { ProductOrchestratorUpdateDto } from "../dto/product-orchestrator.model.schema";
 import { IProcessRepository } from "@modules/core/process/domain/process.repository";
+import { ProductOrchestrator} from "../../domain/product-orchestrator.types";
 import { ProcessProps } from "@modules/core/process/domain/process.types";
 import { ProductProps } from "@modules/core/product/domain/product.types";
 import { IFileCleanupPort } from "@shared/files/file-cleanup.port";
@@ -133,7 +133,7 @@ export class UpdateProductOrchestratorUseCase {
             // --------------------------------------------------
 
 
-            const { product, product_discount_ranges_manager, product_processes_manager, products_inputs_manager } = data
+            const { product, product_discount_ranges_manager, product_processes_manager, product_inputs_manager } = data
 
             // --------------------------------------------------
             // |🖼️ IMAGEN (MISMA LÓGICA QUE MÓDULO BASE)        |
@@ -178,9 +178,9 @@ export class UpdateProductOrchestratorUseCase {
                 (product_discount_ranges_manager?.deleted ?? []).length > 0;
 
             const isChangeProductInput: boolean =
-                (products_inputs_manager?.added ?? []).length > 0 ||
-                (products_inputs_manager?.updated ?? []).length > 0 ||
-                (products_inputs_manager?.deleted ?? []).length > 0;
+                (product_inputs_manager?.added ?? []).length > 0 ||
+                (product_inputs_manager?.updated ?? []).length > 0 ||
+                (product_inputs_manager?.deleted ?? []).length > 0;
 
             const isChangeProductProcess: boolean =
                 (product_processes_manager?.added ?? []).length > 0 ||
@@ -221,9 +221,9 @@ export class UpdateProductOrchestratorUseCase {
             // |🔹 PRODUCT-INPUT                                |
             // --------------------------------------------------
             if (isChangeProductInput) {
-                const adds = products_inputs_manager?.added ?? [];
-                const deletes = products_inputs_manager?.deleted ?? [];
-                const updated = products_inputs_manager?.updated ?? [];
+                const adds = product_inputs_manager?.added ?? [];
+                const deletes = product_inputs_manager?.deleted ?? [];
+                const updated = product_inputs_manager?.updated ?? [];
                 if (adds.length) {
                     const newProductInput = adds.map((pi) => ({
                         ...pi,
@@ -439,7 +439,7 @@ export class UpdateProductOrchestratorUseCase {
             // --------------------------------------------------
             // |🔹 COMMIT + RESPONSE                            |
             // --------------------------------------------------
-            const productOrchestrator: ProductOrchestratorResponseProps | null = await this.getProductOrchestrator.execute(productUpdateResponse.id, tx);
+            const productOrchestrator: ProductOrchestrator | null = await this.getProductOrchestrator.execute(productUpdateResponse.id, tx);
             if (!productOrchestrator)
                 throw new HttpError(500, "No se pudo acceder al producto despues de haber sido actualizado.");
 

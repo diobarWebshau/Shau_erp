@@ -4,7 +4,7 @@ import { DataTypes, Model } from "sequelize";
 interface PurchasedOrderAttributes {
     id: number,
     order_code: string,
-    delivery_date: Date,
+    delivery_date: Date | null,
     status: string,
     // client fields
     client_id: number,
@@ -33,13 +33,50 @@ interface PurchasedOrderAttributes {
     shipping_country: string,
     shipping_zip_code: number,
     //
-    total_price: number,
+    total_price: string,
     updated_at: Date
     created_at: Date,
 }
 
 type PurchasedOrderCreateAttributes = Omit<PurchasedOrderAttributes, "id" | "created_at" | "updated_at">
+type PurchasedOrderUpdateAttributes = Partial<PurchasedOrderCreateAttributes>
 class PurchasedOrderModel extends Model<PurchasedOrderAttributes, PurchasedOrderCreateAttributes> {
+
+    declare id: number;
+    declare order_code: string;
+    declare delivery_date: Date | null;
+    declare status: string;
+    // client fields
+    declare client_id: number;
+    declare company_name: string;
+    declare tax_id: string;
+    declare email: string;
+    declare phone: string;
+    declare city: string;
+    declare state: string;
+    declare country: string;
+    declare street: string;
+    declare street_number: number;
+    declare neighborhood: string;
+    declare payment_terms: string;
+    declare zip_code: number;
+    declare tax_regimen: string;
+    declare cfdi: string;
+    declare payment_method: string;
+    // shipping fields(client address)
+    declare client_address_id: number;
+    declare shipping_street: string;
+    declare shipping_street_number: number;
+    declare shipping_neighborhood: string;
+    declare shipping_city: string;
+    declare shipping_state: string;
+    declare shipping_country: string;
+    declare shipping_zip_code: number;
+    //
+    declare total_price: string;
+    declare updated_at: Date;
+    declare created_at: Date;
+
     static getEditableFields = (): (keyof PurchasedOrderAttributes)[] => [
         "order_code", "delivery_date",
         "status", "client_id", "company_name",
@@ -79,7 +116,7 @@ PurchasedOrderModel.init(
         },
         delivery_date: {
             type: DataTypes.DATE,
-            allowNull: false,
+            allowNull: true,
         },
         status: {
             type: DataTypes.STRING(100),
@@ -212,7 +249,8 @@ PurchasedOrderModel.init(
 
 export type {
     PurchasedOrderAttributes,
-    PurchasedOrderCreateAttributes
-}
+    PurchasedOrderCreateAttributes,
+    PurchasedOrderUpdateAttributes
+};
 
 export { PurchasedOrderModel };

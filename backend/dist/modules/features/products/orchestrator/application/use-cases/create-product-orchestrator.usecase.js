@@ -49,9 +49,9 @@ class CreateProductOrchestratorUseCase {
         });
         let createdProductId = null;
         try {
-            const { product, product_discount_ranges, product_processes, products_inputs } = data;
+            const { product, product_discount_ranges, product_processes, product_inputs } = data;
             // ✅ “Camino update”: tipa los arrays safe con el tipo EXACTO del DTO
-            const safeProductsInputs = products_inputs ?? [];
+            const safeProductsInputs = product_inputs ?? [];
             const safeProductProcesses = product_processes ?? [];
             const safeProductDiscountRanges = product_discount_ranges ?? [];
             // --------------------------------------------------

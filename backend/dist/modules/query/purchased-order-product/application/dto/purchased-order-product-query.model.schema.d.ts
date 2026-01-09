@@ -2,9 +2,9 @@ import { z } from "zod";
 declare const appliedProductDiscountRangeQueryResponseSchema: z.ZodObject<{
     purchase_order_product_id: z.ZodNumber;
     product_discount_range_id: z.ZodNumber;
-    unit_discount: z.ZodNumber;
-    min_qty: z.ZodNumber;
-    max_qty: z.ZodNumber;
+    unit_discount: z.ZodString;
+    min_qty: z.ZodString;
+    max_qty: z.ZodString;
     id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;
@@ -21,7 +21,7 @@ declare const appliedProductDiscountRangeQueryResponseSchema: z.ZodObject<{
 declare const appliedProductDiscountClientQueryResponseSchema: z.ZodObject<{
     purchase_order_product_id: z.ZodNumber;
     product_discount_client_id: z.ZodNumber;
-    discount_percentage: z.ZodNumber;
+    discount_percentage: z.ZodString;
     id: z.ZodNumber;
     created_at: z.ZodString;
     updated_at: z.ZodString;
@@ -37,10 +37,10 @@ declare const appliedProductDiscountClientQueryResponseSchema: z.ZodObject<{
 declare const purchasedOrderProductQueryResponseSchema: z.ZodObject<{
     purchase_order_id: z.ZodNumber;
     product_id: z.ZodNumber;
-    qty: z.ZodNumber;
+    qty: z.ZodString;
     product_name: z.ZodString;
-    recorded_price: z.ZodNumber;
-    original_price: z.ZodNumber;
+    recorded_price: z.ZodString;
+    original_price: z.ZodString;
     price_edit_source: z.ZodNullable<z.ZodEnum<{
         manual: "manual";
         range: "range";
@@ -69,7 +69,7 @@ declare const purchasedOrderProductQueryResponseSchema: z.ZodObject<{
     applied_product_discount_client: z.ZodNullable<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_client_id: z.ZodNumber;
-        discount_percentage: z.ZodNumber;
+        discount_percentage: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;
@@ -85,9 +85,9 @@ declare const purchasedOrderProductQueryResponseSchema: z.ZodObject<{
     applied_product_discount_range: z.ZodNullable<z.ZodObject<{
         purchase_order_product_id: z.ZodNumber;
         product_discount_range_id: z.ZodNumber;
-        unit_discount: z.ZodNumber;
-        min_qty: z.ZodNumber;
-        max_qty: z.ZodNumber;
+        unit_discount: z.ZodString;
+        min_qty: z.ZodString;
+        max_qty: z.ZodString;
         id: z.ZodNumber;
         created_at: z.ZodString;
         updated_at: z.ZodString;

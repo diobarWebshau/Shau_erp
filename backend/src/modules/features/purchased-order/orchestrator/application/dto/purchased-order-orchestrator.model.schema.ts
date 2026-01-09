@@ -9,49 +9,49 @@ import { z } from "zod";
 // |                     ORCHESTRATOR — CREATE (REQUEST)                                   |
 // =========================================================================================
 
-const purchasedOrderProductCreateOrchestratorSchema = purchasedOrderProductCreateSchema.omit({
+const purchasedOrderProductOrchestratorCreateSchema = purchasedOrderProductCreateSchema.omit({
     purchase_order_id: true
 }).extend({
     purchase_order_id: z.undefined().optional()
 });
 
-const purchasedOrderCreateOrchestratorSchema = z.object({
+const purchasedOrderOrchestratorCreateSchema = z.object({
     purchased_order: purchasedOrderCreateschema,
-    purchased_order_products: z.array(purchasedOrderProductCreateOrchestratorSchema)
+    purchased_order_products: z.array(purchasedOrderProductOrchestratorCreateSchema)
 });
 
-const purchasedOrderProductCreateRequestOrchestratorSchema = z.object({
-    payload: purchasedOrderCreateOrchestratorSchema
+const purchasedOrderProductOrchestratorCreateRequestSchema = z.object({
+    payload: purchasedOrderOrchestratorCreateSchema
 });
 
 // =========================================================================================
 // |                     ORCHESTRATOR — UPDATE (REQUEST)                                   |
 // =========================================================================================
 
-const purchasedOrderUpdateOrchestratorSchema = purchasedOrderUpdateSchema.extend({
+const purchasedOrderOrchestratorUpdateSchema = purchasedOrderUpdateSchema.extend({
     id: z.number()
 });
 
 const purchasedOrderProductManagerOrchestratorSchema = z.object({
-    added: z.array(purchasedOrderCreateOrchestratorSchema),
-    updated: z.array(purchasedOrderUpdateOrchestratorSchema),
+    added: z.array(purchasedOrderOrchestratorCreateSchema),
+    updated: z.array(purchasedOrderOrchestratorUpdateSchema),
     deleted: z.array(purchasedOrderResponseschema)
 });
 
-const purchasedOrderProductUpdateOrchestratorSchema = z.object({
+const purchasedOrderProductOrchestratorUpdateSchema = z.object({
     purchased_order: purchasedOrderUpdateSchema,
     purchased_order_products: purchasedOrderProductManagerOrchestratorSchema
 });
 
-const purchasedOrderProductUpdateRequestOrchestratorSchema = z.object({
-    payload: purchasedOrderProductUpdateOrchestratorSchema
+const purchasedOrderProductRequestOrchestratorUpdateSchema = z.object({
+    payload: purchasedOrderProductOrchestratorUpdateSchema
 });
 
 // =========================================================================================
 // |                        ORCHESTRATOR — RESPONSE                                        |
 // =========================================================================================
 
-const purchasedOrderResponseOrchestratorSchema = z.object({
+const purchasedOrderOrchestratorResponseSchema = z.object({
     purchased_order: purchasedOrderResponseschema,
     purchased_order_products: z.array(purchasedOrderProductQueryResponseSchema),
     client_address: clientAddressResponseSchema,
@@ -63,35 +63,33 @@ const purchasedOrderResponseOrchestratorSchema = z.object({
 // |                        ORCHESTRATOR — DTO                                             |
 // =========================================================================================
 
-type PurchasedOrderProductCreateOrchestratorSchemaDto = z.infer<typeof purchasedOrderProductCreateOrchestratorSchema>;
-type PurchasedOrderCreateOrchestratorSchemaDto = z.infer<typeof purchasedOrderCreateOrchestratorSchema>;
-type PurchasedOrderProductCreateRequestOrchestratorSchemaDto = z.infer<typeof purchasedOrderProductCreateRequestOrchestratorSchema>;
-
-type PurchasedOrderUpdateOrchestratorSchemaDto = z.infer<typeof purchasedOrderUpdateOrchestratorSchema>;
-type PurchasedOrderProductManagerOrchestratorSchemaDto = z.infer<typeof purchasedOrderProductManagerOrchestratorSchema>;
-type PurchasedOrderProductUpdateOrchestratorSchemaDto = z.infer<typeof purchasedOrderProductUpdateOrchestratorSchema>;
-type PurchasedOrderProductUpdateRequestOrchestratorSchemaDto = z.infer<typeof purchasedOrderProductUpdateRequestOrchestratorSchema>;
-
-type PurchasedOrderResponseOrchestratorSchemaDto = z.infer<typeof purchasedOrderResponseOrchestratorSchema>;
+type PurchasedOrderProductCreateOrchestratorDto = z.infer<typeof purchasedOrderProductOrchestratorCreateSchema>;
+type PurchasedOrderOrchestratorCreateDto = z.infer<typeof purchasedOrderOrchestratorCreateSchema>;
+type PurchasedOrderProductCreateRequestOrchestratorDto = z.infer<typeof purchasedOrderProductOrchestratorCreateRequestSchema>;
+type PurchasedOrderUpdhestratorSchateOrcemaDto = z.infer<typeof purchasedOrderOrchestratorUpdateSchema>;
+type PurchasedOrderProductManagerOrchestratorDto = z.infer<typeof purchasedOrderProductManagerOrchestratorSchema>;
+type PurchasedOrderProductUpdateOrchestratorDto = z.infer<typeof purchasedOrderProductOrchestratorUpdateSchema>;
+type PurchasedOrderProductUpdateRequestOrchestratorDto = z.infer<typeof purchasedOrderProductRequestOrchestratorUpdateSchema>;
+type PurchasedOrderResponseOrchestratorDto = z.infer<typeof purchasedOrderOrchestratorResponseSchema>;
 
 export {
-    purchasedOrderProductCreateOrchestratorSchema,
-    purchasedOrderCreateOrchestratorSchema,
-    purchasedOrderUpdateOrchestratorSchema,
+    purchasedOrderProductOrchestratorCreateSchema,
+    purchasedOrderOrchestratorCreateSchema,
+    purchasedOrderOrchestratorUpdateSchema,
     purchasedOrderProductManagerOrchestratorSchema,
-    purchasedOrderProductUpdateOrchestratorSchema,
-    purchasedOrderResponseOrchestratorSchema,
-    purchasedOrderProductUpdateRequestOrchestratorSchema,
-    purchasedOrderProductCreateRequestOrchestratorSchema
+    purchasedOrderProductOrchestratorUpdateSchema,
+    purchasedOrderOrchestratorResponseSchema,
+    purchasedOrderProductRequestOrchestratorUpdateSchema,
+    purchasedOrderProductOrchestratorCreateRequestSchema
 };
 
 export type {
-    PurchasedOrderProductCreateOrchestratorSchemaDto,
-    PurchasedOrderCreateOrchestratorSchemaDto,
-    PurchasedOrderUpdateOrchestratorSchemaDto,
-    PurchasedOrderProductCreateRequestOrchestratorSchemaDto,
-    PurchasedOrderProductManagerOrchestratorSchemaDto,
-    PurchasedOrderProductUpdateOrchestratorSchemaDto,
-    PurchasedOrderResponseOrchestratorSchemaDto,
-    PurchasedOrderProductUpdateRequestOrchestratorSchemaDto
+    PurchasedOrderProductCreateOrchestratorDto,
+    PurchasedOrderOrchestratorCreateDto,
+    PurchasedOrderUpdhestratorSchateOrcemaDto,
+    PurchasedOrderProductCreateRequestOrchestratorDto,
+    PurchasedOrderProductManagerOrchestratorDto,
+    PurchasedOrderProductUpdateOrchestratorDto,
+    PurchasedOrderResponseOrchestratorDto,
+    PurchasedOrderProductUpdateRequestOrchestratorDto
 };

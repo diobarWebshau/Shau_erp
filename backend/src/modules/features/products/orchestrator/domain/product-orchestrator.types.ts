@@ -3,15 +3,15 @@ import type { ProductInputProcessCreateProps, ProductInputProcessProps, ProductI
 import type { ProductProcessCreateProps, ProductProcessUpdateProps, ProductProcessProps } from "../../assigments/product-process/domain/product-process.types";
 import type { ProductInputCreateProps, ProductInputUpdateProps, ProductInputProps } from "../../assigments/product-input/domain/product-input.types";
 import { ProductDiscountRangeResponseDto } from "../../assigments/product-discounts-ranges/application/dto/product-discount-range.model.schema";
+import { ProductInputProcessResponseDto } from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
 import { ProductProcessResponseDto } from "../../assigments/product-process/application/dto/product-process.model.schema";
 import type { ProcessCreateProps, ProcessProps, ProcessSearchCriteria } from "@modules/core/process/domain/process.types";
 import type { ProductCreateProps, ProductUpdateProps, ProductProps } from "@modules/core/product/domain/product.types";
 import { ProductInputResponseDto } from "../../assigments/product-input/application/dto/product-input.model.schema";
 import { ProductResponseDto } from "@src/modules/core/product/application/dto/product.model.schema";
-import type { InputProps } from "@modules/core/input/domain/input.types";
-import { InputResponseDto } from "@src/modules/core/input/application/dto/input.model.schema";
 import { ProcessResponseDto } from "@src/modules/core/process/application/dto/process.model.schema";
-import { ProductInputProcessResponseDto } from "../../assigments/product-input-process/application/dto/product-input-process.model.schema";
+import { InputResponseDto } from "@src/modules/core/input/application/dto/input.model.schema";
+import type { InputProps } from "@modules/core/input/domain/input.types";
 
 // =========================================================================================
 // |                                 HELPERS TYPED                                         |
@@ -42,8 +42,8 @@ type ProductProcessOrchestratorPropsLean = ProductProcessProps & {
 
 type ProductInputProcessOrchestratorProps = ProductInputProcessProps & {
     product: ProductProps;
-    product_input: ProductInputOrchestratorProps;
-    product_process: ProductProcessOrchestratorPropsLean;
+    product_input: ProductInputProps;
+    product_process: ProductProcessProps
 };
 
 type ProductProcessOrchestratorProps = ProductProcessOrchestratorPropsLean & {
@@ -118,7 +118,7 @@ type ProductDiscountRangeOrchestratorCreateProps =
 // * Product-Discount-Range MANAGER
 interface ProductOrchestratorCreateProps {
     product: ProductCreateProps;
-    products_inputs: ProductInputOrchestratorCreateProps[];
+    product_inputs: ProductInputOrchestratorCreateProps[];
     product_processes: ProductProcessOrchestratorCreateProps[];
     product_discount_ranges: ProductDiscountRangeOrchestratorCreateProps[];
 }
@@ -187,7 +187,7 @@ interface ProductDiscountRangeManager {
 // * Esquema del objeto para actualizar un producto desde el orquestador
 interface ProductOrchestratorUpdateProps {
     product: ProductUpdateProps; // patch del producto
-    products_inputs_manager: ProductInputManager;
+    product_inputs_manager: ProductInputManager;
     product_processes_manager: ProductProcessManager;
     product_discount_ranges_manager: ProductDiscountRangeManager;
 }
@@ -199,7 +199,7 @@ interface ProductOrchestratorUpdateProps {
 // Dominio (props) — puede venir lean o con relaciones opcionales (Props)
 interface ProductOrchestrator {
     product: ProductProps;
-    products_inputs: ProductInputOrchestratorProps[];
+    product_inputs: ProductInputOrchestratorProps[];
     product_processes: ProductProcessOrchestratorProps[];
     product_discount_ranges: ProductDiscountRangeOrchestratorProps[];
 }
@@ -222,7 +222,7 @@ type ProductDiscountRangeOrchestratorResponseProps = ProductDiscountRangeRespons
 
 interface ProductOrchestratorResponseProps {
     product: ProductResponseDto;
-    products_inputs: ProductInputOrchestratorResponseProp[];
+    product_inputs: ProductInputOrchestratorResponseProp[];
     product_processes: ProductProcessOrchestratorResponseProps[];
     product_discount_ranges: ProductDiscountRangeOrchestratorResponseProps[];
 }
@@ -277,4 +277,6 @@ export type {
     // ******************* RESPONSE ******************
     ProductOrchestrator,
     ProductOrchestratorResponseProps,
+    ProductDiscountRangeOrchestratorResponseProps,
+    ProductInputOrchestratorResponseProp
 };
